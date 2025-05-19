@@ -6,7 +6,9 @@ const Layout = () => {
         <>
             <Header></Header>
 
-            <Outlet></Outlet>
+            <div className="flex justify-center">
+                <Outlet></Outlet>
+            </div>
 
             {/* 푸터 */}
         </>
