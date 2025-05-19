@@ -33,8 +33,8 @@ public class SecurityConfig {
                 })
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer
-                            .loginPage("/user/login")
-                            .
+                            .loginPage("/user/login");
+
                 }).build();
     }
 }
