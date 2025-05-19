@@ -1,5 +1,8 @@
 package com.example.skip.entity;
 
+import com.example.skip.enumeration.UserRole;
+import com.example.skip.enumeration.UserSocial;
+import com.example.skip.enumeration.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
