@@ -20,8 +20,9 @@ public class ActiveBannerList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bannerId;
-    @Column(nullable = false)  // 1:N 조인 생략하고 NotNull조건을 부여, 복잡성 감소
-    private Long rent_id;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "rent_id", nullable = false)
+    private Rent rent;
     private String bannerImage;
     private Integer clickCnt;
     private Integer cpcBid;  //클릭당 비용
