@@ -33,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getSocial(),
                 user.getRoles().stream().map(UserRole::name).collect(Collectors.toSet()),
                 user.getStatus(),
-                user.getRegisteredAt());
+                user.getRegisteredAt(),
+                user.getImage());
     }
 }

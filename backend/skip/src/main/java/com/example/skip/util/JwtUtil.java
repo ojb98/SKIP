@@ -6,7 +6,7 @@ public class JwtUtil {
     private static String key = "1234567890123456789012345678901234567890";
 
     public String generateToken() {
-
+        return "";
     }
 
     public String extractToken(HttpServletRequest request) {
