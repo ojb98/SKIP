@@ -10,6 +10,11 @@ const AdminHeader = () => {
                     <h1>SKI:P</h1>
                 </Link>
             </div>
+            <div className="header-right">
+                <Link to="/">
+                    <h1>메인페이지로 이동</h1>
+                </Link>
+            </div>
         </header>
     );
 };

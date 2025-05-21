@@ -18,8 +18,13 @@ function App() {
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<AdminDashboard />} />
                     {/* 추가 라우트 */}
-                    <Route path="pendinglist" element={<div>Pending List</div>} />
-                    <Route path="customerlist" element={<div>Customer List</div>} />
+                    <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                    <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
+                    <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                    <Route path="/admin/userlist" element={<div>user List</div>} />
+                    <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
+                    <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
+                    <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
                 </Route>
             </Routes>
         </BrowserRouter>
