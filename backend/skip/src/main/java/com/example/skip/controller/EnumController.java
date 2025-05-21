@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
 @RestController
+@RequestMapping("/api/enums")
 @CrossOrigin(origins = "http://localhost:5173")
 public class EnumController {
 
-    @GetMapping("/api/enums/rentCategory")
+    @GetMapping("/rentCategory")
     public ResponseEntity<List<Map<String,String>>> getRentCategory(){
         //enum값 배열로 가져오기
         RentCategory[] categoryNames = RentCategory.values();

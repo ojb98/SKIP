@@ -10,6 +10,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -40,7 +41,7 @@ public class RentDTO {
     private String bizRegNumber;
     private YesNo isValid;
     private YesNo regNumberValidity;
-    private LocalDateTime regCheckDate;
+    private LocalDate regCheckDate;
 
 
     public RentDTO(Rent rent){

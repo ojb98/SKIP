@@ -22,10 +22,11 @@ const RentInsertForm=()=>{
         useYn: 'Y',
         remainAdCash: 0,
         bizRegNumber: '',
-        isValid: 'Y',
-        regNumberValidity: 'Y',
+        isValid: '',
+        regNumberValidity: '',
+        regCheckDate: '',
         createdAt: new Date().toISOString(),
-        regCheckDate: new Date().toISOString(),
+        
     }) 
 
 
@@ -39,11 +40,7 @@ const RentInsertForm=()=>{
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('/api/enums/rentCategory',{
-                    headers : {
-                        'Cache-Control': 'no-cache',  // 캐시를 무시하도록 설정
-                    }
-                });
+                const response = await axios.get('/api/enums/rentCategory');
                 console.log("카테고리 데이터: ", response.data);
                 setCategories(response.data);
             } catch (error) {
@@ -81,6 +78,35 @@ const RentInsertForm=()=>{
     };
 
 
+    const handleBizNumberCheck = async()=>{
+        if(!formData.bizRegNumber){
+            alert("사업자등록번호를 입력하세요.");
+            return;
+        }
+
+    try {
+        const response = await axios.post("http://localhost:8080/api/business/verify", {
+            bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
+        });
+
+        const { isValid, regNumberValidity, regCheckDate } = response.data;
+
+        setFormData((prev) => ({
+            ...prev,
+            isValid,
+            regNumberValidity,
+            regCheckDate,
+        }));
+
+        } catch (error) {
+            console.error("사업자 진위 확인 실패", error);
+            alert("사업자번호 확인 중 오류가 발생했습니다.");
+        }
+
+        
+    };
+
+
     const handleSubmit=()=>{
 
 
@@ -96,7 +122,7 @@ const RentInsertForm=()=>{
                     <select name="category" id="category" value={formData.category} onChange={handleChange}>
                         <option value="">카테고리를 선택하세요</option>
                         {
-                            Array.isArray(categories) && categories.map((cat,index) => (
+                            categories.map((cat,index) => (
                                 <option key={index} value={cat.code}>
                                 {cat.label}
                                 </option>
@@ -126,14 +152,33 @@ const RentInsertForm=()=>{
                 <div className="form-group">
                     <label htmlFor="streetAddress">도로명 주소</label>
                     <input type="text" id="streetAddress" name="streetAddress" value={formData.streetAddress} readOnly />
-                </div>
+                </div>  
                 <div className="form-group">
                     <label htmlFor="detailedAddress">상세 주소</label>
                     <input type="text" id="detailedAddress" name="detailedAddress" onChange={handleChange} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="bizRegNumber">사업자 등록번호</label>
-                     <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange} required/>
+                    <div className="flex">
+                        <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange} placeholder="숫자만 입력하세요" required/>
+                        <button type="button" onClick={handleBizNumberCheck}>진위확인</button>
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="isValid">유효한 사업자여부</label>
+                    <input type="text" name="isValid" id="isValid" value={formData.isValid} readOnly/>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="regNumberValidity">진위여부</label>
+                    <input type="text" name="regNumberValidity" id="regNumberValidity" value={formData.regNumberValidity} readOnly/>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="regCheckDate">사업자등록날짜</label>
+                    <input type="text" name="regCheckDate" id="regCheckDate" value={formData.regCheckDate} readOnly/>
                 </div>
 
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
@@ -161,10 +206,7 @@ const RentInsertForm=()=>{
                 <input type="hidden" name="status" value={formData.status} />
                 <input type="hidden" name="useYn" value={formData.useYn} />
                 <input type="hidden" name="remainAdCash" value={formData.remainAdCash} />
-                <input type="hidden" name="isValid" value={formData.isValid} />
-                <input type="hidden" name="regNumberValidity" value={formData.regNumberValidity} />
                 <input type="hidden" name="createdAt" value={formData.createdAt} />
-                <input type="hidden" name="regCheckDate" value={formData.regCheckDate} />
 
                 <button type="submit">렌탈샵 등록</button>
             </form>

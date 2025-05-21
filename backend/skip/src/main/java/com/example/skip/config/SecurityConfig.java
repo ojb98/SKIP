@@ -31,11 +31,6 @@ public class SecurityConfig {
                             .anyRequest()
                             .permitAll();
                 })
-//                .formLogin(httpSecurityFormLoginConfigurer -> {
-//                    httpSecurityFormLoginConfigurer
-//                            .loginPage("/user/login")
-//
-//                })
                 .build();
     }
 }

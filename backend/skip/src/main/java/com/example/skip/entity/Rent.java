@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -100,6 +101,6 @@ public class Rent {
     private YesNo regNumberValidity; //진위 여부 (Y / N)
 
     @Column(name = "regcheck_date", nullable = false)
-    private LocalDateTime regCheckDate; //진위 확인 날짜
+    private LocalDate regCheckDate; //진위 확인 날짜
 
 }

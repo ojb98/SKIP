@@ -6,6 +6,7 @@ import com.example.skip.enumeration.YesNo;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -36,5 +37,5 @@ public class RentRequestDTO {
     private String bizRegNumber;
     private YesNo isValid;
     private YesNo regNumberValidity;
-    private LocalDateTime regCheckDate;
+    private LocalDate regCheckDate;
 }
