@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
 import java.util.Map;
 
 @RestController
@@ -30,10 +31,11 @@ public class BizApiController {
 //    }
 
     @PostMapping("/verify")
-    public ResponseEntity<BizApiDTO> verifyBusiness(@RequestBody BizVerifyRequest request) {
+    public ResponseEntity<BizApiDTO> verifyBusiness(@RequestBody BizVerifyRequest request) throws URISyntaxException {
         String bno = request.getBizRegNumber();
+        System.out.println("bno===>" + bno);
         BizApiDTO bizApiDTO = bizApiService.callBizApi(bno);
-        return ResponseEntity.ok(bizApiDTO);
+        return new ResponseEntity<>(bizApiDTO, HttpStatus.OK);
     }
 
 }
