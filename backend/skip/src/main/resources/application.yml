@@ -18,3 +18,18 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.MariaDBDialect
+
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 30MB
+      max-file-size: 10MB
+
+file:
+  upload-path: C:/uploads/
+
+biz:
+  api:
+    url: https://api.odcloud.kr/api/nts-businessman/v1/status
+    serviceKey: dWa084asCEVdCW6xMVRx2B8hj2AHumB1QPv47m53+C2qlypMiXrz9pyr8e3XnnpiBWp5ZKGi8rlu0Ve3Kqbnfg==
+
