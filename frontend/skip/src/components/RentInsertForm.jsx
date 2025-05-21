@@ -22,9 +22,8 @@ const RentInsertForm=()=>{
         useYn: 'Y',
         remainAdCash: 0,
         bizRegNumber: '',
-        isValid: '',
-        regNumberValidity: '',
-        regCheckDate: '',
+        bizStatus: '',
+        bizClosureFlag: '',
         createdAt: new Date().toISOString(),
         
     }) 
@@ -89,20 +88,27 @@ const RentInsertForm=()=>{
             bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
         });
 
-        const { isValid, regNumberValidity, regCheckDate } = response.data;
 
-        setFormData((prev) => ({
+        console.log("응답 데이터: ", response.data);
+
+        //응답이 data 배열 형태일 경우
+        const bizInfo = response.data;
+
+        // if (!bizInfo) {
+        //     alert("사업자 정보를 찾을 수 없습니다.");
+        //     return;
+        // }
+
+         setFormData((prev) => ({
             ...prev,
-            isValid,
-            regNumberValidity,
-            regCheckDate,
-        }));
+            bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N", // 예: 01이면 유효한 사업자
+            bizClosureFlag: bizInfo.utcc_yn,
 
+        }));
         } catch (error) {
             console.error("사업자 진위 확인 실패", error);
             alert("사업자번호 확인 중 오류가 발생했습니다.");
         }
-
         
     };
 
@@ -132,11 +138,11 @@ const RentInsertForm=()=>{
                 </div>
                 <div className="form-group">
                     <label htmlFor="name">상호명</label>
-                    <input type="text" id="name" name="name" onChange={handleChange} required />
+                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone">전화번호</label>
-                    <input type="text" id="phone" name="phone" onChange={handleChange} required />
+                    <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="postalCode">우편번호</label>
@@ -167,19 +173,15 @@ const RentInsertForm=()=>{
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="isValid">유효한 사업자여부</label>
-                    <input type="text" name="isValid" id="isValid" value={formData.isValid} readOnly/>
+                    <label htmlFor="bizStatus">사업자 상태</label>
+                    <input type="text" name="bizStatus" id="bizStatus" value={formData.bizStatus} readOnly />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="regNumberValidity">진위여부</label>
-                    <input type="text" name="regNumberValidity" id="regNumberValidity" value={formData.regNumberValidity} readOnly/>
+                    <label htmlFor="bizClosureFlag">휴업 및 폐업 여부</label>
+                    <input type="text" name="bizClosureFlag" id="bizClosureFlag" value={formData.bizClosureFlag} readOnly />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="regCheckDate">사업자등록날짜</label>
-                    <input type="text" name="regCheckDate" id="regCheckDate" value={formData.regCheckDate} readOnly/>
-                </div>
 
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">

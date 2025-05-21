@@ -35,7 +35,7 @@ public class RentRequestDTO {
     private Integer remainAdCash;
     private LocalDateTime createdAt;
     private String bizRegNumber;
-    private YesNo isValid;
-    private YesNo regNumberValidity;
-    private LocalDate regCheckDate;
+    private YesNo bizStatus;
+    private YesNo bizClosureFlag;
+
 }

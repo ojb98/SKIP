@@ -39,9 +39,9 @@ public class RentDTO {
     private Integer remainAdCash;
     private LocalDateTime createdAt;
     private String bizRegNumber;
-    private YesNo isValid;
-    private YesNo regNumberValidity;
-    private LocalDate regCheckDate;
+    private YesNo bizStatus;
+    private YesNo bizClosureFlag;
+
 
 
     public RentDTO(Rent rent){
@@ -64,9 +64,9 @@ public class RentDTO {
         this.remainAdCash=rent.getRemainAdCash();
         this.createdAt=rent.getCreatedAt();
         this.bizRegNumber=rent.getBizRegNumber();
-        this.isValid=rent.getIsValid();
-        this.regNumberValidity=rent.getRegNumberValidity();
-        this.regCheckDate=rent.getRegCheckDate();
+        this.bizStatus=rent.getBizStatus();
+        this.bizClosureFlag=rent.getBizClosureFlag();
+
     }
 
 
@@ -91,9 +91,8 @@ public class RentDTO {
                 .remainAdCash(remainAdCash)
                 .createdAt(createdAt)
                 .bizRegNumber(bizRegNumber)
-                .isValid(isValid)
-                .regNumberValidity(regNumberValidity)
-                .regCheckDate(regCheckDate)
+                .bizStatus(bizStatus)
+                .bizClosureFlag(bizClosureFlag)
                 .build();
     }
 }

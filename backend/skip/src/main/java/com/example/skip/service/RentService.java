@@ -58,9 +58,8 @@ public class RentService {
                 .remainAdCash(rentRequestDTO.getRemainAdCash())
                 .createdAt(rentRequestDTO.getCreatedAt())
                 .bizRegNumber(rentRequestDTO.getBizRegNumber())
-                .isValid(rentRequestDTO.getIsValid())
-                .regNumberValidity(rentRequestDTO.getRegNumberValidity())
-                .regCheckDate(rentRequestDTO.getRegCheckDate())
+                .bizStatus(rentRequestDTO.getBizStatus())
+                .bizClosureFlag(rentRequestDTO.getBizClosureFlag())
                 .build();
         Rent saved = rentRepository.save(rent);
         return saved.getRentId();
@@ -102,9 +101,8 @@ public class RentService {
         if(!rent.getBizRegNumber().equals(rentRequestDTO.getBizRegNumber())){
             rent.setStatus(UserStatus.PENDING);
             rent.setBizRegNumber(rentRequestDTO.getBizRegNumber());
-            rent.setIsValid(rentRequestDTO.getIsValid());
-            rent.setRegNumberValidity(rentRequestDTO.getRegNumberValidity());
-            rent.setRegCheckDate(rentRequestDTO.getRegCheckDate());
+            rent.setBizStatus(rentRequestDTO.getBizStatus());
+            rent.setBizClosureFlag(rentRequestDTO.getBizClosureFlag());
         }
 
         // 파일 업로드 처리 후 URL 업데이트

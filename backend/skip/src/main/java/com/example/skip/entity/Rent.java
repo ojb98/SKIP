@@ -89,18 +89,16 @@ public class Rent {
 
     //사업자등록 관련 컬럼
     @Column(name = "bizregnumber", nullable = false, unique = true)
-    private String bizRegNumber;   //사업자등록번호 (필수)
+    private String bizRegNumber;   //사업자등록번호
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private YesNo isValid;   //유효한(운영중인지) 사업자인지 여부 (필수)
+    @Column(name = "bizstaus", nullable = false)
+    private YesNo bizStatus;   //유효한(운영중인지) 사업자인지 여부
 
     //사업자등록번호 진위확인 관련 컬럼
     @Enumerated(EnumType.STRING)
-    @Column(name = "regnumber_validity", nullable = false)
-    private YesNo regNumberValidity; //진위 여부 (Y / N)
+    @Column(name = "bizclosureflag",nullable = false)
+    private YesNo bizClosureFlag; //휴업/폐업여부 (Y / N)
 
-    @Column(name = "regcheck_date", nullable = false)
-    private LocalDate regCheckDate; //진위 확인 날짜
 
 }
