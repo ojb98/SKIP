@@ -4,8 +4,8 @@ const Header = () => {
     return (
         <>
             <ul>
-                <li><Link>dafasd</Link></li>
                 <li><Link to={"/login"}>Login</Link></li>
+                <li><Link to={"/mypage/account"}>mypage</Link></li>
             </ul>
         </>
     )

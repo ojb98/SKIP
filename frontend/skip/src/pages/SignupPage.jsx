@@ -109,7 +109,7 @@ const JoinPage = () => {
                         <input
                             type="password"
                             placeholder="비밀번호 확인"
-                            ref={confirmPassword}e
+                            ref={confirmPassword}
                             className={inputTextClass}
                             onKeyUp={() => setConfirmPasswordStatus(validateConfirmPassword(password.current.value, confirmPassword.current.value))}
                         ></input>
