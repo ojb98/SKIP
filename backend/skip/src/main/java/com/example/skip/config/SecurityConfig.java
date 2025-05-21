@@ -4,6 +4,9 @@ import com.example.skip.filter.JwtFilter;
 import com.example.skip.handler.CustomAccessDeniedHandler;
 import com.example.skip.handler.LoginFailureHandler;
 import com.example.skip.handler.LoginSuccessHandler;
+import com.example.skip.service.CustomUserDetailsService;
+import com.example.skip.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +24,15 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final LoginSuccessHandler loginSuccessHandler;
+
+    private final JwtFilter jwtFilter;
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,7 +52,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return httpSecurity
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> {
                     httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
@@ -49,8 +60,10 @@ public class SecurityConfig {
                 .csrf(httpSecurityCsrfConfigurer -> {
                     httpSecurityCsrfConfigurer.disable();
                 })
+                // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
+                            .requestMatchers("/user/profile").authenticated()
                             .anyRequest()
                             .permitAll();
                 })
@@ -59,9 +72,10 @@ public class SecurityConfig {
                             .loginPage("/user/login")
                             .usernameParameter("username")
                             .passwordParameter("password")
-                            .successHandler(new LoginSuccessHandler())
+                            .successHandler(loginSuccessHandler)
                             .failureHandler(new LoginFailureHandler());
                 })
+                .userDetailsService(customUserDetailsService)
                 .cors(httpSecurityCorsConfigurer -> {
                     httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
                 })
@@ -69,6 +83,6 @@ public class SecurityConfig {
                     httpSecurityExceptionHandlingConfigurer
                             .accessDeniedHandler(new CustomAccessDeniedHandler());
                 })
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class).build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 }
