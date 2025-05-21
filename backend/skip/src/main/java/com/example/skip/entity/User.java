@@ -50,4 +50,6 @@ public class User {
 
     @CreatedDate
     private LocalDateTime registeredAt;
+
+    private String image;
 }
