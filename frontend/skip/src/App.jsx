@@ -10,6 +10,9 @@ import AccountPage from "./pages/AccountPage"
 import MyReviewPage from "./pages/MyReviewPage"
 import MyQnaPage from "./pages/MyQnaPage"
 
+import RentalshopPage from "./pages/RentalshopPage"
+import ProductPage from "./pages/ProductPage"
+
 
 function App() {
     return (
@@ -37,6 +40,9 @@ function App() {
                         {/* 관리자 등록폼 */}
                         <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
 
+                        {/* 렌탈샵 상세 페이지 */}
+                        <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
+                        <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
