@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import '../css/RentInsertForm.css';
+import '../../css/rentInsertForm.css';
 
 const RentInsertForm=()=>{
 
@@ -31,6 +31,7 @@ const RentInsertForm=()=>{
         image3: useRef()
     }
 
+    //카테고리 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -56,6 +57,7 @@ const RentInsertForm=()=>{
         })
     }
 
+    //주소
     const handleAddressSearch=()=>{
         new window.daum.Postcode({
             oncomplete: (data) => {
@@ -71,6 +73,7 @@ const RentInsertForm=()=>{
     };
 
 
+    //사업자등록
     const handleBizNumberCheck = async()=>{
         if(!formData.bizRegNumber){
             alert("사업자등록번호를 입력하세요.");
@@ -118,6 +121,7 @@ const RentInsertForm=()=>{
     };
 
 
+    //등록
     const handleSubmit=(e)=>{
         e.preventDefault();
 
@@ -166,15 +170,15 @@ const RentInsertForm=()=>{
         .then((res)=>{
             alert("렌탈샵이 등록이 완료했습니다.")
             
-            //window.location.href = "/rent/list";
+            //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
         })
         .catch((err)=>{
             console.log("렌탈샵 등록 실패", err);
             alert("렌탈샵 등록중 오류 발생")
         });
-
-
     }
+
+
 
     return (
         <div className="form-container">
@@ -210,7 +214,7 @@ const RentInsertForm=()=>{
                     </div>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="basicAddress">기본 주소</label>
+                    <label htmlFor="basicAddress">지번 주소</label>
                     <input type="text" id="basicAddress" name="basicAddress" value={formData.basicAddress} readOnly />
                 </div>
                 <div className="form-group">
@@ -221,7 +225,7 @@ const RentInsertForm=()=>{
                     <label htmlFor="detailedAddress">상세 주소</label>
                     <input type="text" id="detailedAddress" name="detailedAddress" onChange={handleChange} />
                 </div>
-
+                
                 <div className="form-group">
                     <label htmlFor="bizRegNumber">사업자 등록번호</label>
                     <div className="flex">
@@ -264,7 +268,7 @@ const RentInsertForm=()=>{
                     <textarea id="description" name="description" onChange={handleChange}></textarea>
                 </div>
 
-                <button type="submit">렌탈샵 등록</button>
+                <button type="submit">등록</button>
             </form>
         </div>
     )

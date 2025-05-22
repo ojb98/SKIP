@@ -2,6 +2,7 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.RentDTO;
 import com.example.skip.dto.RentRequestDTO;
+import com.example.skip.dto.RentUpdateDTO;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.service.RentService;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +57,11 @@ public class RentController {
     }
 
     //렌탈샵 정보 수정
-    @PutMapping("/{rentId}")
-    public ResponseEntity<String> updateRent(@ModelAttribute RentRequestDTO rentRequestDTO){
-        rentService.updateRent(rentRequestDTO);
+    @PostMapping("/update")
+    public ResponseEntity<String> updateRent(@ModelAttribute RentUpdateDTO rentUpdateDTO){
+        System.out.println("렌탈샵 수정 DTO"+rentUpdateDTO);
+
+        rentService.updateRent(rentUpdateDTO);
         return new ResponseEntity<>("UpdateRentSuccess", HttpStatus.OK);
     }
 

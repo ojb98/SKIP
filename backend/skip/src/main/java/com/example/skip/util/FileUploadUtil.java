@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 @Component
 @RequiredArgsConstructor
 public class FileUploadUtil {
@@ -29,4 +31,5 @@ public class FileUploadUtil {
         // 파일이 없으면 기존 파일 그대로 반환
         return currentFile;
     }
+
 }
