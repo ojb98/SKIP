@@ -3,8 +3,6 @@ import SalesSummaryChart from "../../components/adminpage/SalesSummaryChart";
 import SalesCategoryChart from "../../components/adminpage/SalesCategoryChart";
 import SalesTable from "../../components/adminpage/SalesTable";
 import { fetchSalesSummary, fetchSalesChartData, fetchSalesList } from "../../services/admin/salesService";
-import "../../styles/admin/admin.css";
-import StatCompareCard from "../../components/adminpage/StatOverviewCard";
 import StatOverviewCard from "../../components/adminpage/StatOverviewCard";
 
 const AdminDashboard = () => {
@@ -66,10 +64,15 @@ const AdminDashboard = () => {
                     <p id="confirmReservCard" className="odometer"></p>건
                 </div>
 
-                <div className="card-excel">
-                
-                    <div style={{display:"flex"}}><img src="/public/icons8-msExcel-48.png" style={{width:"10%",height:"10%"}}/><h6>&nbsp;&nbsp;엑셀 파일로 내려받기(.xlsx)</h6></div>
-                    <div style={{display:"flex"}}><img src="/public/icon-hancell.png" style={{width:"10%",height:"10%"}}/><h6>&nbsp;&nbsp;엑셀 파일로 내려받기(.cell)</h6></div>
+                <div className="card-excel">                
+                    <div style={{display:"flex" , marginBottom:"12px"}}>
+                        <img src="/public/icons8-msExcel-48.png" style={{width:"10%",height:"10%"}}/>
+                        <h6>&nbsp;&nbsp;엑셀 파일로 내려받기(.xlsx)</h6>
+                    </div>
+                    <div style={{display:"flex"}}>
+                        <img src="/public/icon-hancell.png" style={{width:"9%",height:"9%"}}/>
+                        <h6>&nbsp;&nbsp;엑셀 파일로 내려받기(.cell)</h6>
+                    </div>
                 </div>
 
                 <div className="card-refresh">

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,7 +27,7 @@ public class ActiveBannerList {
     private String bannerImage;
     private Integer clickCnt;
     private Integer cpcBid;  //클릭당 비용
-    private Float finalScore; //노출도 점수
+    private BigDecimal finalScore; //노출도 점수
     private LocalDateTime endDate;
     @CreatedDate
     private LocalDateTime uploadDate;

@@ -1,3 +1,8 @@
+package com.example.skip.service;
+
+import com.example.skip.repository.AdPaymentRepository;
+import com.example.skip.repository.PaymentRepository;
+import com.example.skip.repository.RefundsHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

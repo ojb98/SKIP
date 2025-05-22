@@ -10,9 +10,11 @@ import SignupVerifyPage from "./pages/SignupVerifyPage"
 import AccountPage from "./pages/AccountPage"
 import MyReviewPage from "./pages/MyReviewPage"
 import MyQnaPage from "./pages/MyQnaPage"
-
+import AdminLayout from "./pages/admin/AdminLayout"
+import AdminDashboard from "./pages/admin/AdminDashBoard"
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
+import UsersList from "./pages/admin/UsersList"
 
 
 function App() {
@@ -52,7 +54,7 @@ function App() {
                             <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
                             <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
                             <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
-                            <Route path="/admin/userlist" element={<div>user List</div>} />
+                            <Route path="/admin/userlist" element={<UsersList></UsersList>} />
                             <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                             <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                             <Route path="/admin/pendinglist" element={<div>Pending List</div>} />

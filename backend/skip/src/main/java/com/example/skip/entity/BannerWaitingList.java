@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,8 +29,8 @@ public class BannerWaitingList {
     private Integer cpcBid;
     private String bannerImage;
     private LocalDateTime registDay;
-    private Float averageRating;
-    private Float recent7dRating;
+    private BigDecimal averageRating;
+    private BigDecimal recent7dRating;
     @CreatedDate
     private LocalDateTime createdAt;
     @UpdateTimestamp
