@@ -12,6 +12,7 @@ import MyQnaPage from "./pages/MyQnaPage"
 
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
+import ReviewPopupPage from "./pages/ReviewPopupPage"
 
 
 function App() {
@@ -43,7 +44,10 @@ function App() {
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
                         <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
+
                     </Route>
+                        {/* 리뷰 팝업 */}
+                        <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                 </Routes>
             </BrowserRouter>
         </>
