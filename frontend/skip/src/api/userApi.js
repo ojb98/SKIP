@@ -1,10 +1,10 @@
 import axios from "axios";
-import customAxios from "./customAxios";
+import caxios from "./caxios";
 
 const host = "http://localhost:8080";
 
 export const signup = async req => {
-    const data = await customAxios.post(`/user`, req).then(res => {
+    const data = await caxios.post(`/user`, req).then(res => {
         return res.data;
     });
 
@@ -12,7 +12,7 @@ export const signup = async req => {
 }
 
 export const isUser = async req => {
-    const data = await customAxios.get(`/user/find/${req}`).then(res => {
+    const data = await caxios.get(`/user/find/${req}`).then(res => {
         return res.data;
     });
 
@@ -20,7 +20,15 @@ export const isUser = async req => {
 }
 
 export const login = async req => {
-    const data = await customAxios.post(`/user/login`, req).then(res => {
+    const data = await caxios.post(`/user/login`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const logout = async req => {
+    const data = await caxios.post(`/user/logout`, req).then(res => {
         return res.data;
     });
 
@@ -28,7 +36,7 @@ export const login = async req => {
 }
 
 export const getProfile = async () => {
-    const data = await customAxios.get(`/user/profile`).then(res => {
+    const data = await caxios.get(`/user/profile`).then(res => {
         return res.data;
     });
 

@@ -2,6 +2,7 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
+import com.example.skip.exception.CustomJwtException;
 import com.example.skip.service.UserService;
 import com.example.skip.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -53,7 +54,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
-        Map<String, String> tokens = jwtUtil.extractToken(request);
-        return ResponseEntity.ok(jwtUtil.validateToken(tokens.get("accessToken")));
+        String accessToken = jwtUtil.extractToken("accessToken", request);
+        return ResponseEntity.ok(Map.of("success", true, "return", jwtUtil.validateToken(accessToken)));
     }
 }

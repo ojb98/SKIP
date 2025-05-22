@@ -1,10 +1,9 @@
 import { useState } from "react";
 import SideBar from "../components/SideBar";
-import useProfile from "../hooks/useProfile";
+import { useSelector } from "react-redux";
 
 const AccountPage = () => {
-    const profile = useProfile();
-    console.log(profile);
+    const profile = useSelector(state => state.loginSlice);
 
 
     return (

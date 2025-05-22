@@ -1,17 +1,18 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/userApi";
-import { login as sliceLogin } from "../slices/loginSlice";
 import { useDispatch } from "react-redux";
+import { setProfile } from "../slices/loginSlice";
+
+const input_size = ' h-[55px] w-full ';
+const input_text = ' rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
 const LoginPage = () => {
     const username = useRef();
     const password = useRef();
-
     const [loginError, setLoginError] = useState();
-
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
 
     const loginHandler = e => {
@@ -33,7 +34,7 @@ const LoginPage = () => {
 
         login(params).then(res => {
             if (res.success) {
-                dispatch(sliceLogin());
+                dispatch(setProfile());
                 navigate({ pathname: '/' }, { replace: true });
             } else {
                 setLoginError('아이디 또는 비밀번호가 틀렸습니다.');
@@ -44,18 +45,18 @@ const LoginPage = () => {
     return (
         <>
             <div className="w-[350px]">
-                <form className="flex flex-col items-center gap-5" onSubmit={loginHandler}>
+                <form className="flex flex-col items-center gap-7" onSubmit={loginHandler}>
                     <input
                         type="text"
                         placeholder="아이디"
-                        className="h-[50px] mt-0.5 w-full rounded border-[1px] border-gray-200 text-sm indent-2"
+                        className={`${input_size} ${input_text}`}
                         ref={username}
                     ></input>
 
                     <input
                         type="password"
                         placeholder="비밀번호"
-                        className="h-[50px] mt-0.5 w-full rounded border-[1px] border-gray-200 text-sm indent-2"
+                        className={`${input_size} ${input_text}`}
                         ref={password}
                     ></input>
 
@@ -89,7 +90,7 @@ const LoginPage = () => {
 
                     <input
                         type="submit"
-                        className="h-[50px] w-full rounded border border-blue-400 bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 hover:border-blue-500 cursor-pointer"
+                        className={`${input_size} rounded border border-blue-400 bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 hover:border-blue-500 cursor-pointer`}
                         value="로그인"
                     ></input>
 

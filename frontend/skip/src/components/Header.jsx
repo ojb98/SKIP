@@ -1,29 +1,41 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { logout } from "../slices/loginSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { logout, setProfile } from "../slices/loginSlice";
+import { useEffect } from "react";
 
 const Header = () => {
+    const { isLoggedIn, isLoading } = useSelector(state => state.loginSlice);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { loggedIn } = useSelector(state => state.loginSlice);
 
 
-    const logoutHandler = () => {
-        dispatch(logout());
-    }
+    useEffect(() => {
+        dispatch(setProfile());
+    }, []);
 
     return (
         <>
-            <ul>
-                <li><Link to={"/"}>Home</Link></li>
-                {
-                    loggedIn ?
-                    <>
-                        <li><Link onClick={logoutHandler}>Logout</Link></li>
-                        <li><Link to={"/mypage/account"}>mypage</Link></li>
-                    </> :
-                    <li><Link to={"/login"}>Login</Link></li>
-                }
-            </ul>
+            {
+                !isLoading ? 
+                    <ul>
+                        <li><Link to={"/"}>Home</Link></li>
+                        {
+                            isLoggedIn === true ?
+                            <>
+                                <li><Link onClick={() => {
+                                    dispatch(logout())
+                                        .unwrap()
+                                        .then(res => {
+                                            dispatch(setProfile());
+                                            navigate('/');
+                                        });
+                                    }}>Logout</Link></li>
+                                <li><Link to={"/mypage/account"}>mypage</Link></li>
+                            </> :
+                            <li><Link to={"/login"}>Login</Link></li>
+                        }
+                    </ul> : <></>
+            }
         </>
     )
 }

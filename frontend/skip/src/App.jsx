@@ -7,6 +7,9 @@ import SignupVerifyPage from "./pages/SignupVerifyPage"
 import AccountPage from "./pages/AccountPage"
 import MyReviewPage from "./pages/MyReviewPage"
 import MyQnaPage from "./pages/MyQnaPage"
+import { useDispatch, useSelector } from "react-redux"
+import { setProfile } from "./slices/loginSlice"
+import { useEffect } from "react"
 
 function App() {
     return (

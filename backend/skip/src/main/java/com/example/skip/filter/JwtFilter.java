@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
-        if (path.startsWith("/user/profile")) {
+        if (path.startsWith("/user/logout") || path.startsWith("/user/profile")) {
             return false;
         }
         return true;
@@ -40,8 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            Map<String, String> tokens = jwtUtil.extractToken(request);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername((String) jwtUtil.validateToken(tokens.get("accessToken")).get("username"));
+            String accessToken = jwtUtil.extractToken("accessToken", request);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername((String) jwtUtil.validateToken(accessToken).get("username"));
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             e.printStackTrace();
             Gson gson = new Gson();
-            String jsonStr = gson.toJson(Map.of("success", false));
+            String jsonStr = gson.toJson(Map.of("success", false, "error", "ERROR_ACCESS_TOKEN"));
             response.setContentType("application/json;charset=utf-8");
             PrintWriter pw = response.getWriter();
             pw.println(jsonStr);

@@ -17,7 +17,7 @@ const JoinPage = () => {
     const [confirmPasswordStatus, setConfirmPasswordStatus] = useState({});
     const [emailStatus, setEmailStatus] = useState({});
 
-    const inputTextClass = 'h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black';
+    const inputTextClass = ' h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
 
     const signupHandler = e => {

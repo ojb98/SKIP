@@ -1,6 +1,7 @@
 package com.example.skip.handler;
 
 import com.example.skip.dto.UserDto;
+import com.example.skip.service.RefreshTokenService;
 import com.example.skip.util.JwtUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -21,25 +22,22 @@ import java.util.Map;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
 
+    private final RefreshTokenService refreshTokenService;
+
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Map<String, Object> claims = userDto.getClaims();
 
-        Cookie accessCookie = new Cookie("accessToken", jwtUtil.generateAccessToken(claims));
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false);
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge((int) JwtUtil.accessTokenValidity);
+        String refreshToken = jwtUtil.generateRefreshToken(userDto.getUsername());
 
-        Cookie refreshCookie = new Cookie("refreshToken", jwtUtil.generateRefreshToken(userDto.getUsername()));
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge((int) JwtUtil.refreshTokenValidity);
+        // 쿠키 저장
+        jwtUtil.attachToken("accessToken", jwtUtil.generateAccessToken(claims), response, JwtUtil.accessTokenValidity);
+        jwtUtil.attachToken("refreshToken", refreshToken, response, JwtUtil.refreshTokenValidity);
 
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+        // 레디스 저장
+        refreshTokenService.saveRefreshToken(userDto.getUsername(), refreshToken);
 
         Gson gson = new Gson();
         String json = gson.toJson(Map.of("success", true));
