@@ -2,7 +2,11 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
+import com.example.skip.exception.CustomJwtException;
 import com.example.skip.service.UserService;
+import com.example.skip.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    private final JwtUtil jwtUtil;
 
 
     @PostMapping
@@ -44,5 +50,11 @@ public class UserController {
     @GetMapping("/find/{username}")
     public boolean isUser(@PathVariable("username") String username) {
         return userService.isUser(username);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+        String accessToken = jwtUtil.extractToken("accessToken", request);
+        return ResponseEntity.ok(Map.of("success", true, "return", jwtUtil.validateToken(accessToken)));
     }
 }

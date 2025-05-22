@@ -3,18 +3,15 @@ package com.example.skip.service;
 import com.example.skip.config.BizApiConfig;
 import com.example.skip.dto.BizApiDTO;
 import com.example.skip.dto.BizApiResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import okhttp3.*;
+import okhttp3.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,37 +21,69 @@ import java.util.Map;
 public class BizApiService {
 
     private final BizApiConfig bizApiConfig;  // BizApiConfig 주입
+    //OkHttp라이브러리에서 HTTP 요청을 보내고 응답을 받는 클라이언트 객체입니다.
+    private final OkHttpClient client = new OkHttpClient();
+    //JSON을 자바 객체로 바꾸거나 그 반대로 바꾸는 도구입니다. (Jackson 사용)
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    public BizApiDTO callBizApi(String bizRegNumber) throws URISyntaxException {
-        // 서비스 URL과 서비스 키 가져오기
+    public BizApiDTO callBizApi(String bizRegNumber) {
         String url = bizApiConfig.getUrl();
-        String serviceKey = bizApiConfig.getServiceKey();  // 서비스키는 인코딩해야 할 필요가 없습니다.
+        //디코딩 인증키를 인코딩 인증키로 변환
+        String serviceKey = URLEncoder.encode(bizApiConfig.getServiceKey(), StandardCharsets.UTF_8);
+        String fullUrl = url + "?serviceKey=" + serviceKey;
 
-        // URI 생성 (서비스키를 쿼리 파라미터로 추가)
-        String finalUrl = url + "?serviceKey=" + serviceKey;
-        URI uri = new URI(finalUrl);  // URI 객체로 변환
+        System.out.println("fullUrl ==> " + fullUrl);
 
-        // HTTP 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // 요청 바디에 사업자 등록번호(b_no) 추가
+        // 요청 바디(body) JSON 생성
         Map<String, Object> body = new HashMap<>();
-        body.put("b_no", Arrays.asList(bizRegNumber));  // 사업자 번호를 리스트로 감싸서 전달
+        body.put("b_no", List.of(bizRegNumber)); // b_no는 배열 형태로 전달 (예: { "b_no": ["2268124374"] })
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+        String jsonBody;
+        try {
+            jsonBody = objectMapper.writeValueAsString(body);  //JSON 문자열로 변환
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 직렬화 실패", e);
+        }
 
-        // POST 요청을 보내고 응답 받기
-        ResponseEntity<BizApiResponse> response = restTemplate.exchange(
-                uri,
-                HttpMethod.POST,
-                entity,
-                BizApiResponse.class
-        );
+        //HTTP 요청의 본문 타입을 JSON 형식으로 지정
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        //requestBody는 보낼 내용을 의미해요 (JSON 문자열)
+        RequestBody requestBody = RequestBody.create(jsonBody, mediaType);
 
-        // 응답에서 첫 번째 사업자 정보 꺼내기
-        return response.getBody().getData().get(0);  // 데이터 리스트에서 첫 번째 사업자 정보 반환
+        //HTTP POST 요청 객체를 생성
+        Request request = new Request.Builder()
+                .url(fullUrl)
+                .post(requestBody)
+                .build();
+
+        // 요청 실행 및 응답 처리 (OkHttp로 API 요청을 보냄)
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {  //요청이 실패했는지 확인
+                throw new IOException("Unexpected response code: " + response.code() + ", message: " + response.message());
+            }
+
+            //응답 본문이 비어있으면 오류 처리
+            ResponseBody responseBody = response.body();
+            if (responseBody == null) {
+                throw new IOException("응답 바디가 null입니다.");
+            }
+
+            //응답 JSON 문자열을 자바 객체(BizApiResponse)로 변환
+            String responseString = responseBody.string();
+            BizApiResponse bizApiResponse = objectMapper.readValue(responseString, BizApiResponse.class);
+
+            // 데이터가 없을 경우 예외 처리 (data 배열이 없거나 비어 있으면 오류 처리)
+            if (bizApiResponse.getData() == null || bizApiResponse.getData().isEmpty()) {
+                throw new RuntimeException("응답 데이터가 비어 있습니다.");
+            }
+
+            //data 배열 중 첫 번째 사업자 정보 객체를 반환
+            return bizApiResponse.getData().get(0);
+
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청 실패", e);
+        }
     }
+
+
 }

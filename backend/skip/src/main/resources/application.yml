@@ -7,6 +7,7 @@ spring:
     url: jdbc:mariadb://192.168.80.13:3306/projectdb
     username: hello
     password: hello1234
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,6 +16,14 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.MariaDBDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  profiles:
+    include: security
 
   servlet:
     multipart:
@@ -29,4 +38,3 @@ biz:
   api:
     url: https://api.odcloud.kr/api/nts-businessman/v1/status
     serviceKey: dWa084asCEVdCW6xMVRx2B8hj2AHumB1QPv47m53+C2qlypMiXrz9pyr8e3XnnpiBWp5ZKGi8rlu0Ve3Kqbnfg==
-

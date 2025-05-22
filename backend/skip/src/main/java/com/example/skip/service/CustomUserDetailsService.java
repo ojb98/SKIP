@@ -24,16 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Not Found");
         }
-        return new UserDto(user.getUserId(),
-                user.getUsername(),
-                user.getPassword(),
-                user.getName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getSocial(),
-                user.getRoles().stream().map(UserRole::name).collect(Collectors.toSet()),
-                user.getStatus(),
-                user.getRegisteredAt(),
-                user.getImage());
+        return new UserDto(user);
     }
 }

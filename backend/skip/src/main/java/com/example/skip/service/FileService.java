@@ -19,6 +19,10 @@ public class FileService {
     private String uploadDir;
 
     public String uploadFile(MultipartFile file,String subDir){
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
         try {
             String uploadPath = uploadDir + subDir;
 
@@ -41,6 +45,16 @@ public class FileService {
 
         }catch (IOException ie){
             throw new RuntimeException("파일업로드 실패", ie);
+        }
+    }
+
+    //파일 삭제
+    public void deleteFile(String filePath) {
+        try {
+            Path path = Paths.get(filePath);
+            Files.delete(path);  // 실제 파일 삭제
+        } catch (IOException e) {
+            throw new RuntimeException("파일 삭제 실패", e);
         }
     }
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import '../css/RentInsertForm.css';
+import '../../css/rentInsertForm.css';
 
 const RentInsertForm=()=>{
 
@@ -9,7 +9,7 @@ const RentInsertForm=()=>{
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        userId: "1",
+        userId: 1,
         category: '',
         name: '',
         phone: '',
@@ -18,15 +18,9 @@ const RentInsertForm=()=>{
         streetAddress: '',
         detailedAddress: '',
         description: '',
-        status: 'PENDING',
-        useYn: 'Y',
-        remainAdCash: 0,
         bizRegNumber: '',
-        isValid: '',
-        regNumberValidity: '',
-        regCheckDate: '',
-        createdAt: new Date().toISOString(),
-        
+        bizStatus: '',
+        bizClosureFlag: '',
     }) 
 
 
@@ -37,6 +31,7 @@ const RentInsertForm=()=>{
         image3: useRef()
     }
 
+    //카테고리 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -54,7 +49,6 @@ const RentInsertForm=()=>{
 
 
     const handleChange=(e)=>{
-
         const {name,value} = e.target;
 
         setFormData({
@@ -63,13 +57,14 @@ const RentInsertForm=()=>{
         })
     }
 
+    //주소
     const handleAddressSearch=()=>{
         new window.daum.Postcode({
             oncomplete: (data) => {
                 setFormData({
                     ...formData,
                     postalCode: data.zonecode,
-                    basicAddress: data.jibunAddress,
+                    basicAddress: data.jibunAddress || streetAddress,
                     streetAddress: data.roadAddress
                 });
             }
@@ -78,6 +73,7 @@ const RentInsertForm=()=>{
     };
 
 
+    //사업자등록
     const handleBizNumberCheck = async()=>{
         if(!formData.bizRegNumber){
             alert("사업자등록번호를 입력하세요.");
@@ -89,28 +85,100 @@ const RentInsertForm=()=>{
             bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
         });
 
-        const { isValid, regNumberValidity, regCheckDate } = response.data;
 
-        setFormData((prev) => ({
-            ...prev,
-            isValid,
-            regNumberValidity,
-            regCheckDate,
-        }));
+        console.log("응답 데이터: ", response.data);
 
+        //응답이 data 배열 형태일 경우
+        const bizInfo = response.data;
+
+        if (!bizInfo) {
+            alert("사업자 정보를 찾을 수 없습니다.");
+            return;
+        }
+
+        // 국세청에 등록되지 않은 사업자
+        if (bizInfo.utcc_yn === "") {
+            alert("국세청에 등록되지 않은 사업자등록번호입니다.");
+            setFormData({
+                ...formData,
+                bizStatus: "",        
+                bizClosureFlag: "",    
+            });
+            return;
+        }
+
+        setFormData({
+            ...formData,
+            bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N", // 예: 01이면 유효한 사업자
+            bizClosureFlag: bizInfo.utcc_yn,
+
+        });
         } catch (error) {
             console.error("사업자 진위 확인 실패", error);
             alert("사업자번호 확인 중 오류가 발생했습니다.");
         }
-
         
     };
 
 
-    const handleSubmit=()=>{
+    //등록
+    const handleSubmit=(e)=>{
+        e.preventDefault();
 
+        if(!formData.category || !formData.name || !formData.phone || !formData.bizRegNumber){
+            alert("필수 항목을 모두 입력해주세요.");
+        }
 
+        // 사업자 상태가 Y이고 휴업/폐업 여부가 N인지를 확인
+        if (formData.bizStatus !== 'Y' && formData.bizClosureFlag === 'Y') {
+            alert("운영중인 사업자가 아닙니다.");
+            return;
+        }
+        
+        //ref값 얻어오기
+        const thumbnailInput = fileRefs.thumbnail.current;
+
+        if (!thumbnailInput || thumbnailInput.files.length === 0) {
+            alert("썸네일 이미지는 필수입니다.");
+            return;
+        }
+
+        //FormData 객체 생성
+        const submintData = new FormData();
+
+        
+        for(const key in formData){
+            submintData.append(key,formData[key]);
+        }
+
+        //FormData객체에 파일 추가
+        submintData.append("thumbnail",thumbnailInput.files[0]);
+
+        //이미지 있다면 FormData객체에 추가
+        ["image1","image2", "image3"].forEach((key) => {
+            const fileInput = fileRefs[key].current;
+            if(fileInput && fileInput.files.length > 0 ){
+                submintData.append(key,fileInput.files[0]);
+            }
+        });
+
+        axios.post("http://localhost:8080/api/rents",submintData, {
+            headers:{
+                "Content-Type" : "multipart/form-data"
+            }
+        })
+        .then((res)=>{
+            alert("렌탈샵이 등록이 완료했습니다.")
+            
+            //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
+        })
+        .catch((err)=>{
+            console.log("렌탈샵 등록 실패", err);
+            alert("렌탈샵 등록중 오류 발생")
+        });
     }
+
+
 
     return (
         <div className="form-container">
@@ -132,11 +200,11 @@ const RentInsertForm=()=>{
                 </div>
                 <div className="form-group">
                     <label htmlFor="name">상호명</label>
-                    <input type="text" id="name" name="name" onChange={handleChange} required />
+                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone">전화번호</label>
-                    <input type="text" id="phone" name="phone" onChange={handleChange} required />
+                    <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="postalCode">우편번호</label>
@@ -157,7 +225,7 @@ const RentInsertForm=()=>{
                     <label htmlFor="detailedAddress">상세 주소</label>
                     <input type="text" id="detailedAddress" name="detailedAddress" onChange={handleChange} />
                 </div>
-
+                
                 <div className="form-group">
                     <label htmlFor="bizRegNumber">사업자 등록번호</label>
                     <div className="flex">
@@ -167,19 +235,15 @@ const RentInsertForm=()=>{
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="isValid">유효한 사업자여부</label>
-                    <input type="text" name="isValid" id="isValid" value={formData.isValid} readOnly/>
+                    <label htmlFor="bizStatus">사업자 상태</label>
+                    <input type="text" name="bizStatus" id="bizStatus" value={formData.bizStatus} readOnly />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="regNumberValidity">진위여부</label>
-                    <input type="text" name="regNumberValidity" id="regNumberValidity" value={formData.regNumberValidity} readOnly/>
+                    <label htmlFor="bizClosureFlag">휴업 및 폐업 여부</label>
+                    <input type="text" name="bizClosureFlag" id="bizClosureFlag" value={formData.bizClosureFlag} readOnly />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="regCheckDate">사업자등록날짜</label>
-                    <input type="text" name="regCheckDate" id="regCheckDate" value={formData.regCheckDate} readOnly/>
-                </div>
 
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">
@@ -203,12 +267,8 @@ const RentInsertForm=()=>{
                     <label htmlFor="description">설명</label>
                     <textarea id="description" name="description" onChange={handleChange}></textarea>
                 </div>
-                <input type="hidden" name="status" value={formData.status} />
-                <input type="hidden" name="useYn" value={formData.useYn} />
-                <input type="hidden" name="remainAdCash" value={formData.remainAdCash} />
-                <input type="hidden" name="createdAt" value={formData.createdAt} />
 
-                <button type="submit">렌탈샵 등록</button>
+                <button type="submit">등록</button>
             </form>
         </div>
     )
