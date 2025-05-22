@@ -9,7 +9,7 @@ const RentInsertForm=()=>{
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        userId: "1",
+        userId: 1,
         category: '',
         name: '',
         phone: '',
@@ -18,14 +18,9 @@ const RentInsertForm=()=>{
         streetAddress: '',
         detailedAddress: '',
         description: '',
-        status: 'PENDING',
-        useYn: 'Y',
-        remainAdCash: 0,
         bizRegNumber: '',
         bizStatus: '',
         bizClosureFlag: '',
-        createdAt: new Date().toISOString(),
-        
     }) 
 
 
@@ -53,7 +48,6 @@ const RentInsertForm=()=>{
 
 
     const handleChange=(e)=>{
-
         const {name,value} = e.target;
 
         setFormData({
@@ -68,7 +62,7 @@ const RentInsertForm=()=>{
                 setFormData({
                     ...formData,
                     postalCode: data.zonecode,
-                    basicAddress: data.jibunAddress,
+                    basicAddress: data.jibunAddress || streetAddress,
                     streetAddress: data.roadAddress
                 });
             }
@@ -94,17 +88,28 @@ const RentInsertForm=()=>{
         //응답이 data 배열 형태일 경우
         const bizInfo = response.data;
 
-        // if (!bizInfo) {
-        //     alert("사업자 정보를 찾을 수 없습니다.");
-        //     return;
-        // }
+        if (!bizInfo) {
+            alert("사업자 정보를 찾을 수 없습니다.");
+            return;
+        }
 
-         setFormData((prev) => ({
-            ...prev,
+        // 국세청에 등록되지 않은 사업자
+        if (bizInfo.utcc_yn === "") {
+            alert("국세청에 등록되지 않은 사업자등록번호입니다.");
+            setFormData({
+                ...formData,
+                bizStatus: "",        
+                bizClosureFlag: "",    
+            });
+            return;
+        }
+
+        setFormData({
+            ...formData,
             bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N", // 예: 01이면 유효한 사업자
             bizClosureFlag: bizInfo.utcc_yn,
 
-        }));
+        });
         } catch (error) {
             console.error("사업자 진위 확인 실패", error);
             alert("사업자번호 확인 중 오류가 발생했습니다.");
@@ -113,7 +118,60 @@ const RentInsertForm=()=>{
     };
 
 
-    const handleSubmit=()=>{
+    const handleSubmit=(e)=>{
+        e.preventDefault();
+
+        if(!formData.category || !formData.name || !formData.phone || !formData.bizRegNumber){
+            alert("필수 항목을 모두 입력해주세요.");
+        }
+
+        // 사업자 상태가 Y이고 휴업/폐업 여부가 N인지를 확인
+        if (formData.bizStatus !== 'Y' && formData.bizClosureFlag === 'Y') {
+            alert("운영중인 사업자가 아닙니다.");
+            return;
+        }
+        
+        //ref값 얻어오기
+        const thumbnailInput = fileRefs.thumbnail.current;
+
+        if (!thumbnailInput || thumbnailInput.files.length === 0) {
+            alert("썸네일 이미지는 필수입니다.");
+            return;
+        }
+
+        //FormData 객체 생성
+        const submintData = new FormData();
+
+        
+        for(const key in formData){
+            submintData.append(key,formData[key]);
+        }
+
+        //FormData객체에 파일 추가
+        submintData.append("thumbnail",thumbnailInput.files[0]);
+
+        //이미지 있다면 FormData객체에 추가
+        ["image1","image2", "image3"].forEach((key) => {
+            const fileInput = fileRefs[key].current;
+            if(fileInput && fileInput.files.length > 0 ){
+                submintData.append(key,fileInput.files[0]);
+            }
+        });
+
+        axios.post("http://localhost:8080/api/rents",submintData, {
+            headers:{
+                "Content-Type" : "multipart/form-data"
+            }
+        })
+        .then((res)=>{
+            alert("렌탈샵이 등록이 완료했습니다.")
+            
+            //window.location.href = "/rent/list";
+        })
+        .catch((err)=>{
+            console.log("렌탈샵 등록 실패", err);
+            alert("렌탈샵 등록중 오류 발생")
+        });
 
 
     }
@@ -152,7 +210,7 @@ const RentInsertForm=()=>{
                     </div>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="basicAddress">지번 주소</label>
+                    <label htmlFor="basicAddress">기본 주소</label>
                     <input type="text" id="basicAddress" name="basicAddress" value={formData.basicAddress} readOnly />
                 </div>
                 <div className="form-group">
@@ -205,10 +263,6 @@ const RentInsertForm=()=>{
                     <label htmlFor="description">설명</label>
                     <textarea id="description" name="description" onChange={handleChange}></textarea>
                 </div>
-                <input type="hidden" name="status" value={formData.status} />
-                <input type="hidden" name="useYn" value={formData.useYn} />
-                <input type="hidden" name="remainAdCash" value={formData.remainAdCash} />
-                <input type="hidden" name="createdAt" value={formData.createdAt} />
 
                 <button type="submit">렌탈샵 등록</button>
             </form>

@@ -5,6 +5,7 @@ import com.example.skip.enumeration.YesNo;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -25,5 +26,5 @@ public class ItemRequestDTO {
     private Integer rentHour;
     private Integer price;
     private YesNo isActive;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }

@@ -6,6 +6,7 @@ import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.enumeration.YesNo;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -27,7 +28,7 @@ public class ItemDTO {
     private Integer rentHour;
     private Integer price;
     private YesNo isActive;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     public ItemDTO(Item item){
         this.itemId=item.getItemId();
@@ -57,7 +58,6 @@ public class ItemDTO {
                 .rentHour(rentHour)
                 .price(price)
                 .isActive(isActive)
-                .createdAt(createdAt)
                 .build();
     }
 }

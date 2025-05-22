@@ -37,7 +37,7 @@ public class RentDTO {
     private UserStatus status;
     private YesNo useYn;
     private Integer remainAdCash;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     private String bizRegNumber;
     private YesNo bizStatus;
     private YesNo bizClosureFlag;
@@ -89,7 +89,6 @@ public class RentDTO {
                 .status(status)
                 .useYn(useYn)
                 .remainAdCash(remainAdCash)
-                .createdAt(createdAt)
                 .bizRegNumber(bizRegNumber)
                 .bizStatus(bizStatus)
                 .bizClosureFlag(bizClosureFlag)

@@ -23,7 +23,7 @@ public class Rent {
     private Long rentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -85,7 +85,7 @@ public class Rent {
     private Integer remainAdCash = 0;  //광고료 충전
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     //사업자등록 관련 컬럼
     @Column(name = "bizregnumber", nullable = false, unique = true)
@@ -99,6 +99,5 @@ public class Rent {
     @Enumerated(EnumType.STRING)
     @Column(name = "bizclosureflag",nullable = false)
     private YesNo bizClosureFlag; //휴업/폐업여부 (Y / N)
-
 
 }
