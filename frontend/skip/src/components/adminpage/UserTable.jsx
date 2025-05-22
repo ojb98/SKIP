@@ -189,7 +189,7 @@
 
             <div className="user-activity">
               <h4>⭐ 최근 리뷰</h4>
-              <p></p>
+              <p>...데이터 연동 예정...</p>
             </div>
 
             <div className="user-activity">

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,7 +25,7 @@ public class Item {
     private Long itemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "rent_id", nullable = false)
     private Rent rent;
 
     @Column(nullable = false)
@@ -58,5 +59,5 @@ public class Item {
     private YesNo isActive = YesNo.Y;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }

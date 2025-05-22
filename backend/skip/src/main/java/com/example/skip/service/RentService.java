@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -30,40 +31,54 @@ public class RentService {
 
     //등록
     public Long createRent(RentRequestDTO rentRequestDTO){
-        User user = userRepository.findById(rentRequestDTO.getUserId())
-                .orElseThrow(()-> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        // 파일 업로드 처리
-        String thumbnailUrl = fileService.uploadFile(rentRequestDTO.getThumbnail(), "rents");
-        String imageUrl1 = fileService.uploadFile(rentRequestDTO.getImage1(), "rents");
-        String imageUrl2 = fileService.uploadFile(rentRequestDTO.getImage2(), "rents");
-        String imageUrl3 = fileService.uploadFile(rentRequestDTO.getImage3(), "rents");
+        String thumbnailUrl = null;
+        String imageUrl1 = null;
+        String imageUrl2 = null;
+        String imageUrl3 = null;
 
-        Rent rent = Rent.builder()
-                .user(user)
-                .category(rentRequestDTO.getCategory())
-                .name(rentRequestDTO.getName())
-                .phone(rentRequestDTO.getPhone())
-                .postalCode(rentRequestDTO.getPostalCode())
-                .basicAddress(rentRequestDTO.getBasicAddress())
-                .streetAddress(rentRequestDTO.getStreetAddress())
-                .detailedAddress(rentRequestDTO.getDetailedAddress())
-                .thumbnail(thumbnailUrl)
-                .image1(imageUrl1)
-                .image2(imageUrl2)
-                .image3(imageUrl3)
-                .description(rentRequestDTO.getDescription())
-                .status(rentRequestDTO.getStatus())
-                .useYn(rentRequestDTO.getUseYn())
-                .remainAdCash(rentRequestDTO.getRemainAdCash())
-                .createdAt(rentRequestDTO.getCreatedAt())
-                .bizRegNumber(rentRequestDTO.getBizRegNumber())
-                .isValid(rentRequestDTO.getIsValid())
-                .regNumberValidity(rentRequestDTO.getRegNumberValidity())
-                .regCheckDate(rentRequestDTO.getRegCheckDate())
-                .build();
-        Rent saved = rentRepository.save(rent);
-        return saved.getRentId();
+        try {
+            User user = userRepository.findById(rentRequestDTO.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+            // 파일 업로드 처리
+            thumbnailUrl = fileService.uploadFile(rentRequestDTO.getThumbnail(), "rents");
+            imageUrl1 = fileService.uploadFile(rentRequestDTO.getImage1(), "rents");
+            imageUrl2 = fileService.uploadFile(rentRequestDTO.getImage2(), "rents");
+            imageUrl3 = fileService.uploadFile(rentRequestDTO.getImage3(), "rents");
+
+            Rent rent = Rent.builder()
+                    .user(user)
+                    .category(rentRequestDTO.getCategory())
+                    .name(rentRequestDTO.getName())
+                    .phone(rentRequestDTO.getPhone())
+                    .postalCode(rentRequestDTO.getPostalCode())
+                    .basicAddress(rentRequestDTO.getBasicAddress())
+                    .streetAddress(rentRequestDTO.getStreetAddress())
+                    .detailedAddress(rentRequestDTO.getDetailedAddress())
+                    .thumbnail(thumbnailUrl)
+                    .image1(imageUrl1)
+                    .image2(imageUrl2)
+                    .image3(imageUrl3)
+                    .description(rentRequestDTO.getDescription())
+
+                    //null처리해줌
+                    .status(Optional.ofNullable(rentRequestDTO.getStatus()).orElse(UserStatus.PENDING))
+                    .useYn(Optional.ofNullable(rentRequestDTO.getUseYn()).orElse(YesNo.Y))
+                    .remainAdCash(Optional.ofNullable(rentRequestDTO.getRemainAdCash()).orElse(0))
+
+                    .bizRegNumber(rentRequestDTO.getBizRegNumber())
+                    .bizStatus(rentRequestDTO.getBizStatus())
+                    .bizClosureFlag(rentRequestDTO.getBizClosureFlag())
+                    .build();
+
+            Rent saved = rentRepository.save(rent);
+            return saved.getRentId();
+
+        }catch (Exception e){
+            deleteUploadedFiles(thumbnailUrl, imageUrl1, imageUrl2, imageUrl3);
+            throw new RuntimeException("DB 저장 실패: " + e.getMessage(), e);
+        }
     }
 
     //전체 조회(userid기준으로 전체 렌탈샵 조회)
@@ -102,12 +117,11 @@ public class RentService {
         if(!rent.getBizRegNumber().equals(rentRequestDTO.getBizRegNumber())){
             rent.setStatus(UserStatus.PENDING);
             rent.setBizRegNumber(rentRequestDTO.getBizRegNumber());
-            rent.setIsValid(rentRequestDTO.getIsValid());
-            rent.setRegNumberValidity(rentRequestDTO.getRegNumberValidity());
-            rent.setRegCheckDate(rentRequestDTO.getRegCheckDate());
+            rent.setBizStatus(rentRequestDTO.getBizStatus());
+            rent.setBizClosureFlag(rentRequestDTO.getBizClosureFlag());
         }
 
-        // 파일 업로드 처리 후 URL 업데이트
+        // 파일 업로드 처리 후 URL 업데이트(기존 파일 삭제 및 새로운 파일 업로드)
         rent.setThumbnail(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getThumbnail(), rent.getThumbnail(),"rent"));
         rent.setImage1(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getImage1(), rent.getImage1(),"rent"));
         rent.setImage2(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getImage2(), rent.getImage2(), "rent"));
@@ -122,12 +136,28 @@ public class RentService {
         rent.setDetailedAddress(rentRequestDTO.getDetailedAddress());
         rent.setDescription(rentRequestDTO.getDescription());
 
+        //DB 업데이트
+        rentRepository.save(rent);
+
     }
 
     //최고관리자 - 승인여부(대기,승인,반려) 기준 조회(createdAt 내림차순)
     public List<RentDTO> getRentsByStatusDesc(UserStatus status){
         List<Rent> rents = rentRepository.findByStatus(status,Sort.by(Sort.Order.desc("createdAt")));
         return rents.stream().map(r->new RentDTO(r)).toList();
+    }
+
+    // 롤백을 고려한 파일 삭제 메소드 추가
+    private void deleteUploadedFiles(String thumbnailUrl, String imageUrl1, String imageUrl2, String imageUrl3) {
+        try {
+            if (thumbnailUrl != null) fileService.deleteFile(thumbnailUrl);
+            if (imageUrl1 != null) fileService.deleteFile(imageUrl1);
+            if (imageUrl2 != null) fileService.deleteFile(imageUrl2);
+            if (imageUrl3 != null) fileService.deleteFile(imageUrl3);
+        } catch (Exception e) {
+            // 파일 삭제 실패 시 로그에 남기고 예외 처리
+            e.printStackTrace();
+        }
     }
 
 

@@ -2,7 +2,7 @@ package com.example.skip.enumeration;
 
 public enum RentCategory {
     SKI("스키"),
-    RENT("장비렌탈");
+    RENT("렌탈샵");
 
     private final String displayName;
 
