@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Layout from "./pages/Layout"
 import Home from "./pages/Home"
+
 import LoginPage from "./pages/LoginPage"
 import JoinPage from "./pages/SignupPage"
 import SignupVerifyPage from "./pages/SignupVerifyPage"
@@ -10,6 +11,15 @@ import MyQnaPage from "./pages/MyQnaPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
+
+import RentalshopPage from "./pages/RentalshopPage"
+import ProductPage from "./pages/ProductPage"
+
+import RentInsertForm from "./components/rentAdmin/RentInsertForm"
+import RentList from "./components/rentAdmin/RentList"
+import RentDetail from "./components/rentAdmin/RentDetail"
+import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
+
 
 function App() {
     return (
@@ -32,6 +42,18 @@ function App() {
                         <Route path="mypage/review" element={<MyReviewPage></MyReviewPage>}></Route>
 
                         <Route path="mypage/qna" element={<MyQnaPage></MyQnaPage>}></Route>
+
+
+                        {/* 중간관리자 */}
+                        <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
+                        <Route path="/rentAdmin/list" element={<RentList/>}></Route>
+                        <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
+                        <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
+
+
+                        {/* 렌탈샵 상세 페이지 */}
+                        <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
+                        <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
