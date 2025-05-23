@@ -19,7 +19,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 192.168.80.55
       port: 6379
 
   profiles:

@@ -8,8 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @ToString
-public class ReviewFileRequestDTO {
+public class ReviewRequestDTO {
     private Long reviewId;
+    private Long reserveId;
     private int rating;
     private String content;
     private MultipartFile imageFile;
