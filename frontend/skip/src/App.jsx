@@ -22,6 +22,9 @@ import RentDetail from "./components/rentAdmin/RentDetail"
 import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemList from "./components/rentAdmin/ItemList"
+import AdminLayout from "./pages/admin/AdminLayout"
+import AdminDashboard from "./pages/admin/AdminDashBoard"
+import UsersList from "./pages/admin/UsersList"
 
 
 function App() {
@@ -36,6 +39,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Layout></Layout>}>
+                    
                         {/* 홈페이지 */}
                         <Route index element={<Home></Home>}></Route>
 
@@ -66,9 +70,24 @@ function App() {
                         <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
                         <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
 
+                        
                     </Route>
+                    {/* 관리자 라우트 */}
+                        <Route path="/admin" element={<AdminLayout />}>
+                            <Route index element={<AdminDashboard />} />
+                            {/* 추가 라우트 */}
+                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                            <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
+                            <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                            <Route path="/admin/userlist" element={<UsersList></UsersList>} />
+                            <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
+                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
+                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        </Route>
                         {/* 리뷰 팝업 */}
                         <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+
+                    
                 </Routes>
             </BrowserRouter>
         </>

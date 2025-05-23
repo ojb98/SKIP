@@ -119,7 +119,7 @@ body {
 
 .admin-dashboard {
     padding: 20px;
-    padding-top: 10px;
+    padding-top: 80px;
     background-color: #f9f9f9;
 }
 
@@ -339,7 +339,7 @@ body {
 
 .date-card {
     background-color: white;
-    padding: 15px;
+    padding: 5px;
     padding-top: 10px;
     padding-bottom: 12px;
     border-radius: 10px;
