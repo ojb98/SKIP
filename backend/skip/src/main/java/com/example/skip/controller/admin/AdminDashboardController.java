@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @RestController
@@ -17,12 +18,10 @@ public class AdminDashboardController {
     @Autowired
     private AdminDashboardService adminDashboardService;
 
-    @GetMapping("/sales-summary")
-    public ResponseEntity<Map<String, Object>> getSalesSummary(
-            @RequestParam(required = false) String atStart,
-            @RequestParam(required = false) String atEnd) {
-        Map<String, Object> data = adminDashboardService.getSalesSummary(atStart, atEnd);
-        return ResponseEntity.ok(data);
+    @GetMapping("/summary")
+    public ResponseEntity<?> getSalesSummary(@RequestParam String startDate,
+                                             @RequestParam String endDate) {
+        return ResponseEntity.ok(adminDashboardService.getSummary(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
     

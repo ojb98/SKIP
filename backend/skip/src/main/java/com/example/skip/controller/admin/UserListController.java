@@ -20,17 +20,15 @@ public class UserListController {
         return userRepository.findAll();
     }
 
-    // ✅ 단일 유저 조회 (예: /api/users/1)
-    @GetMapping("/find-user-by-userid/{id}")
-    public User findUserById(@PathVariable("id") Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. 아이디=" + id));
+
+    @GetMapping("/find-user-by-name/{name}")
+    public List<User> findUserByName(@PathVariable("name") String name) {
+        return userRepository.findByNameContaining(name);
     }
 
-    @GetMapping("/find-user-by-username/{id}")
-    public User findUserByUsername(@PathVariable("id") String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. 이름=" + username));
+    @GetMapping("/find-user-by-username/{username}")
+    public List<User> findUsersByUsername(@PathVariable("username") String username) {
+        return userRepository.findByUsernameContaining(username);
     }
 //
 //    @GetMapping("/find-users-5reviews/{id}")

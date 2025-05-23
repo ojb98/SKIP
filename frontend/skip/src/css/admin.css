@@ -119,6 +119,7 @@ body {
 
 .admin-dashboard {
     padding: 20px;
+    padding-top: 10px;
     background-color: #f9f9f9;
 }
 
@@ -150,39 +151,74 @@ body {
 .sales-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+.card-sales {
+    background-color: white;
+    padding: 15px;
+    padding-left: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    width: 11%;
+    max-width: 20%;
+    height: 100%;
+    max-height: 5%;
+    margin-bottom: 15px;
+    margin-left: 15px;
+}
+.card-sales h3 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #333;
+}
 
 .card {
     background-color: white;
-    padding: 20px;
+    padding: 15px;
+    padding-left: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     width: 100%;
-    max-width: 16.2%;
-    margin-bottom: 20px;
-    margin-left: 20px;
+    max-width: 7%;
+    height: 100%;
+    max-height: 5%;
+    margin-bottom: 15px;
+    margin-left: 15px;
 }
 
 .card h3 {
     margin: 0 0 12px;
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
 }
 
 .card-refresh {
     background-color: white;
-    padding: 24px;
+    padding: 18px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 7%;
-    margin-bottom: 20px;
-    margin-left: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    max-width: 10%;
+    height: 95px;
+    max-height: 10%;
+    margin-bottom: 10px;
+    margin-left: 15px;
 }
+
 .card h3 {
-    margin: 0 0 12px;
+    margin: 0 0 20px;
 }
 .card p .card-excel p{
     align-items: center;
+}
+
+.card-sales p {
+    font-size: 15px;
+    text-align: right;
+}
+.card p {
+    font-size: 15px;
+    text-align: right;
+}
+.card-sales h3 {
+    margin: 0 0 20px;
 }
 
 .card-excel {
@@ -191,15 +227,14 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     width: 100%;
-    max-width: 21%;
-    margin-bottom: 20px;
-    margin-left: 20px;
+    height: 100%;
+    max-height: 5%;
+    max-width: 15%;
+    margin-bottom: 15px;
+    margin-left: 15px;
     font-size: 14px;
 }
 
-.card-excel h6{
-    padding-top: 5px;
-}
 
 
 .date-range {
@@ -227,6 +262,7 @@ body {
     margin-bottom: 20px;
 }
 
+
 .chart-card {
     background-color: #fff;
     padding: 15px;
@@ -235,7 +271,6 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     width: 26%;
     height: 400px;
-    margin-left: 10px;
     font-size: 16px;
 
     display: flex;
@@ -305,10 +340,10 @@ body {
 .date-card {
     background-color: white;
     padding: 15px;
-    padding-top: 20px;
+    padding-top: 10px;
+    padding-bottom: 12px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     max-width: 33%;
     margin-bottom: 20px;
 }
@@ -321,7 +356,7 @@ body {
 
 .date-input-group {
     display: flex;
-    gap: 90px; 
+    gap: 20px; 
     align-items: center;
     flex-wrap: wrap;
 }

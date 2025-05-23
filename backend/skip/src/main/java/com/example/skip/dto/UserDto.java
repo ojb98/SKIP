@@ -24,6 +24,7 @@ public class UserDto extends User {
     private String password;
 
     private String name;
+    private String nickname;
 
     private String email;
 
@@ -40,13 +41,14 @@ public class UserDto extends User {
     private String image;
 
 
-    public UserDto(Long userId, String username, String password, String name, String email, String phone,
+    public UserDto(Long userId, String username, String password, String name, String nickname, String email, String phone,
                    UserSocial social, Set<String> roles, UserStatus status, LocalDateTime registeredAt, String image) {
         super(username, password, roles.stream().map(SimpleGrantedAuthority::new).toList());
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.name = name;
+        this.nickname = nickname;
         this.email = email;
         this.phone = phone;
         this.social = social;
@@ -62,6 +64,7 @@ public class UserDto extends User {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.name = user.getName();
+        this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.social = user.getSocial();
@@ -77,6 +80,7 @@ public class UserDto extends User {
                 .username(username)
                 .password(password)
                 .name(name)
+                .nickname(nickname)
                 .email(email)
                 .phone(phone)
                 .social(social)
@@ -84,5 +88,13 @@ public class UserDto extends User {
                 .status(status)
                 .registeredAt(registeredAt)
                 .image(image).build();
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

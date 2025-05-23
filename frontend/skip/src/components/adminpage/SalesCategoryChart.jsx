@@ -33,7 +33,14 @@ const SalesCategoryChart = ({ categoryData }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: "bottom"
+        position: "bottom",
+        labels: {
+        boxWidth: 18,
+        padding: 8,
+        font: {
+          size: 12
+        }
+        }
       }
     }
   };

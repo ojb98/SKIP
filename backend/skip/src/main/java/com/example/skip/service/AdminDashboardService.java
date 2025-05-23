@@ -1,5 +1,6 @@
 package com.example.skip.service;
 
+import com.example.skip.entity.Payment;
 import com.example.skip.repository.AdPaymentRepository;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.RefundsHistoryRepository;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,29 +25,21 @@ public class AdminDashboardService {
     @Autowired
     private AdPaymentRepository adPaymentRepository;
 
-    public Map<String, Object> getSalesSummary(String atStart, String atEnd) {
-        Map<String, Object> data = new HashMap<>();
+    public Map<String, Object> getSummary(LocalDate start, LocalDate end) {
+        List<Payment> payments = paymentRepository.findAllByCreatedAtBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
 
-        // 기본 날짜 범위 설정
-        if (atStart == null || atStart.isEmpty()) {
-            atStart = LocalDate.now().minusDays(14).toString();
-        }
-        if (atEnd == null || atEnd.isEmpty()) {
-            atEnd = LocalDate.now().plusDays(14).toString();
-        }
+        double total = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
+        double profit = payments.stream().mapToDouble(Payment::getAdminPrice).sum();
+        long successCount = payments.stream().filter(p -> p.getStatus().equals("SUCCESS")).count();
+        long cancelCount = payments.stream().filter(p -> p.getStatus().equals("CANCEL")).count();
 
-        // 총 매출, 예약 완료, 취소 건수
-        Long totalSales = paymentRepository.getTotalSales(atStart, atEnd);
-        Long confirmReserv = paymentRepository.getConfirmReserv(atStart, atEnd);
-        Long cancleReserv = paymentRepository.getCancleReserv(atStart, atEnd);
-
-        data.put("totalSales", totalSales);
-        data.put("confirmReserv", confirmReserv);
-        data.put("cancleReserv", cancleReserv);
-        data.put("atStart", atStart);
-        data.put("atEnd", atEnd);
-
-        return data;
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalSales", total);
+        result.put("netProfit", profit);
+        result.put("successCount", successCount);
+        result.put("cancelCount", cancelCount);
+        System.out.println("✔ successCount = " + successCount);
+        return result;
     }
 
     public Map<String, Object> getSalesChartData(String atStart, String atEnd) {
@@ -59,11 +53,11 @@ public class AdminDashboardService {
             atEnd = LocalDate.now().plusDays(14).toString();
         }
 
-        // 날짜별 매출 (라인 차트)
-        List<Map<String, Object>> dailySales = paymentRepository.getDailySales(atStart, atEnd);
+        LocalDateTime startDateTime = LocalDate.parse(atStart).atStartOfDay();
+        LocalDateTime endDateTime = LocalDate.parse(atEnd).plusDays(1).atStartOfDay();
 
-        // 상품별 매출 (도넛 차트)
-        List<Map<String, Object>> categorySales = paymentRepository.getCategorySales(atStart, atEnd);
+        List<Map<String, Object>> dailySales = paymentRepository.getDailySales(startDateTime, endDateTime);
+        List<Map<String, Object>> categorySales = paymentRepository.getCategorySales(startDateTime, endDateTime);
 
         data.put("dailySales", dailySales);
         data.put("categorySales", categorySales);
