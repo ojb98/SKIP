@@ -32,8 +32,12 @@ const Header = () => {
                                 </> :
                                 <li><Link to={"/login"}>Login</Link></li>
                             }
+
+                            <li><button onClick={()=>window.open("/mypage/review/write","_blank","width=600,height=850")}>리뷰작성하기</button></li>
+
                             <li><Link to="/rentAdmin/insert">가맹점 등록</Link></li>
                             <li><Link to="/rentAdmin/list">가맹점 목록</Link></li>
+                            <li><Link to="/ItemAdmin/list">장비목록</Link></li>
                         </ul> : <></>
                 }
             </div>

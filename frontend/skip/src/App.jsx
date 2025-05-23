@@ -14,16 +14,18 @@ import { useEffect } from "react"
 
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
+import ReviewPopupPage from "./pages/ReviewPopupPage"
 
 import RentInsertForm from "./components/rentAdmin/RentInsertForm"
 import RentList from "./components/rentAdmin/RentList"
 import RentDetail from "./components/rentAdmin/RentDetail"
 import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
+import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
+import ItemList from "./components/rentAdmin/ItemList"
 
 
 function App() {
     const dispatch = useDispatch();
-    
     useEffect(() => {
         dispatch(setProfile());
     }, []);
@@ -56,12 +58,17 @@ function App() {
                         <Route path="/rentAdmin/list" element={<RentList/>}></Route>
                         <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                         <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
+                        <Route path="/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
+                        <Route path="/itemAdmin/list" element={<ItemList/>}></Route>
 
 
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
                         <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
+
                     </Route>
+                        {/* 리뷰 팝업 */}
+                        <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                 </Routes>
             </BrowserRouter>
         </>
