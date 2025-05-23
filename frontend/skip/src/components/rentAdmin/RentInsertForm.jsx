@@ -1,15 +1,18 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import '../../css/rentInsertForm.css';
+import { useSelector } from "react-redux";
 
 const RentInsertForm=()=>{
 
-    //스토어에서 나중에 userId값 꺼내오기
+    //userId값 꺼내오기
+    const profile = useSelector(state => state.loginSlice);
+    console.log(profile);
 
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        userId: 1,
+        userId: profile.userId,
         category: '',
         name: '',
         phone: '',
