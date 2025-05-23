@@ -6,8 +6,9 @@ export const logout = createAsyncThunk('logout', () => {
     return logoutApi();
 });
 
-export const setProfile = createAsyncThunk('setProfile', () => {
-    return getProfile();
+export const setProfile = createAsyncThunk('setProfile', async () => {
+    const profile = await getProfile().then(res => res);
+    return profile;
 });
 
 export const loginSlice = createSlice({
@@ -31,10 +32,16 @@ export const loginSlice = createSlice({
                     state.roles = profile.roles;
                     state.registeredAt = profile.registeredAt;
                     state.image = profile.image;
+                    state.nickname = profile.nickname;
                     state.isLoggedIn = true;
                 } else {
                     state.isLoggedIn = false;
                 }
+                state.isLoading = false;
+            })
+            .addCase(setProfile.rejected, (state, action) => {
+                console.log(action.error.message);
+                state.isLoggedIn = false;
                 state.isLoading = false;
             });
     }

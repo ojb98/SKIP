@@ -1,10 +1,8 @@
 package com.example.skip.config;
 
 import com.example.skip.filter.JwtFilter;
-import com.example.skip.handler.CustomAccessDeniedHandler;
-import com.example.skip.handler.CustomLogoutHandler;
-import com.example.skip.handler.LoginFailureHandler;
-import com.example.skip.handler.LoginSuccessHandler;
+import com.example.skip.handler.*;
+import com.example.skip.service.CustomOAuth2UserService;
 import com.example.skip.service.CustomUserDetailsService;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +29,11 @@ import java.util.Map;
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+
     private final LoginSuccessHandler loginSuccessHandler;
+
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     private final CustomLogoutHandler customLogoutHandler;
 
@@ -39,14 +41,9 @@ public class SecurityConfig {
 
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
+        corsConfiguration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"));
         corsConfiguration.setAllowCredentials(true);
@@ -80,6 +77,14 @@ public class SecurityConfig {
                             .passwordParameter("password")
                             .successHandler(loginSuccessHandler)
                             .failureHandler(new LoginFailureHandler());
+                })
+                .oauth2Login(httpSecurityOAuth2LoginConfigurer -> {
+                    httpSecurityOAuth2LoginConfigurer
+                            .loginPage("/user/login")
+                            .userInfoEndpoint(userInfoEndpointConfig -> {
+                                userInfoEndpointConfig.userService(customOAuth2UserService);
+                            })
+                            .successHandler(oAuth2LoginSuccessHandler);
                 })
                 .logout(httpSecurityLogoutConfigurer -> {
                     httpSecurityLogoutConfigurer

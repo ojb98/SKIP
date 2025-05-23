@@ -4,7 +4,9 @@ import Header from "../components/Header";
 const Layout = () => {
     return (
         <>
-            <Header></Header>
+            <div className="flex justify-center">
+                <Header></Header>
+            </div>
 
             <div className="flex justify-center">
                 <Outlet></Outlet>

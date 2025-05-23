@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
 import com.example.skip.repository.UserRepository;
+import com.example.skip.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class UserService {
         }
 
         UserDto userDto = signupRequestDto.toUserDto();
+        userDto.setNickname(userDto.getNickname() + "#" + RandomStringGenerator.generate(5, RandomStringGenerator.NUMERIC));
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         return new UserDto(userRepository.saveAndFlush(userDto.toEntity()));
