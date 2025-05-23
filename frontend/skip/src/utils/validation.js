@@ -1,4 +1,4 @@
-import { isUser } from "../services/userApi";
+import { isUser } from "../api/userApi";
 
 export const validateUsername = async username => {
     const usernameRegex = /^[a-zA-Z0-9]{5,}$/;

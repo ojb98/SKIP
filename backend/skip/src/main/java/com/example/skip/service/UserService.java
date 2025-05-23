@@ -4,6 +4,7 @@ import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
 import com.example.skip.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 public class UserService {
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
 
     public UserDto signup(SignupRequestDto signupRequestDto, BindingResult bindingResult) {
         if (isUser(signupRequestDto.getUsername())) {
@@ -22,7 +25,10 @@ public class UserService {
             return null;
         }
 
-        return new UserDto(userRepository.saveAndFlush(signupRequestDto.toDto().toEntity()));
+        UserDto userDto = signupRequestDto.toUserDto();
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+        return new UserDto(userRepository.saveAndFlush(userDto.toEntity()));
     }
 
     public boolean isUser(String username) {

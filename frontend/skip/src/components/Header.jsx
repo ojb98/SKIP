@@ -1,18 +1,48 @@
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logout, setProfile } from "../slices/loginSlice";
+import { useEffect } from "react";
 
 const Header = () => {
+    const { isLoggedIn, isLoading } = useSelector(state => state.loginSlice);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(setProfile());
+    }, []);
+
     return (
         <>
-            <ul>  
-                <li><Link to={"/login"}>Login</Link></li>
-                <li><Link to={"/mypage/account"}>mypage</Link></li>
+            {
+                !isLoading ? 
+                    <ul>
+                        <li><Link to={"/"}>Home</Link></li>
+                        {
+                            isLoggedIn === true ?
+                            <>
+                                <li><Link onClick={() => {
+                                    dispatch(logout())
+                                        .unwrap()
+                                        .then(res => {
+                                            dispatch(setProfile());
+                                            navigate('/');
+                                        });
+                                    }}>Logout</Link></li>
+                                <li><Link to={"/mypage/account"}>mypage</Link></li>
+                            </> :
+                            <li><Link to={"/login"}>Login</Link></li>
+                        }
+
+                        <li><button onClick={()=>window.open("/mypage/review/write","_blank","width=600,height=850")}>리뷰작성하기</button></li>
 
 
-                <li><Link to="/rentAdmin/insert">가맹점 등록</Link></li>
-                <li><Link to="/rentAdmin/list">가맹점 목록</Link></li>
-                <li><Link to="/ItemAdmin/list">장비목록</Link></li>
-
-            </ul>
+                        <li><Link to="/rentAdmin/insert">가맹점 등록</Link></li>
+                        <li><Link to="/rentAdmin/list">가맹점 목록</Link></li>
+                        <li><Link to="/ItemAdmin/list">장비목록</Link></li>
+                    </ul> : <></>
+            }
         </>
     )
 }

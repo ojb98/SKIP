@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { rentDetailApi } from "./RentListApi";
+import { rentDetailApi } from "../../api/rentListApi";
 
 const RentUpdateForm=()=>{
 

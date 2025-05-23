@@ -4,18 +4,19 @@ import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class UserDto extends User {
     private Long userId;
 
@@ -84,5 +85,15 @@ public class UserDto extends User {
                 .status(status)
                 .registeredAt(registeredAt)
                 .image(image).build();
+    }
+
+    public Map<String, Object> getClaims() {
+        return Map.of("userId", userId,
+                "username", username,
+                "email", email,
+                "social", social,
+                "roles", roles,
+                "registeredAt", registeredAt.toString(),
+                "image", image == null ? "" : image);
     }
 }

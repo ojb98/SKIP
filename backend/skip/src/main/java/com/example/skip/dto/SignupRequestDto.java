@@ -45,7 +45,7 @@ public class SignupRequestDto {
     private String phone;
 
 
-    public UserDto toDto() {
+    public UserDto toUserDto() {
         return new UserDto(null, username, password, name, email, phone,
                 UserSocial.NONE, Set.of(UserRole.USER.name()), UserStatus.APPROVED, null, null);
     }

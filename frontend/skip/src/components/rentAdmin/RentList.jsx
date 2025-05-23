@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { rentListApi } from "./RentListApi";
+import { rentListApi } from "../../api/rentListApi";
 import { Link } from "react-router-dom";
-import { rentDelApi } from "./RentListApi";
+import { rentDelApi } from "../../api/rentListApi";
 import '../../css/rentList.css';
 
 

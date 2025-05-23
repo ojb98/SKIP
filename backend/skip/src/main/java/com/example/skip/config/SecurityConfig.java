@@ -2,8 +2,12 @@ package com.example.skip.config;
 
 import com.example.skip.filter.JwtFilter;
 import com.example.skip.handler.CustomAccessDeniedHandler;
+import com.example.skip.handler.CustomLogoutHandler;
 import com.example.skip.handler.LoginFailureHandler;
 import com.example.skip.handler.LoginSuccessHandler;
+import com.example.skip.service.CustomUserDetailsService;
+import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,16 +16,28 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final LoginSuccessHandler loginSuccessHandler;
+
+    private final CustomLogoutHandler customLogoutHandler;
+
+    private final JwtFilter jwtFilter;
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return httpSecurity
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> {
                     httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
@@ -49,18 +65,34 @@ public class SecurityConfig {
                 .csrf(httpSecurityCsrfConfigurer -> {
                     httpSecurityCsrfConfigurer.disable();
                 })
+                // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
+                            .requestMatchers("/user/logout", "/user/profile").authenticated()
                             .anyRequest()
                             .permitAll();
                 })
+                .userDetailsService(customUserDetailsService)
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer
                             .loginPage("/user/login")
                             .usernameParameter("username")
                             .passwordParameter("password")
-                            .successHandler(new LoginSuccessHandler())
+                            .successHandler(loginSuccessHandler)
                             .failureHandler(new LoginFailureHandler());
+                })
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer
+                            .logoutUrl("/user/logout")
+                            .addLogoutHandler(customLogoutHandler)
+                            .logoutSuccessHandler((request, response, authentication) -> {
+                                Gson gson = new Gson();
+                                String jsonStr = gson.toJson(Map.of("success", true));
+                                response.setContentType("application/json;charset=utf-8");
+                                PrintWriter pw = response.getWriter();
+                                pw.println(jsonStr);
+                                pw.close();
+                            });
                 })
                 .cors(httpSecurityCorsConfigurer -> {
                     httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
@@ -69,6 +101,6 @@ public class SecurityConfig {
                     httpSecurityExceptionHandlingConfigurer
                             .accessDeniedHandler(new CustomAccessDeniedHandler());
                 })
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class).build();
+                .addFilterBefore(jwtFilter, LogoutFilter.class).build();
     }
 }
