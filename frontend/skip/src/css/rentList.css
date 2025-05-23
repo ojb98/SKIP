@@ -22,7 +22,7 @@ tr:hover {
 }
 
 /* 이미지 썸네일 크기 및 스타일 */
-img {
+.rent-img {
     width: 100px;
     height: auto;
     object-fit: cover;
@@ -92,7 +92,7 @@ img {
 }
 
 /* 테이블 제목 스타일 */
-h1 {
+.rent-list {
     font-size: 2rem;
     margin-bottom: 20px;
     color: #333;

@@ -22,6 +22,13 @@ import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 
 
 function App() {
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        dispatch(setProfile());
+    }, []);
+
+
     return (
         <>
             <BrowserRouter>

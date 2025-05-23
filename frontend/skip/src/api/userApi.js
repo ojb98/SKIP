@@ -27,6 +27,12 @@ export const login = async req => {
     return data;
 }
 
+export const socialLogin = async req => {
+    const data = await caxios.get(`/user/login/${req}`).then(res=> res.data);
+
+    return data;
+}
+
 export const logout = async req => {
     const data = await caxios.post(`/user/logout`, req).then(res => {
         return res.data;

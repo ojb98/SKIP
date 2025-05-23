@@ -18,12 +18,12 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtUtil {
-    @Value("${security.jwt.key}")
+    @Value("${spring.security.jwt.key}")
     public String key;
 
     private SecretKey secretKey;
 
-    public final static long accessTokenValidity = 10 * 1000; // 10분
+    public final static long accessTokenValidity = 10 * 60 * 1000; // 10분
 
     public final static long refreshTokenValidity = 7 * 24 * 60 * 60 * 1000; // 1주
 

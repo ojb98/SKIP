@@ -41,7 +41,7 @@ const RentList=()=>{
 
     return(
         <div>
-            <h1>가맹점 리스트</h1>
+            <h1 className="rent-list">가맹점 리스트</h1>
             <table>
                 <thead>
                     <tr>
@@ -66,7 +66,7 @@ const RentList=()=>{
                             return(
                                 <tr key={r.rentId}>
                                     <td>{index + 1}</td>
-                                    <td><img src={`http://localhost:8080${r.thumbnail}`} /></td>
+                                    <td><img className="rent-img" src={`http://localhost:8080${r.thumbnail}`} /></td>
                                     <td>{r.name}</td>
                                     <td>{r.phone}</td>
                                     <td>{r.streetAddress}</td>
