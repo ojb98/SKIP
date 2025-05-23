@@ -51,7 +51,11 @@ public class FileService {
     //파일 삭제
     public void deleteFile(String filePath) {
         try {
-            Path path = Paths.get(filePath);
+            //
+            String replacePath = filePath.replaceFirst("^/images/", "");
+            Path path = Paths.get(uploadDir + replacePath);
+
+            System.out.println("path경로================>" + path);
             Files.delete(path);  // 실제 파일 삭제
         } catch (IOException e) {
             throw new RuntimeException("파일 삭제 실패", e);

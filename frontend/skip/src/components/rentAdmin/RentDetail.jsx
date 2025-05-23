@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { rentDetailApi } from "./RentListApi";
+import { rentDetailApi } from "../../api/rentListApi";
 import { useNavigate, useParams } from "react-router-dom";
 
 const RentDetail=()=>{

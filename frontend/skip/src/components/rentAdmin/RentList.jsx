@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
-import { rentListApi } from "./RentListApi";
+import { rentListApi } from "../../api/rentListApi";
 import { Link } from "react-router-dom";
-import { rentDelApi } from "./RentListApi";
+import { rentDelApi } from "../../api/rentListApi";
 import '../../css/rentList.css';
+import { useSelector } from "react-redux";
 
 
 const RentList=()=>{
 
-    //스토어에서 나중에 userId값 꺼내오기
+    //userId값 꺼내오기
+    const profile = useSelector(state => state.loginSlice);
+    console.log(profile);
 
     const [rent,setRent] = useState([]);
 
 
     //렌트샵 목록 불러오기
     const getRentList=()=>{
-        // 여기 "1" 대신 userId값 넣어주기
-        rentListApi(1).then(data=>{
+        //userId값 넣어주기
+        rentListApi(profile.userId).then(data=>{
             setRent([...data]);
         })
     }
@@ -42,6 +45,10 @@ const RentList=()=>{
     return(
         <div>
             <h1>가맹점 리스트</h1>
+
+            {rent.length === 0 ? (
+                <h2>현재 등록된 가맹점이 없습니다.</h2>
+            ) : (
             <table>
                 <thead>
                     <tr>
@@ -74,7 +81,7 @@ const RentList=()=>{
                                     <td>{r.createdAt}</td>
                                     <td>
                                         {r.status === "APPROVED" ? (
-                                            <Link to="/itemAdmin/insert" className="register-btn">등록</Link>
+                                            <Link to={`/itemAdmin/insert/${r.rentId}`} className="register-btn">등록</Link>
                                         ) : (
                                             <button className="register-btn-disabled" disabled>등록</button>
                                         )}
@@ -87,6 +94,8 @@ const RentList=()=>{
                     }
                 </tbody>
             </table>
+            )}
+
         </div>
     )
 

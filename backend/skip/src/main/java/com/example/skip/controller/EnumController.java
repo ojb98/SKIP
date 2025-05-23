@@ -1,5 +1,6 @@
 package com.example.skip.controller;
 
+import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.enumeration.RentCategory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,27 @@ public class EnumController {
             //리스트에 추가
             list.add(map);
         }
-        System.out.println("categoryList "+ list);
+        System.out.println("rent-categoryList===> "+ list);
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/itemCategory")
+    public ResponseEntity<List<Map<String,String>>> getItemCategory() {
+        //enum값 배열로 가져오기
+        ItemCategory[] categoryNames = ItemCategory.values();
+
+        //리스트로 만들기
+        List<Map<String, String>> list = new ArrayList<>();
+        for (ItemCategory category : categoryNames) {
+            Map<String, String> map = new HashMap<>();
+            map.put("code", category.name());
+            map.put("label", category.getDisplayName());
+
+            //리스트에 추가
+            list.add(map);
+        }
+        System.out.println("Item-categoryList===> " + list);
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
