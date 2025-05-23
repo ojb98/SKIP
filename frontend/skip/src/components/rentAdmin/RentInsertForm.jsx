@@ -144,33 +144,60 @@ const RentInsertForm=()=>{
         }
 
         //FormData 객체 생성
-        const submintData = new FormData();
+        const submitData = new FormData();
 
         
         for(const key in formData){
-            submintData.append(key,formData[key]);
+            submitData.append(key,formData[key]);
         }
 
         //FormData객체에 파일 추가
-        submintData.append("thumbnail",thumbnailInput.files[0]);
+        submitData.append("thumbnail",thumbnailInput.files[0]);
 
         //이미지 있다면 FormData객체에 추가
         ["image1","image2", "image3"].forEach((key) => {
             const fileInput = fileRefs[key].current;
             if(fileInput && fileInput.files.length > 0 ){
-                submintData.append(key,fileInput.files[0]);
+                submitData.append(key,fileInput.files[0]);
             }
         });
 
-        axios.post("http://localhost:8080/api/rents",submintData, {
+        axios.post("http://localhost:8080/api/rents",submitData, {
             headers:{
                 "Content-Type" : "multipart/form-data"
             }
         })
         .then((res)=>{
-            alert("렌탈샵이 등록이 완료했습니다.")
+            console.log("rent insert success==>",res);
+            alert("렌탈샵이 등록이 완료했습니다.");
+
+            
+            //초기화
+            setFormData({
+                userId: "",
+                category: "",
+                name: "",
+                phone: "",
+                postalCode: "",
+                basicAddress: "",
+                streetAddress: "",
+                detailedAddress: "",
+                bizRegNumber: "",
+                bizStatus: "",
+                bizClosureFlag: "",
+                description: "",
+            });
+
+            //file input 초기화
+            Object.values(fileRefs).forEach(ref => {
+                if (ref.current) {
+                    ref.current.value = null;
+                }
+            });
             
             //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
+
+
         })
         .catch((err)=>{
             console.log("렌탈샵 등록 실패", err);
@@ -204,7 +231,7 @@ const RentInsertForm=()=>{
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone">전화번호</label>
-                    <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
+                    <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="010-111-1234" required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="postalCode">우편번호</label>

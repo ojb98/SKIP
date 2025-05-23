@@ -21,7 +21,6 @@ const RentUpdateForm=()=>{
         bizStatus: "",
         bizClosureFlag: "",
         description: "",
-        thumbnailPath: "",
     });
 
     
@@ -145,41 +144,62 @@ const RentUpdateForm=()=>{
             alert("운영중인 사업자가 아닙니다.");
             return;
         }
-        
-        //ref값 얻어오기
-        const thumbnailInput = fileRefs.thumbnail.current;
-
-
 
         //FormData 객체 생성
-        const submintData = new FormData();
+        const submitData = new FormData();
 
         
         for(const key in formData){
-            submintData.append(key,formData[key]);
+            if(!["thumbnail" ,"image1","image2", "image3"].includes(key)){
+                submitData.append(key,formData[key]);
+            }
         }
 
-        //이미지가 있다면 FormData 객체에 추가, 경로를 기존 값으로 유지
+        //이미지가 있다면 FormData 객체에 추가
         ["thumbnail" ,"image1","image2", "image3"].forEach((key) => {
             const fileInput = fileRefs[key].current;
-            if(fileInput && fileInput.files.length > 0 ){
-                submintData.append(key,fileInput.files[0]);
-            }else{
-                //기존 파일 경로를 전달
-                submintData.append(`${key}Path`,formData[`${key}Path`]);
+            if(fileInput && fileInput.files && fileInput.files.length > 0 && fileInput.files[0]){
+                submitData.append(key,fileInput.files[0]);
             }
         });
 
-        axios.post(`http://localhost:8080/api/rents/update`,submintData, {
+
+        axios.post(`http://localhost:8080/api/rents/update`,submitData, {
             headers:{
                 "Content-Type" : "multipart/form-data"
             }
         })
         .then((res)=>{
-            console.log(res);
-            alert("렌탈샵이 수정이 완료했습니다.")
+            console.log("rent update success==>", res);
+            alert("렌탈샵이 수정이 완료했습니다.");
+
+            //초기화
+            setFormData({
+                userId: "",
+                category: "",
+                name: "",
+                phone: "",
+                postalCode: "",
+                basicAddress: "",
+                streetAddress: "",
+                detailedAddress: "",
+                bizRegNumber: "",
+                bizStatus: "",
+                bizClosureFlag: "",
+                description: "",
+            });
+
+            //file input 초기화
+            Object.values(fileRefs).forEach(ref => {
+                if (ref.current) {
+                    ref.current.value = null;
+                }
+            });
+
+
             
             //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
+
         })
         .catch((err)=>{
             console.log("렌탈샵 수정 실패", err);
@@ -237,7 +257,7 @@ const RentUpdateForm=()=>{
 
                 <div className="form-group">
                     <span className="text-red-500 text-sm">
-                        새로운 사업자등록번호 등록시 승인상태가 "대기"로 변경됩니다.
+                        *새로운 사업자등록번호 등록시 승인상태가 "대기"로 변경됩니다.
                     </span>
                 </div>
 
@@ -263,19 +283,19 @@ const RentUpdateForm=()=>{
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">
                     <label htmlFor="thumbnail">썸네일 이미지</label>
-                    <input type="file" id="thumbnail" name="thumbnail" accept="image/*" />
+                    <input type="file" id="thumbnail" name="thumbnail" ref={fileRefs.thumbnail} accept="image/*" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="image1">이미지 1</label>
-                    <input type="file" id="image1" name="image1" accept="image/*" />
+                    <input type="file" id="image1" name="image1" ref={fileRefs.image1} accept="image/*" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="image2">이미지 2</label>
-                    <input type="file" id="image2" name="image2" accept="image/*" />
+                    <input type="file" id="image2" name="image2" ref={fileRefs.image2} accept="image/*" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="image3">이미지 3</label>
-                    <input type="file" id="image3" name="image3" accept="image/*" />
+                    <input type="file" id="image3" name="image3" ref={fileRefs.image3} accept="image/*" />
                 </div>
 
                 <div className="form-group">
