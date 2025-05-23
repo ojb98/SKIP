@@ -7,6 +7,7 @@ import com.example.skip.entity.Item;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.ItemCategory;
+import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -46,7 +48,7 @@ public class ItemService {
                 .category(itemRequestDTO.getCategory())
                 .rentHour(itemRequestDTO.getRentHour())
                 .price(itemRequestDTO.getPrice())
-                .isActive(itemRequestDTO.getIsActive())
+                .isActive(Optional.ofNullable(itemRequestDTO.getIsActive()).orElse(YesNo.Y))
                 .createdAt(itemRequestDTO.getCreatedAt())
                 .build();
 

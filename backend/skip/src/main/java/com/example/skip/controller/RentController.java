@@ -56,9 +56,11 @@ public class RentController {
     }
 
     //렌탈샵 정보 수정
-    @PutMapping("/{rentId}")
-    public ResponseEntity<String> updateRent(@ModelAttribute RentRequestDTO rentRequestDTO){
-        rentService.updateRent(rentRequestDTO);
+    @PostMapping("/update")
+    public ResponseEntity<String> updateRent(@ModelAttribute RentRequestDTO dto){
+        System.out.println("렌탈샵 수정 DTO ===>"+ dto);
+
+        rentService.updateRent(dto);
         return new ResponseEntity<>("UpdateRentSuccess", HttpStatus.OK);
     }
 

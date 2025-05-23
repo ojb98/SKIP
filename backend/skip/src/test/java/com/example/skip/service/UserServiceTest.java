@@ -17,4 +17,10 @@ import java.util.Set;
 public class UserServiceTest {
     @Autowired
     private UserService userService;
+
+
+    @Test
+    public void admin() {
+
+    }
 }

@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -109,32 +108,32 @@ public class RentService {
     }
 
     //수정
-    public void updateRent(RentRequestDTO rentRequestDTO){
-        Rent rent = rentRepository.findById(rentRequestDTO.getRentId())
+    public void updateRent(RentRequestDTO dto){
+        Rent rent = rentRepository.findById(dto.getRentId())
                         .orElseThrow(()-> new IllegalArgumentException("해당 렌탈샵을 찾을 수 없습니다."));
 
         //사업자등록번호가 기존과 다르면 승인상태 대기로 변경
-        if(!rent.getBizRegNumber().equals(rentRequestDTO.getBizRegNumber())){
+        if(!rent.getBizRegNumber().equals(dto.getBizRegNumber())){
             rent.setStatus(UserStatus.PENDING);
-            rent.setBizRegNumber(rentRequestDTO.getBizRegNumber());
-            rent.setBizStatus(rentRequestDTO.getBizStatus());
-            rent.setBizClosureFlag(rentRequestDTO.getBizClosureFlag());
+            rent.setBizRegNumber(dto.getBizRegNumber());
+            rent.setBizStatus(dto.getBizStatus());
+            rent.setBizClosureFlag(dto.getBizClosureFlag());
         }
 
         // 파일 업로드 처리 후 URL 업데이트(기존 파일 삭제 및 새로운 파일 업로드)
-        rent.setThumbnail(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getThumbnail(), rent.getThumbnail(),"rent"));
-        rent.setImage1(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getImage1(), rent.getImage1(),"rent"));
-        rent.setImage2(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getImage2(), rent.getImage2(), "rent"));
-        rent.setImage3(fileUploadUtil.uploadFileAndUpdateUrl(rentRequestDTO.getImage3(), rent.getImage3(), "rent"));
+        rent.setThumbnail(fileUploadUtil.uploadFileAndUpdateUrl(dto.getThumbnail(), rent.getThumbnail(),"rents"));
+        rent.setImage1(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage1(), rent.getImage1(),"rents"));
+        rent.setImage2(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage2(), rent.getImage2(), "rents"));
+        rent.setImage3(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage3(), rent.getImage3(), "rents"));
 
-        rent.setCategory(rentRequestDTO.getCategory());
-        rent.setName(rentRequestDTO.getName());
-        rent.setPhone(rentRequestDTO.getPhone());
-        rent.setPostalCode(rentRequestDTO.getPostalCode());
-        rent.setBasicAddress(rentRequestDTO.getBasicAddress());
-        rent.setStreetAddress(rentRequestDTO.getStreetAddress());
-        rent.setDetailedAddress(rentRequestDTO.getDetailedAddress());
-        rent.setDescription(rentRequestDTO.getDescription());
+        rent.setCategory(dto.getCategory());
+        rent.setName(dto.getName());
+        rent.setPhone(dto.getPhone());
+        rent.setPostalCode(dto.getPostalCode());
+        rent.setBasicAddress(dto.getBasicAddress());
+        rent.setStreetAddress(dto.getStreetAddress());
+        rent.setDetailedAddress(dto.getDetailedAddress());
+        rent.setDescription(dto.getDescription());
 
         //DB 업데이트
         rentRepository.save(rent);

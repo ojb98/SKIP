@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import SignupStep from "../components/SignupStep";
-import { signup } from "../services/userApi";
+import { signup } from "../api/userApi";
 import CheckMark from "../components/CheckMark";
 import { validateConfirmPassword, validateEmail, validatePassword, validateUsername } from "../utils/validation";
 
@@ -17,7 +17,7 @@ const JoinPage = () => {
     const [confirmPasswordStatus, setConfirmPasswordStatus] = useState({});
     const [emailStatus, setEmailStatus] = useState({});
 
-    const inputTextClass = 'h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black';
+    const inputTextClass = ' h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
 
     const signupHandler = e => {
@@ -31,8 +31,8 @@ const JoinPage = () => {
             phone: phone.current.value
         }).then(res => {
             alert(res);
-        }).catch(e => {
-            const data = e.response.data;
+        }).catch(ex => {
+            const data = ex.response.data;
 
             if (data.username) {
                 setUsernameStatus({
@@ -79,7 +79,7 @@ const JoinPage = () => {
                             className={inputTextClass}
                             onKeyUp={() => validateUsername(username.current.value).then(res => setUsernameStatus(res))}
                         ></input>
-                        <div className="w-full flex justify-start mt-1">
+                        <div className="w-full flex justify-start">
                             {
                                 usernameStatus.success ?
                                 <span className="text-xs text-green-400">{usernameStatus.message}</span> :
@@ -113,7 +113,7 @@ const JoinPage = () => {
                             className={inputTextClass}
                             onKeyUp={() => setConfirmPasswordStatus(validateConfirmPassword(password.current.value, confirmPassword.current.value))}
                         ></input>
-                        <div className="w-full flex justify-start mt-1">
+                        <div className="w-full flex justify-start">
                             <span className="text-xs text-red-400">{confirmPasswordStatus.success === false ? '※ ' + confirmPasswordStatus.message : null}</span>
                         </div>
                     </div>
@@ -126,7 +126,7 @@ const JoinPage = () => {
                             className={inputTextClass}
                             onKeyUp={() => setEmailStatus(validateEmail(email.current.value))}
                         ></input>
-                        <div className="w-full flex justify-start mt-1">
+                        <div className="w-full flex justify-start">
                             {
                                 emailStatus.success ?
                                 <span className="text-xs text-green-400">{emailStatus.message}</span> :

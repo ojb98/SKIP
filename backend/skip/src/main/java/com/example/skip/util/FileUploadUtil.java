@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 @Component
 @RequiredArgsConstructor
 public class FileUploadUtil {
@@ -15,8 +17,9 @@ public class FileUploadUtil {
     public String uploadFileAndUpdateUrl(MultipartFile file, String currentFile, String directory){
         if(file != null && !file.isEmpty()){  //새로운 파일이 있을 경우
             // 기존 파일이 있으면 삭제
-            if (currentFile != null && !currentFile.isEmpty()) {
+            if (currentFile != null && !currentFile.isEmpty() && !"undefined".equalsIgnoreCase(currentFile)) {
                 try {
+                    System.out.println("기존파일 ===============> "+currentFile);
                     fileService.deleteFile(currentFile);  // 기존 파일 삭제
                 } catch (Exception e) {
                     e.printStackTrace();  // 파일 삭제 실패 시 로그에 기록
@@ -29,4 +32,5 @@ public class FileUploadUtil {
         // 파일이 없으면 기존 파일 그대로 반환
         return currentFile;
     }
+
 }

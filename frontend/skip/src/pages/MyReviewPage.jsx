@@ -1,8 +1,8 @@
+import { useSelector } from "react-redux";
 import SideBar from "../components/SideBar";
-import useProfile from "../hooks/useProfile";
 
 const MyReviewPage = () => {
-    const profile = useProfile();
+    const profile = useSelector(state => state.loginSlice);
     console.log(profile.username);
 
     return (

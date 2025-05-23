@@ -20,15 +20,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:///"+uploadDir);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        // CORS 설정: 모든 경로에 대해 localhost:5173에서 오는 요청을 허용
-        registry.addMapping("/api/**")  // API 요청 경로에 대해 CORS 허용
-                .allowedOrigins("http://localhost:5173")  // 허용할 클라이언트 도메인
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")  // 허용할 HTTP 메소드
-                .allowedHeaders("*")  // 허용할 헤더
-                .allowCredentials(true);  // 쿠키나 인증 정보를 함께 보낼 수 있게 허용
-    }
-
-
 }
