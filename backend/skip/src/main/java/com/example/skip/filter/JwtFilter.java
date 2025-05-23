@@ -41,6 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String accessToken = jwtUtil.extractToken("accessToken", request);
+            System.out.println(accessToken);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername((String) jwtUtil.validateToken(accessToken).get("username"));
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
