@@ -11,33 +11,40 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class ItemDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long itemId;
+    private Long itemDetailId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rentId", nullable = false)
-    private Rent rent;
+    @JoinColumn(name = "itemId", nullable = false)
+    private Item item;
+
+    @Column(nullable = true)
+    private String size;
 
     @Column(nullable = false)
-    private String name;
+    private Integer totalQuantity;
 
-    @Lob
-    private String image;
+    @Column(nullable = false)
+    private Integer stockQuantity;
+
+    @Column(nullable = true)
+    private Integer rentHour;
+
+    @Column(nullable = false)
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ItemCategory category;
+    @Builder.Default
+    private YesNo isActive = YesNo.Y;
 
-    @CreatedDate
-    private LocalDate createdAt;
 }

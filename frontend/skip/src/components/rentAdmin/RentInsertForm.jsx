@@ -7,7 +7,7 @@ const RentInsertForm=()=>{
 
     //userId값 꺼내오기
     const profile = useSelector(state => state.loginSlice);
-    console.log(profile);
+    console.log("profile=====>",profile);
 
     const [categories, setCategories] = useState([]);
 
@@ -149,7 +149,6 @@ const RentInsertForm=()=>{
         //FormData 객체 생성
         const submitData = new FormData();
 
-        
         for(const key in formData){
             submitData.append(key,formData[key]);
         }

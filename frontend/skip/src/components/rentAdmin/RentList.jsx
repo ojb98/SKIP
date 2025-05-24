@@ -10,7 +10,7 @@ const RentList=()=>{
 
     //userId값 꺼내오기
     const profile = useSelector(state => state.loginSlice);
-    console.log(profile);
+    console.log("profile=====>",profile);
 
     const [rent,setRent] = useState([]);
 
@@ -28,7 +28,6 @@ const RentList=()=>{
     },[])
 
     
-    
     //렌트샵 삭제
     const deleteRent=(rentId)=>{
         const checkDel = window.confirm("정말로 삭제하시겠습니까?");
@@ -38,9 +37,7 @@ const RentList=()=>{
                 getRentList();
             })
         }
-    
     }
-
 
     return(
         <div>

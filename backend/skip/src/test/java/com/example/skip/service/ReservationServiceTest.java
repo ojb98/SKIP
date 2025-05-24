@@ -1,6 +1,5 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.ReservationItemsDTO;
 import com.example.skip.entity.*;
 import com.example.skip.repository.*;
 import jakarta.transaction.Transactional;

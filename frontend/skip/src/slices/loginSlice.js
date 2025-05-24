@@ -36,6 +36,14 @@ export const loginSlice = createSlice({
                     state.isLoggedIn = false;
                 }
                 state.isLoading = false;
+            })
+            .addCase(setProfile.pending, (state, action) => {
+                state.isLoggedIn = false;
+                state.isLoading = false;
+            })
+            .addCase(setProfile.rejected, (state, action) => {
+                state.isLoggedIn = false;
+                state.isLoading = false;
             });
     }
 });
