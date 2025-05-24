@@ -9,29 +9,30 @@ const ItemInsertForm=()=>{
 
     const [categories, setCategories]=useState([]);
 
-    //아이템 초기값 셋팅
+    //장비 기본 초기값 셋팅
     const [formData, setFormData]=useState({
         rentId:rentId,
         name:"",
         category:"",
     });
 
-    //시간/가격 셋팅
+    // 장비 대여 시간 및 가격 정보 셋팅 (복수 입력 가능)
     const [timePrices, setTimePrices] = useState([
         { rentHour: "", price: "" }
     ]);
 
-    // 사이즈/수량 셋팅
+    // 장비 사이즈 및 수량 정보 셋팅(복수 입력 가능)
     const [commonSizeStocks, setCommonSizeStocks] = useState([
         { size: "", quantity: "" }
     ]);
 
-    // 이미지 
+    // 사용자가 업로드한 이미지파일 읽기 위함 
     const fileRef = useRef();
+
     // 커스텀 훅 사용(카테고리마다 사이즈,시간대여 변환)
     const selectedOptions = useCategoryOptions(formData.category);
     
-    // 카테고리 백엔드에서 값 가져오기
+    // 처음 렌더링될 때 카테고리 백엔드에서 값 가져오기
     useEffect(()=>{
         const fetchCategories = async () => {
             try {
@@ -72,8 +73,8 @@ const ItemInsertForm=()=>{
 
     // 사이즈/수량 핸들러
     const handleSizeStockChange = (index, field, value) => {
-        const updated = [...commonSizeStocks];
-        updated[index][field] = value;
+        const updated = [...commonSizeStocks];  
+        updated[index][field] = value;  // 예시) updated[1]["size"] = "XL";
         setCommonSizeStocks(updated);
     };
 
@@ -82,7 +83,9 @@ const ItemInsertForm=()=>{
     };
 
     const removeSizeStock = (idx) => {
-        setCommonSizeStocks(commonSizeStocks.filter((_, i) => i !== idx));
+        // filter 조건을 만족하는 요소만 남기는 배열 메서드
+        // 선택했을때 선택한 인덱스번호와 일치하지 않는거만 보여주기(같은 인덱스번호는 안보임)
+        setCommonSizeStocks(commonSizeStocks.filter((_, i) => i !== idx)); 
     };
 
 
@@ -90,8 +93,18 @@ const ItemInsertForm=()=>{
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // 장비명과 카테고리 검증
         if (!formData.name || !formData.category) {
             alert("장비명과 카테고리를 입력하세요.");
+            return;
+        }
+
+        //ref값 얻어오기
+        const imageInput = fileRef.current;
+
+        // 이미지 검증
+        if (!imageInput || imageInput.files.length === 0) {
+            alert("이미지는 필수입니다.");
             return;
         }
 
@@ -99,6 +112,7 @@ const ItemInsertForm=()=>{
 
         // 시간/가격 검증
         if (category === "LIFT_TICKET" || category !== "PROTECTIVE_GEAR") {
+            // some() : 배열 안의 요소 중 하나라도 조건을 만족하면 true를 반환
             if (timePrices.some(tp => !tp.rentHour || !tp.price)) {
                 alert("모든 대여 시간/가격 정보를 입력하세요.");
                 return;
@@ -107,31 +121,46 @@ const ItemInsertForm=()=>{
 
         // 사이즈/수량 검증
         if (category === "PROTECTIVE_GEAR" || category !== "LIFT_TICKET") {
+            // some() : 배열 안의 요소 중 하나라도 조건을 만족하면 true를 반환
             if (commonSizeStocks.some(s => !s.size || !s.quantity)) {
                 alert("모든 사이즈/수량 정보를 입력하세요.");
                 return;
             }
         }
 
+        //timePrices 배열을 순회하면서 각 시간/가격 객체를 생성
         const transformedDetails = timePrices.map(tp => ({
             rentHour: tp.rentHour,
             price: tp.price,
+
+            //sizeStockList : 백엔드 DTO 필드명과 반드시 일치
+            //commonSizeStocks 배열을 순회하면서 각 사이즈/수량 객체를 생성
             sizeStockList: commonSizeStocks.map(s => {
-                const q = Math.max(0, parseInt(s.quantity) || 0);
-                return { size: s.size, totalQuantity: q, stockQuantity: q };
+            const q = Math.max(0, parseInt(s.quantity) || 0); 
+                return {
+                    size: s.size,
+                    totalQuantity: q,
+                    stockQuantity: q
+                };
             })
         }));
 
-        //전체 DTO를 JSON 객체로 묶어서 itemRequest라는 키로 전달
+        //requestDTO 객체 만들기
+        // 이 전체 구조가 백엔드의 ItemRequestDTO와 일치
         const requestDTO = {
             ...formData,
+            //detailList는 시간/가격 + 사이즈/재고를 묶은 구조.
             detailList: transformedDetails,
         };
 
+        // FormData는 파일 업로드가 포함된 multipart/form-data 전송을 위해 사용
+        // 텍스트 + 파일을 한 번에 보낼 수 있는 특수한 객체
         const submitData = new FormData();
 
-        // JSON을 Blob으로 변환해서 itemRequest라는 이름으로 추가
-        submitData.append("itemRequest", new Blob(
+
+        // 전체 DTO를 JSON 객체로 묶어서 itemRequest라는 키로 전달
+        // Blob : 파일처럼 다루는 JSON 데이터 (파일이나 이진 데이터를 나타내는 객체)
+        submitData.append("itemRequest", new Blob(  
             [JSON.stringify(requestDTO)],
             { type: "application/json" }
         ));

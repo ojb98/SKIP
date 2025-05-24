@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.ItemRequestDTO;
 import com.example.skip.dto.ItemRequestDTO.DetailGroup;
 import com.example.skip.dto.ItemRequestDTO.SizeStock;
+import com.example.skip.dto.ItemResponseDTO;
 import com.example.skip.entity.Item;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Rent;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -65,6 +67,34 @@ public class ItemService {
         }
 
         return savedItem.getItemId();
+    }
+
+    //장비 + 디테일 리스트
+    public List<ItemResponseDTO> getItemByDetailList(Long rentId) {
+        List<Item> items = itemRepository.findActiveItemsByRentId(rentId);
+
+        return items.stream()
+                .map(item -> {
+                    List<ItemResponseDTO.ItemDetailDTO> activeDetails = item.getItemDetails().stream()
+                            .filter(d -> d.getIsActive() == YesNo.Y)
+                            .map(d -> new ItemResponseDTO.ItemDetailDTO(
+                                    d.getRentHour(),
+                                    d.getPrice(),
+                                    d.getSize(),
+                                    d.getTotalQuantity(),
+                                    d.getStockQuantity()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return new ItemResponseDTO(
+                            item.getItemId(),
+                            item.getName(),
+                            item.getCategory().name(),
+                            item.getImage(),
+                            activeDetails
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
 }

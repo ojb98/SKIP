@@ -22,6 +22,7 @@ import RentDetail from "./components/rentAdmin/RentDetail"
 import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemList from "./components/rentAdmin/ItemList"
+import RentSelector from "./components/rentAdmin/RentSelector"
 
 
 function App() {
@@ -59,7 +60,8 @@ function App() {
                         <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                         <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
                         <Route path="/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                        <Route path="/itemAdmin/list" element={<ItemList/>}></Route>
+                        <Route path="/rentAdmin/select" element={<RentSelector/>}></Route>
+                        <Route path="/itemAdmin/list/:rentId" element={<ItemList/>}></Route>
 
 
                         {/* 렌탈샵 상세 페이지 */}
