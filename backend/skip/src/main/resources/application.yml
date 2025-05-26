@@ -28,6 +28,10 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
+logging:
+  level:
+    org.springframework.security: debug
+
 file:
   upload-path: C:/uploads/
 

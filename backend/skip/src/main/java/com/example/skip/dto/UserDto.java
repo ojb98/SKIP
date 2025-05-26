@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class UserDto extends User {
+public class UserDto extends User implements OAuth2User {
     private Long userId;
 
     private String username;
@@ -40,9 +41,13 @@ public class UserDto extends User {
 
     private String image;
 
+    private String nickname;
+
+    private Map<String, Object> attributes;
+
 
     public UserDto(Long userId, String username, String password, String name, String email, String phone,
-                   UserSocial social, Set<String> roles, UserStatus status, LocalDateTime registeredAt, String image) {
+                   UserSocial social, Set<String> roles, UserStatus status, LocalDateTime registeredAt, String image, String nickname) {
         super(username, password, roles.stream().map(SimpleGrantedAuthority::new).toList());
         this.userId = userId;
         this.username = username;
@@ -55,6 +60,7 @@ public class UserDto extends User {
         this.status = status;
         this.registeredAt = registeredAt;
         this.image = image;
+        this.nickname = nickname;
     }
 
     public UserDto(com.example.skip.entity.User user) {
@@ -70,6 +76,7 @@ public class UserDto extends User {
         this.status = user.getStatus();
         this.registeredAt = user.getRegisteredAt();
         this.image = user.getImage();
+        this.nickname = user.getNickname();
     }
 
     public com.example.skip.entity.User toEntity() {
@@ -84,7 +91,8 @@ public class UserDto extends User {
                 .roles(roles.stream().map(UserRole::valueOf).collect(Collectors.toSet()))
                 .status(status)
                 .registeredAt(registeredAt)
-                .image(image).build();
+                .image(image)
+                .nickname(nickname).build();
     }
 
     public Map<String, Object> getClaims() {
@@ -94,6 +102,12 @@ public class UserDto extends User {
                 "social", social,
                 "roles", roles,
                 "registeredAt", registeredAt.toString(),
-                "image", image == null ? "" : image);
+                "image", image == null ? "" : image,
+                "nickname", nickname == null ? "" : nickname);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 }

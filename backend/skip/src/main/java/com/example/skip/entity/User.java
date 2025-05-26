@@ -53,4 +53,7 @@ public class User {
     private LocalDateTime registeredAt;
 
     private String image;
+
+    @Column(unique = true)
+    private String nickname;
 }
