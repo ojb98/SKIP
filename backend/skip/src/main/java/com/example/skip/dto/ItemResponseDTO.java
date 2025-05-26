@@ -1,5 +1,6 @@
 package com.example.skip.dto;
 
+import com.example.skip.enumeration.YesNo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,6 @@ public class ItemResponseDTO {
         private String size;
         private Integer totalQuantity;
         private Integer stockQuantity;
+        private YesNo isActive;
     }
 }

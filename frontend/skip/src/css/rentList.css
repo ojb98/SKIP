@@ -1,34 +1,59 @@
-/* 기본적인 테이블 스타일 */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+/* 컨테이너 */
+.rent-list-container {
+    padding: 20px;
     font-family: Arial, sans-serif;
 }
 
-th, td {
+/* 제목 스타일 */
+.top-subject {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.sub-subject {
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* 테이블 스타일 */
+.list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.list-thead th {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.list-tbody td {
     padding: 12px 15px;
     text-align: left;
     border: 1px solid #ddd;
 }
 
-th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-tr:hover {
+/* 행 hover 효과 */
+.clickable-row:hover {
     background-color: #f1f1f1;
+    cursor: pointer;
 }
 
-/* 이미지 썸네일 크기 및 스타일 */
-img {
+/* 이미지 썸네일 */
+.list-tbody img {
     width: 100px;
     height: auto;
     object-fit: cover;
+    border-radius: 4px;
 }
 
-/* 등록 버튼 스타일 */
+/* 등록 버튼 */
 .register-btn {
     text-decoration: none;
     padding: 8px 16px;
@@ -44,7 +69,7 @@ img {
     background-color: #45a049;
 }
 
-/* 비활성화된 등록 버튼 스타일 */
+/* 비활성 등록 버튼 */
 .register-btn-disabled {
     padding: 8px 16px;
     background-color: #ccc;
@@ -54,7 +79,7 @@ img {
     font-weight: bold;
 }
 
-/* 삭제 버튼 스타일 */
+/* 삭제 버튼 */
 .delete-btn {
     padding: 8px 16px;
     background-color: #f44336;
@@ -68,32 +93,4 @@ img {
 
 .delete-btn:hover {
     background-color: #e53935;
-}
-
-.delete-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-/* 보기 버튼 스타일 */
-.view-btn {
-    text-decoration: none;
-    padding: 8px 16px;
-    color: white;
-    background-color: #2196F3;
-    border-radius: 4px;
-    font-weight: bold;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-}
-
-.view-btn:hover {
-    background-color: #1976D2;
-}
-
-/* 테이블 제목 스타일 */
-h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #333;
 }

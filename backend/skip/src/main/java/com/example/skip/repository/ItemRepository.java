@@ -9,10 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item,Long> {
 
     @Query("SELECT DISTINCT d.item FROM ItemDetail d WHERE d.isActive = 'Y' AND d.item.rent.rentId = :rentId")
     List<Item> findActiveItemsByRentId(@Param("rentId") Long rentId);
+
+
+    Optional<Item> findByRent_RentIdAndItemId(Long rentId, Long itemId);
 
 }

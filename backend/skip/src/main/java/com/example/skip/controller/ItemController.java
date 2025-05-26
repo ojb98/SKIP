@@ -1,5 +1,6 @@
 package com.example.skip.controller;
 
+import com.example.skip.dto.ItemDelDTO;
 import com.example.skip.dto.ItemRequestDTO;
 import com.example.skip.dto.ItemResponseDTO;
 import com.example.skip.entity.Item;
@@ -39,7 +40,23 @@ public class ItemController {
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
-        return ResponseEntity.ok(items);
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+
+    //장비 항목 삭제
+    @PatchMapping("/delete")
+    public ResponseEntity<String> deletedItemDetail(@RequestBody List<ItemDelDTO> detailList){
+        for (ItemDelDTO dto: detailList){
+            itemService.setItemDetailDelete(dto.getItemId(), dto.getItemDetailId());
+        }
+        return new ResponseEntity<>("deletedItemDetailSuccess",HttpStatus.OK);
+    }
+
+    @GetMapping("/{rentId}/{itemId}")
+    public ResponseEntity<ItemRequestDTO> getItem(@PathVariable("rentId") Long rentId,
+                                                  @PathVariable("itemId") Long itemId){
+        ItemRequestDTO dto = itemService.getItemByRent(rentId,itemId);
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
 }

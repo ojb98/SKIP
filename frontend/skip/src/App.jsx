@@ -8,7 +8,7 @@ import SignupVerifyPage from "./pages/SignupVerifyPage"
 import AccountPage from "./pages/AccountPage"
 import MyReviewPage from "./pages/MyReviewPage"
 import MyQnaPage from "./pages/MyQnaPage"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
 
@@ -21,8 +21,9 @@ import RentList from "./components/rentAdmin/RentList"
 import RentDetail from "./components/rentAdmin/RentDetail"
 import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
-import ItemList from "./components/rentAdmin/ItemList"
-import RentSelector from "./components/rentAdmin/RentSelector"
+import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
+import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
+import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
 
 
 function App() {
@@ -60,8 +61,9 @@ function App() {
                         <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                         <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
                         <Route path="/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                        <Route path="/rentAdmin/select" element={<RentSelector/>}></Route>
-                        <Route path="/itemAdmin/list/:rentId" element={<ItemList/>}></Route>
+                        <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
+                        <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                        <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
 
 
                         {/* 렌탈샵 상세 페이지 */}

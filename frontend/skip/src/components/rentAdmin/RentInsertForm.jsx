@@ -12,7 +12,7 @@ const RentInsertForm=()=>{
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        userId: profile.userId,
+        userId: profile.userId, 
         category: '',
         name: '',
         phone: '',
