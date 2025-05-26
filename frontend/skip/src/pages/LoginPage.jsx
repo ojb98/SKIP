@@ -64,10 +64,10 @@ const LoginPage = () => {
                         placeholder="비밀번호"
                         className={`${input_size} ${input_text}`}
                         ref={password}
-                    ></input>
+                    ></input>   
 
-                    <div className={`w-full ${loginError ? 'flex' : 'hidden'} justify-start`}>
-                        <span className="text-xs text-red-400">{loginError}</span>
+                    <div className={`w-full ${loginError ? 'flex' : 'hidden'} justify-start -my-3`}>
+                        <span className="text-xs text-red-400">※ {loginError}</span>
                     </div>
 
                     <input

@@ -42,6 +42,8 @@ public class SignupRequestDto {
     @Email(message = "이메일 형식이 올바르지 않습니다.", regexp = "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,10}$")
     private String email;
 
+    private boolean isVerified;
+
     private String phone;
 
 

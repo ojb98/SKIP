@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+	<div style="width: 350px;">
+		<h2>
+			<a href="http://localhost:5173" style="
+				color: oklch(70.7% 0.165 254.624);
+				text-decoration: none;
+				font-family: Arial, sans-serif;
+			"
+			>SKI:P
+			</a>
+		</h2>
+		
+		<h2 style="font-weight: 500; font-family: Arial, sans-serif;">회원가입을 위한 인증 메일입니다.</h2>
+		
+		<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
+			<h4 style="margin: 0; font-weight: 500; font-family: Arial, sans-serif;">인증 번호</h4>
+			
+			<div style="
+				width: 300px;
+				height: 200px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 1.1em;
+				border-radius: 10px;
+				background-color: #dfdfdf;
+			">{{code}}</div>
+			
+			<span style="font-size: 0.8em; color: dimgray">* 개인정보보호를 위해 인증번호는 10분 동안만 유효합니다.</span>
+		</div>
+	</div>
+</body>
+</html>
