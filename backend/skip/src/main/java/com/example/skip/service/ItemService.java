@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.ItemRequestDTO;
 import com.example.skip.dto.ItemRequestDTO.DetailGroup;
 import com.example.skip.dto.ItemRequestDTO.SizeStock;
+import com.example.skip.dto.ItemResponseDTO.ItemDetailDTO;
 import com.example.skip.dto.ItemResponseDTO;
 import com.example.skip.entity.Item;
 import com.example.skip.entity.ItemDetail;
@@ -72,20 +73,26 @@ public class ItemService {
     public List<ItemResponseDTO> getItemByDetailList(Long rentId) {
         List<Item> items = itemRepository.findActiveItemsByRentId(rentId);
 
+        // 1. items 리스트를 스트림으로 변환
         return items.stream()
+                // Item → ItemResponseDTO로 변환
                 .map(item -> {
-                    List<ItemResponseDTO.ItemDetailDTO> activeDetails = item.getItemDetails().stream()
+                    // 2. 각 Item에 대해 내부 ItemDetail을 ItemDetailDTO로 변환
+                    List<ItemDetailDTO> activeDetails = item.getItemDetails().stream()
+                            //비활성화된 상세정보는 제외 ('Y'인 경우만)
                             .filter(d -> d.getIsActive() == YesNo.Y)
-                            .map(d -> new ItemResponseDTO.ItemDetailDTO(
+                            .map(d -> new ItemDetailDTO(
+                                    d.getItemDetailId(),
                                     d.getRentHour(),
                                     d.getPrice(),
                                     d.getSize(),
                                     d.getTotalQuantity(),
                                     d.getStockQuantity(),
                                     d.getIsActive()
-                            ))
-                            .collect(Collectors.toList());
+                            )).toList();
 
+
+                    // 3. 최종적으로 ItemResponseDTO로 감싸서 List<ItemResponseDTO>로 반환
                     return new ItemResponseDTO(
                             item.getItemId(),
                             item.getName(),
@@ -93,8 +100,7 @@ public class ItemService {
                             item.getImage(),
                             activeDetails
                     );
-                })
-                .collect(Collectors.toList());
+                }).toList();
     }
 
 
@@ -106,7 +112,7 @@ public class ItemService {
         ItemDetail detail = itemDetailRepository.findById(itemDetailId)
                 .orElseThrow(()-> new IllegalArgumentException("해당 장비항목이 존재하지않습니다"));
 
-        // 소속된 item 확인
+        // 상세 항목이 조회된 itemId와 일치하는지 확인
         if (!detail.getItem().getItemId().equals(item.getItemId())) {
             throw new IllegalArgumentException("해당 장비항목이 지정된 장비에 속하지 않습니다.");
         }
@@ -114,6 +120,7 @@ public class ItemService {
         detail.setIsActive(YesNo.N);
         itemDetailRepository.save(detail);
     }
+
 
     // 장비 + 디테일 수정하기 위한 조회
     public ItemRequestDTO getItemByRent(Long rentId, Long itemId) {

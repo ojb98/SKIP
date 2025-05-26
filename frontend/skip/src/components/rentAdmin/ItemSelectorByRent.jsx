@@ -10,10 +10,12 @@ const ItemSelectorByRent = () => {
     const profile = useSelector(state => state.loginSlice);
     console.log("profile=====>",profile);
 
+
+    //처음 랜더링할때, 가맹점 목록 불러오기
     useEffect(() => {
         if(profile.userId) {
-            rentListApi(profile.userId)
-            .then(setRents)
+            rentListApi(profile.userId)  //가맹점 리스트 API호출
+            .then(response => setRents(response))
             .catch(err => console.error("렌탈샵 목록 불러오기 실패", err));
         }
     }, [profile.userId]);
@@ -42,9 +44,9 @@ const ItemSelectorByRent = () => {
                     <tr key={rent.rentId} className="hover:bg-gray-50 cursor-pointer">
                         <td className="border border-gray-300 px-4 py-2">{rent.name}</td>
                         <td className="border border-gray-300 px-4 py-2">
-                        <Link to={`/itemAdmin/list/${rent.rentId}`} className="text-blue-600 hover:underline">
-                            보기
-                        </Link>
+                            <Link to={`/itemAdmin/list/${rent.rentId}`} className="text-blue-600 hover:underline">
+                                보기
+                            </Link>
                         </td>
                     </tr>
                     ))

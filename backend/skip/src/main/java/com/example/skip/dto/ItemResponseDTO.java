@@ -24,6 +24,7 @@ public class ItemResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemDetailDTO {
+        private Long itemDetailId;
         private Integer rentHour;
         private Integer price;
         private String size;

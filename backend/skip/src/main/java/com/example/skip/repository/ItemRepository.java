@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item,Long> {
 
+    //ItemDetail엔티티를 기준으로 ItemDetail에 소속되어 사용중인 장비(중복제거) 보여줌
     @Query("SELECT DISTINCT d.item FROM ItemDetail d WHERE d.isActive = 'Y' AND d.item.rent.rentId = :rentId")
     List<Item> findActiveItemsByRentId(@Param("rentId") Long rentId);
-
 
     Optional<Item> findByRent_RentIdAndItemId(Long rentId, Long itemId);
 

@@ -45,8 +45,8 @@ public class ItemController {
 
     //장비 항목 삭제
     @PatchMapping("/delete")
-    public ResponseEntity<String> deletedItemDetail(@RequestBody List<ItemDelDTO> detailList){
-        for (ItemDelDTO dto: detailList){
+    public ResponseEntity<String> deletedItemDetail(@RequestBody List<ItemDelDTO> detailDelList){
+        for (ItemDelDTO dto: detailDelList){
             itemService.setItemDetailDelete(dto.getItemId(), dto.getItemDetailId());
         }
         return new ResponseEntity<>("deletedItemDetailSuccess",HttpStatus.OK);
