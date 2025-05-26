@@ -1,7 +1,7 @@
 const BannerActiveList = () => {
     return (
         <div>
-
+            
         </div>
     )
 }

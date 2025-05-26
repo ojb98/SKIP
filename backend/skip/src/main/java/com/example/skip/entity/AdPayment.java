@@ -29,8 +29,8 @@ public class AdPayment {
     @Column(name = "IMP_UID", nullable = false, length = 100)
     private String impUid;
 
-    @Column(name = "TOTAL_PRICE", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalPrice;
+    @Column(name = "TOTAL_PRICE", nullable = false)
+    private Double totalPrice;
 
     @Column(name = "METHOD", nullable = false, length = 20)
     private String method;

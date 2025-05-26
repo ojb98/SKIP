@@ -32,4 +32,11 @@ public class AdminDashboardController {
         Map<String, Object> data = adminDashboardService.getSalesChartData(atStart, atEnd);
         return ResponseEntity.ok(data);
     }
+
+    @GetMapping("/today-sales-data")
+    public ResponseEntity<Map<String, Object>> getStatOverviewCard(@RequestParam String todaysDate){
+        return ResponseEntity.ok(adminDashboardService.getSummary(LocalDate.parse(todaysDate), LocalDate.parse(todaysDate)));
+    }
+
+
 }
