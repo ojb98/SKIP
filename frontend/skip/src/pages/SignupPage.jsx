@@ -35,9 +35,9 @@ const JoinPage = () => {
     const [personal, setPersonal] = useState(false);
     const [marketing, setMarketing] = useState(false);
 
-    const [serviceDetail, setServiceDetail] = useState(false);
-    const [personalDetail, setPersonalDetail] = useState(false);
-    const [marketingDetail, setMarketingDetail] = useState(false);
+    const [serviceDetails, setServiceDetails] = useState(false);
+    const [personalDetails, setPersonalDetails] = useState(false);
+    const [marketingDetails, setMarketingDetails] = useState(false);
 
     const inputTextClass = ' h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
@@ -371,21 +371,21 @@ const JoinPage = () => {
                                             </label>
 
                                             {
-                                                serviceDetail ?
-                                                <button type="button" onClick={() => {setServiceDetail(false)}}>
+                                                serviceDetails ?
+                                                <button type="button" onClick={() => {setServiceDetails(false)}}>
                                                     <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
 
                                                 :
 
-                                                <button type="button" onClick={() => {setServiceDetail(true)}}>
+                                                <button type="button" onClick={() => {setServiceDetails(true)}}>
                                                     <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
                                             }
                                         </div>
 
                                         {
-                                            serviceDetail
+                                            serviceDetails
                                             &&
                                             <span className="text-xs text-gray-500 font-medium">
                                                 제1조 (목적)
@@ -419,21 +419,21 @@ const JoinPage = () => {
                                             </label>
 
                                             {
-                                                personalDetail ?
-                                                <button type="button" onClick={() => {setPersonalDetail(false)}}>
+                                                personalDetails ?
+                                                <button type="button" onClick={() => {setPersonalDetails(false)}}>
                                                     <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
 
                                                 :
 
-                                                <button type="button" onClick={() => {setPersonalDetail(true)}}>
+                                                <button type="button" onClick={() => {setPersonalDetails(true)}}>
                                                     <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
                                             }
                                         </div>
 
                                         {
-                                            personalDetail
+                                            personalDetails
                                             &&
                                             <span className="text-xs text-gray-500 font-medium">
                                                 1. 수집 항목<br></br>
@@ -462,21 +462,21 @@ const JoinPage = () => {
                                             </label>
 
                                             {
-                                                marketingDetail ?
-                                                <button type="button" onClick={() => {setMarketingDetail(false)}}>
+                                                marketingDetails ?
+                                                <button type="button" onClick={() => {setMarketingDetails(false)}}>
                                                     <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
 
                                                 :
 
-                                                <button type="button" onClick={() => {setMarketingDetail(true)}}>
+                                                <button type="button" onClick={() => {setMarketingDetails(true)}}>
                                                     <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
                                                 </button>
                                             }
                                         </div>
 
                                         {
-                                            marketingDetail
+                                            marketingDetails
                                             &&
                                             <span className="text-xs text-gray-500 font-medium">
                                                 회원에게 이메일, 문자 등을 통해 최신 소식, 이벤트, 할인 정보 등을 제공합니다.<br></br>

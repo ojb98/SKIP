@@ -23,6 +23,7 @@ import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemList from "./components/rentAdmin/ItemList"
 import LoginLayout from "./pages/LoginLayout"
+import MyPageLayout from "./pages/MyPageLayout"
 
 
 function App() {
@@ -42,11 +43,13 @@ function App() {
 
 
                         {/* 마이페이지 */}
-                        <Route path="mypage/account" element={<AccountPage></AccountPage>}></Route>
+                        <Route path="mypage/" element={<MyPageLayout></MyPageLayout>}>
+                            <Route path="account" element={<AccountPage></AccountPage>}></Route>
 
-                        <Route path="mypage/review" element={<MyReviewPage></MyReviewPage>}></Route>
+                            <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 
-                        <Route path="mypage/qna" element={<MyQnaPage></MyQnaPage>}></Route>
+                            <Route path="qna" element={<MyQnaPage></MyQnaPage>}></Route>
+                        </Route>
 
 
                         {/* 중간관리자 */}
