@@ -10,6 +10,7 @@
 
 .user-table {
   width: 100%;
+  margin-top: 0px;
   border-collapse: collapse;
   background: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

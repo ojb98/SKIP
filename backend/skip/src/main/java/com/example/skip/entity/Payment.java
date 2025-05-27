@@ -1,5 +1,6 @@
 package com.example.skip.entity;
 
+import com.example.skip.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -16,7 +17,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private Long reserveId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reserveId", nullable = false)
+    private Reservations reservations;
 
     @Column(nullable = false, length = 100)
     private String merchantUid;
@@ -41,7 +44,8 @@ public class Payment {
     private String pgProvider;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

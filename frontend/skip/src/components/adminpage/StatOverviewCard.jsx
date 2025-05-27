@@ -69,7 +69,9 @@ const StatOverviewCard = ({ stats }) => {
             const salesChange = calcChange(safeGet(today, "totalSales"), sales)
             const countChange = calcChange(safeGet(today, "totalSalesCount"), count)
             const adChange = calcChange(safeGet(today, "totalAdPrice"), ad)
-
+            const salesFontColor = salesChange >= 0 ? "red" : "blue";
+            const countFontColor = countChange >= 0 ? "red" : "blue";
+            const adFontColor = adChange >= 0 ? "red" : "blue";
             return (
               <li
                 key={label}
@@ -81,16 +83,16 @@ const StatOverviewCard = ({ stats }) => {
                 }}
               >
                 <div style={{ marginBottom: "6px" }}>
-                  {label} 매출: <strong>{sales.toLocaleString()}원</strong> (
-                  {trendIcon(salesChange)} {Math.abs(salesChange).toFixed(1)}%)
+                  {label} 매출: <span style={{color:salesFontColor}}><strong>{sales.toLocaleString()}원</strong> (
+                  {trendIcon(salesChange)} {Math.abs(salesChange).toFixed(1)}%)</span>
                 </div>
                 <div style={{ marginBottom: "6px" }}>
-                  결제 건수: <strong>{count.toLocaleString()}건</strong> (
-                  {trendIcon(countChange)} {Math.abs(countChange).toFixed(1)}%)
+                  결제 건수: <span style={{color:countFontColor}}><strong>{count.toLocaleString()}건</strong> (
+                  {trendIcon(countChange)} {Math.abs(countChange).toFixed(1)}%)</span>
                 </div>
                 <div>
-                  광고 수익: <strong>{ad.toLocaleString()}원</strong> (
-                  {trendIcon(adChange)} {Math.abs(adChange).toFixed(1)}%)
+                  광고 수익: <span style={{color:adFontColor}}><strong>{ad.toLocaleString()}원</strong> (
+                  {trendIcon(adChange)} {Math.abs(adChange).toFixed(1)}%)</span>
                 </div>
               </li>
             )

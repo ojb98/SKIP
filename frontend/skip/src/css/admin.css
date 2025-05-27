@@ -153,7 +153,7 @@ body {
 }
 .card-sales {
     background-color: white;
-    padding: 15px;
+    padding: 12.5px;
     padding-left: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -172,7 +172,7 @@ body {
 
 .card {
     background-color: white;
-    padding: 15px;
+    padding: 12.5px;
     padding-left: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -457,3 +457,7 @@ body {
     color: #212529;
 }
 
+.odometer.odometer-auto-theme, .odometer.odometer-theme-default {
+    font-family: "Arial", sans-serif !important;
+    line-height: 1.0em;
+}

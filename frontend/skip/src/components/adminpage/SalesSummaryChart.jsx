@@ -8,7 +8,7 @@ const SalesSummaryChart = ({ summaryData }) => {
   };
 
   const data = {
-    labels: mode === "count"? [["총 결제 (건)","(렌트+광고)"] , "결제완료", "결제취소", "결제진행중", "광고결제", "렌탈샵결제"] 
+    labels: mode === "count"? [["총 결제 (건)","(렌트+광고)"] , "결제완료", "결제취소",  "광고결제", "렌탈샵결제"] 
                             : [["총 결제 (원)","(렌트+광고)"] , "총 환불", "광고 수익", "렌탈샵 매출", "순이익"],
     datasets: [
       {
@@ -18,8 +18,7 @@ const SalesSummaryChart = ({ summaryData }) => {
           mode === "count" ? [
               summaryData.totalSalesCount || 0,
               summaryData.totalSuccessCount || 0,
-              summaryData.totalCancelCount || 0,
-              summaryData.totalPendingCount || 0,              
+              summaryData.totalCancelCount || 0,           
               summaryData.totalAdAmount || 0,
               summaryData.totalRentAmount || 0,                
             ]

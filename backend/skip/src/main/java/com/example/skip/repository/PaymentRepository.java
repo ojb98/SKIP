@@ -1,6 +1,7 @@
 package com.example.skip.repository;
 
 import com.example.skip.entity.Payment;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,11 +17,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT SUM(p.totalPrice) FROM Payment p WHERE p.createdAt BETWEEN :atStart AND :atEnd")
     Long getTotalSales(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
 
-    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CONFIRMED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-    Long getConfirmReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
-
-    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CANCELLED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-    Long getCancleReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
+//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CONFIRMED' AND p.createdAt BETWEEN :atStart AND :atEnd")
+//    Long getConfirmReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
+//
+//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CANCELLED' AND p.createdAt BETWEEN :atStart AND :atEnd")
+//    Long getCancleReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
 
     @Query("SELECT new map(DATE(p.createdAt) as date, SUM(p.totalPrice) as total) " +
             "FROM Payment p " +
@@ -40,4 +41,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             @Param("atEnd") LocalDateTime atEnd
     );
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    List<Payment> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
 }
