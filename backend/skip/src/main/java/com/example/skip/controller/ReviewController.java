@@ -58,7 +58,6 @@ public class ReviewController {
     }
 
     // 렌탈샵 리뷰 목록 조회
-    @GetMapping("/rent")
     public ResponseEntity<Page<ReviewDTO>> getRentalReviews(@RequestParam Long rentId,
                                                             Pageable pageable) {
         Page<ReviewDTO> result = reviewService.getRentalReviews(rentId, pageable);
@@ -66,21 +65,21 @@ public class ReviewController {
     }
 
     // 아이템 리뷰 목록 조회
-    @GetMapping("/rent/item")
+/*    @GetMapping("/rent/item")
     public ResponseEntity<Page<ReviewDTO>> getReviewsByItem(@RequestParam Long rentId,
                                                             @RequestParam Long itemId,
                                                             @RequestParam(required = false, defaultValue = "latest") String sort,
                                                             Pageable pageable) {
         Page<ReviewDTO> result = reviewService.getReviewsByRentIdAndItemIdSorted(rentId, itemId, sort, pageable);
         return ResponseEntity.ok(result);
-    }
+    }*/
 
     // 리뷰 평점 평균
-    @GetMapping("/rent/item/average")
+/*    @GetMapping("/rent/item/average")
     public ResponseEntity<Double> getAverageRating(@RequestParam Long rentId,
                                                    @RequestParam Long itemId) {
         Double avg = reviewRepository.findAverageRating(rentId, itemId);
         return ResponseEntity.ok(avg != null ? avg : 0.0);
-    }
+    }*/
 
 }

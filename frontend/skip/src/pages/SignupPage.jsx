@@ -1,14 +1,18 @@
 import { useRef, useState } from "react";
 import SignupStep from "../components/SignupStep";
-import { signup } from "../api/userApi";
+import { confirmCode, signup, verifyEmail } from "../api/userApi";
 import CheckMark from "../components/CheckMark";
-import { validateConfirmPassword, validateEmail, validatePassword, validateUsername } from "../utils/validation";
+import { validateConfirmPassword, validateEmail, validatePassword, validateUsername, validateVerificationCode } from "../utils/validation";
+import { faL } from "@fortawesome/free-solid-svg-icons";
+import EmailTimer from "../components/EmailTimer";
 
 const JoinPage = () => {
     const username = useRef();
     const password = useRef();
     const confirmPassword = useRef();
     const email = useRef();
+    const verificationCode = useRef();
+    const [lastEmail, setLastEmail] = useState();
     const name = useRef();
     const phone = useRef();
 
@@ -16,9 +20,85 @@ const JoinPage = () => {
     const [passwordStatus, setPasswordStatus] = useState({});
     const [confirmPasswordStatus, setConfirmPasswordStatus] = useState({});
     const [emailStatus, setEmailStatus] = useState({});
+    const [timer, setTimer] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const [verificationCodeStatus, setVerificationCodeStatus] = useState({});
+
+    const [verify1, setVerify1] = useState('');
+    const [verify2, setVerify2] = useState('hidden');
+    const [verify3, setVerify3] = useState('hidden');
+    const [verify4, setVerify4] = useState('hidden');
+
+    const [confirm, setConfirm] = useState('hidden');
 
     const inputTextClass = ' h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
+
+    const verifyHandler = () => {
+        setEmailStatus(validateEmail(email.current.value));
+        if (emailStatus.success) {
+            setVisible(setVerify2);
+            const params = new URLSearchParams();
+            params.append('email', email.current.value);
+            verifyEmail(params).then(res => {
+                if (res.success) {
+                    setVisible(setVerify3);
+                    setConfirm('');
+                    setLastEmail(res.data);
+                    setTimer(true);
+                } else {
+                    setEmailStatus({
+                        success: false,
+                        message: res.data
+                    });
+                }
+            });
+        } else {
+            email.current.focus();
+        }
+    }
+
+    const setVisible = set => {
+        setVerify1('hidden');
+        setVerify2('hidden');
+        setVerify3('hidden');
+        setVerify4('hidden');
+        set('');
+    }
+
+    const confirmHandler = () => {
+        setVerificationCodeStatus(validateVerificationCode(verificationCode.current.value));
+        if (verificationCodeStatus.success) {
+            const params = new URLSearchParams();
+            params.append('email', lastEmail);
+            params.append('verificationCode', verificationCode.current.value);
+            confirmCode(params).then(res => {
+                if (res.success) {
+                    // 이메일 인증 성공
+                    setConfirm('hidden');
+
+                    setVisible(setVerify4);
+
+                    setEmailStatus({
+                        success: true,
+                        message: '인증되었습니다.'
+                    });
+
+                    setIsVerified(true);
+
+                    email.current.disabled = true;
+                    email.current.className += 'bg-gray-100';
+                } else {
+                    setVerificationCodeStatus({
+                        success: false,
+                        message: res.data
+                    });
+                }
+            });
+        } else {
+            verificationCode.current.focus();
+        }
+    }
 
     const signupHandler = e => {
         e.preventDefault();
@@ -27,6 +107,7 @@ const JoinPage = () => {
             password: password.current.value,
             confirmPassword: confirmPassword.current.value,
             email: email.current.value,
+            isVerified: isVerified,
             name: name.current.value,
             phone: phone.current.value
         }).then(res => {
@@ -65,7 +146,7 @@ const JoinPage = () => {
         <>
             <div className="w-[400px]">
                 <form className="flex flex-col items-center gap-5" onSubmit={signupHandler}>
-                    <div className="w-full flex justify-between border-b-[1px] pb-3">
+                    <div className="w-full flex justify-between mt-10 mb-5 border-b">
                         <h1 className="text-2xl">회원가입</h1>
 
                         <SignupStep step={2}></SignupStep>
@@ -113,19 +194,65 @@ const JoinPage = () => {
                             className={inputTextClass}
                             onKeyUp={() => setConfirmPasswordStatus(validateConfirmPassword(password.current.value, confirmPassword.current.value))}
                         ></input>
+
                         <div className="w-full flex justify-start">
                             <span className="text-xs text-red-400">{confirmPasswordStatus.success === false ? '※ ' + confirmPasswordStatus.message : null}</span>
                         </div>
                     </div>
 
                     <div className="w-full">
-                        <input
-                            type="text"
-                            placeholder="이메일"
-                            ref={email}
-                            className={inputTextClass}
-                            onKeyUp={() => setEmailStatus(validateEmail(email.current.value))}
-                        ></input>
+                        <div className="w-full flex gap-1">
+                            <input
+                                type="text"
+                                placeholder="이메일"
+                                ref={email}
+                                className={inputTextClass}
+                                onKeyUp={() => setEmailStatus(validateEmail(email.current.value))}
+                            ></input>
+
+                            {/* 인증번호 전송 */}
+                            <button
+                                type="button"
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
+                                onClick={verifyHandler}
+                            >
+                                인증
+                            </button>
+
+                            {/* 인증번호 전송중 */}
+                            <button
+                                type="button"
+                                className={`w-[90px] h-[50px] flex justify-center items-center rounded bg-blue-400 text-sm font-medium text-white ${verify2}`}
+                            >
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" fill="#FFFFFF" opacity=".30"/>
+                                    <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" fill="#FFFFFF" className="spinner_ajPY"/>
+                                </svg>
+                            </button>
+
+                            {/* 인증번호 재전송 */}
+                            <button
+                                type="button"
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
+                                onClick={verifyHandler}
+                            >
+                                재전송
+                            </button>
+
+                            {/* 인증번호 전송 비활성화 */}
+                            <button
+                                type="button"
+                                className={`w-[90px] h-[50px] rounded bg-gray-400 text-sm font-medium text-white ${verify4}`}
+                            >
+                                인증
+                            </button>
+                        </div>
+
                         <div className="w-full flex justify-start">
                             {
                                 emailStatus.success ?
@@ -135,6 +262,44 @@ const JoinPage = () => {
                                         <></> :
                                         <span className="text-xs text-red-400">{'※ ' + emailStatus.message}</span>
                                     )
+                            }
+                        </div>
+                    </div>
+
+                    <div className={`w-full ${confirm}`}>
+                        <div className="w-full flex gap-1">
+                            <div className="relative w-full">
+                                <input
+                                    type="text"
+                                    placeholder="인증번호 6자리"
+                                    ref={verificationCode}
+                                    onKeyUp={() => setVerificationCodeStatus(validateVerificationCode(verificationCode.current.value))}
+                                    className={inputTextClass}
+                                ></input>
+
+                                {
+                                    timer &&
+                                    <span className="absolute inset-y-0 right-3 grid w-8 place-content-center text-red-400 text-xs">
+                                        <EmailTimer></EmailTimer>
+                                    </span>
+                                }
+                            </div>
+
+                            {/* 인증번호 확인 */}
+                            <button
+                                type="button"
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer`}
+                                onClick={confirmHandler}
+                            >
+                                확인
+                            </button>
+                        </div>
+
+                        <div className="w-full flex justify-start">
+                            {
+                                !verificationCodeStatus.success ?
+                                <span className="text-xs text-red-400">{verificationCodeStatus.message}</span> :
+                                <></>
                             }
                         </div>
                     </div>
@@ -155,7 +320,7 @@ const JoinPage = () => {
 
                     <input
                         type="submit"
-                        className="h-[50px] w-full rounded border border-blue-400 bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 hover:border-blue-500 cursor-pointer"
+                        className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
                         value="가입하기"
                     ></input>
                 </form>

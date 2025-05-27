@@ -100,17 +100,4 @@ public class ReviewServiceTest {
         reviewPage.getContent().forEach(System.out::println);
     }
 
-    @Test
-    public void getItemReviews() {
-        Long rentId = 1L;
-        Long itemId = 1L;
-        Pageable pageable = PageRequest.of(0, 10);
-
-        Page<ReviewDTO> reviews = reviewService.getReviewsByRentIdAndItemId(rentId, itemId, pageable);
-
-        Assertions.assertNotNull(reviews);
-        System.out.println("<< " + rentId + "샵의" + itemId + "번 아이템 리뷰 >>");
-        reviews.getContent().forEach(System.out::println);
-
-    }
 }

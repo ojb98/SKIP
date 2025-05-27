@@ -31,7 +31,7 @@ const RentUpdateForm=()=>{
         image3: useRef(),
     };
 
-    //카테고리 
+    //카테고리 불러오기
     useEffect(() => {
         const fetchCategories = async () => {
             try {

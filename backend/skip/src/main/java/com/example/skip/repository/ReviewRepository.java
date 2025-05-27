@@ -16,7 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByReservations_Rent_RentId(Long rentId, Pageable pageable);
 
     // 특정 렌탈샵 특정 아이템별 리뷰 조회
-    @Query("""
+   /* @Query("""
         SELECT DISTINCT r FROM Review r
         Join r.reservations res
         Join ReservationItems ri ON ri.reservations = res
@@ -25,10 +25,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     Page<Review> findByRentIdAndItemId(@Param("rentId") Long rentId,
                                        @Param("itemId") Long itemId,
-                                       Pageable pageable);
-    
+                                       Pageable pageable);*/
+
     // 리뷰 평점 평균
-    @Query("""
+/*    @Query("""
         SELECT AVG(r.rating)
         FROM Review r
         JOIN r.reservations res
@@ -37,6 +37,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         WHERE res.rent.rentId =:rentId AND i.itemId =:itemId
     """)
     Double findAverageRating(@Param("rentId") Long rentId,
-                             @Param("itemId") Long itemId);
+                             @Param("itemId") Long itemId);*/
 
 }

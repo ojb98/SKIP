@@ -101,7 +101,7 @@ public class ReviewService {
                 .map(ReviewDTO::new);
     }
     // 특정 렌탈샵 특정 아이템별 리뷰 조회
-    public Page<ReviewDTO> getReviewsByRentIdAndItemIdSorted(Long rentId, Long itemId, String sort, Pageable pageable) {
+/*    public Page<ReviewDTO> getReviewsByRentIdAndItemIdSorted(Long rentId, Long itemId, String sort, Pageable pageable) {
         Sort sorted;
         switch (sort) {
             case "high":
@@ -115,6 +115,6 @@ public class ReviewService {
         }
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorted);
         return reviewRepository.findByRentIdAndItemId(rentId, itemId, sortedPageable).map(ReviewDTO::new);
-    }
+    }*/
 
 }

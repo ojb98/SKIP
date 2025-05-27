@@ -76,3 +76,26 @@ export const validateEmail = email => {
         message: '사용 가능한 이메일입니다.'
     };
 }
+
+export const validateVerificationCode = verificationCode => {
+    const verificationCodeRegex = /^\d{6}$/;
+
+    if (verificationCode.length == 0) {
+        return {
+            success: false,
+            message: '인증번호를 입력해주세요.'
+        };
+    }
+
+    if (!verificationCodeRegex.test(verificationCode)) {
+        return {
+            success: false,
+            message: '6자리 번호를 입력해주세요.'
+        }
+    }
+
+    return {
+        success: true,
+        message: ''
+    };
+}

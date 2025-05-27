@@ -7,12 +7,12 @@ const RentInsertForm=()=>{
 
     //userId값 꺼내오기
     const profile = useSelector(state => state.loginSlice);
-    console.log(profile);
+    console.log("profile=====>",profile);
 
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        userId: profile.userId,
+        userId: profile.userId, 
         category: '',
         name: '',
         phone: '',
@@ -146,10 +146,10 @@ const RentInsertForm=()=>{
             return;
         }
 
-        //FormData 객체 생성
+        //FormData는 파일 업로드가 포함된 multipart/form-data 전송을 위해 사용
+        //텍스트 + 파일을 한 번에 보낼 수 있는 특수한 객체
         const submitData = new FormData();
 
-        
         for(const key in formData){
             submitData.append(key,formData[key]);
         }
