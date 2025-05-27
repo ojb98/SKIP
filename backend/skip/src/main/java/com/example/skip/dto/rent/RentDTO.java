@@ -1,17 +1,13 @@
-package com.example.skip.dto;
+package com.example.skip.dto.rent;
 
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.RentCategory;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
-import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor

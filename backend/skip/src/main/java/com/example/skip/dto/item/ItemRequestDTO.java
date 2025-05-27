@@ -1,12 +1,8 @@
-package com.example.skip.dto;
+package com.example.skip.dto.item;
 
-import com.example.skip.enumeration.ItemCategory;
-import com.example.skip.enumeration.YesNo;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor

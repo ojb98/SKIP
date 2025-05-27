@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.item;
 
 import com.example.skip.enumeration.YesNo;
 import lombok.AllArgsConstructor;

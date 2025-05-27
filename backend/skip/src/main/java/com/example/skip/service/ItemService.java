@@ -1,10 +1,8 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.ItemRequestDTO;
-import com.example.skip.dto.ItemRequestDTO.DetailGroup;
-import com.example.skip.dto.ItemRequestDTO.SizeStock;
-import com.example.skip.dto.ItemResponseDTO.ItemDetailDTO;
-import com.example.skip.dto.ItemResponseDTO;
+import com.example.skip.dto.item.*;
+import com.example.skip.dto.item.ItemRequestDTO.DetailGroup;
+import com.example.skip.dto.item.ItemRequestDTO.SizeStock;
 import com.example.skip.entity.Item;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Rent;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -75,13 +72,16 @@ public class ItemService {
 
         // 1. items 리스트를 스트림으로 변환
         return items.stream()
-                // Item → ItemResponseDTO로 변환
                 .map(item -> {
-                    // 2. 각 Item에 대해 내부 ItemDetail을 ItemDetailDTO로 변환
-                    List<ItemDetailDTO> activeDetails = item.getItemDetails().stream()
+                    // 활성 상태의 디테일만 추림
+                    List<ItemResponseDTO.ItemDetailDTO> sortedDetailList = item.getItemDetails().stream()
                             //비활성화된 상세정보는 제외 ('Y'인 경우만)
                             .filter(d -> d.getIsActive() == YesNo.Y)
-                            .map(d -> new ItemDetailDTO(
+                            // 사이즈 → 렌트 시간 기준 정렬 (복합 정렬)
+                            .sorted(Comparator
+                                    .comparing(ItemDetail::getSize, Comparator.nullsLast(String::compareTo))
+                                    .thenComparing(ItemDetail::getRentHour, Comparator.nullsLast(Integer::compareTo)))
+                            .map(d -> new ItemResponseDTO.ItemDetailDTO(
                                     d.getItemDetailId(),
                                     d.getRentHour(),
                                     d.getPrice(),
@@ -89,8 +89,8 @@ public class ItemService {
                                     d.getTotalQuantity(),
                                     d.getStockQuantity(),
                                     d.getIsActive()
-                            )).toList();
-
+                            ))
+                            .toList();
 
                     // 3. 최종적으로 ItemResponseDTO로 감싸서 List<ItemResponseDTO>로 반환
                     return new ItemResponseDTO(
@@ -98,11 +98,10 @@ public class ItemService {
                             item.getName(),
                             item.getCategory().name(),
                             item.getImage(),
-                            activeDetails
+                            sortedDetailList
                     );
                 }).toList();
     }
-
 
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
@@ -123,62 +122,137 @@ public class ItemService {
 
 
     // 장비 + 디테일 수정하기 위한 조회
-    public ItemRequestDTO getItemByRent(Long rentId, Long itemId) {
+    public ItemConfirmDTO getItemByRent(Long rentId, Long itemId) {
         Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
                 .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
 
-        Map<String, ItemRequestDTO.DetailGroup> groupedDetails = new LinkedHashMap<>();
+        Map<String, ItemConfirmDTO.DetailGroups> groupedDetails = new LinkedHashMap<>();
+        Map<String, ItemConfirmDTO.SizeStocks> sizeStockMap = new LinkedHashMap<>();
 
-        item.getItemDetails().stream()
-                .filter(d -> d.getIsActive() == YesNo.Y)
-                .forEach(detail -> {
-                    String groupKey = detail.getRentHour() + "-" + detail.getPrice();
+        for (ItemDetail detail : item.getItemDetails()) {
+            if (detail.getIsActive() != YesNo.Y) continue;
 
-                    ItemRequestDTO.SizeStock newStock = new ItemRequestDTO.SizeStock();
-                    newStock.setSize(detail.getSize());
-                    newStock.setTotalQuantity(detail.getTotalQuantity());
-                    newStock.setStockQuantity(detail.getStockQuantity());
+            // rentHour + price 조합으로 그룹화
+            String groupKey = detail.getRentHour() + "-" + detail.getPrice();
+            if (!groupedDetails.containsKey(groupKey)) {
+                ItemConfirmDTO.DetailGroups group = new ItemConfirmDTO.DetailGroups();
+                group.setItemDetailId(detail.getItemDetailId());
+                group.setRentHour(detail.getRentHour());
+                group.setPrice(detail.getPrice());
+                groupedDetails.put(groupKey, group);
+            }
 
-                    // 그룹이 존재하면 중복 검사 후 추가
-                    if (groupedDetails.containsKey(groupKey)) {
-                        ItemRequestDTO.DetailGroup group = groupedDetails.get(groupKey);
-                        boolean isDuplicate = group.getSizeStockList().stream()
-                                .anyMatch(s -> s.getSize().equals(newStock.getSize())
-                                        && s.getTotalQuantity() == newStock.getTotalQuantity()
-                                        && s.getStockQuantity() == newStock.getStockQuantity());
+            // size 기준으로 중복 없는 사이즈 수량 정보 수집
+            String sizeKey = detail.getSize();
+            if (!sizeStockMap.containsKey(sizeKey)) {
+                ItemConfirmDTO.SizeStocks stock = new ItemConfirmDTO.SizeStocks();
+                stock.setSize(detail.getSize());
+                stock.setTotalQuantity(detail.getTotalQuantity());
+                stock.setStockQuantity(detail.getStockQuantity());
+                sizeStockMap.put(sizeKey, stock);
+            }
+        }
 
-                        if (!isDuplicate) {
-                            group.getSizeStockList().add(newStock);
-                        }
-                    } else {
-                        // 새 그룹 생성
-                        ItemRequestDTO.DetailGroup group = new ItemRequestDTO.DetailGroup();
-                        group.setRentHour(detail.getRentHour());
-                        group.setPrice(detail.getPrice());
-                        List<ItemRequestDTO.SizeStock> sizeList = new ArrayList<>();
-                        sizeList.add(newStock);
-                        group.setSizeStockList(sizeList);
-
-                        groupedDetails.put(groupKey, group);
-                    }
-                });
-
-        // 최종 DTO 생성
-        ItemRequestDTO dto = new ItemRequestDTO();
+        // DTO 생성
+        ItemConfirmDTO dto = new ItemConfirmDTO();
         dto.setItemId(item.getItemId());
         dto.setRentId(item.getRent().getRentId());
         dto.setCategory(item.getCategory().name());
         dto.setName(item.getName());
         dto.setDetailList(new ArrayList<>(groupedDetails.values()));
+        dto.setSizeStockList(new ArrayList<>(sizeStockMap.values()));
 
+        System.out.println("서비스 조회 ===> " +dto);
         return dto;
     }
 
+//    // 장비 + 디테일 수정
+//    public void updateItemByDetail(ItemConfirmDTO dto) {
+//        // 1. 기존 아이템 조회
+//        Item item = itemRepository.findById(dto.getItemId())
+//                .orElseThrow(() -> new EntityNotFoundException("Item not found"));
+//
+//        // 2. 기본 정보 업데이트
+//        item.setName(dto.getName());
+//        item.setCategory(ItemCategory.valueOf(dto.getCategory()));
+//
+//        // 3. 이미지 처리 (교체 또는 유지)
+//        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
+//        item.setImage(updatedImageUrl);
+//
+//        // 4. 기존 상세 정보 초기화
+//        item.getItemDetails().clear();
+//
+//        System.out.println("dto.getDetailList()=========>"+dto.getDetailList());
+//
+//
+////        for(ItemDetailDTO d : dto.getItemDetails()) {
+////            ItemDetail detail = ItemDetail.builder()
+////                    .item(item)
+////                    .rentHour(d.getRentHour())
+////                    .price(d.getPrice())
+////                    .size(d.getSize())
+////                    .totalQuantity(d.getTotalQuantity())
+////                    .stockQuantity(d.getStockQuantity())
+////                    .isActive(YesNo.Y)
+////                    .build();
+////
+////            item.getItemDetails().add(detail);
+////        }
+//
+//        // 7. 저장
+//        itemRepository.save(item);
+//    }
+
+    public void updateItemByDetail(ItemConfirmDTO dto) {
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.getItemDetails().clear(); // 기존 데이터 초기화
+
+        List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
+        List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
+
+        if (detailList != null && sizeList != null) {
+            for (ItemConfirmDTO.DetailGroups detail : detailList) {
+                for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                    ItemDetail itemDetail = ItemDetail.builder()
+                            .item(item)
+                            .rentHour(detail.getRentHour())
+                            .price(detail.getPrice() != null ? detail.getPrice() : 0)
+                            .size(sizeStock.getSize())
+                            .totalQuantity(sizeStock.getTotalQuantity() != null ? sizeStock.getTotalQuantity() : 0)
+                            .stockQuantity(sizeStock.getStockQuantity() != null ? sizeStock.getStockQuantity() : 0)
+                            .isActive(YesNo.Y)
+                            .build();
+                    item.getItemDetails().add(itemDetail);
+                }
+            }
+        }
+
+        itemRepository.save(item);
+    }
 
 
+    public void addItemOption(Long itemId, OptionRequestDTO dto){
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다: " + itemId));
 
+        for (SizeStockDTO sizeDto : dto.getSizeStocks()) {
+            ItemDetail detail = new ItemDetail();
 
-    // 장비 + 디테일 수정
+            detail.setItem(item);
+            detail.setRentHour(dto.getRentHour());
+            detail.setPrice(dto.getPrice());
 
+            detail.setSize(sizeDto.getSize());
+            detail.setTotalQuantity(sizeDto.getTotalQuantity());
+            detail.setStockQuantity(sizeDto.getStockQuantity());
 
+            detail.setIsActive(YesNo.Y);  // 기본 활성 상태 설정
+
+            itemDetailRepository.save(detail);
+        }
+
+    }
 }

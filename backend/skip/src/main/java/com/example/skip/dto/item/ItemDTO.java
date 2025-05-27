@@ -1,13 +1,11 @@
-package com.example.skip.dto;
+package com.example.skip.dto.item;
 
 import com.example.skip.entity.Item;
 import com.example.skip.entity.Rent;
 import com.example.skip.enumeration.ItemCategory;
-import com.example.skip.enumeration.YesNo;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @NoArgsConstructor

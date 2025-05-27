@@ -1,7 +1,7 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.RentDTO;
-import com.example.skip.dto.RentRequestDTO;
+import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserStatus;

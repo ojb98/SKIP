@@ -1,9 +1,6 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.ItemDelDTO;
-import com.example.skip.dto.ItemRequestDTO;
-import com.example.skip.dto.ItemResponseDTO;
-import com.example.skip.entity.Item;
+import com.example.skip.dto.item.*;
 import com.example.skip.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,7 +33,7 @@ public class ItemController {
         return new ResponseEntity<>(itemId, HttpStatus.OK);
     }
 
-    //장비 + 디테일 리스트 조회
+    //리스트 조회(장비 + 디테일)
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
@@ -52,11 +49,32 @@ public class ItemController {
         return new ResponseEntity<>("deletedItemDetailSuccess",HttpStatus.OK);
     }
 
+    //장비 수정하기 위한 조회
     @GetMapping("/{rentId}/{itemId}")
-    public ResponseEntity<ItemRequestDTO> getItem(@PathVariable("rentId") Long rentId,
+    public ResponseEntity<ItemConfirmDTO> getItem(@PathVariable("rentId") Long rentId,
                                                   @PathVariable("itemId") Long itemId){
-        ItemRequestDTO dto = itemService.getItemByRent(rentId,itemId);
+        ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
         return new ResponseEntity<>(dto,HttpStatus.OK);
+    }
+
+    //장비 수정
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateItem(@RequestPart("itemRequest") ItemConfirmDTO dto,
+                                             @RequestPart(value = "image", required = false) MultipartFile image){
+
+        dto.setImage(image);
+        itemService.updateItemByDetail(dto);
+        return new ResponseEntity<>("UpdateItemSuccess",HttpStatus.OK);
+
+    }
+
+    //장비 옵션 추가
+    @PostMapping("/optionAdd/{itemId}")
+    public ResponseEntity<String> addItemOption(@PathVariable Long itemId,
+                                                @RequestBody OptionRequestDTO dto){
+        itemService.addItemOption(itemId, dto);
+        return new ResponseEntity<>("AddOptionItemSuccess",HttpStatus.OK);
+
     }
 
 }

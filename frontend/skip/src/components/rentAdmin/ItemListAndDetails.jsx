@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import '../../css/itemList.css';
+import useCategoryOptions from "../../hooks/useCategoryoptions";
 
 const ItemListAndDetails=()=>{
 
@@ -15,6 +16,33 @@ const ItemListAndDetails=()=>{
 
     //다른 페이지로 이동할 때 사용 (수정)
     const navigate=useNavigate();
+
+    // 모달 관련 상태
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalItemId, setModalItemId] = useState(null);
+    const [modalItemCategory, setModalItemCategory] = useState(null);
+    const { sizes, hours } = useCategoryOptions(modalItemCategory);
+
+    // 옵션 리스트 상태 (첫번째 항목은 기본 입력폼)
+    const [newOptions, setNewOptions] = useState([
+        { rentHour: '', price: '' }
+    ]);
+
+    // 사이즈별 재고 입력 상태
+    const [sizeStockInputs, setSizeStockInputs] = useState({});
+
+
+    // 사이즈/재고 입력 변경 핸들러
+    const handleSizeStockChange = (size, field, value) => {
+        setSizeStockInputs(prev => ({
+        ...prev,
+        [size]: {
+            ...prev[size],
+            [field]: value
+        }
+        }));
+    };
+
 
     //카테고리 한글명 매핑 가져오기
     const fetchCategoryMap = async () => {
@@ -144,6 +172,89 @@ const ItemListAndDetails=()=>{
         }
     }
 
+
+    //모달 제어
+
+    // 모달 열기
+    const openModal = (itemId, category) => {
+        setModalItemId(itemId);
+        setModalItemCategory(category);
+        setNewOptions([{ rentHour: '', price: '' }]);
+        setSizeStockInputs({});
+        setIsModalOpen(true);
+    };
+
+    // 모달 닫기
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setModalItemId(null);
+        setModalItemCategory(null);
+    };
+
+    // 옵션 추가
+    const addEmptyTimePriceOption = () => {
+        const base = newOptions[0];
+        if (!base.rentHour || !base.price) {
+        alert("시간과 가격을 입력해주세요.");
+        return;
+        }
+        setNewOptions(prev => [...prev, { rentHour: base.rentHour, price: base.price }]);
+
+        
+    };
+    
+
+
+    // 옵션 변경 핸들러
+    const handleOptionChange = (index, field, value) => {
+        setNewOptions(prev => {
+        const copy = [...prev];
+        copy[index][field] = value;
+        return copy;
+        });
+    };
+
+    // 옵션 삭제
+    const removeOption = (index) => {
+        setNewOptions(prev => prev.filter((_, i) => i !== index));
+    };
+
+
+    // 저장
+    const handleFinalSave = async () => {
+        for (const option of newOptions) {
+        if (!option.rentHour || !option.price) {
+            alert("모든 시간/가격 조합을 확인해주세요.");
+            return;
+        }
+        }
+
+        const sizeStocks = Object.entries(sizeStockInputs)
+            .filter(([size]) => size !== 'selectedSize')  // selectedSize 제외
+            .map(([size, stock]) => ({
+                size,
+                totalQuantity: Number(stock.totalQuantity || 0),
+                stockQuantity: Number(stock.stockQuantity || 0),
+            }));
+
+        try {
+        for (const option of newOptions) {
+            await axios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {
+            rentHour: Number(option.rentHour),
+            price: Number(option.price),
+            sizeStocks,
+            });
+        }
+        alert("옵션이 저장되었습니다.");
+        closeModal();
+        fetchItems();
+        } catch (error) {
+        console.error("옵션 저장 실패:", error);
+        alert("옵션 저장 중 오류가 발생했습니다.");
+        }
+    };
+
+
     return(
         <div className="item-list-container">
             <h1 className="top-subject">장비 목록</h1>
@@ -186,6 +297,11 @@ const ItemListAndDetails=()=>{
                     <img src={`http://localhost:8080${item.image}`}  width="150" />
                     
                     <ul className="button-list">
+                        <li>
+                            {/* 옵션 추가 버튼 */}
+                            <button className="add-option-btn" onClick={() => openModal(item.itemId,item.category)}>옵션 추가</button>
+                        </li>
+
                         <li>
                             {/* 수정버튼 */}
                             <button className="update-btn" onClick={() => goToUpdate(item.itemId)}>수정</button>
@@ -253,7 +369,111 @@ const ItemListAndDetails=()=>{
                 </div>
                 ))
             )}
+
+{/* 옵션 추가 모달 */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-subject">옵션 추가</h2>
+            <div className="model-size-group">
+              <select
+                value={newOptions[0].rentHour}
+                onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
+              >
+                <option value="">시간 선택</option>
+                {Array.isArray(hours) && hours.map(hour => (
+                  <option key={hour} value={hour}>{hour}시간</option>
+                ))}
+              </select>
+
+              <input
+                type="number"
+                placeholder="가격 (숫자만 입력)"
+                value={newOptions[0].price}
+                onChange={e => handleOptionChange(0, 'price', e.target.value)}
+                style={{ marginLeft: 8 }}
+              />
+
+              <button type="button" onClick={addEmptyTimePriceOption} className="modal-add-btn">
+                    추가
+              </button>
+            </div>
+
+            <div className="model-add-group">
+            {newOptions.length > 1 && (
+              <div style={{ marginBottom: 20 }}>
+                <h4>추가된 시간/가격</h4>
+                <ul>
+                  {newOptions.slice(1).map((opt, idx) => (
+                    <li key={idx}>
+                      {opt.rentHour}시간 - {opt.price}원
+                      <button onClick={() => removeOption(idx + 1)} className="modal-del-btn">삭제</button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            </div>
+
+            <table className="model-size-table">
+              <thead className="model-thead">
+                <tr>
+                  <th>사이즈</th>
+                  <th>총 수량</th>
+                  <th>재고 수량</th>
+                </tr>
+              </thead>
+             <tbody className="model-tbody">
+                <tr>
+                    <td>
+                    <select
+                        value={sizeStockInputs.selectedSize || ''}
+                        onChange={e => {
+                        const selectedSize = e.target.value;
+                        // 사이즈 선택 시 선택된 사이즈만 상태에 저장
+                        setSizeStockInputs(prev => ({
+                            selectedSize,
+                            [selectedSize]: prev[selectedSize] || { totalQuantity: '', stockQuantity: '' },
+                        }));
+                        }}
+                    >
+                        <option value="">사이즈 선택</option>
+                        {sizes.map(size => (
+                        <option key={size} value={size}>{size}</option>
+                        ))}
+                    </select>
+                    </td>
+                    <td>
+                    <input
+                        type="number"
+                        placeholder="숫자만 입력"
+                        value={sizeStockInputs[sizeStockInputs.selectedSize]?.totalQuantity || ''}
+                        onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'totalQuantity', e.target.value)}
+                        disabled={!sizeStockInputs.selectedSize} // 사이즈 선택 전 비활성화
+                    />
+                    </td>
+                    <td>
+                    <input
+                        type="number"
+                        placeholder="숫자만 입력"
+                        value={sizeStockInputs[sizeStockInputs.selectedSize]?.stockQuantity || ''}
+                        onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'stockQuantity', e.target.value)}
+                        disabled={!sizeStockInputs.selectedSize} // 사이즈 선택 전 비활성화
+                    />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div className="modal-actions">
+              <button type="button" onClick={handleFinalSave} className="option-save-btn">옵션 저장</button>
+              <button type="button" onClick={closeModal} className="option-cancel-btn">취소</button>
+            </div>
+          </div>
         </div>
-    )
-}
+      )}
+
+    </div>
+  );
+};
 export default ItemListAndDetails;

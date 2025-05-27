@@ -1,8 +1,8 @@
 package com.example.skip.service;
 
 import com.example.skip.config.BizApiConfig;
-import com.example.skip.dto.BizApiDTO;
-import com.example.skip.dto.BizApiResponse;
+import com.example.skip.dto.rent.BizApiDTO;
+import com.example.skip.dto.rent.BizApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

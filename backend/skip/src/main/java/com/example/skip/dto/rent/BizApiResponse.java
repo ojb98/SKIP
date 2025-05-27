@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.rent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

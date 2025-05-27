@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useCategoryOptions from "../../hooks/useCategoryoptions";
+import '../../css/itemInsertForm.css';
 
 const ItemInsertForm=()=>{
 
@@ -186,7 +187,7 @@ const ItemInsertForm=()=>{
                 fileRef.current.value = null;
             }
         })
-        .catch(err => {
+        .catch(err => { 
             console.log("장비등록 실패", err);
                 alert("장비등록 실패했습니다.");
         });
@@ -194,65 +195,72 @@ const ItemInsertForm=()=>{
 
     return (
         <div className="form-container">
-            <h1>장비 등록</h1>
+            <h1 className="top-subject">장비 등록</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" name="rentId" value={formData.rentId} />
 
-                <div className="form-group">
-                    <label htmlFor="category">카테고리</label>
-                    <select name="category" id="category" value={formData.category} onChange={handleFormChange}>
-                        <option value="">카테고리를 선택하세요</option>
-                        {
-                            categories.map((cat, index) => (
-                            <option key={index} value={cat.code}>{cat.label}</option>
-                            ))
-                        }
-                    </select>
-                </div>
 
-                <div className="form-group">
-                    <label htmlFor="name">장비명</label>
-                    <input type="text" id="name" name="name" value={formData.name} onChange={handleFormChange} placeholder="일반의류 or 고급의류" required/>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="image">이미지</label>
-                    <input type="file" id="image" name="image" ref={fileRef} accept="image/*" />
-                </div>
-
-                <h1>대여 옵션</h1>
-
-                <div className="form-group">
-                    {
-                        
-                        timePrices.map((tp, idx) => (
-                        <div key={idx}>
-                            <label htmlFor="rentHour">시간</label>
-                            <select name="rentHour" value={tp.rentHour} onChange={(e) => handleTimePriceChange(idx, e)}>
-                            <option value="">시간 선택</option>
+                <div className="item-group">
+                    <div className="form-group">
+                        <label htmlFor="category">카테고리</label>
+                        <select name="category" id="category" value={formData.category} onChange={handleFormChange}>
+                            <option value="">카테고리를 선택하세요</option>
                             {
-                                selectedOptions.hours.map(hour => (
-                                    <option key={hour} value={hour}>{hour}시간</option>
+                                categories.map((cat, index) => (
+                                <option key={index} value={cat.code}>{cat.label}</option>
                                 ))
                             }
-                            </select>
-                            <label htmlFor="price">가격</label>
-                            <input type="number" name="price" value={tp.price} onChange={(e) => handleTimePriceChange(idx, e)} placeholder="가격"/>
-                            <button type="button" className="delete-btn" onClick={() => removeTimePrice(idx)}>시간 삭제</button>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="name">장비명</label>
+                        <input type="text" id="name" name="name" value={formData.name} onChange={handleFormChange} placeholder="일반의류 or 고급의류" required/>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="image">이미지</label>
+                        <input type="file" id="image" name="image" ref={fileRef} accept="image/*" />
+                    </div>
+                </div>
+
+
+                <h2 className="sub-subject">대여 옵션</h2>
+                <div className="time-group">
+                    {
+                        timePrices.map((tp, idx) => (
+                        <div key={idx}>
+                            <div className="form-inline-row">
+                                <label htmlFor="rentHour">시간</label>
+                                <select name="rentHour" value={tp.rentHour} onChange={(e) => handleTimePriceChange(idx, e)}>
+                                <option value="">시간 선택</option>
+                                {
+                                    selectedOptions.hours.map(hour => (
+                                        <option key={hour} value={hour}>{hour}시간</option>
+                                    ))
+                                }
+                                </select>
+                                <label htmlFor="price">가격</label>
+                                <input type="number" name="price" value={tp.price} onChange={(e) => handleTimePriceChange(idx, e)} placeholder="가격"/>
+                                <button type="button" className="delete-btn" onClick={() => removeTimePrice(idx)}>시간 삭제</button>
+                            </div>
                         </div>
                         ))
                     }
                 </div>
-                    <button type="button" onClick={addTimePrice}>+ 시간 추가</button>
+                    <div className="add-group">
+                        <button type="button" onClick={addTimePrice} className="add-btn">+ 시간 추가</button>
+                    </div>
+                    
 
                     <hr/><br/>
 
-                    <h2>사이즈 / 수량</h2>
-                    <table>
-                        <thead>
+                    <h2 className="sub-subject">사이즈 / 수량</h2>
+                    <table className="item-table">
+                        <thead className="item-thead">
                             <tr><th>사이즈</th><th>수량</th><th>삭제</th></tr>
                         </thead>
-                        <tbody>
+                        <tbody className="item-tbody">
                             {
                                 commonSizeStocks.map((s, idx) => (
                                 <tr key={idx}>
@@ -267,7 +275,7 @@ const ItemInsertForm=()=>{
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" value={s.quantity} onChange={(e) => handleSizeStockChange(idx, "quantity", e.target.value)}/>
+                                        <input type="number" value={s.quantity} onChange={(e) => handleSizeStockChange(idx, "quantity", e.target.value)} required/>
                                     </td>
                                     <td>
                                         <button type="button" className="delete-btn" onClick={() => removeSizeStock(idx)}>삭제</button>
@@ -277,11 +285,13 @@ const ItemInsertForm=()=>{
                             }
                         </tbody>
                     </table>
-                    <button type="button" onClick={addSizeStock}>+ 사이즈 추가</button>
-           
+                    <div className="add-group">
+                        <button type="button" onClick={addSizeStock} className="size-add-btn">+ 사이즈 추가</button>
+                    </div>
+                
                     <hr/><br/>
 
-                <button type="submit">장비 등록</button>
+                <button type="submit" className="add-btn">장비 등록</button>
             </form>
         </div>
     )
