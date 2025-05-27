@@ -67,7 +67,7 @@ function App() {
 
 
                         {/* 렌탈샵 상세 페이지 */}
-                        <Route path="/rent/detail" element={<RentalshopPage/>}></Route>
+                        <Route path="/rent/detail/:rentId" element={<RentalshopPage/>}></Route>
                         <Route path="/rent/product/:rentId/:itemId" element={<ProductPage/>}></Route>
 
                     </Route>

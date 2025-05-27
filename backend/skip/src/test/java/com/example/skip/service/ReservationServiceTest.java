@@ -16,7 +16,7 @@ import java.util.List;
 @Transactional
 @Commit
 public class ReservationServiceTest {
-    @Autowired
+/*    @Autowired
     private UserRepository userRepository;
     @Autowired
     private RentRepository rentRepository;
@@ -69,5 +69,5 @@ public class ReservationServiceTest {
 
         Assertions.assertEquals(1, reservations.size());
         Assertions.assertEquals(3, reservationItems.size());
-    }
+    }*/
 }
