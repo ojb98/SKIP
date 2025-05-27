@@ -7,6 +7,10 @@ const LoginLayout = () => {
                 <h1 className="my-10 text-5xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
 
                 <Outlet></Outlet>
+
+                <div className="my-10 text-xs text-gray-700">
+                    ©Skip Corp. All rights reserved.
+                </div>
             </div>
         </>
     )
