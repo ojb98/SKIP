@@ -19,10 +19,26 @@ export const isUser = async req => {
     return data;
 }
 
+export const verifyEmail = async req => {
+    return caxios.post(`/user/email/verify`, req).then(res => res.data);
+}
+
+export const confirmCode = async req => {
+    const data = await caxios.post(`/user/email/confirm`, req).then(req => req.data);
+
+    return data;
+}
+
 export const login = async req => {
     const data = await caxios.post(`/user/login`, req).then(res => {
         return res.data;
     });
+
+    return data;
+}
+
+export const socialLogin = async req => {
+    const data = await caxios.get(`/user/login/${req}`).then(res=> res.data);
 
     return data;
 }

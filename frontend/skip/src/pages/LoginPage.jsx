@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../api/userApi";
+import { login, socialLogin } from "../api/userApi";
 import { useDispatch } from "react-redux";
 import { setProfile } from "../slices/loginSlice";
 
@@ -42,10 +42,16 @@ const LoginPage = () => {
         });
     }
 
+    const socialLoginHandler = client => {
+        window.location.href = `http://localhost:8080/oauth2/authorization/${client}`;
+    }
+
     return (
         <>
-            <div className="w-[350px]">
-                <form className="flex flex-col items-center gap-7" onSubmit={loginHandler}>
+            <div className="w-[350px] flex flex-col items-center">
+                <h1 className="my-10 text-5xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
+
+                <form className="w-full flex flex-col items-center gap-7" onSubmit={loginHandler}>
                     <input
                         type="text"
                         placeholder="아이디"
@@ -58,39 +64,15 @@ const LoginPage = () => {
                         placeholder="비밀번호"
                         className={`${input_size} ${input_text}`}
                         ref={password}
-                    ></input>
+                    ></input>   
 
-                    <div className={`w-full ${loginError ? 'flex' : 'hidden'} justify-start`}>
-                        <span className="text-xs text-red-400">{loginError}</span>
-                    </div>
-
-                    <div className="flex justify-center gap-5">
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="auto"
-                            ></input>
-                            <label
-                                htmlFor="auto"
-                                className="text-sm text-gray-500"
-                            >로그인 유지</label>
-                        </div>
-
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="save"
-                            ></input>
-                            <label
-                                htmlFor="save"
-                                className="text-sm text-gray-500"
-                            >아이디 저장</label>
-                        </div>
+                    <div className={`w-full ${loginError ? 'flex' : 'hidden'} justify-start -my-3`}>
+                        <span className="text-xs text-red-400">※ {loginError}</span>
                     </div>
 
                     <input
                         type="submit"
-                        className={`${input_size} rounded border border-blue-400 bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 hover:border-blue-500 cursor-pointer`}
+                        className={`${input_size} rounded mt-3 bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
                         value="로그인"
                     ></input>
 
@@ -101,6 +83,32 @@ const LoginPage = () => {
                         <li className="cursor-default">|</li>
                         <li className="hover:text-black"><Link to={"/signup"}>회원가입</Link></li>
                     </ul>
+
+                    <span className="w-full my-3 flex items-center">
+                        <span className="h-px flex-1 bg-gray-300"></span>
+
+                        <span className="shrink-0 px-4 text-sm text-gray-500 cursor-default">OR</span>
+
+                        <span className="h-px flex-1 bg-gray-300"></span>
+                    </span>
+
+                    <button
+                        type="button"
+                        className={`${input_size} flex justify-center gap-1 items-center rounded bg-[#03c75a] hover:bg-[#02be57] cursor-pointer`}
+                        onClick={() => socialLoginHandler('naver')}
+                    >
+                        <img src="/images/naver.svg" className="-ml-2 w-10 h-10"></img>
+                        <span className="text-white font-[NanumSquareNeo] font-medium">네이버 로그인</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className={`${input_size} flex justify-center gap-3 items-center rounded bg-[#FEE500] hover:bg-yellow-300 cursor-pointer`}
+                        onClick={() => socialLoginHandler('kakao')}
+                    >
+                        <img src="/images/kakao.svg" className="w-6 h-6"></img>
+                        <span className="text-black/85 font-[NanumSquareNeo] font-medium">카카오 로그인</span>
+                    </button>
                 </form>
             </div>
         </>

@@ -72,7 +72,7 @@ const RentList=()=>{
                             return(
                                 <tr key={r.rentId} onClick={()=>navigate(`/rentAdmin/detail/${r.rentId}`)} className="clickable-row">
                                     <td>{index + 1}</td>
-                                    <td><img src={`http://localhost:8080${r.thumbnail}`} /></td>
+                                    <td><img className="rent-img" src={`http://localhost:8080${r.thumbnail}`} /></td>
                                     <td>{r.name}</td>
                                     <td>{r.phone}</td>
                                     <td>{r.streetAddress}</td>

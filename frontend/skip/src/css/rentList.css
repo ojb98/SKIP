@@ -45,8 +45,9 @@
     cursor: pointer;
 }
 
-/* 이미지 썸네일 */
-.list-tbody img {
+
+/* 이미지 썸네일 크기 및 스타일 */
+.rent-img {
     width: 100px;
     height: auto;
     object-fit: cover;
@@ -93,4 +94,5 @@
 
 .delete-btn:hover {
     background-color: #e53935;
+
 }

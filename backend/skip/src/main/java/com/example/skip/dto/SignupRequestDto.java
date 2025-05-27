@@ -42,11 +42,13 @@ public class SignupRequestDto {
     @Email(message = "이메일 형식이 올바르지 않습니다.", regexp = "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,10}$")
     private String email;
 
+    private boolean isVerified;
+
     private String phone;
 
 
     public UserDto toUserDto() {
         return new UserDto(null, username, password, name, email, phone,
-                UserSocial.NONE, Set.of(UserRole.USER.name()), UserStatus.APPROVED, null, null);
+                UserSocial.NONE, Set.of(UserRole.USER.name()), UserStatus.APPROVED, null, null, name);
     }
 }
