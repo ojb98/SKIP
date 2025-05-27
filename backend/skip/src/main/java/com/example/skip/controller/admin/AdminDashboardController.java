@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,7 +25,18 @@ public class AdminDashboardController {
         return ResponseEntity.ok(adminDashboardService.getSummary(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
-    
+    @GetMapping("/sales-list")
+    public ResponseEntity<List<?>> getSalesList(
+            @RequestParam("atStart") String startDate,
+            @RequestParam("atEnd") String endDate
+    ) {
+//        // startDate와 endDate를 이용해 서비스에서 매출 리스트 가져오기
+//        List<SalesDto> sales = salesService.getSalesBetween(startDate, endDate);
+        List<?> list= null;
+        return ResponseEntity.ok(list);
+
+    }
+
     @GetMapping("/sales-chart-data")
     public ResponseEntity<Map<String, Object>> getSalesChartData(
             @RequestParam(required = false) String atStart,

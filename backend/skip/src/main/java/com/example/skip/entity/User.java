@@ -32,7 +32,6 @@ public class User {
     private String password;
 
     private String name;
-    private String nickname;
 
     private String email;
 

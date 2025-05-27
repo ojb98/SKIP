@@ -6,7 +6,7 @@ Chart.register(...registerables);
 
 const SalesCategoryChart = ({ categoryData }) => {
   const data = {
-    labels: ["스키", "보드", "장비", "의류", "기타"],
+    labels: ["스키", "보드", "장비", "의류", ""],
     datasets: [
       {
         data: categoryData || [100, 200, 150, 250, 300],

@@ -8,15 +8,16 @@ import AdminPagination from './AdminPagenation';
     const [loading, setLoading] = useState(true);
     const [selectedUser, setSelectedUser] = useState(null);
     const [filter, setFilter] = useState("username");
-    const [keyword, setKeyword] = useState("");
-    const [user5Reviews, setUser5Reviews] = useState(null);
-    const [user5Purchases, setUser5Purchases] = useState(null);
+    const [keyword, setKeyword] = useState("");        
     const [searchedUsers, setSearchedUsers] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [sortField, setSortField] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
-
+    const [user5Activities, setUser5Activites] = useState({
+      user5Reviews: [],
+      user5Purchases: [],
+    });
     const totalPages = Math.ceil(users.length / pageSize)
     const pageGroupSize = 5
     const currentGroup = Math.floor((currentPage - 1) / pageGroupSize)
@@ -28,11 +29,13 @@ import AdminPagination from './AdminPagenation';
     )
 
     const handleRowClick = (user) => {
-      if(selectedUser == null || selectedUser != user){
-        setSelectedUser(user);
-      }else if(selectedUser == user){
+      if (!user || selectedUser?.userId === user.userId) {
         setSelectedUser(null);
-      }      
+        setUser5Activites({ user5Reviews: [], user5Purchases: [] });
+        return;
+      }
+      setSelectedUser(user);
+      findUser5Activity(user.userId);
     };
 
     const handleSearch = () =>{
@@ -82,21 +85,10 @@ import AdminPagination from './AdminPagenation';
       }
     }
 
-    const findUser5Reviews = async (userId) => {
+    const findUser5Activity = async (userId) => {
       try{
-        const response = await axios.get(`/api/users/find-users-5reviews/${userId}`);
-        setUsers(response.data);
-      } catch (error){
-        console.error('사용자 데이터를 불러오는 데 실패했습니다.',error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    const findUser5Purchases = async (userId) => {
-      try{
-        const response = await axios.get(`/api/users/find-users-5purchases/${userId}`);
-        setUsers(response.data);
+        const response = await axios.get(`/api/users/find-users-recent-activity/${userId}`);
+        setUser5Activites(response.data);
       } catch (error){
         console.error('사용자 데이터를 불러오는 데 실패했습니다.',error);
       } finally {
@@ -222,17 +214,51 @@ import AdminPagination from './AdminPagenation';
             </div>
 
             <div className="user-activity">
-              <h4>⭐ 최근 리뷰</h4>
-              <p>...데이터 연동 예정...</p>
+              <h4>🏂 최근 리뷰</h4>
+              {user5Activities?.user5Reviews?.length > 0 && (
+              <ul>
+                {user5Activities?.user5Reviews?.map((review, idx)=> (
+                  <li key={idx} style={{display:"flex"}}>
+                    <div>
+                      {review.createdAt} 에 작성함 ⭐<strong> {review.rating}</strong><br />
+                      {review.content} 
+                    </div>
+                    <div>
+                      <img src={review.img} style={{ width: '100px', height: 'auto' }}/>
+                    </div>
+                  </li>                  
+                ))}
+              </ul>
+              )}
             </div>
 
             <div className="user-activity">
               <h4>📃 결제 내역</h4>
-              <p>...데이터 연동 예정...</p>
+                <table className="user-table">
+                  <thead>
+                    <tr>
+                      <th>결제일시</th>
+                      <th>결제금액</th>
+                      <th>결제상태</th>
+                      <th>결제장소</th>                      
+                    </tr>
+                  </thead>
+                  {user5Activities?.user5Purchases?.length > 0 && (
+                    <tbody>
+                      {user5Activities.user5Purchases.map((purchase, idx) => (
+                        <tr key={idx}>
+                          <td>{purchase.createdAt}</td>
+                          <td>{purchase.totalPrice}</td>
+                          <td>{purchase.status}</td>
+                          <td>{purchase.rentId}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-        )}
-
+          )}
       </div>
     );
   }

@@ -16,7 +16,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private Long reserveId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reserveId", nullable = false)
+    private Reservations reservations;
 
     @Column(nullable = false, length = 100)
     private String merchantUid;

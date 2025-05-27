@@ -162,9 +162,9 @@ const AdminDashboard = () => {
 
         
 
-        fetchSalesList(startDate, endDate)
-            .then(data => setSalesList(data))
-            .catch(error => console.error("매출 리스트 데이터 로드 오류:", error));
+        // fetchSalesList(startDate, endDate)
+        //     .then(data => setSalesList(data))
+        //     .catch(error => console.error("매출 리스트 데이터 로드 오류:", error));
     };    
 
     const handleClick = (type) => {
@@ -183,37 +183,37 @@ const AdminDashboard = () => {
                 </div>
                 <div className="card-sales">
                     <h3>💰 총 매출</h3>
-                    <p className="odometer">
+                    <div className="odometer">
                         <Odometer value={mounted ? summaryData.totalSales : 0} format="(,ddd)" duration={500} /> 원
-                    </p>
+                    </div>
                 </div>
 
                 <div className="card-sales">
                     <h3>💸 순 이익</h3>
-                    <p className="odometer">
+                    <div className="odometer">
                         <Odometer value={mounted ? summaryData.totalProfit : 0} format="(,ddd)" duration={500} /> 원
-                    </p>
+                    </div>
                 </div>
 
                 <div className="card">
                     <h3>✅ 결제 완료</h3>
-                    <p className="odometer">
+                    <div className="odometer">
                         <Odometer value={mounted ? summaryData.totalSuccessCount : 0} duration={500} /> 건
-                    </p>
+                    </div>
                 </div>
 
                 <div className="card">
                     <h3>❌ 결제 취소</h3>
-                    <p className="odometer">
+                    <div className="odometer">
                         <Odometer value={mounted ? summaryData.totalCancelCount : 0} duration={500} /> 건
-                    </p>
+                    </div>
                 </div>                   
 
                 <div className="card">
                     <h3>⭐ 배너신청</h3>
-                    <p id="confirmReservCard" className="odometer">
+                    <div id="confirmReservCard" className="odometer">
                         <Odometer value={mounted ? summaryData.totalBannerWating : 0} duration={500} /> 건
-                    </p>
+                    </div>
                 </div>
                 <div className="card-excel">                
                     <div style={{display:"flex",marginBottom:"10px", cursor: "pointer", backgroundColor: isClicked==="xlsx" ? "#ccc" : "transparent",transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick("xlsx")}}>

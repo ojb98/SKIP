@@ -13,13 +13,8 @@ import java.util.Map;
 
 @Service
 public class AdminDashboardService {
-
     @Autowired
     private PaymentRepository paymentRepository;
-
-    @Autowired
-    private RefundsHistoryRepository refundsHistoryRepository;
-
     @Autowired
     private AdPaymentRepository adPaymentRepository;
     @Autowired
@@ -29,9 +24,6 @@ public class AdminDashboardService {
     @Autowired
     private BoostRepository boostRepository;
 
-
-
-
     public Map<String, Object> getSummary(LocalDate start, LocalDate end) {
         List<Payment> payments = paymentRepository.findAllByCreatedAtBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
         List<AdPayment> adPayments = adPaymentRepository.findAllByCreatedAtBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
@@ -39,19 +31,18 @@ public class AdminDashboardService {
         List<BannerWaitingList> watingBannerList = bannerWaitingListRepository.findAllByCreatedAtBetween(start.atStartOfDay(),end.plusDays(1).atStartOfDay());
         List<Boost> boostList = boostRepository.findAllByEndDateBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
 
-
         // 총 결제액 : 렌탈샵 매출액 + 광고비 매출액
         double total = payments.stream().mapToDouble(Payment::getTotalPrice).sum() + adPayments.stream().mapToDouble(AdPayment::getTotalPrice).sum();
         // 총 결제건 : 렌탈샵 매출건 + 광고비 매출건
         long totalSalesCount = payments.stream().count() + adPayments.stream().count();
         // 렌탈샵 매출액 , 광고비 매출액
-        double rentTotalSales = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
+        double rentTotalSales = payments.stream().filter(p -> p.getStatus().equals("SUCCESS")  || p.getStatus().equals("PENDING")).mapToDouble(Payment::getTotalPrice).sum();
         double adTotalSales = adPayments.stream().mapToDouble(AdPayment::getTotalPrice).sum();
         // 렌탈샵 매출건 , 광고비 매출건
-        long rentTotalAmounts = payments.stream().count();
+        long rentTotalAmounts = payments.stream().filter(p -> p.getStatus().equals("SUCCESS")).count();
         long adTotalAmounts = adPayments.stream().count();
         // 관리자 순수익액
-        double profit = payments.stream().mapToDouble(Payment::getAdminPrice).sum();
+        double profit = payments.stream().filter(p -> p.getStatus().equals("SUCCESS") || p.getStatus().equals("PENDING")).mapToDouble(Payment::getAdminPrice).sum();
         // 결제승인건
         long successCount = payments.stream().filter(p -> p.getStatus().equals("SUCCESS")).count();
         // 결제취소금액

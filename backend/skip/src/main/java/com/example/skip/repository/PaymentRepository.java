@@ -1,6 +1,7 @@
 package com.example.skip.repository;
 
 import com.example.skip.entity.Payment;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,4 +41,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             @Param("atEnd") LocalDateTime atEnd
     );
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    @Query("SELECT p FROM Payment p WHERE p.reservations.user.userId = :userId ORDER BY p.createdAt DESC")
+    List<Payment> findTop5ByUserId(@Param("userId") Long userId, Pageable pageable);
+
 }
