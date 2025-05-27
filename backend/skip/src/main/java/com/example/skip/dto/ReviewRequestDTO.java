@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @ToString
 public class ReviewRequestDTO {
-    private Long reviewId;
     private Long reserveId;
     private int rating;
     private String content;

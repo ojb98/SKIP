@@ -49,8 +49,6 @@ const LoginPage = () => {
     return (
         <>
             <div className="w-[350px] flex flex-col items-center">
-                <h1 className="my-10 text-5xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
-
                 <form className="w-full flex flex-col items-center gap-7" onSubmit={loginHandler}>
                     <input
                         type="text"

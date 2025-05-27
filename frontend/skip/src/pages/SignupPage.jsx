@@ -31,6 +31,14 @@ const JoinPage = () => {
 
     const [confirm, setConfirm] = useState('hidden');
 
+    const [service, setService] = useState(false);
+    const [personal, setPersonal] = useState(false);
+    const [marketing, setMarketing] = useState(false);
+
+    const [serviceDetail, setServiceDetail] = useState(false);
+    const [personalDetail, setPersonalDetail] = useState(false);
+    const [marketingDetail, setMarketingDetail] = useState(false);
+
     const inputTextClass = ' h-[50px] w-full rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
 
 
@@ -146,7 +154,7 @@ const JoinPage = () => {
         <>
             <div className="w-[400px]">
                 <form className="flex flex-col items-center gap-5" onSubmit={signupHandler}>
-                    <div className="w-full flex justify-between mt-10 mb-5 border-b">
+                    <div className="w-full flex justify-between mb-5 border-b">
                         <h1 className="text-2xl">회원가입</h1>
 
                         <SignupStep step={2}></SignupStep>
@@ -213,7 +221,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
                                 onClick={verifyHandler}
                             >
                                 인증
@@ -238,7 +246,7 @@ const JoinPage = () => {
                             {/* 인증번호 재전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
                                 onClick={verifyHandler}
                             >
                                 재전송
@@ -247,7 +255,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 비활성화 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-gray-400 text-sm font-medium text-white ${verify4}`}
+                                className={`w-[90px] h-[50px] rounded bg-gray-400/60 text-sm font-[NanumSquareNeo] font-medium text-white ${verify4}`}
                             >
                                 인증
                             </button>
@@ -318,11 +326,187 @@ const JoinPage = () => {
                         className={inputTextClass + ' bg-gray-100'}
                     ></input>
 
-                    <input
-                        type="submit"
-                        className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
-                        value="가입하기"
-                    ></input>
+                    <div className="w-full mb-3">
+                        <div className="flex flex-col my-3 py-3 border-t border-gray-200">
+                            <label className="inline-flex items-start gap-3 py-3">
+                                <input
+                                    type="checkbox"
+                                    className="mt-0.5 size-4"
+                                    onChange={e => {
+                                        const checked = e.target.checked;
+                                        document.getElementById('Option1').checked = checked;
+                                        document.getElementById('Option2').checked = checked;
+                                        document.getElementById('Option3').checked = checked;
+                                        setService(checked);
+                                        setPersonal(checked);
+                                        setMarketing(checked);
+                                    }}
+                                >
+                                </input>
+
+                                <span className="text-sm font-medium">모두 확인하였으며 동의합니다.</span>
+                            </label>
+
+                            <span className="text-xs text-gray-500 px-5">
+                                전체 동의에는 필수 및 선택 정보에 대한 동의가 포함되어 있으며, 개별적으로 동의를 선택 하실 수 있습니다. 선택 항목에 대한 동의를 거부하시는 경우에도 서비스 이용이 가능합니다.
+                            </span>
+                        </div>
+
+                        <fieldset className="border p-5 border-gray-200 rounded">
+                            <legend className="sr-only">이용약관</legend>
+
+                            <div className="flow-root">
+                                <div className="-my-3 flex flex-col items-start divide-y divide-gray-200">
+                                    <div className="w-full">
+                                        <div className="flex justify-between">
+                                            <label htmlFor="Option1" className="inline-flex items-start gap-3 py-3">
+                                                <input
+                                                    type="checkbox"
+                                                    className="mt-0.5 size-4"
+                                                    id="Option1"
+                                                    onChange={() => setService(!service)}
+                                                />
+
+                                                <span className="text-sm font-medium">[필수] 서비스 이용약관</span>
+                                            </label>
+
+                                            {
+                                                serviceDetail ?
+                                                <button type="button" onClick={() => {setServiceDetail(false)}}>
+                                                    <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+
+                                                :
+
+                                                <button type="button" onClick={() => {setServiceDetail(true)}}>
+                                                    <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+                                            }
+                                        </div>
+
+                                        {
+                                            serviceDetail
+                                            &&
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                제1조 (목적)
+                                                이 약관은 [스킵] (이하 "회사")이 제공하는 [스킵] (이하 "서비스")의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.<br></br>
+                                                제2조 (회원가입 및 이용계약)<br></br>
+                                                회원가입은 이용자가 본 약관에 동의하고, 회사가 이를 승인함으로써 성립됩니다.<br></br>
+                                                회사는 다음 각 호에 해당하는 경우 가입을 거절할 수 있습니다.<br></br>
+                                                타인의 명의로 신청한 경우<br></br>
+                                                허위 정보를 기재한 경우<br></br>
+                                                기타 사회 질서 및 미풍양속을 해치는 행위가 우려되는 경우<br></br>
+                                                제3조 (회원의 의무)<br></br>
+                                                회원은 관련 법령 및 회사의 운영 정책을 준수해야 합니다.<br></br>
+                                                타인의 정보를 무단으로 도용하거나 서비스를 부정한 목적으로 이용해서는 안 됩니다.<br></br>
+                                                제4조 (서비스의 제공 및 중단)<br></br>
+                                                회사는 서비스의 안정적인 제공을 위하여 최선을 다하나, 시스템 점검 등으로 인해 일시적으로 서비스가 중단될 수 있습니다.<br></br>
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <div className="w-full">
+                                        <div className="flex justify-between">
+                                            <label htmlFor="Option2" className="inline-flex items-start gap-3 py-3">
+                                                <input
+                                                    type="checkbox"
+                                                    className="mt-0.5 size-4"
+                                                    id="Option2"
+                                                    onChange={() => setPersonal(!personal)}
+                                                />
+
+                                                <span className="text-sm font-medium">[필수] 개인정보 수집 및 이용 동의</span>
+                                            </label>
+
+                                            {
+                                                personalDetail ?
+                                                <button type="button" onClick={() => {setPersonalDetail(false)}}>
+                                                    <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+
+                                                :
+
+                                                <button type="button" onClick={() => {setPersonalDetail(true)}}>
+                                                    <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+                                            }
+                                        </div>
+
+                                        {
+                                            personalDetail
+                                            &&
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                1. 수집 항목<br></br>
+                                                필수: 비밀번호, 이메일, 이름, 휴대폰 번호<br></br>
+                                                2. 수집 목적<br></br>
+                                                회원 식별 및 관리<br></br>
+                                                회원 식별 및 관리<br></br>
+                                                회원 식별 및 관리<br></br>
+                                                3. 보유 및 이용 기간<br></br>
+                                                회원 탈퇴 시까지 보관하며, 이후 즉시 파기합니다. (단, 관련 법령에 따라 보관이 필요한 경우 제외)<br></br>
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <div className="w-full">
+                                        <div className="flex justify-between">
+                                            <label htmlFor="Option3" className="inline-flex items-start gap-3 py-3">
+                                                <input
+                                                    type="checkbox"
+                                                    className="mt-0.5 size-4"
+                                                    id="Option3"
+                                                    onChange={() => setMarketing(!marketing)}
+                                                />
+
+                                                <span className="text-sm font-medium">[선택] 마케팅 정보 수신 동의</span>
+                                            </label>
+
+                                            {
+                                                marketingDetail ?
+                                                <button type="button" onClick={() => {setMarketingDetail(false)}}>
+                                                    <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+
+                                                :
+
+                                                <button type="button" onClick={() => {setMarketingDetail(true)}}>
+                                                    <svg fill="#000000" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve" transform="rotate(180)" className="size-4"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_224_" d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394 l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393 C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z"></path> </g></svg>
+                                                </button>
+                                            }
+                                        </div>
+
+                                        {
+                                            marketingDetail
+                                            &&
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                회원에게 이메일, 문자 등을 통해 최신 소식, 이벤트, 할인 정보 등을 제공합니다.<br></br>
+                                                ※ 동의를 거부해도 서비스 이용에는 영향이 없습니다.
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    {
+                        isVerified && service && personal ? 
+                        // 가입버튼
+                        <input
+                            type="submit"
+                            className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
+                            value="가입하기"
+                        ></input>
+
+                        :
+
+                        // 비활성화
+                        <input
+                            type="button"
+                            className="h-[50px] w-full rounded bg-gray-400/60 font-[NanumSquareNeo] font-medium text-white"
+                            value="가입하기"
+                        ></input>
+                    }
                 </form>
             </div>
         </>
