@@ -63,8 +63,8 @@ function App() {
 
 
                         {/* 렌탈샵 상세 페이지 */}
-                        <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
-                        <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
+                        <Route path="/rent/detail" element={<RentalshopPage/>}></Route>
+                        <Route path="/rent/product/:rentId/:itemId" element={<ProductPage/>}></Route>
 
                     </Route>
                         {/* 리뷰 팝업 */}

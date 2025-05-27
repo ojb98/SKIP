@@ -11,7 +11,9 @@ import com.example.skip.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,6 +99,22 @@ public class ReviewService {
     public Page<ReviewDTO> getRentalReviews(Long rentId, Pageable pageable) {
         return reviewRepository.findAllByReservations_Rent_RentId(rentId, pageable)
                 .map(ReviewDTO::new);
+    }
+    // 특정 렌탈샵 특정 아이템별 리뷰 조회
+    public Page<ReviewDTO> getReviewsByRentIdAndItemIdSorted(Long rentId, Long itemId, String sort, Pageable pageable) {
+        Sort sorted;
+        switch (sort) {
+            case "high":
+                sorted = Sort.by(Sort.Direction.DESC, "rating");
+                break;
+            case "low":
+                sorted = Sort.by(Sort.Direction.ASC, "rating");
+                break;
+            default:
+                sorted = Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorted);
+        return reviewRepository.findByRentIdAndItemId(rentId, itemId, sortedPageable).map(ReviewDTO::new);
     }
 
 }

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import BoardTabs from "../components/rentalshop/BoardTabs";
+import { useParams } from "react-router-dom";
 
 const ProductPage=()=>{
+  const { rentId, itemId } = useParams();
+  const parsedRentId = parseInt(rentId, 10);
+  const parsedItemId = parseInt(itemId, 10);
+
   const [date, setDate] = useState("");
   const [clotOption, setClotOption] = useState("");
   const [size, setSize] = useState("");
@@ -127,7 +132,7 @@ const ProductPage=()=>{
           </div>
         </div>
       </div>
-      <BoardTabs />
+      <BoardTabs rentId={parsedRentId} itemId={parsedItemId}/>
     </main>
   )
 }

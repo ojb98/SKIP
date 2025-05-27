@@ -20,12 +20,7 @@ public class UserRepositoryTest {
     private PasswordEncoder passwordEncoder;
 
 
-    @Test
-    public void admin() {
-        UserDto userDto = new UserDto(null, "admin", "1234", "admin", "admin", "admin", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null);
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.saveAndFlush(userDto.toEntity());
-    }
+
 
     @Test
     public void select() {

@@ -59,16 +59,17 @@
   margin-top: 30px;
 }
 
-.pagelist a {
+.pagelist button {
   margin: 0 10px;
   display: inline-block;
   padding: 7px 15px;
 }
 
-.pagelist a:hover,
-.pagelist a.active {
+.pagelist button:hover,
+.pagelist button.active {
   background-color: #5399f5;
   color: #fff;
+  cursor: pointer;
 }
 
 /* Review */
@@ -94,9 +95,10 @@
   gap: 15px;
 }
 
-.review-sort a:hover,
-.review-sort a.active {
+.review-sort button:hover,
+.review-sort button.active {
   font-weight: 900;
+  cursor: pointer;
 }
 
 /* Review-List*/
@@ -126,6 +128,7 @@
 
 .review-right img {
   width: 130px;
+  height: 100px;
 }
 
 /* Q&A */

@@ -6,7 +6,7 @@ const ProductList=({items})=>{
       <ul>
         {items.map((item) => (
           <li key={item.id} className="product-item">
-            <Link to={`/rentalshop/product`}>
+            <Link to={`/rent/product/:rentId/:itemId`}>
               <div>
                 <img
                   src={item.img}

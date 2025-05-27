@@ -2,6 +2,7 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.ReviewDTO;
 import com.example.skip.dto.ReviewRequestDTO;
+import com.example.skip.repository.ReviewRepository;
 import com.example.skip.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import java.nio.file.AccessDeniedException;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewRepository reviewRepository;
+
     // 리뷰 작성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ReviewDTO> writeReview(@ModelAttribute ReviewRequestDTO dto,
@@ -55,10 +58,29 @@ public class ReviewController {
     }
 
     // 렌탈샵 리뷰 목록 조회
-    @GetMapping("/rental")
+    @GetMapping("/rent")
     public ResponseEntity<Page<ReviewDTO>> getRentalReviews(@RequestParam Long rentId,
                                                             Pageable pageable) {
         Page<ReviewDTO> result = reviewService.getRentalReviews(rentId, pageable);
         return ResponseEntity.ok(result);
     }
+
+    // 아이템 리뷰 목록 조회
+    @GetMapping("/rent/item")
+    public ResponseEntity<Page<ReviewDTO>> getReviewsByItem(@RequestParam Long rentId,
+                                                            @RequestParam Long itemId,
+                                                            @RequestParam(required = false, defaultValue = "latest") String sort,
+                                                            Pageable pageable) {
+        Page<ReviewDTO> result = reviewService.getReviewsByRentIdAndItemIdSorted(rentId, itemId, sort, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+    // 리뷰 평점 평균
+    @GetMapping("/rent/item/average")
+    public ResponseEntity<Double> getAverageRating(@RequestParam Long rentId,
+                                                   @RequestParam Long itemId) {
+        Double avg = reviewRepository.findAverageRating(rentId, itemId);
+        return ResponseEntity.ok(avg != null ? avg : 0.0);
+    }
+
 }
