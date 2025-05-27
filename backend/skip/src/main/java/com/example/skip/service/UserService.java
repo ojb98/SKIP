@@ -26,6 +26,11 @@ public class UserService {
             return null;
         }
 
+        if (!signupRequestDto.isVerified()) {
+            bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
+            return null;
+        }
+
         UserDto userDto = signupRequestDto.toUserDto();
         userDto.setNickname(userDto.getNickname() + "#" + RandomStringGenerator.generate(5, RandomStringGenerator.NUMERIC));
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));

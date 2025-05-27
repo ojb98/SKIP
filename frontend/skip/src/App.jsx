@@ -25,6 +25,8 @@ import ItemList from "./components/rentAdmin/ItemList"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
 import UsersList from "./pages/admin/UsersList"
+import LoginLayout from "./pages/LoginLayout"
+import MyPageLayout from "./pages/MyPageLayout"
 
 
 function App() {
@@ -38,8 +40,7 @@ function App() {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout></Layout>}>
-                    
+                    <Route path="/" element={<MainLayout></MainLayout>}>
                         {/* 홈페이지 */}
                         <Route index element={<Home></Home>}></Route>
 
@@ -70,7 +71,7 @@ function App() {
                         <Route path="/rentalshop/detail" element={<RentalshopPage/>}></Route>
                         <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
 
-                        
+
                     </Route>
                     {/* 관리자 라우트 */}
                         <Route path="/admin" element={<AdminLayout />}>
@@ -87,7 +88,19 @@ function App() {
                         {/* 리뷰 팝업 */}
                         <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
 
-                    
+
+                    {/* 리뷰 팝업 */}
+                    <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+
+
+                    {/* 로그인 */}
+                    <Route path="/" element={<LoginLayout></LoginLayout>}>
+                        <Route path="login" element={<LoginPage></LoginPage>}></Route>
+
+                        <Route path="signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
+
+                        <Route path="signup" element={<JoinPage></JoinPage>}></Route>
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </>
