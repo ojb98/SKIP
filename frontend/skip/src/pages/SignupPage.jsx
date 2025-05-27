@@ -146,7 +146,7 @@ const JoinPage = () => {
         <>
             <div className="w-[400px]">
                 <form className="flex flex-col items-center gap-5" onSubmit={signupHandler}>
-                    <div className="w-full flex justify-between mt-10 mb-5 border-b">
+                    <div className="w-full flex justify-between mb-5 border-b">
                         <h1 className="text-2xl">회원가입</h1>
 
                         <SignupStep step={2}></SignupStep>
@@ -213,7 +213,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
                                 onClick={verifyHandler}
                             >
                                 인증
@@ -238,7 +238,7 @@ const JoinPage = () => {
                             {/* 인증번호 재전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
                                 onClick={verifyHandler}
                             >
                                 재전송
@@ -247,7 +247,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 비활성화 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-gray-400 text-sm font-medium text-white ${verify4}`}
+                                className={`w-[90px] h-[50px] rounded bg-gray-400/60 text-sm font-[NanumSquareNeo] font-medium text-white ${verify4}`}
                             >
                                 인증
                             </button>
@@ -318,11 +318,82 @@ const JoinPage = () => {
                         className={inputTextClass + ' bg-gray-100'}
                     ></input>
 
-                    <input
-                        type="submit"
-                        className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
-                        value="가입하기"
-                    ></input>
+                    <div>
+                        <fieldset>
+                            <legend className="sr-only">Checkboxes</legend>
+
+                            <div className="flow-root">
+                                <div className="-my-3 flex flex-col items-start divide-y divide-gray-200">
+                                    <label htmlFor="Option1" className="inline-flex items-start gap-3 py-3">
+                                        <input
+                                            type="checkbox"
+                                            className="my-0.5 size-3 rounded border-gray-300 shadow-sm"
+                                            id="Option1"
+                                        />
+
+                                        <div>
+                                            <span className="font-medium text-gray-700"> Option 1 </span>
+
+                                            <p className="mt-0.5 text-sm text-gray-700">
+                                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea, distinctio.
+                                            </p>
+                                        </div>
+                                    </label>
+
+                                    <label htmlFor="Option2" className="inline-flex items-start gap-3 py-3">
+                                        <input
+                                            type="checkbox"
+                                            className="my-0.5 size-5 rounded border-gray-300 shadow-sm"
+                                            id="Option2"
+                                        />
+
+                                        <div>
+                                            <span className="font-medium text-gray-700"> Option 2 </span>
+
+                                            <p className="mt-0.5 text-sm text-gray-700">
+                                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea, distinctio.
+                                            </p>
+                                        </div>
+                                    </label>
+
+                                    <label htmlFor="Option3" className="inline-flex items-start gap-3 py-3">
+                                        <input
+                                            type="checkbox"
+                                            className="my-0.5 size-5 rounded border-gray-300 shadow-sm"
+                                            id="Option3"
+                                        />
+
+                                        <div>
+                                            <span className="font-medium text-gray-700"> Option 3 </span>
+
+                                            <p className="mt-0.5 text-sm text-gray-700">
+                                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea, distinctio.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    {
+                        isVerified ? 
+                        // 가입버튼
+                        <input
+                            type="submit"
+                            className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
+                            value="가입하기"
+                        ></input>
+
+                        :
+
+                        // 비활성화
+                        <input
+                            type="button"
+                            className="h-[50px] w-full rounded bg-gray-400/60 font-[NanumSquareNeo] font-medium text-white"
+                            value="가입하기"
+                        ></input>
+                    }
                 </form>
             </div>
         </>

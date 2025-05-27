@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Layout from "./pages/Layout"
+import MainLayout from "./pages/MainLayout"
 import Home from "./pages/Home"
 
 import LoginPage from "./pages/LoginPage"
@@ -22,6 +22,7 @@ import RentDetail from "./components/rentAdmin/RentDetail"
 import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemList from "./components/rentAdmin/ItemList"
+import LoginLayout from "./pages/LoginLayout"
 
 
 function App() {
@@ -35,15 +36,10 @@ function App() {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout></Layout>}>
+                    <Route path="/" element={<MainLayout></MainLayout>}>
                         {/* 홈페이지 */}
                         <Route index element={<Home></Home>}></Route>
 
-                        <Route path="login" element={<LoginPage></LoginPage>}></Route>
-
-                        <Route path="signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="signup" element={<JoinPage></JoinPage>}></Route>
 
                         {/* 마이페이지 */}
                         <Route path="mypage/account" element={<AccountPage></AccountPage>}></Route>
@@ -67,8 +63,18 @@ function App() {
                         <Route path="/rentalshop/product" element={<ProductPage/>}></Route>
 
                     </Route>
-                        {/* 리뷰 팝업 */}
-                        <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+                    {/* 리뷰 팝업 */}
+                    <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+
+
+                    {/* 로그인 */}
+                    <Route path="/" element={<LoginLayout></LoginLayout>}>
+                        <Route path="login" element={<LoginPage></LoginPage>}></Route>
+
+                        <Route path="signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
+
+                        <Route path="signup" element={<JoinPage></JoinPage>}></Route>
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </>

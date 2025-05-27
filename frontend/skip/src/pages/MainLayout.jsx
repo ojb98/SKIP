@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 
-const Layout = () => {
+const MainLayout = () => {
     return (
         <>
             <div className="flex justify-center">
@@ -17,4 +17,4 @@ const Layout = () => {
     )
 }
 
-export default Layout;
+export default MainLayout;
