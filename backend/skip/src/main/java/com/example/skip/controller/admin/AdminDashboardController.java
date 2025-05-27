@@ -2,6 +2,7 @@ package com.example.skip.controller.admin;
 
 import com.example.skip.service.AdminDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,11 @@ public class AdminDashboardController {
     private AdminDashboardService adminDashboardService;
 
     @GetMapping("/summary")
-    public ResponseEntity<?> getSalesSummary(@RequestParam String startDate,
-                                             @RequestParam String endDate) {
-        return ResponseEntity.ok(adminDashboardService.getSummary(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+    public ResponseEntity<Map<String, Object>> getSummary(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        Map<String, Object> summary = adminDashboardService.getSummary(start, end);
+        return ResponseEntity.ok(summary);
     }
 
     @GetMapping("/sales-list")

@@ -2,6 +2,7 @@
   import axios from 'axios';
   import '../../css/userlist.css'; 
 import AdminPagination from './AdminPagenation';
+import { formatDate, formatDate1 } from '../../utils/formatdate';
 
   function UserTable() {
     const [users, setUsers] = useState([]);
@@ -9,11 +10,8 @@ import AdminPagination from './AdminPagenation';
     const [selectedUser, setSelectedUser] = useState(null);
     const [filter, setFilter] = useState("username");
     const [keyword, setKeyword] = useState("");        
-    const [searchedUsers, setSearchedUsers] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [sortField, setSortField] = useState(null);
-    const [sortOrder, setSortOrder] = useState('asc');
     const [user5Activities, setUser5Activites] = useState({
       user5Reviews: [],
       user5Purchases: [],
@@ -214,13 +212,13 @@ import AdminPagination from './AdminPagenation';
             </div>
 
             <div className="user-activity">
-              <h4>🏂 최근 리뷰</h4>
+              <h4>🏂 최근 작성한 리뷰</h4>
               {user5Activities?.user5Reviews?.length > 0 && (
               <ul>
                 {user5Activities?.user5Reviews?.map((review, idx)=> (
                   <li key={idx} style={{display:"flex"}}>
-                    <div>
-                      {review.createdAt} 에 작성함 ⭐<strong> {review.rating}</strong><br />
+                    <div style={{marginTop:"25px", marginLeft:"10px"}}>
+                      <div style={{display:"flex"}}> ⭐<strong>{review.rating.toFixed(1)}</strong> <p style={{color:"#c9c9c8", transform: "scale(0.8)"}}>{formatDate(review.createdAt)} 에 작성함 </p></div>
                       {review.content} 
                     </div>
                     <div>
@@ -233,24 +231,24 @@ import AdminPagination from './AdminPagenation';
             </div>
 
             <div className="user-activity">
-              <h4>📃 결제 내역</h4>
+              <h4>📃 최근 결제 내역</h4>
                 <table className="user-table">
                   <thead>
                     <tr>
                       <th>결제일시</th>
                       <th>결제금액</th>
                       <th>결제상태</th>
-                      <th>결제장소</th>                      
+                      <th>결제 ID</th>                      
                     </tr>
                   </thead>
                   {user5Activities?.user5Purchases?.length > 0 && (
                     <tbody>
                       {user5Activities.user5Purchases.map((purchase, idx) => (
                         <tr key={idx}>
-                          <td>{purchase.createdAt}</td>
-                          <td>{purchase.totalPrice}</td>
+                          <td>{formatDate1(purchase.createdAt)}</td>
+                          <td>{purchase.totalPrice.toLocaleString()}원</td>
                           <td>{purchase.status}</td>
-                          <td>{purchase.rentId}</td>
+                          <td>{purchase.paymentId}</td>
                         </tr>
                       ))}
                     </tbody>

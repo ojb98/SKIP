@@ -1,17 +1,16 @@
 package com.example.skip.controller.admin;
 
-import com.example.skip.entity.Payment;
-import com.example.skip.entity.Review;
+import com.example.skip.dto.PaymentDTO;
+import com.example.skip.dto.ReviewDTO;
 import com.example.skip.entity.User;
 import com.example.skip.repository.PaymentRepository;
-import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
-import com.example.skip.service.AdminDashboardService;
 import com.example.skip.service.UserListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,11 @@ public class UserListController {
 
     @GetMapping("/find-users-recent-activity/{userId}")
     public ResponseEntity<Map<String, Object>> getUserActivity(@PathVariable("userId") Long userId) {
-        Map<String, Object> result = userListService.getUserListActivity(userId);
+        List<ReviewDTO> recentReviews = userListService.getUserRecentReviews(userId);
+        List<PaymentDTO> recentPayment = userListService.getUserRecentPayments(userId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("user5Reviews", recentReviews);
+        result.put("user5Purchases", recentPayment);
         return ResponseEntity.ok(result);
     }
 

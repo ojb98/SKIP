@@ -16,6 +16,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 본인 렌탈샵 리뷰 조회
     Page<Review> findAllByReservations_Rent_RentId(Long rentId, Pageable pageable);
 
-    @Query("SELECT r FROM Review r WHERE r.reservations.user.userId = :userId ORDER BY r.createdAt DESC")
-    List<Review> findTop5ByUserId(@Param("userId") Long userId, Pageable pageable);
+    List<Review> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
 }

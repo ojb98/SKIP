@@ -49,7 +49,7 @@ const AdminDashboard = () => {
         totalRentPrice: 0,
         totalAdPrice: 0,
         totalAdCount: 0,
-        totalPendingCount: 0,
+        // totalPendingCount: 0,
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
         totalRentPrice: 0,
         totalAdPrice: 0,
         totalAdCount: 0,
-        totalPendingCount: 0,
+        // totalPendingCount: 0,
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
         totalRentPrice: 0,
         totalAdPrice: 0,
         totalAdCount: 0,
-        totalPendingCount: 0,
+        // totalPendingCount: 0,
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
         totalRentPrice: 0,
         totalAdPrice: 0,
         totalAdCount: 0,
-        totalPendingCount: 0,
+        // totalPendingCount: 0,
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
         totalRentPrice: 0,
         totalAdPrice: 0,
         totalAdCount: 0,
-        totalPendingCount: 0,
+        // totalPendingCount: 0,
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
@@ -162,9 +162,9 @@ const AdminDashboard = () => {
 
         
 
-        // fetchSalesList(startDate, endDate)
-        //     .then(data => setSalesList(data))
-        //     .catch(error => console.error("매출 리스트 데이터 로드 오류:", error));
+        fetchSalesList(startDate, endDate)
+            .then(data => setSalesList(data))
+            .catch(error => console.error("매출 리스트 데이터 로드 오류:", error));
     };    
 
     const handleClick = (type) => {
@@ -243,7 +243,7 @@ const AdminDashboard = () => {
                 }} 
                 />
             </div>
-            <SalesTable salesList={salesList} />
+            {/* <SalesTable salesList={salesList} /> */}
         </div>
     );
 };

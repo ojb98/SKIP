@@ -17,11 +17,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT SUM(p.totalPrice) FROM Payment p WHERE p.createdAt BETWEEN :atStart AND :atEnd")
     Long getTotalSales(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
 
-    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CONFIRMED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-    Long getConfirmReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
-
-    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CANCELLED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-    Long getCancleReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
+//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CONFIRMED' AND p.createdAt BETWEEN :atStart AND :atEnd")
+//    Long getConfirmReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
+//
+//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CANCELLED' AND p.createdAt BETWEEN :atStart AND :atEnd")
+//    Long getCancleReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
 
     @Query("SELECT new map(DATE(p.createdAt) as date, SUM(p.totalPrice) as total) " +
             "FROM Payment p " +
@@ -42,7 +42,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     );
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 
-    @Query("SELECT p FROM Payment p WHERE p.reservations.user.userId = :userId ORDER BY p.createdAt DESC")
-    List<Payment> findTop5ByUserId(@Param("userId") Long userId, Pageable pageable);
-
+    List<Payment> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
 }

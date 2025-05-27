@@ -1,5 +1,6 @@
 package com.example.skip.entity;
 
+import com.example.skip.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -43,7 +44,8 @@ public class Payment {
     private String pgProvider;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
