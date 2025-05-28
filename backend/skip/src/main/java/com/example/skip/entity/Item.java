@@ -25,7 +25,7 @@ public class Item {
     private Long itemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rentId", nullable = false)
+    @JoinColumn(name = "rent_id", nullable = false)
     private Rent rent;
 
     @Column(nullable = false)
