@@ -12,12 +12,12 @@
 
 
 /* 기본 설정 */
-body {
+/* body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f1f3f5;
-}
+} 태그 별로 스타일 지정하지 말고 클래스 명 전부 별도 부여해주세요 from 오정빈 to 지봉필 */
 
 /* 헤더 스타일 */
 .admin-header {

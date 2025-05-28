@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Layout from "./pages/Layout"
 import Home from "./pages/Home"
 
 import LoginPage from "./pages/LoginPage"
@@ -8,6 +7,8 @@ import SignupVerifyPage from "./pages/SignupVerifyPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
+
+import MainLayout from "./pages/MainLayout"
 
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
