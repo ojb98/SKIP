@@ -18,18 +18,19 @@ const MainHeader = () => {
                     {
                         !isLoading ? 
                             <ul className="flex gap-5">
-                                <li><Link to={"/"}>Home</Link></li>
                                 {
                                     isLoggedIn === true ?
                                     <>
-                                        <li><Link onClick={() => {
-                                            dispatch(logout())
-                                                .unwrap()
-                                                .then(res => {
-                                                    dispatch(setProfile());
-                                                    navigate('/');
-                                                });
-                                            }}>Logout</Link></li>
+                                        <li>
+                                            <Link onClick={() => {
+                                                dispatch(logout())
+                                                    .unwrap()
+                                                    .then(res => {
+                                                        dispatch(setProfile());
+                                                        navigate('/');
+                                                    });
+                                                }}>Logout</Link>
+                                        </li>
                                         <li><Link to={"/mypage/account"}>mypage</Link></li>
                                     </> :
                                     <li><Link to={"/login"}>Login</Link></li>

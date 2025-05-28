@@ -5,9 +5,6 @@ import Home from "./pages/Home"
 import LoginPage from "./pages/LoginPage"
 import JoinPage from "./pages/SignupPage"
 import SignupVerifyPage from "./pages/SignupVerifyPage"
-import AccountPage from "./pages/AccountPage"
-import MyReviewPage from "./pages/MyReviewPage"
-import MyQnaPage from "./pages/MyQnaPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -23,7 +20,11 @@ import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
 import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemList from "./components/rentAdmin/ItemList"
 import LoginLayout from "./pages/LoginLayout"
-import MyPageLayout from "./pages/MyPageLayout"
+import AccountPage from "./pages/myPage/AccountPage"
+import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
+import MyReviewPage from "./pages/myPage/MyReviewPage"
+import MyQnaPage from "./pages/myPage/MyQnaPage"
+import MyPageLayout from "./pages/myPage/MyPageLayout"
 
 
 function App() {
@@ -45,6 +46,8 @@ function App() {
                         {/* 마이페이지 */}
                         <Route path="mypage/" element={<MyPageLayout></MyPageLayout>}>
                             <Route path="account" element={<AccountPage></AccountPage>}></Route>
+
+                            <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 

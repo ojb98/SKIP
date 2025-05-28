@@ -1,10 +1,12 @@
 import { Outlet, useLocation } from "react-router-dom";
-import MySideBar from "../components/MySideBar";
+import MySideMenu from "../../components/myPage/MySideMenu";
+import { useSelector } from "react-redux";
 
 const MyPageLayout = () => {
+    const profile = useSelector(state => state.loginSlice);
     const pathname = useLocation().pathname;
     const active = pathname.substring(pathname.lastIndexOf('/') + 1);
-    const group = active == 'account' || active == 'logout' ? 'account' : (
+    const group = active == 'account' || active == 'security' ? 'account' : (
         active == 'review' || active == 'qna' ? 'activity' : (
         active == 'reserve' || active == 'refund' ? 'payment' : ''));
 
@@ -12,10 +14,14 @@ const MyPageLayout = () => {
     return (
         <>
             <div className="w-[1100px] flex justify-between items-start my-12">
-                <MySideBar group={group} active={active}></MySideBar>
+                <MySideMenu group={group} active={active}></MySideMenu>
 
                 <div className="w-[800px] pl-3 font-[NanumSquare]">
-                    <Outlet></Outlet>
+                    {
+                        !profile.isLoading
+                        &&
+                        <Outlet></Outlet>
+                    }
                 </div>
             </div>
         </>

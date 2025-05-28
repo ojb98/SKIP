@@ -83,4 +83,13 @@ public class UserController {
         String accessToken = jwtUtil.extractToken("accessToken", request);
         return ResponseEntity.ok(Map.of("success", true, "return", jwtUtil.validateToken(accessToken)));
     }
+
+    @PutMapping("/password/set")
+    public ApiResponseDto setPassword() {
+//        userService.setPassword();
+
+        return ApiResponseDto.builder()
+                .success(true)
+                .data(null).build();
+    }
 }

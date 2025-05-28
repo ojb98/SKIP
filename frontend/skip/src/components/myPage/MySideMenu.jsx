@@ -1,17 +1,18 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import LogoutButton from "../LogoutButton";
 
 const tab = "block rounded-lg px-4 py-2 text-sm font-medium";
-const active_style = 'bg-sky-100/80 text-sky-500 font-semibold';
+const active_style = 'bg-blue-50 text-blue-400 font-semibold hover:underline hover:underline-offset-2';
 const inactive_style = 'text-gray-700 hover:bg-gray-100 hover:text-black';
 
-const MySideBar = ({group, active}) => {
+const MySideMenu = ({group, active}) => {
     const profile = useSelector(state => state.loginSlice);
 
 
     return (
         <>
-            <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white">
+            <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white shadow-xl">
                 <div className="px-4 py-6">
                     <div className="flex flex-col items-center gap-2">
                         <img src={profile.image ? `http://localhost:8080/${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
@@ -21,7 +22,7 @@ const MySideBar = ({group, active}) => {
                         </div>
                     </div>
 
-                    <ul className="mt-6 space-y-1">
+                    <ul className="mt-6 space-y-3">
                         <li>
                             <details className="group [&_summary::-webkit-details-marker]:hidden" open={group == 'account' ? true : false}>
                                 <summary
@@ -48,7 +49,7 @@ const MySideBar = ({group, active}) => {
                                 <ul className="mt-2 space-y-1 px-4">
                                     <li>
                                         <Link
-                                            to={"/mypage/account"}
+                                            to={'/mypage/account'}
                                             className={`${tab} ${active == 'account' ? active_style : inactive_style}`}
                                         >
                                             회원 정보
@@ -56,12 +57,12 @@ const MySideBar = ({group, active}) => {
                                     </li>
 
                                     <li>
-                                        <a
-                                            href="#"
-                                            className={`${tab} ${active == 'logout' ? active_style : inactive_style}`}
+                                        <Link
+                                            to={'/mypage/account/security'}
+                                            className={`${tab} ${active == 'security' ? active_style : inactive_style}`}
                                         >
-                                            로그아웃
-                                        </a>
+                                            보안 사항
+                                        </Link>
                                     </li>
                                 </ul>
                             </details>
@@ -156,6 +157,10 @@ const MySideBar = ({group, active}) => {
                                 </ul>
                             </details>
                         </li>
+
+                        <li>
+                            <LogoutButton styleClass="flex cursor-pointer items-center justify-between rounded-lg mt-6 px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 text-sm"></LogoutButton>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -163,4 +168,4 @@ const MySideBar = ({group, active}) => {
     )
 }
 
-export default MySideBar;
+export default MySideMenu;

@@ -32,7 +32,6 @@ public class UserService {
         }
 
         UserDto userDto = signupRequestDto.toUserDto();
-        userDto.setNickname(userDto.getNickname() + "#" + RandomStringGenerator.generate(5, RandomStringGenerator.NUMERIC));
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         return new UserDto(userRepository.saveAndFlush(userDto.toEntity()));

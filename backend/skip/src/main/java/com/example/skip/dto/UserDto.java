@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -96,14 +97,18 @@ public class UserDto extends User implements OAuth2User {
     }
 
     public Map<String, Object> getClaims() {
-        return Map.of("userId", userId,
-                "username", username,
-                "email", email,
-                "social", social,
-                "roles", roles,
-                "registeredAt", registeredAt.toString(),
-                "image", image == null ? "" : image,
-                "nickname", nickname == null ? "" : nickname);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("username", username);
+        claims.put("email", email);
+        claims.put("name", name);
+        claims.put("phone", phone);
+        claims.put("social", social);
+        claims.put("roles", roles);
+        claims.put("registeredAt", registeredAt.toString());
+        claims.put("image", image);
+        claims.put("nickname", nickname);
+        return claims;
     }
 
     @Override
