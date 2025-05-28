@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import '../../css/rentInsertForm.css';
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const RentInsertForm=()=>{
 
@@ -33,6 +34,11 @@ const RentInsertForm=()=>{
         image2: useRef(),
         image3: useRef()
     }
+
+    //이동
+    const navigate=useNavigate();
+    //진위여부버튼 상태
+    const [isBizChecked, setIsBizChecked] = useState(false);
 
     //카테고리 
     useEffect(() => {
@@ -83,39 +89,48 @@ const RentInsertForm=()=>{
             return;
         }
 
-    try {
-        const response = await axios.post("http://localhost:8080/api/business/verify", {
-            bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
-        });
-
-
-        console.log("응답 데이터: ", response.data);
-
-        //응답이 data 배열 형태일 경우
-        const bizInfo = response.data;
-
-        if (!bizInfo) {
-            alert("사업자 정보를 찾을 수 없습니다.");
+        // 하이픈 포함 여부 확인
+        if (formData.bizRegNumber.includes("-")) {
+            alert("사업자등록번호는 하이픈(-) 없이 숫자만 입력해주세요.");
             return;
         }
 
-        // 국세청에 등록되지 않은 사업자
-        if (bizInfo.utcc_yn === "") {
-            alert("국세청에 등록되지 않은 사업자등록번호입니다.");
+        try {
+            const response = await axios.post("http://localhost:8080/api/business/verify", {
+                bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
+            });
+
+
+            console.log("응답 데이터: ", response.data);
+
+            //응답이 data 배열 형태일 경우
+            const bizInfo = response.data;
+
+            if (!bizInfo) {
+                alert("사업자 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            // 국세청에 등록되지 않은 사업자
+            if (bizInfo.utcc_yn === "") {
+                alert("국세청에 등록되지 않은 사업자등록번호입니다.");
+                setFormData({
+                    ...formData,
+                    bizStatus: "",        
+                    bizClosureFlag: "",    
+                });
+                return;
+            }
+
             setFormData({
                 ...formData,
-                bizStatus: "",        
-                bizClosureFlag: "",    
+                bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N", // 예: 01이면 유효한 사업자
+                bizClosureFlag: bizInfo.utcc_yn,
+
             });
-            return;
-        }
 
-        setFormData({
-            ...formData,
-            bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N", // 예: 01이면 유효한 사업자
-            bizClosureFlag: bizInfo.utcc_yn,
+            setIsBizChecked(true);
 
-        });
         } catch (error) {
             console.error("사업자 진위 확인 실패", error);
             alert("사업자번호 확인 중 오류가 발생했습니다.");
@@ -125,16 +140,63 @@ const RentInsertForm=()=>{
 
 
     //등록
-    const handleSubmit=(e)=>{
+    const handleSubmit = async(e) => {
         e.preventDefault();
+        
+        const { name, value } = e.target;
 
-        if(!formData.category || !formData.name || !formData.phone || !formData.bizRegNumber){
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+
+        if (name === "bizRegNumber") {
+            setIsBizChecked(false);  // 사업자번호 변경 시 진위확인 초기화
+        }
+
+        if (!isBizChecked) {
+            alert("사업자등록번호 진위확인을 먼저 해주세요.");
+            return;
+        }
+
+
+        if(!formData.category || !formData.name || !formData.phone || !formData.bizRegNumber || !formData.postalCode || !formData.basicAddress || !formData.streetAddress){
             alert("필수 항목을 모두 입력해주세요.");
         }
 
-        // 사업자 상태가 Y이고 휴업/폐업 여부가 N인지를 확인
+        // 전화번호에 숫자와 하이픈(-)만 포함되는지 검사
+        const phonePattern = /^[0-9-]+$/;
+
+        if (!phonePattern.test(formData.phone)) {
+            alert("전화번호 형식이 올바르지 않습니다");
+            return;
+        }
+
+        // 하이픈 포함 여부도 검사
+        if (!formData.phone.includes("-")) {
+            alert("전화번호는 하이픈(-)을 포함해서 입력해주세요. 예: 010-1234-5678");
+            return;
+        }
+
+        // 사업자 상태가 Y이면서 휴업/폐업 여부가 N인지를 확인
         if (formData.bizStatus !== 'Y' && formData.bizClosureFlag === 'Y') {
             alert("운영중인 사업자가 아닙니다.");
+            return;
+        }
+
+        try {
+            // DB에서 사업자등록번호 중복 체크
+            const resp = await axios.get("http://localhost:8080/api/business/duplicate", {
+                params: { bizRegNumber: formData.bizRegNumber }
+            });
+
+            if (resp.data === true) {
+                alert("이미 등록된 사업자등록번호입니다.");
+                return;
+            }
+        } catch (error) {
+                console.error("사업자번호 중복 체크 실패", error);
+                alert("사업자번호 중복 확인 중 오류가 발생했습니다.");
             return;
         }
         
@@ -199,7 +261,7 @@ const RentInsertForm=()=>{
             });
             
             //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
-
+            navigate("/rentAdmin/list")            
 
         })
         .catch((err)=>{
@@ -216,7 +278,7 @@ const RentInsertForm=()=>{
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" id="userId" name="userId" value={formData.userId} />
                 <div className="form-group">
-                    <label htmlFor="category">카테고리</label>
+                    <label htmlFor="category">*카테고리</label>
                     <select name="category" id="category" value={formData.category} onChange={handleChange}>
                         <option value="">카테고리를 선택하세요</option>
                         {
@@ -229,26 +291,26 @@ const RentInsertForm=()=>{
                     </select>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="name">상호명</label>
+                    <label htmlFor="name">*상호명</label>
                     <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="phone">전화번호</label>
+                    <label htmlFor="phone">*전화번호</label>
                     <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="010-111-1234" required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="postalCode">우편번호</label>
+                    <label htmlFor="postalCode">*우편번호</label>
                     <div className="flex">
                         <input type="text" id="postalCode" name="postalCode" value={formData.postalCode} readOnly />
                         <button type="button" onClick={handleAddressSearch}>주소 검색</button>
                     </div>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="basicAddress">지번 주소</label>
+                    <label htmlFor="basicAddress">*지번 주소</label>
                     <input type="text" id="basicAddress" name="basicAddress" value={formData.basicAddress} readOnly />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="streetAddress">도로명 주소</label>
+                    <label htmlFor="streetAddress">*도로명 주소</label>
                     <input type="text" id="streetAddress" name="streetAddress" value={formData.streetAddress} readOnly />
                 </div>  
                 <div className="form-group">
@@ -257,7 +319,7 @@ const RentInsertForm=()=>{
                 </div>
                 
                 <div className="form-group">
-                    <label htmlFor="bizRegNumber">사업자 등록번호</label>
+                    <label htmlFor="bizRegNumber">*사업자 등록번호</label>
                     <div className="flex">
                         <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange} placeholder="숫자만 입력하세요" required/>
                         <button type="button" onClick={handleBizNumberCheck}>진위확인</button>
@@ -277,7 +339,7 @@ const RentInsertForm=()=>{
 
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">
-                    <label htmlFor="thumbnail">썸네일 이미지</label>
+                    <label htmlFor="thumbnail">*썸네일 이미지</label>
                     <input type="file" id="thumbnail" name="thumbnail" ref={fileRefs.thumbnail} accept="image/*" />
                 </div>
                 <div className="form-group">
@@ -304,6 +366,5 @@ const RentInsertForm=()=>{
     )
 }
 export default RentInsertForm;
-
 
 

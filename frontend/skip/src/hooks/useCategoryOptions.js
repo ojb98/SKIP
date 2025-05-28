@@ -5,9 +5,9 @@ const useCategoryOptions = (category) => {
     //메모리 안에 캐시해두고 재사용할 수 있도록 도와주는 React 훅
     const options = useMemo(() => ({
 
-        LIFT_TICKET: { sizes: [], hours: [2, 4, 8, 24] },
+        LIFT_TICKET: { sizes: [], hours: [4, 8, 24, 8760] },
         
-        PACKAGE: { sizes: ["SS", "S", "M", "L"], hours: [2, 4, 8, 24] },
+        PACKAGE: { sizes: ["S", "M", "L", "XL", "2XL", "3XL"], hours: [4, 8, 24] },
 
         SKI: {
             sizes: ["90cm", "100cm", "110cm", "120cm", "130cm", "140cm", "150cm", "160cm", "165cm"],

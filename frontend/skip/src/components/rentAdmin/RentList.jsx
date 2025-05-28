@@ -32,7 +32,7 @@ const RentList=()=>{
     
     //렌트샵 삭제
     const deleteRent=(rentId)=>{
-        const checkDel = window.confirm("정말로 삭제하시겠습니까?");
+        const checkDel = window.confirm("정말로 탈퇴하시겠습니까?");
 
         if(checkDel){
             rentDelApi(rentId).then(()=>{
@@ -63,7 +63,7 @@ const RentList=()=>{
                 <thead className="list-thead"> 
                     <tr>
                         <th>번호</th><th>썸네일</th><th>상호명</th><th>전화번호</th><th>주소</th><th>승인상태</th><th>등록일</th>
-                        <th>장비등록</th><th>삭제</th>
+                        <th>장비등록</th><th>탈퇴</th>
                     </tr>
                 </thead>
                 <tbody className="list-tbody">
@@ -90,7 +90,7 @@ const RentList=()=>{
                                         e.stopPropagation(); // 행 클릭 이벤트 막기
                                         deleteRent(r.rentId);
                                     }}>
-                                        <button className="delete-btn">삭제</button>
+                                        <button className="delete-btn">탈퇴</button>
                                     </td>
                                 </tr>
                             )

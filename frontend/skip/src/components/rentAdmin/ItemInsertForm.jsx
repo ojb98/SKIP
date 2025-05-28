@@ -186,6 +186,7 @@ const ItemInsertForm=()=>{
             if (fileRef.current) {
                 fileRef.current.value = null;
             }
+
         })
         .catch(err => { 
             console.log("장비등록 실패", err);
@@ -202,7 +203,7 @@ const ItemInsertForm=()=>{
 
                 <div className="item-group">
                     <div className="form-group">
-                        <label htmlFor="category">카테고리</label>
+                        <label htmlFor="category">*카테고리</label>
                         <select name="category" id="category" value={formData.category} onChange={handleFormChange}>
                             <option value="">카테고리를 선택하세요</option>
                             {
@@ -214,12 +215,12 @@ const ItemInsertForm=()=>{
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="name">장비명</label>
+                        <label htmlFor="name">*장비명</label>
                         <input type="text" id="name" name="name" value={formData.name} onChange={handleFormChange} placeholder="일반의류 or 고급의류" required/>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="image">이미지</label>
+                        <label htmlFor="image">*이미지</label>
                         <input type="file" id="image" name="image" ref={fileRef} accept="image/*" />
                     </div>
                 </div>
@@ -236,7 +237,9 @@ const ItemInsertForm=()=>{
                                 <option value="">시간 선택</option>
                                 {
                                     selectedOptions.hours.map(hour => (
-                                        <option key={hour} value={hour}>{hour}시간</option>
+                                        <option key={hour} value={hour}>
+                                            {hour === 8760 ? "1년" : `${hour}시간`}
+                                        </option>
                                     ))
                                 }
                                 </select>

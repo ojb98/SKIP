@@ -24,4 +24,10 @@ public class BizApiController {
         return new ResponseEntity<>(bizApiDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/duplicate")
+    public boolean checkDuplicate(@RequestParam String bizRegNumber) {
+        return bizApiService.isBizRegNumberDuplicate(bizRegNumber);
+    }
+
+
 }
