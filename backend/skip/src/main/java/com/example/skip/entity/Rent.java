@@ -11,7 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -48,19 +49,15 @@ public class Rent {
     @Column(nullable = false)
     private String detailedAddress;
 
-    @Lob
     @Column(nullable = false)
     private String thumbnail;
 
-    @Lob
     @Column(nullable = true)
     private String image1;
 
-    @Lob
     @Column(nullable = true)
     private String image2;
 
-    @Lob
     @Column(nullable = true)
     private String image3;
 

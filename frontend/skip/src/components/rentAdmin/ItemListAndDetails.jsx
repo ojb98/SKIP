@@ -241,6 +241,14 @@ const ItemListAndDetails=()=>{
                 stockQuantity: Number(stock.stockQuantity || 0),
             }));
 
+        // 총 수량 >= 재고 수량인지 확인
+        for (const stock of sizeStocks) {
+            if (stock.totalQuantity < stock.stockQuantity) {
+                alert(`사이즈 ${stock.size}: 총 수량은 재고 수량보다 작을 수 없습니다.`);
+                return;
+            }
+        }
+
         try {
             for (const option of newOptions) {
                 await axios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {

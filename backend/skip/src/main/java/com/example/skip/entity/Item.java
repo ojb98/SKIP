@@ -4,10 +4,7 @@ import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.enumeration.YesNo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,7 +15,8 @@ import java.util.List;
 
 //Item 클래스에 이 어노테이션을 추가하여 JSON 직렬화 시 Lazy 로딩 관련 프록시 객체를 무시할 수 있습니다.
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -36,7 +34,6 @@ public class Item {
     @Column(nullable = false)
     private String name;
 
-    @Lob
     private String image;
 
     @Enumerated(EnumType.STRING)
