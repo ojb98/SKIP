@@ -24,6 +24,7 @@ import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
 import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
 import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import QnaPopupPage from "./pages/QnaPopupPage"
 
 
 function App() {
@@ -73,6 +74,8 @@ function App() {
                     </Route>
                         {/* 리뷰 팝업 */}
                         <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+                        {/* Q&A 팝업 */}
+                        <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
                 </Routes>
             </BrowserRouter>
         </>

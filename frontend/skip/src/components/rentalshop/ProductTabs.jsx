@@ -5,7 +5,6 @@ import axios from "axios";
 const ProductTabs=({rentId})=>{
   const [shopName, setShopName] = useState("");
   const [tab,setTab] = useState("LIFT_TICKET");
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     axios.get(`/api/rents/${rentId}`).then(res => {

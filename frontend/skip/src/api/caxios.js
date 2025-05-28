@@ -1,12 +1,12 @@
 import axios from "axios";
 
 const caxios = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://192.168.80.14:8080',
     withCredentials: true
 });
 
 export const refresh = async () => {
-    const res = await axios.post('http://localhost:8080/user/refresh', {}, { withCredentials: true }).then(res => res.data);
+    const res = await axios.post('http://192.168.80.14:8080/user/refresh', {}, { withCredentials: true }).then(res => res.data);
     return res;
 }
 

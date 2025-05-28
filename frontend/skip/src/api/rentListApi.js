@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const host='http://localhost:8080/api/rents';
+const host='http://192.168.80.14:8080/api/rents';
 
 export const rentListApi = async(userId)=>{
     const data = await axios.get(`${host}/user/${userId}`).then((res)=>{

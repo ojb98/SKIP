@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReviewList from "../review/ReviewList";
-import QnaList from "./QnaList";
+import QnaList from "../qna/QnaList";
 
 const BoardTabs=({ rentId, itemId })=>{
   const [tab, setTab] = useState('review');
@@ -26,7 +26,7 @@ const BoardTabs=({ rentId, itemId })=>{
         }
       </div>
       {tab === 'review' && <ReviewList rentId={rentId} itemId={itemId} />}
-      {tab === 'qna' && <QnaList />}
+      {tab === 'qna' && <QnaList rentId={rentId} itemId={itemId} />}
     </>
   )
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = 'http://localhost:8080/api/reviews';
+const host = 'http://192.168.80.14:8080/api/reviews';
 
 // 리뷰 등록
 export const writeReviewApi = async (FormData, userId) => {

@@ -37,8 +37,6 @@ public class ReviewDTO {
                 .rating(rating)
                 .content(content)
                 .image(image)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .build();
         return review;
     }
