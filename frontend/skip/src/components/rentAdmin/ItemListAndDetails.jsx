@@ -24,23 +24,18 @@ const ItemListAndDetails=()=>{
     // 카테고리별로 제공되는 사이즈, 시간 옵션을 불러오는 커스텀 훅.
     const { sizes, hours } = useCategoryOptions(modalItemCategory); 
 
-    // 사용자가 추가할 시간/가격 옵션.
-    const [newOptions, setNewOptions] = useState([
-        { rentHour: '', price: '' }
-    ]);
+    // 사용자가 추가할 시간/가격 옵션 (배열로 저장)
+    const [newOptions, setNewOptions] = useState([{ rentHour: '', price: '' }]);
 
     // 사이즈별 재고 입력 상태
     const [sizeStockInputs, setSizeStockInputs] = useState({});
 
-
     // 사이즈/재고 입력 변경 핸들러
+    // { M: { totalQuantity: "10", stockQuantity: "7" }, L: { totalQuantity: "8", stockQuantity: "4" },} 형식으로 저장
     const handleSizeStockChange = (size, field, value) => {
         setSizeStockInputs(prev => ({
             ...prev,
-            [size]: {
-                ...prev[size],
-                [field]: value
-            }
+            [size]: {...prev[size], [field]:value}
         }));
     };
 
@@ -145,10 +140,12 @@ const ItemListAndDetails=()=>{
 
     // 선택한 항목 삭제 처리
     const deleteSelectedDetails= async()=>{
+
         if(checkedDetails.size === 0){  // 체크된 항목이 없으면 경고창 띄우고 중단
             alert("삭제할 항목을 선택해주세요.");
             return;
         }
+
         if(!window.confirm("선택한 장비항목들을 삭제하시겠습니까?")) return;  //정말 삭제할 것인지 확인 요청
 
         // checkedDetails는 Set 객체 (예: Set { "1_101", "1_102" })
@@ -181,53 +178,51 @@ const ItemListAndDetails=()=>{
     const openModal = (itemId, category) => {
         setModalItemId(itemId);
         setModalItemCategory(category);
-        setNewOptions([{ rentHour: '', price: '' }]);
-        setSizeStockInputs({});
-        setIsModalOpen(true);
+        setNewOptions([{ rentHour: '', price: '' }]);  // 첫 번째 옵션 입력칸 초기화
+        setSizeStockInputs({});  // 사이즈/재고 입력도 초기화
+        setIsModalOpen(true); // 모달 열기
     };
 
     // 모달 닫기
     const closeModal = () => {
-        setIsModalOpen(false);
-        setModalItemId(null);
+        setIsModalOpen(false);  // 모달 닫기
+        setModalItemId(null);  
         setModalItemCategory(null);
     };
 
     // 옵션 추가
     const addEmptyTimePriceOption = () => {
-        const base = newOptions[0];
+        const base = newOptions[0];  // 사용자가 현재 입력 중인 값
+
         if (!base.rentHour || !base.price) {
             alert("시간과 가격을 입력해주세요.");
             return;
         }
-    setNewOptions(prev => {
-        // 새 옵션 추가
-        const newList = [...prev, { rentHour: base.rentHour, price: base.price }];
-        // 첫 번째 입력폼 초기화
-        newList[0] = { rentHour: '', price: '' };
-        return newList;
-    });
-};
+        setNewOptions(prev => {
+            // 새 옵션 추가
+            const newList = [...prev, { rentHour: base.rentHour, price: base.price }];
+            newList[0] = { rentHour: '', price: '' };  // 첫 번째 입력폼 초기화
+            return newList;
+        });
+    };
     
-
-
     // 옵션 변경 핸들러
     const handleOptionChange = (index, field, value) => {
         setNewOptions(prev => {
-        const copy = [...prev];
-        copy[index][field] = value;
-        return copy;
+            const copy = [...prev];
+            copy[index][field] = value;
+            return copy;
         });
     };
 
     // 옵션 삭제
     const removeOption = (index) => {
-        setNewOptions(prev => prev.filter((_, i) => i !== index));
+        setNewOptions(prev => prev.filter((_, i) => i !== index));  
     };
 
 
-    // 저장
-    const handleFinalSave = async () => {
+    // 모달 저장
+    const handleModalSave = async () => {
         for (const option of newOptions) {
             if (!option.rentHour || !option.price) {
                 alert("모든 시간/가격 조합을 확인해주세요.");
@@ -235,8 +230,11 @@ const ItemListAndDetails=()=>{
             }
         }
 
+        // 모달창 사이즈/총 수량/재고 수량 배열형태 저장
+        // Object.entries() : key-value 쌍 배열
         const sizeStocks = Object.entries(sizeStockInputs)
             .filter(([size]) => size !== 'selectedSize')  // selectedSize 제외
+            // 배열의 각 항목이 [key, value] 형태 : size 는 'M', 'L' 키 값 , stock는 { totalQuantity: '10', stockQuantity: '5' } 같은 값 객체
             .map(([size, stock]) => ({
                 size,
                 totalQuantity: Number(stock.totalQuantity || 0),
@@ -244,19 +242,19 @@ const ItemListAndDetails=()=>{
             }));
 
         try {
-        for (const option of newOptions) {
-            await axios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {
-            rentHour: Number(option.rentHour),
-            price: Number(option.price),
-            sizeStocks,
-            });
-        }
-        alert("옵션이 저장되었습니다.");
-        closeModal();
-        fetchItems();
+            for (const option of newOptions) {
+                await axios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {
+                    rentHour: Number(option.rentHour),
+                    price: Number(option.price),
+                    sizeStocks,
+                });
+            }
+            alert("옵션이 저장되었습니다.");
+            closeModal();
+            fetchItems();
         } catch (error) {
-        console.error("옵션 저장 실패:", error);
-        alert("옵션 저장 중 오류가 발생했습니다.");
+            console.error("옵션 저장 실패:", error);
+            alert("옵션 저장 중 오류가 발생했습니다.");
         }
     };
 
@@ -268,9 +266,9 @@ const ItemListAndDetails=()=>{
                 <button  className={`category-selected ${selectedCategory === null ? 'active' : ''}`}
                     onClick={()=> setSelectedCategory(null)}>전체보기</button> 
                 {
-                    // Object.entries : 객체형식을 배열식으로 변환
+                    // Object.entries : 객체형식(key-value 쌍)을 배열식으로 변환
                     // 객체는 직접 .map()을 못 써서 Object.entries()로 배열로 바꾼 뒤 .map()을 사용
-                    //[code,label] : 구조분해 할당 => code = "SKI", label = "스키"
+                    //[code,label] : 구조분해 할당(키-값) => code = "SKI", label = "스키"
                     Object.entries(categoryMap).map(([code,label]) => (
                         <button key={code} className={`category-selected ${selectedCategory === code ? 'active' : ''}`}
                             onClick={()=> setSelectedCategory(code)}> {label}
@@ -396,9 +394,12 @@ const ItemListAndDetails=()=>{
                             <div>
                                 <h4>추가된 시간/가격</h4>
                                 <ul>
+                                {/* newOptions에서 첫번째요소(입력창) 제외하고 새 배열 만듬 */}
                                 {newOptions.slice(1).map((opt, idx) => (
                                     <li key={idx}>
                                         {opt.rentHour}시간 - {opt.price}원
+                                        {/* 화면에서 보이는 옵션 목록 인덱스: idx (slice된 배열 기준)
+                                            실제 newOptions 배열 인덱스: idx + 1 */}
                                         <button onClick={() => removeOption(idx + 1)} className="modal-del-btn">삭제</button>
                                     </li>
                                 ))}
@@ -416,18 +417,19 @@ const ItemListAndDetails=()=>{
                             <tbody className="model-tbody">
                                 <tr>
                                     <td>
-                                        <select value={sizeStockInputs.selectedSize || ''}
-                                            onChange={e => {const selectedSize = e.target.value;
-                                                // 사이즈 선택 시 선택된 사이즈만 상태에 저장
-                                                setSizeStockInputs(prev => ({
-                                                    selectedSize,
-                                                    [selectedSize]: prev[selectedSize] || { totalQuantity: '', stockQuantity: '' },
-                                                }));
-                                            }}>
-                                                <option value="">사이즈 선택</option>
-                                                {sizes.map(size => (
-                                                    <option key={size} value={size}>{size}</option>
-                                                ))}
+                                        <select value={sizeStockInputs.selectedSize || ''} onChange={e => {const selectedSize = e.target.value;
+                                            // 사이즈 선택 시 선택된 사이즈만 상태에 저장
+                                            setSizeStockInputs(prev => ({
+                                                // 객체의 키로 사용
+                                                selectedSize,
+                                                // 이전 상태에 이미 해당 키가 있으면 그 값을 쓰고, 없으면 기본값 객체를 사용
+                                                [selectedSize]: prev[selectedSize] || { totalQuantity: '', stockQuantity: '' },
+                                            }));
+                                        }}>
+                                            <option value="">사이즈 선택</option>
+                                            {sizes.map(size => (
+                                                <option key={size} value={size}>{size}</option>
+                                            ))}
                                         </select>
                                     </td>
                                     <td>
@@ -449,7 +451,7 @@ const ItemListAndDetails=()=>{
                         </table>
 
                         <div className="modal-actions">
-                            <button type="button" onClick={handleFinalSave} className="option-save-btn">옵션 저장</button>
+                            <button type="button" onClick={handleModalSave} className="option-save-btn">옵션 저장</button>
                             <button type="button" onClick={closeModal} className="option-cancel-btn">취소</button>
                         </div>
                     </div>

@@ -74,23 +74,25 @@ public class ItemService {
         return items.stream()
                 .map(item -> {
                     // 활성 상태의 디테일만 추림
-                    List<ItemResponseDTO.ItemDetailDTO> sortedDetailList = item.getItemDetails().stream()
-                            //비활성화된 상세정보는 제외 ('Y'인 경우만)
-                            .filter(d -> d.getIsActive() == YesNo.Y)
-                            // 사이즈 → 렌트 시간 기준 정렬 (복합 정렬)
-                            .sorted(Comparator
-                                    .comparing(ItemDetail::getSize, Comparator.nullsLast(String::compareTo))
-                                    .thenComparing(ItemDetail::getRentHour, Comparator.nullsLast(Integer::compareTo)))
-                            .map(d -> new ItemResponseDTO.ItemDetailDTO(
-                                    d.getItemDetailId(),
-                                    d.getRentHour(),
-                                    d.getPrice(),
-                                    d.getSize(),
-                                    d.getTotalQuantity(),
-                                    d.getStockQuantity(),
-                                    d.getIsActive()
-                            ))
-                            .toList();
+                    List<ItemResponseDTO.ItemDetailDTO> sortedDetailList =
+                            item.getItemDetails().stream()
+                                // 비활성화된 상세정보는 제외 ('Y'인 경우만)
+                                // 그 장비가 가진 상세 옵션들 중 활성 상태인 것만 추려내는 것
+                                .filter(d -> d.getIsActive() == YesNo.Y)
+                                // 사이즈 → 렌트 시간 기준 정렬 (복합 정렬)
+                                .sorted(Comparator
+                                        .comparing(ItemDetail::getSize, Comparator.nullsLast(String::compareTo))
+                                        .thenComparing(ItemDetail::getRentHour, Comparator.nullsLast(Integer::compareTo)))
+                                .map(d -> new ItemResponseDTO.ItemDetailDTO(
+                                        d.getItemDetailId(),
+                                        d.getRentHour(),
+                                        d.getPrice(),
+                                        d.getSize(),
+                                        d.getTotalQuantity(),
+                                        d.getStockQuantity(),
+                                        d.getIsActive()
+                                ))
+                                .toList();
 
                     // 3. 최종적으로 ItemResponseDTO로 감싸서 List<ItemResponseDTO>로 반환
                     return new ItemResponseDTO(
@@ -126,9 +128,11 @@ public class ItemService {
         Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
                 .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
 
+        // LinkedHashMap: 입력 순서를 보장
         Map<String, ItemConfirmDTO.DetailGroups> groupedDetails = new LinkedHashMap<>();
         Map<String, ItemConfirmDTO.SizeStocks> sizeStockMap = new LinkedHashMap<>();
 
+        // 비활성화된 상세 정보는 무시 (YesNo.Y만 통과)
         for (ItemDetail detail : item.getItemDetails()) {
             if (detail.getIsActive() != YesNo.Y) continue;
 
@@ -159,51 +163,15 @@ public class ItemService {
         dto.setRentId(item.getRent().getRentId());
         dto.setCategory(item.getCategory().name());
         dto.setName(item.getName());
+        //Map에 저장된 값을 List형식으로 설정
         dto.setDetailList(new ArrayList<>(groupedDetails.values()));
         dto.setSizeStockList(new ArrayList<>(sizeStockMap.values()));
 
-        System.out.println("서비스 조회 ===> " +dto);
+        System.out.println("서비스 수정하기위한 조회 ===> " +dto);
         return dto;
     }
 
-//    // 장비 + 디테일 수정
-//    public void updateItemByDetail(ItemConfirmDTO dto) {
-//        // 1. 기존 아이템 조회
-//        Item item = itemRepository.findById(dto.getItemId())
-//                .orElseThrow(() -> new EntityNotFoundException("Item not found"));
-//
-//        // 2. 기본 정보 업데이트
-//        item.setName(dto.getName());
-//        item.setCategory(ItemCategory.valueOf(dto.getCategory()));
-//
-//        // 3. 이미지 처리 (교체 또는 유지)
-//        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
-//        item.setImage(updatedImageUrl);
-//
-//        // 4. 기존 상세 정보 초기화
-//        item.getItemDetails().clear();
-//
-//        System.out.println("dto.getDetailList()=========>"+dto.getDetailList());
-//
-//
-////        for(ItemDetailDTO d : dto.getItemDetails()) {
-////            ItemDetail detail = ItemDetail.builder()
-////                    .item(item)
-////                    .rentHour(d.getRentHour())
-////                    .price(d.getPrice())
-////                    .size(d.getSize())
-////                    .totalQuantity(d.getTotalQuantity())
-////                    .stockQuantity(d.getStockQuantity())
-////                    .isActive(YesNo.Y)
-////                    .build();
-////
-////            item.getItemDetails().add(detail);
-////        }
-//
-//        // 7. 저장
-//        itemRepository.save(item);
-//    }
-
+    // 장비 + 디테일 수정 (해당 장비(Item)의 ItemDetail 리스트를 싹 비우고 다시 등록)
     public void updateItemByDetail(ItemConfirmDTO dto) {
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("Item not found"));
@@ -214,6 +182,7 @@ public class ItemService {
         List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
 
         if (detailList != null && sizeList != null) {
+            //모든 조합(곱집합)
             for (ItemConfirmDTO.DetailGroups detail : detailList) {
                 for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
                     ItemDetail itemDetail = ItemDetail.builder()
@@ -225,6 +194,7 @@ public class ItemService {
                             .stockQuantity(sizeStock.getStockQuantity() != null ? sizeStock.getStockQuantity() : 0)
                             .isActive(YesNo.Y)
                             .build();
+                    //새로 생성한 itemDetail 객체를 해당 장비(item)의 상세 목록에 추가
                     item.getItemDetails().add(itemDetail);
                 }
             }
@@ -234,6 +204,7 @@ public class ItemService {
     }
 
 
+    //장비 옵션 추가
     public void addItemOption(Long itemId, OptionRequestDTO dto){
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다: " + itemId));
@@ -253,6 +224,6 @@ public class ItemService {
 
             itemDetailRepository.save(detail);
         }
-
     }
+
 }
