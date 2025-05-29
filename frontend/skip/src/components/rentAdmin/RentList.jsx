@@ -55,7 +55,6 @@ const RentList=()=>{
     return(
         <div className="rent-list-container">
             <h1 className="top-subject">가맹점 리스트</h1>
-
             {rent.length === 0 ? (
                 <h1 className="sub-subject">현재 등록된 가맹점이 없습니다.</h1>
             ) : (

@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizationSuccessHandler;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -21,6 +22,9 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
+    @Value("${api.host}")
+    private String host;
+
     private final JwtUtil jwtUtil;
 
     private final RefreshTokenService refreshTokenService;
@@ -40,6 +44,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 레디스 저장
         refreshTokenService.saveRefreshToken(userDto.getUsername(), refreshToken);
 
-        response.sendRedirect("http://localhost:5173/");
+        response.sendRedirect("http://" + host + ":5173");
     }
 }

@@ -28,9 +28,11 @@ export const loginSlice = createSlice({
                     state.userId = profile.userId;
                     state.username = profile.username;
                     state.email = profile.email;
+                    state.name = profile.name;
+                    state.phone = profile.phone;
                     state.social = profile.social;
                     state.roles = profile.roles;
-                    state.registeredAt = profile.registeredAt;
+                    state.registeredAt = profile.registeredAt.split('T')[0];
                     state.image = profile.image;
                     state.nickname = profile.nickname;
                     state.isLoggedIn = true;
@@ -41,7 +43,6 @@ export const loginSlice = createSlice({
             })
             .addCase(setProfile.rejected, (state, action) => {
                 console.log(action.error.message);
-
                 state.isLoggedIn = false;
                 state.isLoading = false;
             });

@@ -23,7 +23,7 @@ public class ReservationItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reserveId", nullable = false)
-    private Reservation reservations;
+    private Reservation reservation;
 
     @Column(nullable = false)
     private LocalDateTime rentStart;

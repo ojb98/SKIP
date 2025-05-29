@@ -5,7 +5,7 @@ import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import com.example.skip.entity.User;
-import com.example.skip.repository.ReservationsRepository;
+import com.example.skip.repository.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUtil;
@@ -25,24 +25,25 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
-    private final ReservationsRepository reservationsRepository;
     private final FileUtil fileUtil;
+    private final ReservationRepository reservationRepository;
+
 
     private final String subDir = "review";
 
     // 리뷰 작성
     public ReviewDTO writeReview(ReviewRequestDTO dto, Long userId) throws AccessDeniedException {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-        Reservation reservations = reservationsRepository.findById(dto.getReserveId()).orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+        Reservation reservation = reservationRepository.findById(dto.getReserveId()).orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
 
-        if (!reservations.getUser().getUserId().equals(userId)){
+        if (!reservation.getUser().getUserId().equals(userId)){
             throw new AccessDeniedException("본인이 예약한 리뷰만 작성할 수 있습니다.");
         }
 
         String imagePath = fileUtil.uploadFile(dto.getImageFile(), subDir);
 
         Review review = Review.builder()
-                .reservation(reservations)
+                .reservation(reservation)
                 .rating(dto.getRating())
                 .content(dto.getContent())
                 .image(imagePath)
@@ -99,5 +100,21 @@ public class ReviewService {
         return reviewRepository.findAllByReservation_Rent_RentId(rentId, pageable)
                 .map(ReviewDTO::new);
     }
+    // 특정 렌탈샵 특정 아이템별 리뷰 조회
+/*    public Page<ReviewDTO> getReviewsByRentIdAndItemIdSorted(Long rentId, Long itemId, String sort, Pageable pageable) {
+        Sort sorted;
+        switch (sort) {
+            case "high":
+                sorted = Sort.by(Sort.Direction.DESC, "rating");
+                break;
+            case "low":
+                sorted = Sort.by(Sort.Direction.ASC, "rating");
+                break;
+            default:
+                sorted = Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorted);
+        return reviewRepository.findByRentIdAndItemId(rentId, itemId, sortedPageable).map(ReviewDTO::new);
+    }*/
 
 }

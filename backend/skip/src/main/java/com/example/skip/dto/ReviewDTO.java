@@ -30,15 +30,13 @@ public class ReviewDTO {
         this.createdAt = review.getCreatedAt();
         this.updatedAt = review.getUpdatedAt();
     }
-    public Review toEntity(Reservation reservations) {
+    public Review toEntity(Reservation reservation) {
         Review review = Review.builder()
                 .reviewId(reviewId)
-                .reservation(reservations)
+                .reservation(reservation)
                 .rating(rating)
                 .content(content)
                 .image(image)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .build();
         return review;
     }

@@ -1,8 +1,13 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.item.*;
+import com.example.skip.dto.ItemDetailFlatDTO;
+import com.example.skip.dto.ItemDetailPageDTO;
+import com.example.skip.dto.item.ItemRequestDTO;
 import com.example.skip.dto.item.ItemRequestDTO.DetailGroup;
 import com.example.skip.dto.item.ItemRequestDTO.SizeStock;
+import com.example.skip.dto.item.ItemResponseDTO.ItemDetailDTO;
+import com.example.skip.dto.item.ItemResponseDTO;
+import com.example.skip.dto.item.*;
 import com.example.skip.entity.Item;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Rent;
@@ -15,6 +20,8 @@ import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -105,6 +112,7 @@ public class ItemService {
                     );
                 }).toList();
     }
+
 
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
@@ -227,4 +235,58 @@ public class ItemService {
         }
     }
 
+
+    // 렌탈샵 아이템 페이징
+    public Page<ItemResponseDTO> getRentItemPaging(Long rentId, String category, Pageable pageable) {
+        System.out.println("요청 카테고리: " + category);
+        Page<Item> items = itemRepository.rentItemPaging(rentId, ItemCategory.valueOf(category), pageable);
+
+        return items.map(item -> {
+            List<ItemDetailDTO> details = item.getItemDetails().stream()
+                    .filter(d -> d.getIsActive() == YesNo.Y)
+                    .map(d -> new ItemDetailDTO(
+                            d.getItemDetailId(),
+                            d.getRentHour(),
+                            d.getPrice(),
+                            d.getSize(),
+                            d.getTotalQuantity(),
+                            d.getStockQuantity(),
+                            d.getIsActive()
+                    ))
+                    .toList();
+
+            return new ItemResponseDTO(
+                    item.getItemId(),
+                    item.getName(),
+                    item.getCategory().name(),
+                    item.getImage(),
+                    details
+            );
+        });
+    }
+
+    // 렌탈샵 아이템 상세 페이지
+    public ItemDetailPageDTO getItemDetailPage(Long rentId, Long itemId) {
+        Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
+
+        List<ItemDetailFlatDTO> detailList = item.getItemDetails().stream()
+                .filter(d -> d.getIsActive() == YesNo.Y)
+                .map(d -> new ItemDetailFlatDTO(
+                        d.getItemDetailId(),
+                        d.getRentHour(),
+                        d.getPrice(),
+                        d.getSize(),
+                        d.getStockQuantity()
+                ))
+                .toList();
+
+        return new ItemDetailPageDTO(
+                item.getItemId(),
+                item.getName(),
+                item.getImage(),
+                item.getCategory().name(),
+                detailList
+        );
+    }
 }

@@ -1,28 +1,40 @@
+import { useEffect, useState } from "react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import axios from "axios";
 
-const slide=()=>{
+const slide=({ rentId })=>{
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/api/rents/${rentId}`).then(res => {
+      const { thumbnail, image1, image2, image3 } = res.data;
+      const imageList = [thumbnail, image1, image2, image3].filter(Boolean);
+      setImages(imageList);
+    });
+  }, [rentId]);
+
   return(
     <Swiper
       modules={[Pagination, Navigation, Autoplay]}
       spaceBetween={20}
       slidesPerView={1}
       pagination={{ clickable: true }}
-      // autoplay={{delay:3000}} //오토플레이
+      autoplay={{delay:3000}}
       loop
     >
-      <SwiperSlide>
-        <div style={{ background: '#ddd', height: '300px' }}>Slide 1</div>
-      </SwiperSlide>
-      <SwiperSlide>
-        <div style={{ background: '#ddd', height: '300px' }}>Slide 2</div>
-      </SwiperSlide>
-      <SwiperSlide>
-        <div style={{ background: '#ccc', height: '300px' }}>Slide 3</div>
-      </SwiperSlide>
+      {images.map((img, idx) => (
+        <SwiperSlide key={idx}>
+          <img 
+            src={`http://localhost:8080${img}`}
+            alt={`slide-${idx}`}
+            style={{ width: "100%", height: "300px", objectFit: "cover"}}
+          />
+        </SwiperSlide>
+      ))}
     </Swiper>
   )
 }

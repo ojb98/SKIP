@@ -99,4 +99,5 @@ public class ReviewServiceTest {
         Assertions.assertFalse(reviewPage.isEmpty(), "리뷰 목록이 비어있습니다.");
         reviewPage.getContent().forEach(System.out::println);
     }
+
 }
