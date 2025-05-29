@@ -1,6 +1,7 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.NaverLinkage;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
@@ -14,11 +15,13 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Set;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
@@ -36,7 +39,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (clientName.equals("Naver")) {
             // 네이버 로그인
             Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-            String username = clientName + "_" + (String) response.get("id");
+            String naverId = (String) response.get("id");
+            String username = clientName + "_" + naverId;
 
             User user = userRepository.getUserWithRolesByUsername(username);
             if (user == null) {
@@ -44,6 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 String name = (String) response.get("name");
                 String mobile = (String) response.get("mobile");
                 String profile_image = (String) response.get("profile_image");
+
                 user = User.builder()
                         .userId(null)
                         .username(username)
@@ -56,6 +61,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .roles(Set.of(UserRole.USER))
                         .social(UserSocial.NAVER).build();
                 userRepository.saveAndFlush(user);
+
+                NaverLinkage naverLinkage = NaverLinkage.builder()
+                        .naverId(naverId)
+                        .usernameSet(false)
+                        .passwordSet(false).build();
             }
             UserDto userDto = new UserDto(user);
             userDto.setAttributes(attributes);

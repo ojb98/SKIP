@@ -1,15 +1,15 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.PasswordChangeRequestDto;
 import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.User;
 import com.example.skip.repository.UserRepository;
-import com.example.skip.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 @Transactional
@@ -39,5 +39,24 @@ public class UserService {
 
     public boolean isUser(String username) {
         return userRepository.findByUsername(username).isPresent();
+    }
+
+    public boolean changePassword(UserDto userDto, PasswordChangeRequestDto passwordChangeRequestDto, BindingResult bindingResult) {
+        String inputPassword = passwordChangeRequestDto.getCurrentPassword();
+        if (passwordEncoder.matches(inputPassword, userDto.getPassword())) {
+            String newPassword = passwordChangeRequestDto.getNewPassword();
+            if (newPassword.equals(passwordChangeRequestDto.getConfirmNewPassword())) {
+                User user = userDto.toEntity();
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.saveAndFlush(user);
+                return true;
+            }
+
+            bindingResult.rejectValue("confirmNewPassword", null, "비밀번호 확인이 일치하지 않습니다.");
+            return false;
+        }
+
+        bindingResult.rejectValue("currentPassword", null, "현재 비밀번호가 일치하지 않습니다.");
+        return false;
     }
 }

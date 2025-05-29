@@ -46,19 +46,11 @@ function App() {
                         {/* 홈페이지 */}
                         <Route index element={<Home></Home>}></Route>
 
-                        <Route path="login" element={<LoginPage></LoginPage>}></Route>
-
-                        <Route path="signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="signup" element={<JoinPage></JoinPage>}></Route>
-
                         {/* 마이페이지 */}
                         <Route path="mypage/" element={<MyPageLayout></MyPageLayout>}>
                             <Route path="account" element={<AccountPage></AccountPage>}></Route>
 
                             <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
-
-                            <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 
@@ -81,19 +73,17 @@ function App() {
                     </Route>
 
                     {/* 관리자 라우트 */}
-                        <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<AdminDashboard />} />
-                            {/* 추가 라우트 */}
-                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
-                            <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                            <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
-                            <Route path="/admin/userlist" element={<UsersList></UsersList>} />
-                            <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
-                        </Route>
-                        {/* 리뷰 팝업 */}
-                        <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<AdminDashboard />} />
+                        {/* 추가 라우트 */}
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
+                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/userlist" element={<UsersList></UsersList>} />
+                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
+                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                    </Route>
 
 
                     {/* 리뷰 팝업 */}
@@ -101,12 +91,12 @@ function App() {
 
 
                     {/* 로그인 */}
-                    <Route path="/" element={<LoginLayout></LoginLayout>}>
-                        <Route path="login" element={<LoginPage></LoginPage>}></Route>
+                    <Route element={<LoginLayout></LoginLayout>}>
+                        <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
+                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
 
-                        <Route path="signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

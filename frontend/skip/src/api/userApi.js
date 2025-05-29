@@ -59,8 +59,8 @@ export const getProfile = async () => {
     return data;
 }
 
-export const setPassword = async () => {
-    const data = await caxios.get(`/user/password/change`).then(res => {
+export const changePassword = async req => {
+    const data = await caxios.put(`/user/password/change`, req).then(res => {
         return res.data;
     });
 

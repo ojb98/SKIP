@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
-        if (path.startsWith("/user/logout") || path.startsWith("/user/profile")) {
+        if (path.startsWith("/user/logout") || path.startsWith("/user/profile") || path.startsWith("/user/password")) {
             return false;
         }
         return true;

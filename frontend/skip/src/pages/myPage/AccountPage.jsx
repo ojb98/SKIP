@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import NotSetBadge from "../../components/MyPage/NotSetBadge";
 import MyContainer from "../../components/myPage/MyContainer";
+import { button } from "../../components/buttons";
 
 const AccountPage = () => {
     const profile = useSelector(state => state.loginSlice);
@@ -100,7 +101,7 @@ const AccountPage = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-                                    <dt className="font-medium text-gray-900">가입 형태</dt>
+                                    <dt className="font-medium text-gray-900">권한</dt>
 
                                     <dd className="text-gray-700 sm:col-span-2">
                                         {
@@ -123,7 +124,9 @@ const AccountPage = () => {
                         </div>
 
                         <button
-                            className={`w-[150px] h-[45px] rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
+                            className={button({
+                                color: "primary", className: 'w-[150px] h-[45px]'
+                            })}
                         >
                             수정
                         </button>
