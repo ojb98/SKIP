@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString(exclude = {"item", "reservations"})
 @Builder
-public class ReservationItems {
+public class ReservationItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rentItemId;
@@ -23,7 +23,7 @@ public class ReservationItems {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reserveId", nullable = false)
-    private Reservations reservations;
+    private Reservation reservations;
 
     @Column(nullable = false)
     private LocalDateTime rentStart;

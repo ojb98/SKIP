@@ -29,6 +29,7 @@ const Header = () => {
                                             });
                                         }}>Logout</Link></li>
                                     <li><Link to={"/mypage/account"}>mypage</Link></li>
+                                    <li><Link to="/cart/list">장바구니</Link></li>
                                 </> :
                                 <li><Link to={"/login"}>Login</Link></li>
                             }

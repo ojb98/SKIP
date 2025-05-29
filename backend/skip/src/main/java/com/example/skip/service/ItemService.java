@@ -12,6 +12,7 @@ import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.util.FileUploadUtil;
+import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemDetailRepository itemDetailRepository;
     private final RentRepository rentRepository;
-    private final FileService fileService;
+    private final FileUtil fileUtil;
     private final FileUploadUtil fileUploadUtil;
 
     //장비 등록
@@ -35,7 +36,7 @@ public class ItemService {
         Rent rent = rentRepository.findById(dto.getRentId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 렌트샵을 찾을 수 없습니다."));
 
-        String imageUrl = fileService.uploadFile(dto.getImage(),"items");
+        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
 
         Item item = Item.builder()
                 .rent(rent)

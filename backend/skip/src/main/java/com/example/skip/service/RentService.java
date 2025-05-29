@@ -9,6 +9,7 @@ import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUploadUtil;
+import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,7 @@ public class RentService {
     private final UserRepository userRepository;
     private final RentRepository rentRepository;
     private final FileUploadUtil fileUploadUtil;
-    private final FileService fileService;
+    private final FileUtil fileUtil;
 
     //등록
     public Long createRent(RentRequestDTO rentRequestDTO){
@@ -41,10 +42,10 @@ public class RentService {
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
             // 파일 업로드 처리
-            thumbnailUrl = fileService.uploadFile(rentRequestDTO.getThumbnail(), "rents");
-            imageUrl1 = fileService.uploadFile(rentRequestDTO.getImage1(), "rents");
-            imageUrl2 = fileService.uploadFile(rentRequestDTO.getImage2(), "rents");
-            imageUrl3 = fileService.uploadFile(rentRequestDTO.getImage3(), "rents");
+            thumbnailUrl = fileUtil.uploadFile(rentRequestDTO.getThumbnail(), "rents");
+            imageUrl1 = fileUtil.uploadFile(rentRequestDTO.getImage1(), "rents");
+            imageUrl2 = fileUtil.uploadFile(rentRequestDTO.getImage2(), "rents");
+            imageUrl3 = fileUtil.uploadFile(rentRequestDTO.getImage3(), "rents");
 
             Rent rent = Rent.builder()
                     .user(user)
@@ -149,10 +150,10 @@ public class RentService {
     // 롤백을 고려한 파일 삭제 메소드 추가
     private void deleteUploadedFiles(String thumbnailUrl, String imageUrl1, String imageUrl2, String imageUrl3) {
         try {
-            if (thumbnailUrl != null) fileService.deleteFile(thumbnailUrl);
-            if (imageUrl1 != null) fileService.deleteFile(imageUrl1);
-            if (imageUrl2 != null) fileService.deleteFile(imageUrl2);
-            if (imageUrl3 != null) fileService.deleteFile(imageUrl3);
+            if (thumbnailUrl != null) fileUtil.deleteFile(thumbnailUrl);
+            if (imageUrl1 != null) fileUtil.deleteFile(imageUrl1);
+            if (imageUrl2 != null) fileUtil.deleteFile(imageUrl2);
+            if (imageUrl3 != null) fileUtil.deleteFile(imageUrl3);
         } catch (Exception e) {
             // 파일 삭제 실패 시 로그에 남기고 예외 처리
             e.printStackTrace();

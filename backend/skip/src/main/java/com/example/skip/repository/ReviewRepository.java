@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 본인 리뷰 조회
-    Page<Review> findAllByReservations_User_UserId(Long userId, Pageable pageable);
+    Page<Review> findAllByReservation_User_UserId(Long userId, Pageable pageable);
 
     // 본인 렌탈샵 리뷰 조회
-    Page<Review> findAllByReservations_Rent_RentId(Long rentId, Pageable pageable);
+    Page<Review> findAllByReservation_Rent_RentId(Long rentId, Pageable pageable);
 }

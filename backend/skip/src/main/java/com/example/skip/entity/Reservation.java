@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString(exclude = {"user", "rent"})
 @Builder
-public class Reservations {
+public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reserveId;

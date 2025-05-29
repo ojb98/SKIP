@@ -24,6 +24,7 @@ import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
 import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
 import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import CartList from "./components/cart/cartList"
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        <Route path="/cart/list" element={<CartList/>}></Route>
 
 
                         {/* 렌탈샵 상세 페이지 */}
