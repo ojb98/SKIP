@@ -36,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (clientName.equals("Naver")) {
             // 네이버 로그인
             Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-            String username = clientName + (String) response.get("id");
+            String username = clientName + "_" + (String) response.get("id");
 
             User user = userRepository.getUserWithRolesByUsername(username);
             if (user == null) {
@@ -44,7 +44,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 String name = (String) response.get("name");
                 String mobile = (String) response.get("mobile");
                 String profile_image = (String) response.get("profile_image");
-                String nickname = (String) response.get("nickname");
                 user = User.builder()
                         .userId(null)
                         .username(username)
@@ -53,7 +52,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .name(name)
                         .phone(mobile)
 //                        .image()
-                        .nickname(nickname)
                         .status(UserStatus.APPROVED)
                         .roles(Set.of(UserRole.USER))
                         .social(UserSocial.NAVER).build();
@@ -64,26 +62,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return userDto;
         } else if (clientName.equals("Kakao")) {
             // 카카오 로그인
-            String username = clientName + attributes.get("id");
+            String username = clientName + "_" + attributes.get("id");
 
             User user = userRepository.getUserWithRolesByUsername(username);
             if (user == null) {
                 Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
                 String email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
-                String nickname = (String) properties.get("nickname");
                 user = User.builder()
                         .userId(null)
                         .username(username)
                         .password(password)
                         .email(email)
 //                        .image()
-                        .nickname(nickname + "#" + RandomStringGenerator.generate(5, RandomStringGenerator.NUMERIC))
                         .status(UserStatus.APPROVED)
                         .roles(Set.of(UserRole.USER))
                         .social(UserSocial.KAKAO).build();
                 userRepository.saveAndFlush(user);
             }
-            System.out.println("디버깅");
             UserDto userDto = new UserDto(user);
             userDto.setAttributes(attributes);
             return userDto;

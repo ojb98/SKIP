@@ -58,3 +58,11 @@ export const getProfile = async () => {
 
     return data;
 }
+
+export const setPassword = async () => {
+    const data = await caxios.get(`/user/password/change`).then(res => {
+        return res.data;
+    });
+
+    return data;
+}

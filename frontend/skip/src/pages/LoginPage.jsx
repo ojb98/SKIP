@@ -49,8 +49,6 @@ const LoginPage = () => {
     return (
         <>
             <div className="w-[350px] flex flex-col items-center">
-                <h1 className="my-10 text-5xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
-
                 <form className="w-full flex flex-col items-center gap-7" onSubmit={loginHandler}>
                     <input
                         type="text"
@@ -65,6 +63,7 @@ const LoginPage = () => {
                         className={`${input_size} ${input_text}`}
                         ref={password}
                     ></input>   
+
                     <div className={`w-full ${loginError ? 'flex' : 'hidden'} justify-start -my-3`}>
                         <span className="text-xs text-red-400">※ {loginError}</span>
                     </div>

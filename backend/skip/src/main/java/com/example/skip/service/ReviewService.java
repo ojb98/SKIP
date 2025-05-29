@@ -2,18 +2,16 @@ package com.example.skip.service;
 
 import com.example.skip.dto.ReviewDTO;
 import com.example.skip.dto.ReviewRequestDTO;
-import com.example.skip.entity.Reservations;
+import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import com.example.skip.entity.User;
-import com.example.skip.repository.ReservationsRepository;
+import com.example.skip.repository.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +24,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
-    private final ReservationsRepository reservationsRepository;
+    private final ReservationRepository reservationRepository;
     private final FileService fileService;
 
     private final String subDir = "review";
@@ -34,16 +32,16 @@ public class ReviewService {
     // 리뷰 작성
     public ReviewDTO writeReview(ReviewRequestDTO dto, Long userId) throws AccessDeniedException {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-        Reservations reservations = reservationsRepository.findById(dto.getReserveId()).orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+        Reservation reservation = reservationRepository.findById(dto.getReserveId()).orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
 
-        if (!reservations.getUser().getUserId().equals(userId)){
+        if (!reservation.getUser().getUserId().equals(userId)){
             throw new AccessDeniedException("본인이 예약한 리뷰만 작성할 수 있습니다.");
         }
 
         String imagePath = fileService.uploadFile(dto.getImageFile(), subDir);
 
         Review review = Review.builder()
-                .reservations(reservations)
+                .reservation(reservation)
                 .rating(dto.getRating())
                 .content(dto.getContent())
                 .image(imagePath)
@@ -57,7 +55,7 @@ public class ReviewService {
     public ReviewDTO updateReview(Long reviewId, ReviewRequestDTO dto, Long userId) throws AccessDeniedException {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다."));
 
-        if(!review.getReservations().getUser().getUserId().equals(userId)){
+        if(!review.getReservation().getUser().getUserId().equals(userId)){
             throw new AccessDeniedException("수정 권한이 없습니다.");
         }
 
@@ -79,7 +77,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId, Long userId) throws AccessDeniedException {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다."));
 
-        if(!review.getReservations().getUser().getUserId().equals(userId)) {
+        if(!review.getReservation().getUser().getUserId().equals(userId)) {
             throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
 
@@ -92,12 +90,12 @@ public class ReviewService {
     // 리뷰 목록
     // 본인 리뷰 목록 조회 (개인 회원 마이페이지)
     public Page<ReviewDTO> getUserReviews(Long userId, Pageable pageable) {
-        return reviewRepository.findAllByReservations_User_UserId(userId, pageable)
+        return reviewRepository.findAllByReservation_User_UserId(userId, pageable)
                 .map(ReviewDTO::new);
     }
     // 렌탈샵 리뷰 목록 조회 (렌탈샵 마이페이지)
     public Page<ReviewDTO> getRentalReviews(Long rentId, Pageable pageable) {
-        return reviewRepository.findAllByReservations_Rent_RentId(rentId, pageable)
+        return reviewRepository.findAllByReservation_Rent_RentId(rentId, pageable)
                 .map(ReviewDTO::new);
     }
     // 특정 렌탈샵 특정 아이템별 리뷰 조회

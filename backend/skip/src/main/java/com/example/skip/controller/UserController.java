@@ -7,7 +7,6 @@ import com.example.skip.service.EmailVerifyService;
 import com.example.skip.service.UserService;
 import com.example.skip.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValidator;
@@ -16,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,5 +82,14 @@ public class UserController {
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
         String accessToken = jwtUtil.extractToken("accessToken", request);
         return ResponseEntity.ok(Map.of("success", true, "return", jwtUtil.validateToken(accessToken)));
+    }
+
+    @PutMapping("/password/set")
+    public ApiResponseDto setPassword() {
+//        userService.setPassword();
+
+        return ApiResponseDto.builder()
+                .success(true)
+                .data(null).build();
     }
 }
