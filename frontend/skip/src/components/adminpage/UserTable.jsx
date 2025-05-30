@@ -1,8 +1,9 @@
-  import React, { useEffect, useState } from 'react';
-  import axios from 'axios';
+  import { useEffect, useState } from 'react';
   import '../../css/userlist.css'; 
 import AdminPagination from './AdminPagenation';
 import { formatDate, formatDate1 } from '../../utils/formatdate';
+import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, requestDelete } from '../../services/admin/UserListService';
+
 
   function UserTable() {
     const [users, setUsers] = useState([]);
@@ -33,7 +34,8 @@ import { formatDate, formatDate1 } from '../../utils/formatdate';
         return;
       }
       setSelectedUser(user);
-      findUser5Activity(user.userId);
+      findUser5Activity(user.userId).then(data=>setUser5Activites(data)).catch(err=>console.error("유저활동조회 실패",err));
+      
     };
 
     const handleSearch = () =>{
@@ -51,63 +53,19 @@ import { formatDate, formatDate1 } from '../../utils/formatdate';
       setSelectedUser(null)
     };
 
-    const fetchUsers = async () => {
+    const loadUsers = async () => {
       try {
-        const response = await axios.get('/api/users');
-        setUsers(response.data);
-      } catch (error) {
-        console.error('사용자 데이터를 불러오는 데 실패했습니다.', error);
+      const data = await fetchUsers();
+        setUsers(data);
+      } catch (e) {
+        console.error('사용자 조회 실패', e);
       } finally {
         setLoading(false);
-      }
-    };
-
-    const findUsersByUsername = async (username) => {
-      try{
-        const response = await axios.get(`/api/users/find-user-by-username/${username}`);
-        setUsers(Array.isArray(response.data) ? response.data : [response.data])
-      } catch (error){
-        console.error('사용자 데이터를 불러오는 데 실패했습니다.',error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    const findUsersByName= async (name) => {
-      try{
-        const response = await axios.get(`/api/users/find-user-by-name/${name}`);
-        setUsers(Array.isArray(response.data) ? response.data : [response.data])
-      } catch (error){
-        console.error('사용자 데이터를 불러오는 데 실패했습니다.',error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    const findUser5Activity = async (userId) => {
-      try{
-        const response = await axios.get(`/api/users/find-users-recent-activity/${userId}`);
-        setUser5Activites(response.data);
-      } catch (error){
-        console.error('사용자 데이터를 불러오는 데 실패했습니다.',error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    const requestDelete = async (userId) => {
-      if (!window.confirm('정말로 탈퇴 처리하시겠습니까?')) return;
-      try {
-        await axios.delete(`/api/users/delete/${userId}`);
-        alert('탈퇴 처리되었습니다.');
-        fetchUsers(); 
-      } catch (error) {
-        alert('탈퇴 처리 실패');
-        console.error(error);
       }
     };
 
     useEffect(() => {
-      fetchUsers();
+      loadUsers();
     }, []);
 
     if (loading) return <p>로딩 중...</p>;

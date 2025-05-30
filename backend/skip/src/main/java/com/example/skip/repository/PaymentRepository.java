@@ -14,33 +14,91 @@ import java.util.Map;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    @Query("SELECT SUM(p.totalPrice) FROM Payment p WHERE p.createdAt BETWEEN :atStart AND :atEnd")
-    Long getTotalSales(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
-
-//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CONFIRMED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-//    Long getConfirmReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
-//
-//    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'CANCELLED' AND p.createdAt BETWEEN :atStart AND :atEnd")
-//    Long getCancleReserv(@Param("atStart") String atStart, @Param("atEnd") String atEnd);
-
-    @Query("SELECT new map(DATE(p.createdAt) as date, SUM(p.totalPrice) as total) " +
-            "FROM Payment p " +
-            "WHERE p.createdAt BETWEEN :start AND :end " +
-            "GROUP BY DATE(p.createdAt)")
-    List<Map<String, Object>> getDailySales(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
-    );
-    @Query("SELECT p.method AS method, SUM(p.totalPrice) AS total " +
-            "FROM Payment p " +
-            "WHERE p.createdAt BETWEEN :atStart AND :atEnd " +
-            "GROUP BY p.method " +
-            "ORDER BY p.method")
-    List<Map<String, Object>> getCategorySales(
-            @Param("atStart") LocalDateTime atStart,
-            @Param("atEnd") LocalDateTime atEnd
-    );
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 
     List<Payment> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
+
+    @Query("""
+    SELECT SUM(p.totalPrice) 
+    FROM Payment p 
+    WHERE p.createdAt >= :start AND p.createdAt < :end AND p.status = 'PAID'
+    """)
+    Double getTotalPaidPriceBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(p) 
+    FROM Payment p 
+    WHERE p.createdAt >= :start 
+    AND p.createdAt < :end AND p.status = 'PAID'
+""")
+    Long getPaidCountBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.totalPrice), 0)
+    FROM Payment p
+    WHERE p.status = 'PAID'
+    AND p.createdAt BETWEEN :start AND :end
+    """)
+    Double getRentTotalSales(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(a.totalPrice), 0)
+    FROM AdPayment a
+    WHERE a.createdAt BETWEEN :start AND :end
+    """)
+    Double getAdTotalSales(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(p)
+    FROM Payment p
+    WHERE p.status = 'PAID'
+    AND p.createdAt BETWEEN :start AND :end
+    """)
+    Long getRentTotalCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(a)
+    FROM AdPayment a
+    WHERE a.createdAt BETWEEN :start AND :end
+    """)
+    Long getAdTotalCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.adminPrice), 0)
+    FROM Payment p
+    WHERE p.status = 'PAID'
+    AND p.createdAt BETWEEN :start AND :end
+    """)
+    Double getAdminProfit(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.totalPrice), 0)
+    FROM Payment p
+    WHERE p.status = 'CANCELLED'
+    AND p.createdAt BETWEEN :start AND :end
+    """)
+    Double getCancelledSales(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(p)
+    FROM Payment p
+    WHERE p.status = 'CANCELLED'
+    AND p.createdAt BETWEEN :start AND :end
+    """)
+    Long getCancelledCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT COUNT(b) FROM ActiveBannerList b WHERE b.uploadDate BETWEEN :start AND :end")
+    Long countBanner(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT COUNT(bs) FROM Boost bs WHERE bs.endDate BETWEEN :start AND :end")
+    Long countBoost(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+
+    @Query("""
+    SELECT COUNT(bw)
+    FROM BannerWaitingList bw
+    WHERE bw.createdAt BETWEEN :start AND :end
+    """)
+    Long getBannerWaitingCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 }

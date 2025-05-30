@@ -6,6 +6,7 @@ import com.example.skip.entity.User;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.service.UserListService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +31,17 @@ public class UserListController {
     }
 
 
-    @GetMapping("/find-user-by-name/{name}")
+    @GetMapping("/find/name/{name}")
     public List<User> findUserByName(@PathVariable("name") String name) {
         return userRepository.findByNameContaining(name);
     }
 
-    @GetMapping("/find-user-by-username/{username}")
+    @GetMapping("/find/username/{username}")
     public List<User> findUsersByUsername(@PathVariable("username") String username) {
         return userRepository.findByUsernameContaining(username);
     }
 
-    @GetMapping("/find-users-recent-activity/{userId}")
+    @GetMapping("/find/recent/activity/{userId}")
     public ResponseEntity<Map<String, Object>> getUserActivity(@PathVariable("userId") Long userId) {
         List<ReviewDTO> recentReviews = userListService.getUserRecentReviews(userId);
         List<PaymentDTO> recentPayment = userListService.getUserRecentPayments(userId);

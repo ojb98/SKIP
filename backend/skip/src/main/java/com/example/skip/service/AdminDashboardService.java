@@ -1,16 +1,14 @@
 package com.example.skip.service;
 
 import com.example.skip.entity.*;
+import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AdminDashboardService {
@@ -24,80 +22,71 @@ public class AdminDashboardService {
     private BannerWaitingListRepository bannerWaitingListRepository;
     @Autowired
     private BoostRepository boostRepository;
+    @Autowired
+    private ReservationItemsRepository reservationItemsRepository;
 
+    // ***DB에서 가공된 결과 가져오기
     public Map<String, Object> getSummary(LocalDate start, LocalDate end) {
-        List<Payment> payments = paymentRepository.findAllByCreatedAtBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
-        List<AdPayment> adPayments = adPaymentRepository.findAllByCreatedAtBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
-        List<ActiveBannerList> activeBannerList = activeBannerListRepository.findAllByUploadDateBetween(start.atStartOfDay(),end.plusDays(1).atStartOfDay());
-        List<BannerWaitingList> watingBannerList = bannerWaitingListRepository.findAllByCreatedAtBetween(start.atStartOfDay(),end.plusDays(1).atStartOfDay());
-        List<Boost> boostList = boostRepository.findAllByEndDateBetween(start.atStartOfDay(), end.plusDays(1).atStartOfDay());
+        LocalDateTime from = start.atStartOfDay();
+        LocalDateTime to = end.plusDays(1).atStartOfDay();
 
-        // 총 결제액 : 렌탈샵 매출액 + 광고비 매출액
-        double total = payments.stream().mapToDouble(Payment::getTotalPrice).sum() + adPayments.stream().mapToDouble(AdPayment::getTotalPrice).sum();
-        // 총 결제건 : 렌탈샵 매출건 + 광고비 매출건
-        long totalSalesCount = payments.stream().count() + adPayments.stream().count();
-        // 렌탈샵 매출액 , 광고비 매출액
-        double rentTotalSales = payments.stream()
-                .filter(p -> p.getStatus() == PaymentStatus.PAID)
-                .mapToDouble(Payment::getTotalPrice)
-                .sum();
-        double adTotalSales = adPayments.stream().mapToDouble(AdPayment::getTotalPrice).sum();
+        // 총 결제액, 총 결제건 수
+        double totalSales = Optional.ofNullable(paymentRepository.getTotalPaidPriceBetween(from, to)).orElse(0.0);
+        long totalSalesCount =  Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L);
+        // 렌탈샵 총 결제액 , 광고비 총 결제액
+        double rentTotalSales = Optional.ofNullable(paymentRepository.getRentTotalSales(from, to)).orElse(0.0);
+        double adTotalSales = Optional.ofNullable(paymentRepository.getAdTotalSales(from, to)).orElse(0.0);
         // 렌탈샵 매출건 , 광고비 매출건
-        long rentTotalAmounts = payments.stream().filter(p -> p.getStatus() == PaymentStatus.PAID).count();
-        long adTotalAmounts = adPayments.stream().count();
-        // 관리자 순수익액
-        double profit = payments.stream().filter(p -> p.getStatus() == PaymentStatus.PAID).mapToDouble(Payment::getAdminPrice).sum();
-        // 결제승인건
-        long successCount = payments.stream().filter(p -> p.getStatus() == PaymentStatus.PAID).count();
-        // 결제취소금액
-        double cancelPrice = payments.stream().filter(p -> p.getStatus() == PaymentStatus.CANCELLED).mapToDouble(Payment::getTotalPrice).sum();
-        // 결제취소건
-        long cancelCount = payments.stream().filter(p -> p.getStatus() == PaymentStatus.CANCELLED).count();
+        long rentTotalCount = Optional.ofNullable(paymentRepository.getRentTotalCount(from, to)).orElse(0L);
+        long adTotalCount = Optional.ofNullable(paymentRepository.getAdTotalCount(from, to)).orElse(0L);
+        // 광고 신청건
+        long adAmount = Optional.ofNullable(paymentRepository.countBanner(from,to)).orElse(0L)
+                        + Optional.ofNullable(paymentRepository.countBoost(from,to)).orElse(0L);
 
-        // 광고결제건수
-        long adCount = activeBannerList.stream().count() + boostList.stream().count();
+
+        // 관리자 순수익액
+        double profit = Optional.ofNullable(paymentRepository.getAdminProfit(from, to)).orElse(0.0);
+        // 결제승인건
+        long successCount = Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L)
+                            - Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);
+        // 결제취소금액, 결제취소건
+        double cancelPrice = Optional.ofNullable(paymentRepository.getCancelledSales(from, to)).orElse(0.0);
+        long cancelCount = Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);
         // 대기중인 배너등록요청 건 수
-        long bannerWaitingCount = watingBannerList.stream().count();
+        long bannerWaitingCount = Optional.ofNullable(paymentRepository.getBannerWaitingCount(from, to)).orElse(0L);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("totalSales", total);
+        result.put("totalSales", totalSales);
         result.put("totalSalesCount", totalSalesCount);
-        result.put("totalAdCount", adCount);
+        result.put("totalAdCount", adTotalCount);
+        result.put("totalAdPrice", adTotalSales);
         result.put("totalProfit", profit);
         result.put("totalSuccessCount", successCount);
         result.put("totalCancelPrice", cancelPrice);
         result.put("totalCancelCount", cancelCount);
-//        result.put("totalPendingCount", pendingCount);
+        result.put("totalAdAmount", adAmount);
         result.put("totalRentPrice", rentTotalSales);
-        result.put("totalRentAmount", rentTotalAmounts);
-        result.put("totalAdPrice", adTotalSales);
-        result.put("totalAdAmount", adTotalAmounts);
+        result.put("totalRentAmount", rentTotalCount);
         result.put("totalBannerWaiting", bannerWaitingCount);
         return result;
     }
 
-    public Map<String, Object> getSalesChartData(String atStart, String atEnd) {
-        Map<String, Object> data = new HashMap<>();
+    //ItemCategory enum클래스의 인자 순서대로 순회하며 Map에 담기
+    public List<Map<String, Object>> getSalesChartData(LocalDate start, LocalDate end) {
+        List<Map<String, Object>> result = new ArrayList<>();
 
-        // 기본 날짜 범위 설정
-        if (atStart == null || atStart.isEmpty()) {
-            atStart = LocalDate.now().minusDays(14).toString();
-        }
-        if (atEnd == null || atEnd.isEmpty()) {
-            atEnd = LocalDate.now().plusDays(14).toString();
-        }
-
-        LocalDateTime startDateTime = LocalDate.parse(atStart).atStartOfDay();
-        LocalDateTime endDateTime = LocalDate.parse(atEnd).plusDays(1).atStartOfDay();
-
-        List<Map<String, Object>> dailySales = paymentRepository.getDailySales(startDateTime, endDateTime);
-        List<Map<String, Object>> categorySales = paymentRepository.getCategorySales(startDateTime, endDateTime);
-
-        data.put("dailySales", dailySales);
-        data.put("categorySales", categorySales);
-        data.put("atStart", atStart);
-        data.put("atEnd", atEnd);
-
-        return data;
+        for (ItemCategory category: ItemCategory.values()) {
+            long count = reservationItemsRepository.countPaymentsByItemCategory(
+                    category,
+                    start.atStartOfDay(),
+                    end.plusDays(1).atStartOfDay()
+            );
+            Map<String, Object> map = new HashMap<>();
+            map.put("category",category.toString());
+            map.put("count",count);
+            result.add(map);
+        };
+        System.out.println(result);
+        return result;
     }
 }

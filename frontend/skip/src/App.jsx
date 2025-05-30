@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Layout from "./pages/Layout"
 import Home from "./pages/Home"
-
+import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
 import JoinPage from "./pages/SignupPage"
 import SignupVerifyPage from "./pages/SignupVerifyPage"
@@ -82,8 +81,7 @@ function App() {
                             <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
                             <Route path="/admin/userlist" element={<UsersList></UsersList>} />
                             <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />                        
                         </Route>
                         {/* 리뷰 팝업 */}
                         <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>

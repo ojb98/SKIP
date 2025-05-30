@@ -12,11 +12,13 @@ const StatOverviewCard = ({ stats }) => {
     return <div>📈 통계 데이터를 불러오는 중입니다...</div>
   }
 
+  const current = stats.current
+  const before = stats.before
   const today = stats.today
   const dayAgo = stats.dayAgo
   const weekAgo = stats.weekAgo
   const yearAgo = stats.yearAgo
-
+  
   const compareSections = [
     {
       label: "전일 대비",
@@ -82,11 +84,11 @@ const StatOverviewCard = ({ stats }) => {
                   listStyle: "none"
                 }}
               >
-                <div style={{ marginBottom: "6px" }}>
+                <div style={{ marginBottom: "1px" }}>
                   {label} 매출: <span style={{color:salesFontColor}}><strong>{sales.toLocaleString()}원</strong> (
                   {trendIcon(salesChange)} {Math.abs(salesChange).toFixed(1)}%)</span>
                 </div>
-                <div style={{ marginBottom: "6px" }}>
+                <div style={{ marginBottom: "1px" }}>
                   결제 건수: <span style={{color:countFontColor}}><strong>{count.toLocaleString()}건</strong> (
                   {trendIcon(countChange)} {Math.abs(countChange).toFixed(1)}%)</span>
                 </div>

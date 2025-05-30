@@ -18,8 +18,8 @@ public class ReservationItems {
     private Long rentItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="itemId", nullable = false)
-    private Item item;
+    @JoinColumn(name="itemDetailId", nullable = false)
+    private ItemDetail itemDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reserveId", nullable = false)

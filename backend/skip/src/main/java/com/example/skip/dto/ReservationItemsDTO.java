@@ -1,6 +1,6 @@
 package com.example.skip.dto;
 
-import com.example.skip.entity.Item;
+import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Reservations;
 import com.example.skip.entity.ReservationItems;
 import lombok.*;
@@ -15,16 +15,17 @@ import java.time.LocalDateTime;
 @Builder
 public class ReservationItemsDTO {
     private Long rentItemId;
-    private Long itemId;
+    private Long itemDetailId;
     private Long reserveId;
     private LocalDateTime rentStart;
     private LocalDateTime rentEnd;
     private int quantity;
     private Long subtotalPrice;
 
+    // Entity → DTO 변환 생성자
     public ReservationItemsDTO(ReservationItems reservationItem) {
         this.rentItemId = reservationItem.getRentItemId();
-        this.itemId = reservationItem.getItem().getItemId();
+        this.itemDetailId = reservationItem.getItemDetail().getItemDetailId();
         this.reserveId = reservationItem.getReservations().getReserveId();
         this.rentStart = reservationItem.getRentStart();
         this.rentEnd = reservationItem.getRentEnd();
@@ -32,16 +33,16 @@ public class ReservationItemsDTO {
         this.subtotalPrice = reservationItem.getSubtotalPrice();
     }
 
-    public ReservationItems toEntity(Item item, Reservations reservations) {
-        ReservationItems reservationItem = com.example.skip.entity.ReservationItems.builder()
+    // DTO → Entity 변환 메서드
+    public ReservationItems toEntity(ItemDetail itemDetail, Reservations reservations) {
+        return ReservationItems.builder()
                 .rentItemId(rentItemId)
-                .item(item)
+                .itemDetail(itemDetail)
                 .reservations(reservations)
                 .rentStart(rentStart)
                 .rentEnd(rentEnd)
                 .quantity(quantity)
                 .subtotalPrice(subtotalPrice)
                 .build();
-        return reservationItem;
     }
 }
