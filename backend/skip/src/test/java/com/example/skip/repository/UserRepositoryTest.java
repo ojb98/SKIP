@@ -35,6 +35,18 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void userAdd() {
+        for(int i = 0; i <= 10; i++) {
+            UserDto userDto = new UserDto(null, "user" + i, "1234", "user" + i, "user" + i, "user" + i, UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userRepository.save(userDto.toEntity());
+        }
+        userRepository.flush();
+    }
+
+
+
+    @Test
     public void select() {
         System.out.println(userRepository.getUserWithRolesByUsername("admin"));
     }

@@ -1,0 +1,94 @@
+package com.example.skip.service;
+
+import com.example.skip.dto.QnaDTO;
+import com.example.skip.dto.QnaRequestDTO;
+import com.example.skip.dto.projection.QnaListDTO;
+import com.example.skip.entity.Item;
+import com.example.skip.entity.Qna;
+import com.example.skip.entity.User;
+import com.example.skip.enumeration.QnaStatus;
+import com.example.skip.repository.ItemRepository;
+import com.example.skip.repository.QnaRepository;
+import com.example.skip.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class QnaService {
+
+    private final QnaRepository qnaRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
+    
+    // Q&A 등록
+    public QnaDTO createQna(QnaRequestDTO dto, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
+        Item item = itemRepository.findById(dto.getItemId()).orElseThrow(() -> new EntityNotFoundException("아이템을 찾을 수 없습니다."));
+
+        Qna qna = Qna.builder()
+                .user(user)
+                .item(item)
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .status(QnaStatus.WAITING)
+                .secret(dto.isSecret())
+                .build();
+
+        System.out.println("엔티티 상태:" + qna.getStatus());
+
+        return new QnaDTO(qnaRepository.save(qna));
+    }
+
+    // Q&A 수정
+    public QnaDTO updateQna(Long qnaId, QnaRequestDTO dto, Long userId) {
+        Qna qna = qnaRepository.findDetailById(qnaId);
+
+        if(!qna.getUser().getUserId().equals(userId)) {
+            throw new SecurityException("수정 권한이 없습니다.");
+        }
+
+        qna.setTitle(dto.getTitle());
+        qna.setContent(dto.getContent());
+        qna.setSecret(dto.isSecret());
+
+        return new QnaDTO(qna);
+    }
+
+    // 삭제 - 사용자
+    public void deleteQnaByUser(Long qnaId, Long userId) {
+        if(!qnaRepository.existsByQnaIdAndUser_UserId(qnaId, userId)) {
+            throw new SecurityException("삭제 권한이 없습니다.");
+        }
+        qnaRepository.deleteById(qnaId);
+    }
+
+    // 삭제 - 관리자
+    public void deleteQnaByAdmin(Long qnaId, Long rentId) {
+        if(!qnaRepository.existsByQnaIdAndItem_Rent_RentId(qnaId, rentId)) {
+            throw new SecurityException("삭제 권한이 없습니다.");
+        }
+        qnaRepository.deleteById(qnaId);
+    }
+
+    // 아이템 페이지 Q&A 조회
+    public Page<QnaListDTO> getQnaListByItem(Long itemId, QnaStatus status ,Boolean secret, Pageable pageable) {
+        return qnaRepository.findQnaListByItemWithFilters(itemId, status, secret, pageable);
+    }
+
+    // 사용자 페이지 Q&A 조회
+    public Page<QnaListDTO> getQnaListByUser(Long userId, QnaStatus status, Boolean secret, Pageable pageable) {
+        return qnaRepository.findQnaListByUserWithFilters(userId, status, secret, pageable);
+    }
+
+    // 관리자 페이지 Q&A 조회
+    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, Boolean secret, Pageable pageable) {
+        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, secret, pageable);
+    }
+
+}

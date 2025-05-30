@@ -1,10 +1,11 @@
 package com.example.skip.dto;
 
-import com.example.skip.entity.Item;
 import com.example.skip.entity.Qna;
-import com.example.skip.entity.User;
 import com.example.skip.enumeration.QnaStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -12,39 +13,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class QnaDTO {
+public class QnaResponseDTO {
     private Long qnaId;
-    private Long userId;
-    private Long itemId;
     private String title;
     private String content;
+    private String username;
+    private String itemName;
     private QnaStatus status;
     private boolean secret;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public QnaDTO(Qna qna) {
+    public QnaResponseDTO(Qna qna) {
         this.qnaId = qna.getQnaId();
-        this.userId = qna.getUser().getUserId();
-        this.itemId = qna.getItem().getItemId();
         this.title = qna.getTitle();
         this.content = qna.getContent();
+        this.username = qna.getUser().getUsername();
+        this.itemName = qna.getItem().getName();
         this.status = qna.getStatus();
         this.secret = qna.isSecret();
         this.createdAt = qna.getCreatedAt();
         this.updatedAt = qna.getUpdatedAt();
-    }
-
-    public Qna toEntity(User user, Item item) {
-        Qna qna = Qna.builder()
-                .qnaId(qnaId)
-                .user(user)
-                .item(item)
-                .title(title)
-                .content(content)
-                .status(status)
-                .secret(secret)
-                .build();
-        return qna;
     }
 }

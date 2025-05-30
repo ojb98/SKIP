@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = 'http://192.168.80.14:8080/api/reviews';
+const host = 'http://localhost:8080/api/reviews';
 
 // 리뷰 등록
 export const writeReviewApi = async (FormData, userId) => {
@@ -54,11 +54,11 @@ export const getItemReviewsApi = async (rentId, itemId, page = 0, size = 10, sor
 };
 
 // 리뷰 평점 평균
-export const getAverageRatingApi = async (rentId, itemId) => {
-  const response = await axios.get(`${host}/rent/item/average`, {
-    params: { rentId, itemId },
-  });
-  return response.data;
-};
+// export const getAverageRatingApi = async (rentId, itemId) => {
+//   const response = await axios.get(`${host}/rent/item/average`, {
+//     params: { rentId, itemId },
+//   });
+//   return response.data;
+// };
 
 

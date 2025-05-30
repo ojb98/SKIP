@@ -1,7 +1,7 @@
 import axios from "axios";
 import caxios from "./caxios";
 
-const host = "http://192.168.80.14:8080";
+const host = "http://localhost:8080";
 
 export const signup = async req => {
     const data = await caxios.post(`/user`, req).then(res => {

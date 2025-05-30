@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = 'http://192.168.80.14:8080/api/items';
+const host = 'http://localhost:8080/api/items';
 
 // 아이템리스트 api
 export const fetchPagedItems = async (rentId, category, page = 0, size = 10) => {
