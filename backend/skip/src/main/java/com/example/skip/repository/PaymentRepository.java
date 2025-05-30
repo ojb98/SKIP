@@ -42,5 +42,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     );
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 
-    List<Payment> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
+    List<Payment> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
 }

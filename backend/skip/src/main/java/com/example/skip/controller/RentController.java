@@ -1,7 +1,7 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.RentDTO;
-import com.example.skip.dto.RentRequestDTO;
+import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.service.RentService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rents")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class RentController {
 
     private final RentService rentService;
