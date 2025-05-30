@@ -1,11 +1,14 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.KakaoLinkage;
 import com.example.skip.entity.NaverLinkage;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
+import com.example.skip.repository.KakaoLinkageRepository;
+import com.example.skip.repository.NaverLinkageRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+
+    private final NaverLinkageRepository naverLinkageRepository;
+
+    private final KakaoLinkageRepository kakaoLinkageRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -50,7 +57,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 String profile_image = (String) response.get("profile_image");
 
                 user = User.builder()
-                        .userId(null)
                         .username(username)
                         .password(password)
                         .email(email)
@@ -63,23 +69,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 userRepository.saveAndFlush(user);
 
                 NaverLinkage naverLinkage = NaverLinkage.builder()
+                        .user(user)
                         .naverId(naverId)
                         .usernameSet(false)
                         .passwordSet(false).build();
+                naverLinkageRepository.saveAndFlush(naverLinkage);
+
+                user.setNaverLinkage(naverLinkage);
             }
             UserDto userDto = new UserDto(user);
             userDto.setAttributes(attributes);
             return userDto;
         } else if (clientName.equals("Kakao")) {
             // 카카오 로그인
-            String username = clientName + "_" + attributes.get("id");
+            Long kakaoId = (Long) attributes.get("id");
+            String username = clientName + "_" + kakaoId;
 
             User user = userRepository.getUserWithRolesByUsername(username);
             if (user == null) {
                 Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
                 String email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
+                System.out.println(properties);
                 user = User.builder()
-                        .userId(null)
                         .username(username)
                         .password(password)
                         .email(email)
@@ -88,6 +99,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .roles(Set.of(UserRole.USER))
                         .social(UserSocial.KAKAO).build();
                 userRepository.saveAndFlush(user);
+
+                KakaoLinkage kakaoLinkage = KakaoLinkage.builder()
+                        .user(user)
+                        .kakaoId(kakaoId)
+                        .usernameSet(false)
+                        .passwordSet(false)
+                        .nameSet(false)
+                        .phoneSet(false).build();
+                kakaoLinkageRepository.saveAndFlush(kakaoLinkage);
+
+                user.setKakaoLinkage(kakaoLinkage);
             }
             UserDto userDto = new UserDto(user);
             userDto.setAttributes(attributes);

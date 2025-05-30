@@ -4,10 +4,7 @@ import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,7 +12,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -55,4 +53,10 @@ public class User {
 
     @Column(unique = true)
     private String nickname;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private NaverLinkage naverLinkage;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private KakaoLinkage kakaoLinkage;
 }

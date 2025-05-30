@@ -66,3 +66,11 @@ export const changePassword = async req => {
 
     return data;
 }
+
+export const setPassword = async req => {
+    const data = await caxios.put(`/user/password/set`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}

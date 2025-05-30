@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Entity
 @Builder
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -23,7 +24,7 @@ public class KakaoLinkage {
     private User user;
 
     @Column(nullable = false)
-    private String kakaoId;
+    private Long kakaoId;
 
     @Column(nullable = false)
     private Boolean usernameSet;

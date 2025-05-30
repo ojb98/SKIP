@@ -1,15 +1,27 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.PasswordChangeRequestDto;
+import com.example.skip.dto.PasswordSetRequestDto;
 import com.example.skip.dto.SignupRequestDto;
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.QKakaoLinkage;
+import com.example.skip.entity.QNaverLinkage;
+import com.example.skip.entity.QUser;
 import com.example.skip.entity.User;
+import com.example.skip.enumeration.UserSocial;
 import com.example.skip.repository.UserRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -18,6 +30,14 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private static final QUser user = QUser.user;
+
+    private static final QNaverLinkage naverLinkage = QNaverLinkage.naverLinkage;
+
+    private static final QKakaoLinkage kakaoLinkage = QKakaoLinkage.kakaoLinkage;
 
 
     public UserDto signup(SignupRequestDto signupRequestDto, BindingResult bindingResult) {
@@ -41,14 +61,19 @@ public class UserService {
         return userRepository.findByUsername(username).isPresent();
     }
 
+    @Cacheable(value = "users", key = "#userId", unless = "#result == null")
+    public UserDto getUser(Long userId) {
+        return new UserDto(userRepository.findByUserId(userId).orElseThrow());
+    }
+
+    @CacheEvict(value = "users", key = "#userDto.userId")
     public boolean changePassword(UserDto userDto, PasswordChangeRequestDto passwordChangeRequestDto, BindingResult bindingResult) {
         String inputPassword = passwordChangeRequestDto.getCurrentPassword();
         if (passwordEncoder.matches(inputPassword, userDto.getPassword())) {
             String newPassword = passwordChangeRequestDto.getNewPassword();
             if (newPassword.equals(passwordChangeRequestDto.getConfirmNewPassword())) {
-                User user = userDto.toEntity();
+                User user = userRepository.findByUserId(userDto.getUserId()).orElseThrow();
                 user.setPassword(passwordEncoder.encode(newPassword));
-                userRepository.saveAndFlush(user);
                 return true;
             }
 
@@ -57,6 +82,39 @@ public class UserService {
         }
 
         bindingResult.rejectValue("currentPassword", null, "현재 비밀번호가 일치하지 않습니다.");
+        return false;
+    }
+
+    @CacheEvict(value = "users", key = "#userDto.userId")
+    public boolean setPassword(UserDto userDto, PasswordSetRequestDto passwordSetRequestDto, BindingResult bindingResult) {
+        System.out.println(passwordSetRequestDto);
+        String password = passwordSetRequestDto.getPassword();
+        if (password.equals(passwordSetRequestDto.getConfirmPassword())) {
+            Long userId = userDto.getUserId();
+            User user = userRepository.findByUserId(userId).orElseThrow();
+            user.setPassword(passwordEncoder.encode(password));
+
+            long affected = 0;
+            if (user.getSocial() == UserSocial.NAVER) {
+                affected = jpaQueryFactory
+                        .update(naverLinkage)
+                        .set(naverLinkage.passwordSet, true)
+                        .where(naverLinkage.user.userId.eq(userId))
+                        .execute();
+            } else if (user.getSocial() == UserSocial.KAKAO) {
+                affected = jpaQueryFactory
+                        .update(kakaoLinkage)
+                        .set(kakaoLinkage.passwordSet, true)
+                        .where(kakaoLinkage.user.userId.eq(userId))
+                        .execute();
+            }
+
+            if (affected > 0) {
+                return true;
+            }
+        }
+
+        bindingResult.rejectValue("confirmPassword", null, "비밀번호 확인이 일치하지 않습니다.");
         return false;
     }
 }

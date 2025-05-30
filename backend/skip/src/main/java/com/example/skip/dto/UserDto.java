@@ -46,6 +46,10 @@ public class UserDto extends User implements OAuth2User {
 
     private Map<String, Object> attributes;
 
+    private NaverLinkageDto naverLinkageDto;
+
+    private KakaoLinkageDto kakaoLinkageDto;
+
 
     public UserDto(Long userId, String username, String password, String name, String email, String phone,
                    UserSocial social, Set<String> roles, UserStatus status, LocalDateTime registeredAt, String image, String nickname) {
@@ -78,6 +82,11 @@ public class UserDto extends User implements OAuth2User {
         this.registeredAt = user.getRegisteredAt();
         this.image = user.getImage();
         this.nickname = user.getNickname();
+        if (social == UserSocial.NAVER) {
+            this.naverLinkageDto = new NaverLinkageDto(user.getNaverLinkage());
+        } else if (social == UserSocial.KAKAO) {
+            this.kakaoLinkageDto = new KakaoLinkageDto(user.getKakaoLinkage());
+        }
     }
 
     public com.example.skip.entity.User toEntity() {
@@ -108,6 +117,12 @@ public class UserDto extends User implements OAuth2User {
         claims.put("registeredAt", registeredAt.toString());
         claims.put("image", image);
         claims.put("nickname", nickname);
+        if (social == UserSocial.NAVER) {
+            claims.put("linkage", naverLinkageDto.getClaims());
+        } else if (social == UserSocial.KAKAO) {
+            claims.put("linkage", kakaoLinkageDto.getClaims());
+        }
+        System.out.println(claims);
         return claims;
     }
 

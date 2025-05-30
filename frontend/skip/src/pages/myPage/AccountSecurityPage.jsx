@@ -3,6 +3,8 @@ import MyContainer from "../../components/myPage/MyContainer";
 import { useRef, useState } from "react";
 import { button } from "../../components/buttons";
 import PasswordChangingModal from "./PasswordChangingModal";
+import NotSetBadge from "../../components/MyPage/NotSetBadge";
+import PasswordSettingModal from "./PasswordSettingModal";
 
 const AccountSecurityPage = () => {
     const profile = useSelector(state => state.loginSlice);
@@ -23,14 +25,15 @@ const AccountSecurityPage = () => {
                                 <div className="w-full flex justify-between items-center">
                                     <span className="text-gray-500 font-semibold">
                                         비밀번호
-                                        {
-                                            profile.social != 'NONE'
-                                            &&
-                                            !profile.linkage.passwordSet
-                                            &&
-                                            <NotSetBadge styleClass="ml-10"></NotSetBadge>
-                                        }
                                     </span>
+
+                                    {
+                                        profile.social != 'NONE'
+                                        &&
+                                        !profile.linkage.passwordSet
+                                        &&
+                                        <span className="text-xs text-gray-400">*아이디, 비밀번호를 설정하시면 일반회원처럼 로그인할 수 있어요.</span>
+                                    }
 
                                     <span>
                                         {
@@ -96,6 +99,13 @@ const AccountSecurityPage = () => {
                 passwordChangingModalVisible
                 &&
                 <PasswordChangingModal onClose={() => setPasswordChangingModalVisible(false)}></PasswordChangingModal>
+            }
+
+            {/* 비밀번호 설정 모달 */}
+            {
+                passwordSettingModalVisible
+                &&
+                <PasswordSettingModal onClose={() => setPasswordSettingModalVisible(false)}></PasswordSettingModal>
             }
         </>
     )

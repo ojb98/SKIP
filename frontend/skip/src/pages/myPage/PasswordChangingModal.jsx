@@ -63,7 +63,7 @@ const PasswordChangingModal = ({ onClose }) => {
                 }
             }
         });
-    }
+    };
 
     const modalContent = (
         <>
