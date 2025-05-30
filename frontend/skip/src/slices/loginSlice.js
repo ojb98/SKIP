@@ -35,6 +35,10 @@ export const loginSlice = createSlice({
                     state.registeredAt = profile.registeredAt.split('T')[0];
                     state.image = profile.image;
                     state.nickname = profile.nickname;
+                    state.showname = profile.nickname ? profile.nickname : profile.username.substring(0, 11).slice(0, -3) + '***';
+                    if (state.social != 'NONE') {
+                        state.linkage = profile.linkage;
+                    }
                     state.isLoggedIn = true;
                 } else {
                     state.isLoggedIn = false;

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import NotSetBadge from "../../components/MyPage/NotSetBadge";
 import MyContainer from "../../components/myPage/MyContainer";
+import { button } from "../../components/buttons";
 
 const AccountPage = () => {
     const profile = useSelector(state => state.loginSlice);
@@ -29,7 +30,7 @@ const AccountPage = () => {
                                                     typeof profile.nickname == 'undefined' || profile.nickname == ''
                                                 )
                                                 &&
-                                                <NotSetBadge></NotSetBadge>
+                                                <span className="text-xs text-gray-400">*남에게 보여지는 이름이에요.</span>
                                             )
                                             ||
                                             profile.nickname
@@ -44,12 +45,10 @@ const AccountPage = () => {
                                         {
                                             (
                                                 (
-                                                    profile.social != 'NONE' && profile.linkage.usernameSet
+                                                    profile.social != 'NONE' && !profile.linkage.usernameSet
                                                 )
                                                 &&
-                                                <>
-                                                    <NotSetBadge></NotSetBadge><span className="ml-5 text-xs text-gray-400">*아이디 설정하고 일반회원 처럼 로그인해보세요.</span>
-                                                </>
+                                                <span className="text-xs text-gray-400">*아이디, 비밀번호를 설정하시면 일반회원처럼 로그인할 수 있어요.</span>
                                             )
                                             ||
                                             profile.username
@@ -67,40 +66,18 @@ const AccountPage = () => {
                                     <dt className="font-medium text-gray-900">이름</dt>
 
                                     <dd className="text-gray-700 sm:col-span-2">
-                                        {
-                                            (
-                                                (
-                                                    typeof profile.name == 'undefined' || profile.name == ''
-                                                )
-                                                &&
-                                                <NotSetBadge></NotSetBadge>
-                                            )
-                                            ||
-                                            profile.name
-                                        }
+                                        {profile.name}
                                     </dd>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-                                    <dt className="font-medium text-gray-900">
-                                        {
-                                            (
-                                                (
-                                                    typeof profile.phone == 'undefined' || profile.phone == ''
-                                                )
-                                                &&
-                                                <NotSetBadge></NotSetBadge>
-                                            )
-                                            ||
-                                            profile.phone
-                                        }
-                                    </dt>
+                                    <dt className="font-medium text-gray-900">휴대폰 번호</dt>
 
                                     <dd className="text-gray-700 sm:col-span-2">{profile.phone}</dd>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-                                    <dt className="font-medium text-gray-900">가입 형태</dt>
+                                    <dt className="font-medium text-gray-900">권한</dt>
 
                                     <dd className="text-gray-700 sm:col-span-2">
                                         {
@@ -123,7 +100,9 @@ const AccountPage = () => {
                         </div>
 
                         <button
-                            className={`w-[150px] h-[45px] rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
+                            className={button({
+                                color: "primary", className: 'w-[150px] h-[45px]'
+                            })}
                         >
                             수정
                         </button>
