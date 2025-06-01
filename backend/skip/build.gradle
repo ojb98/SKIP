@@ -47,6 +47,27 @@ dependencies {
 	// OkHttp 추가
 	implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
+    // QueryDSL JPA
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	// dot env
+	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+}
+
+// 쿼리 dsl 설정
+sourceSets {
+    main {
+        java {
+            srcDirs "build/generated/sources/annotationProcessor/java/main"
+        }
+    }
+}
+
+clean {
+    delete file("build/generated/sources/annotationProcessor/java/main")
 }
 
 tasks.named('test') {

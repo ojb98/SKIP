@@ -3,7 +3,6 @@ import SignupStep from "../components/SignupStep";
 import { confirmCode, signup, verifyEmail } from "../api/userApi";
 import CheckMark from "../components/CheckMark";
 import { validateConfirmPassword, validateEmail, validatePassword, validateUsername, validateVerificationCode } from "../utils/validation";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 import EmailTimer from "../components/EmailTimer";
 
 const JoinPage = () => {

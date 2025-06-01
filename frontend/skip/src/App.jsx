@@ -22,6 +22,7 @@ import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
 import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
 import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
 import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
@@ -32,6 +33,7 @@ import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
+
 
 
 function App() {
@@ -70,6 +72,7 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        <Route path="/cart/list" element={<CartList/>}></Route>
 
 
                         {/* 렌탈샵 상세 페이지 */}
@@ -78,16 +81,17 @@ function App() {
                     </Route>
 
                     {/* 관리자 라우트 */}
-                        <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<AdminDashboard />} />
-                            {/* 추가 라우트 */}
-                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
-                            <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                            <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
-                            <Route path="/admin/userlist" element={<UsersList></UsersList>} />
-                            <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                        </Route>
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<AdminDashboard />} />
+                        {/* 추가 라우트 */}
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
+                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/userlist" element={<UsersList></UsersList>} />
+                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
+                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                    </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}

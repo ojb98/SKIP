@@ -8,6 +8,7 @@ import com.example.skip.entity.User;
 import com.example.skip.repository.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
+import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,8 +25,9 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final FileUtil fileUtil;
     private final ReservationRepository reservationRepository;
-    private final FileService fileService;
+
 
     private final String subDir = "review";
 
@@ -38,7 +40,7 @@ public class ReviewService {
             throw new AccessDeniedException("본인이 예약한 리뷰만 작성할 수 있습니다.");
         }
 
-        String imagePath = fileService.uploadFile(dto.getImageFile(), subDir);
+        String imagePath = fileUtil.uploadFile(dto.getImageFile(), subDir);
 
         Review review = Review.builder()
                 .reservation(reservation)
@@ -65,9 +67,9 @@ public class ReviewService {
         MultipartFile newImage = dto.getImageFile();
         if(newImage != null && !newImage.isEmpty()) {
             if(review.getImage() != null) {
-                fileService.deleteFile(review.getImage());
+                fileUtil.deleteFile(review.getImage());
             }
-            String newImagePath = fileService.uploadFile(newImage, subDir);
+            String newImagePath = fileUtil.uploadFile(newImage, subDir);
             review.setImage(newImagePath);
         }
         return new ReviewDTO(review);
@@ -82,7 +84,7 @@ public class ReviewService {
         }
 
         if(review.getImage() != null) {
-            fileService.deleteFile(review.getImage());
+            fileUtil.deleteFile(review.getImage());
         }
         reviewRepository.delete(review);
     }

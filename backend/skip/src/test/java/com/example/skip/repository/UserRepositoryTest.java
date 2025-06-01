@@ -1,6 +1,7 @@
 package com.example.skip.repository;
 
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
 import org.junit.jupiter.api.Test;

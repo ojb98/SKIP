@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.rent;
 
 import com.example.skip.enumeration.RentCategory;
 import com.example.skip.enumeration.UserStatus;
@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor

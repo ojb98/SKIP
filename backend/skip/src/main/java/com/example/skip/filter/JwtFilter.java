@@ -2,6 +2,7 @@ package com.example.skip.filter;
 
 import com.example.skip.dto.UserDto;
 import com.example.skip.service.CustomUserDetailsService;
+import com.example.skip.service.UserService;
 import com.example.skip.util.JwtUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
@@ -24,14 +25,14 @@ import java.util.Map;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
-        if (path.startsWith("/user/logout") || path.startsWith("/user/profile")) {
+        if (path.startsWith("/user/logout") || path.startsWith("/user/profile") || path.startsWith("/user/password")) {
             return false;
         }
         return true;
@@ -41,7 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String accessToken = jwtUtil.extractToken("accessToken", request);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername((String) jwtUtil.validateToken(accessToken).get("username"));
+            Long userId = ((Number) jwtUtil.validateToken(accessToken).get("userId")).longValue();
+            UserDetails userDetails = userService.getUser(userId);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

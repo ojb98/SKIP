@@ -16,10 +16,12 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item,Long> {
 
-    //ItemDetail엔티티를 기준으로 ItemDetail에 소속되어 사용중인 장비(중복제거) 보여줌
+    // ItemDetail엔티티를 기준으로 ItemDetail에 소속되어 사용중인 장비(중복제거) 보여줌
+    // 활성 상태인 상세가 1개 이상 있는 장비(Item)를 찾는 것
     @Query("SELECT DISTINCT d.item FROM ItemDetail d WHERE d.isActive = 'Y' AND d.item.rent.rentId = :rentId")
     List<Item> findActiveItemsByRentId(@Param("rentId") Long rentId);
 
+    // rentId, itemId가 모두 일치하는 장비 찾기
     Optional<Item> findByRent_RentIdAndItemId(Long rentId, Long itemId);
 
     // 렌탈샵 상세 페이지 아이템 페이징

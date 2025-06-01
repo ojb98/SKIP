@@ -32,8 +32,10 @@ const MainHeader = () => {
                                                 }}>Logout</Link>
                                         </li>
                                         <li><Link to={"/mypage/account"}>mypage</Link></li>
+                                        <li><Link to="/cart/list">장바구니</Link></li>
                                     </> :
                                     <li><Link to={"/login"}>Login</Link></li>
+                                    
                                 }
 
                                 <li><button onClick={()=>window.open("/mypage/review/write","_blank","width=600,height=850")}>리뷰작성하기</button></li>

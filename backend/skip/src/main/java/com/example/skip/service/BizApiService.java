@@ -1,8 +1,9 @@
 package com.example.skip.service;
 
 import com.example.skip.config.BizApiConfig;
-import com.example.skip.dto.BizApiDTO;
-import com.example.skip.dto.BizApiResponse;
+import com.example.skip.dto.rent.BizApiDTO;
+import com.example.skip.dto.rent.BizApiResponse;
+import com.example.skip.repository.RentRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class BizApiService {
+    private final RentRepository rentRepository;
 
     private final BizApiConfig bizApiConfig;  // BizApiConfig 주입
     //OkHttp라이브러리에서 HTTP 요청을 보내고 응답을 받는 클라이언트 객체입니다.
@@ -83,6 +85,11 @@ public class BizApiService {
         } catch (IOException e) {
             throw new RuntimeException("API 요청 실패", e);
         }
+    }
+
+    // 렌탈테이블에 사업자등록번호 중복여부
+    public boolean isBizRegNumberDuplicate(String bizRegNumber) {
+        return rentRepository.existsByBizRegNumber(bizRegNumber);
     }
 
 

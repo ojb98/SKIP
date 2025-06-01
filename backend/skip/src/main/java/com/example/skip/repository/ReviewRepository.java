@@ -42,4 +42,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                              @Param("itemId") Long itemId);*/
 
     List<Review> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
+
 }

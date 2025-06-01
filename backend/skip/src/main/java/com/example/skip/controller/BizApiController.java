@@ -1,15 +1,12 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.BizApiDTO;
-import com.example.skip.dto.BizVerifyRequest;
+import com.example.skip.dto.rent.BizApiDTO;
+import com.example.skip.dto.rent.BizVerifyRequest;
 import com.example.skip.service.BizApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URISyntaxException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/business")
@@ -26,5 +23,11 @@ public class BizApiController {
         BizApiDTO bizApiDTO = bizApiService.callBizApi(bno);
         return new ResponseEntity<>(bizApiDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/duplicate")
+    public boolean checkDuplicate(@RequestParam String bizRegNumber) {
+        return bizApiService.isBizRegNumberDuplicate(bizRegNumber);
+    }
+
 
 }
