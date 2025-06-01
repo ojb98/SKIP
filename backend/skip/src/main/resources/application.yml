@@ -16,8 +16,8 @@ spring:
 #    password: hello1234
 
     url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
-    username: hello
-    password: hello1234
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
 
   #    url: jdbc:mariadb://localhost:3306/projectdb # 지봉필 데이터베이스 설정
   #    username: root
@@ -46,6 +46,7 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
+# security에 있는 $ 표기법은 .env 파일에 있는 변수를 불러옴. .env는 반드시 .gitignore에 .env가 포함된 걸 먼저 확인하고 커밋한 후에 프로젝트 루트 폴더에 넣어야함
   security:
     jwt:
       key: ${JWT_SECRET_KEY}
