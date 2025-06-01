@@ -35,11 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-=======
 node_modules/
 .vite/
->>>>>>> dev
 
 ### Security ###
 application-security.yml
+.env
