@@ -13,6 +13,7 @@ import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValid
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -28,17 +29,25 @@ public class UserController {
 
     private final EmailVerifyService emailVerifyService;
 
+    private final PasswordEncoder passwordEncoder;
+
     private final JwtUtil jwtUtil;
 
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto,
-                                          BindingResult bindingResult) {
-        if (!signupRequestDto.getUsername().isEmpty() && !bindingResult.hasErrors()) {
-            userService.signup(signupRequestDto, bindingResult);
+                                    BindingResult bindingResult) {
+        if (userService.isUser(signupRequestDto.getUsername())) {
+            bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
         }
 
-        if (bindingResult.hasErrors()) {
+        if (!signupRequestDto.isVerified()) {
+            bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
+        }
+
+        if (!bindingResult.hasErrors()) {
+            userService.signup(signupRequestDto, bindingResult);
+        } else {
             Map<String, Object> fieldErrors = new HashMap<>();
 
             for (FieldError fieldError: bindingResult.getFieldErrors()) {
@@ -111,21 +120,63 @@ public class UserController {
     public ApiResponseDto setPassword(@AuthenticationPrincipal UserDetails userDetails,
                                       @Valid @RequestBody PasswordSetRequestDto passwordSetRequestDto,
                                       BindingResult bindingResult) {
-        System.out.println(passwordSetRequestDto);
         UserDto userDto = (UserDto) userDetails;
         boolean result = false;
 
-        if (!bindingResult.hasErrors()) {
-            result = userService.setPassword(userDto, passwordSetRequestDto, bindingResult);
+        String password = passwordSetRequestDto.getPassword();
+        if (!password.equals(passwordSetRequestDto.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", null, "비밀번호 확인이 일치하지 않습니다.");
         }
 
-        Map<String, Object> fieldErrors = new HashMap<>();
-        for (FieldError fieldError: bindingResult.getFieldErrors()) {
-            fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        if (!bindingResult.hasErrors()) {
+            result = userService.setPassword(userDto, password);
+        } else {
+            Map<String, Object> fieldErrors = new HashMap<>();
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ApiResponseDto.builder()
+                    .success(false)
+                    .data(fieldErrors).build();
         }
 
         return ApiResponseDto.builder()
                 .success(result)
-                .data(fieldErrors).build();
+                .data(null).build();
+    }
+
+    @DeleteMapping("/delete")
+    public ApiResponseDto deleteAccount(@AuthenticationPrincipal UserDetails userDetails,
+                                        @Valid @RequestBody AccountDeleteRequestDto accountDeleteRequestDto,
+                                        BindingResult bindingResult) {
+        UserDto userDto = (UserDto) userDetails;
+
+        if (!passwordEncoder.matches(accountDeleteRequestDto.getPassword(), userDto.getPassword())) {
+            bindingResult.rejectValue("password", null, "비밀번호가 일치하지 않습니다.");
+        }
+
+        if (!bindingResult.hasErrors()) {
+            try {
+                userService.deleteAccount(userDto);
+                return ApiResponseDto.builder()
+                        .success(true).build();
+            } catch (Exception e) {
+                return ApiResponseDto.builder()
+                        .success(false)
+                        .data(e.getMessage()).build();
+            }
+        } else {
+            Map<String, String> fieldErrors = new HashMap<>();
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            System.out.println(bindingResult.getFieldErrors());
+
+            return ApiResponseDto.builder()
+                    .success(false)
+                    .data(fieldErrors).build();
+        }
     }
 }
