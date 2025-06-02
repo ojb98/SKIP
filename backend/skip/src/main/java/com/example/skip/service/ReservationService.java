@@ -24,6 +24,7 @@ public class ReservationService {
     private final ReservationItemRepository reservationItemRepository;
 
 
+    // 예약 등록
     public ReservationDTO createReservation(ReservationDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
@@ -36,14 +37,15 @@ public class ReservationService {
                 .user(user)
                 .rent(rent)
                 .totalPrice(dto.getTotalPrice())
+                .merchantUid(dto.getMerchantUid())
+                .impUid(dto.getImpUid())
                 .build();
         reservation = reservationRepository.save(reservation);
 
         List<ReservationDTO.ReservationItemDTO> reservationItemDTOList = new ArrayList<>();
-
-        for (Long cartId : dto.getCartIds()) {
-            CartItem cartItem = cartItemRepository.findById(cartId)
-                    .orElseThrow(() -> new IllegalArgumentException("장바구니 항목 없음: " + cartId));
+        for (ReservationDTO.ReservationItemDTO itemDto : dto.getReservationItems()) {
+            CartItem cartItem = cartItemRepository.findById(itemDto.getCartItemId())
+                    .orElseThrow(() -> new IllegalArgumentException("카트 아이템 없음: " + itemDto.getCartItemId()));
 
             ReservationItem reservationItem = ReservationItem.builder()
                     .reservation(reservation)
@@ -57,25 +59,28 @@ public class ReservationService {
             reservationItemRepository.save(reservationItem);
 
             // 응답용 DTO에 담기
-            ReservationDTO.ReservationItemDTO itemDTO = new ReservationDTO.ReservationItemDTO();
-            itemDTO.setItemDetailId(cartItem.getItemDetail().getItemDetailId());
-            itemDTO.setRentStart(cartItem.getRentStart());
-            itemDTO.setRentEnd(cartItem.getRentEnd());
-            itemDTO.setQuantity(cartItem.getQuantity());
-            itemDTO.setSubtotalPrice((long) cartItem.getQuantity() * cartItem.getPrice());
-            reservationItemDTOList.add(itemDTO);
+            ReservationDTO.ReservationItemDTO responseItemDto = new ReservationDTO.ReservationItemDTO();
+            responseItemDto.setCartItemId(cartItem.getCartId());
+            responseItemDto.setRentStart(cartItem.getRentStart());
+            responseItemDto.setRentEnd(cartItem.getRentEnd());
+            responseItemDto.setQuantity(cartItem.getQuantity());
+            responseItemDto.setSubtotalPrice(reservationItem.getSubtotalPrice());
 
-            // 장바구니 항목 삭제 (선택적)
-            cartItemRepository.delete(cartItem);
+            reservationItemDTOList.add(responseItemDto);
+
+            // 장바구니 항목 삭제(필요 시)
+            // cartItemRepository.delete(cartItem);
         }
 
-        // 응답 DTO 구성
+        // 전체 응답 DTO 구성
         ReservationDTO result = new ReservationDTO();
         result.setReserveId(reservation.getReserveId());
         result.setUserId(user.getUserId());
         result.setRentId(rent.getRentId());
         result.setTotalPrice(reservation.getTotalPrice());
         result.setCreatedAt(reservation.getCreatedAt());
+        result.setMerchantUid(reservation.getMerchantUid());
+        result.setImpUid(reservation.getImpUid());
         result.setReservationItems(reservationItemDTOList);
 
         return result;

@@ -54,3 +54,7 @@ biz:
   api:
     url: https://api.odcloud.kr/api/nts-businessman/v1/status
     serviceKey: dWa084asCEVdCW6xMVRx2B8hj2AHumB1QPv47m53+C2qlypMiXrz9pyr8e3XnnpiBWp5ZKGi8rlu0Ve3Kqbnfg==
+
+iamport:
+  apiKey: 3545637150470273
+  secretKey: cTDwoTl4TzBhAZv0JAPekT03xD1UABB6RrP3YdfMEhnGNtdlziqGB6D1xyK1leu4BJ5KufRzUbSWq5mq

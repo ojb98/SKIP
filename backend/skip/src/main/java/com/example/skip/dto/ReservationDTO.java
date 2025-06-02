@@ -16,14 +16,15 @@ public class ReservationDTO {
     private Long rentId;
     private Long totalPrice;
     private LocalDateTime createdAt;
-    private List<Long> cartIds;
+    private String merchantUid;   // 아임포트 주문번호
+    private String impUid;        // 아임포트 결제 고유번호
     private List<ReservationItemDTO> reservationItems;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReservationItemDTO{
-        private Long itemDetailId;
+        private Long cartItemId;
         private LocalDateTime rentStart;
         private LocalDateTime rentEnd;
         private int quantity;

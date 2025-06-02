@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { cartListApi } from "../../api/cartApi";
 import { useSelector } from "react-redux";
-import { createReservationApi } from "../../api/ReserveApi";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CartList=()=>{
     const navigate = useNavigate();
@@ -94,84 +94,70 @@ const CartList=()=>{
         .reduce((sum,item) => sum + item.price, 0);
     
 
-    const handlePayment= async()=>{
+    // 결제   
+    const handlePayment = async () => {
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
             return;
         }
 
-        // 예약 생성에 필요한 데이터 구조 만들기
-        // group: rentId, userId는 profile.userId
-        // 선택된 CartItem들을 기반으로 ReservationItem 배열 생성
-        // 예시 구조 참고해서 실제 백엔드 API 스펙에 맞게 조정 필요
+        const selectedItems = cartGroups.flatMap(group => group.items)
+            .filter(item => checkedItems.has(item.cartId));
 
-        const selectedItems = cartGroups.flatMap((group) => group.items)
-            .filter((item) => checkedItems.has(item.cartId));
-
-        // 예시: rentId가 동일하다고 가정 (보통 같은 렌트 업체 내 상품만 예약)
         const rentId = cartGroups[0]?.rentId || null;
-            if (!rentId) {
+        if (!rentId) {
             alert("예약할 상품이 없습니다.");
             return;
         }
 
-        const reservationData = {
-            userId: profile.userId,
-            rentId: rentId,
-            totalPrice: totalPrice,
-            cartIds: selectedItems.map(item => item.cartId),
-        };
+        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
-        console.log("예약결과 ======>",reservationData);
+        const reservationItems = selectedItems.map(item => ({
+            cartItemId: item.cartId,
+            rentStart: new Date(item.rentStart).toISOString(),
+            rentEnd: new Date(item.rentEnd).toISOString(),
+            quantity: item.quantity,
+            subtotalPrice: item.price,
+        }));
 
-        try {
-            const reservationResult = await createReservationApi(reservationData);
+        const IMP = window.IMP;
+        IMP.init("imp57043461");
 
-            const reserveId = reservationResult.reserveId;
-            
-            //포트원 결제 요청
-            const IMP = window.IMP;
-            IMP.init("imp57043461");  //포트원(아임포트)에서 발급받은 가맹점 식별코드
+        const merchantUid = `order_${new Date().getTime()}`;
 
-            const merchanUid = `order_${newDate().getTime()}`;  // 유니크한 주문번호
-
-            IMP.request_pay({
-                pg: "kakaopay",
-                pay_method: "card",
-                merchant_uid: `mid_${Date.now()}`,
-                name: "대여 결제",
-                amount: totalPrice,
-                buyer_email: profile.email,
-                buyer_name: profile.name,
-            }, async (rsp) => {
-                if (rsp.success) {
-                    // 성공 시 결제 검증 요청
-                    await fetch("/api/payment/verify", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
+        IMP.request_pay({
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: merchantUid,
+            name: "대여 결제",
+            amount: totalPrice,
+            buyer_email: profile.email,
+            buyer_name: profile.name,
+        }, async (rsp) => {
+            if (rsp.success) {
+                try {
+                    const completeRes = await axios.post("/api/payments/complete", {
                         impUid: rsp.imp_uid,
                         merchantUid: rsp.merchant_uid,
-                        reserveId: reserveId,
-                        amount: rsp.paid_amount
-                    })
-                })
+                        amount: rsp.paid_amount,
+                        userId: profile.userId,
+                        rentId: rentId,
+                        totalPrice: totalPrice,
+                        reservationItems: reservationItems,
+                    });
 
-                    alert("예약이 완료되었습니다! 결제 페이지로 이동합니다.");
-                    //navigate("/payment", { state: { reservation: reservationResult } }); // 예: 예약 결과 넘기며 결제 페이지 이동
-            
-                }else{
-                    alert("결제 실패:" + rep.error_msg);
+                    console.log("예약 완료:", completeRes.data);
+                    alert("예약이 완료되었습니다!");
+                    // navigate("/payment", { state: { reservation: completeRes.data } });
+
+                } catch (err) {
+                    console.error("결제 검증 또는 예약 실패:", err);
+                    alert("결제 완료 처리 중 오류가 발생했습니다.");
                 }
-
-            })
-
-
-        } catch (error) {
-            alert("예약 처리 중 오류가 발생했습니다.");
-            console.error(error);
-        }
-        
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
     }
 
 

@@ -36,4 +36,6 @@ public class ReservationItem {
 
     @Column(nullable = false)
     private Long subtotalPrice;
+
+
 }
