@@ -101,7 +101,6 @@ public class ItemService {
                                         d.getIsActive()
                                 ))
                                 .toList();
-
                     // 3. 최종적으로 ItemResponseDTO로 감싸서 List<ItemResponseDTO>로 반환
                     return new ItemResponseDTO(
                             item.getItemId(),
@@ -112,8 +111,6 @@ public class ItemService {
                     );
                 }).toList();
     }
-
-
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
         Item item = itemRepository.findById(itemId)
@@ -234,7 +231,6 @@ public class ItemService {
             itemDetailRepository.save(detail);
         }
     }
-
 
     // 렌탈샵 아이템 페이징
     public Page<ItemResponseDTO> getRentItemPaging(Long rentId, String category, Pageable pageable) {

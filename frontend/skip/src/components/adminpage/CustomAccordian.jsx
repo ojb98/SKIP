@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 
 const CustomAccordion = ({ title, children, isOpen, onClick }) => {
   const contentRef = useRef(null);

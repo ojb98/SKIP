@@ -38,4 +38,11 @@ public class Reservation {
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    // 아래 두 필드 추가
+    @Column(nullable = true, unique = true)
+    private String merchantUid;  // 아임포트 주문번호
+
+    @Column(nullable = true)
+    private String impUid;       // 아임포트 결제 고유번호
 }

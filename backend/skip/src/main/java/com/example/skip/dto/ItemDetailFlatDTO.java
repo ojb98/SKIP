@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemDetailFlatDTO {
-    private Long itemDetaild;
+    private Long itemDetailId;
     private Integer rentHour;
     private Integer price;
     private String size;

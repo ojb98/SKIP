@@ -37,3 +37,4 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
                               @Param("category") ItemCategory category,
                               Pageable pageable);
 }
+

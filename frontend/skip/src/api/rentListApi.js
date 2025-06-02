@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const host='http://localhost:8080/api/rents';
 
 export const rentListApi = async(userId)=>{
