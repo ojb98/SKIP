@@ -11,12 +11,12 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://localhost:3306/testdb # 권새미 데이터베이스 설정
-#    username: hello
-#    password: hello1234
-    url: jdbc:mariadb://192.168.80.13:3306/sy
+    url: jdbc:mariadb://localhost:3306/testdb # 권새미 데이터베이스 설정
     username: hello
     password: hello1234
+#    url: jdbc:mariadb://192.168.80.13:3306/sy  # 이상엽 데이터베이스 설정
+#    username: hello
+#    password: hello1234
 
     #url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
     #username: ${MARIADB_USERNAME}
@@ -116,8 +116,8 @@ file:
 biz:
   api:
     url: https://api.odcloud.kr/api/nts-businessman/v1/status
-    serviceKey: 
+    serviceKey: ${BIZ_API_KEY}
 
 iamport:
-  apiKey:
-  secretKey:
+  apiKey: ${IAMPORT_API_KEY}
+  secretKey: ${IAMPORT_SECRET_KEY}
