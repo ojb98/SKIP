@@ -33,6 +33,7 @@
     "react-router-dom": "^7.6.0",
     "swiper": "^11.2.7",
     "swr": "^2.3.3",
+    "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.7",
     "xlsx-js-style": "^1.2.0"
   },

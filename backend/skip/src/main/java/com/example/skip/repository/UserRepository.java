@@ -13,11 +13,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u " +
             "from User u " +
             "where u.username = :username")
-    @EntityGraph(attributePaths = {"roles"})
+    @EntityGraph(attributePaths = {"roles", "naverLinkage", "kakaoLinkage"})
     User getUserWithRolesByUsername(@Param("username") String username);
+
+    @EntityGraph(attributePaths = {"roles", "naverLinkage", "kakaoLinkage"})
+    Optional<User> findByUserId(Long userId);
 
     Optional<User> findByUsername(String username);
 
     List<User> findByUsernameContaining(String keyword);
+
     List<User> findByNameContaining(String keyword);
 }

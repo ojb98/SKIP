@@ -20,6 +20,8 @@ const MyPageLayout = () => {
                     {
                         !profile.isLoading
                         &&
+                        profile.isLoggedIn
+                        &&
                         <Outlet></Outlet>
                     }
                 </div>

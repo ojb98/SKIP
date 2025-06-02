@@ -1,13 +1,21 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { createQnaApi } from "../../api/qnaApi";
+import { useSelector } from "react-redux";
 
 const QnaWrite = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [secret, setSecret] = useState(false);
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
 
-  const handleSubmit = (e) => {
+  const { itemId } = useParams();
+  const profile = useSelector(state => state.loginSlice);
+  const userId = profile.userId;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
 
@@ -25,16 +33,31 @@ const QnaWrite = () => {
       setContentError("");
     }
 
-    if(isValid) {
+    if (!isValid) return;
+
+    const qnaData = {
+      itemId: parseInt(itemId, 10),
+      title,
+      content,
+      secret
+    };
+
+    try {
+      await createQnaApi(userId, qnaData);
+      console.log("Q&A 등록:", qnaData);
       alert("Q&A가 등록되었습니다.");
+      window.opener.location.reload();
       window.close();
+    } catch(err) {
+      console.error("Q&A 등록 실패:", err);
+      alert("Q&A 등록에 실패했습니다.");
     }
   }
 
   return(
     <div>
       <h2 className="qna-popup-header">상품Q&A 작성하기</h2>
-      <form onSubmit={handleSubmit} action="post">
+      <form onSubmit={handleSubmit}>
         <div className="qna-popup-form">
           <div>
             <input 
@@ -56,7 +79,12 @@ const QnaWrite = () => {
             {contentError && <p className="qna-error-msg">{contentError}</p>}
           </div>
           <div className="qna-secret">
-            <input type="checkbox" id="secretCheck" />
+            <input 
+              type="checkbox" 
+              id="secretCheck" 
+              checked={secret}
+              onChange={() => setSecret(!secret)}
+            />
             <label htmlFor="secretCheck">비공개</label>
             <span>(체크하시면 해당 글은 비공개처리 됩니다.)</span>
           </div>

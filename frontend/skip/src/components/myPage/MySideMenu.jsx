@@ -18,7 +18,7 @@ const MySideMenu = ({group, active}) => {
                         <img src={profile.image ? `http://localhost:8080/${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
 
                         <div>
-                            <span className="text-sm font-semibold">{profile.username} </span><span className="text-sm text-gray-500">님</span>
+                            <span className="text-sm font-semibold">{profile.showname} </span><span className="text-sm text-gray-500">님</span>
                         </div>
                     </div>
 

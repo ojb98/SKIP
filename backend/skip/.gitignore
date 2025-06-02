@@ -40,3 +40,4 @@ node_modules/
 
 ### Security ###
 application-security.yml
+.env

@@ -1,6 +1,7 @@
 package com.example.skip.repository;
 
 import com.example.skip.dto.UserDto;
+import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,18 @@ public class UserRepositoryTest {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(userDto.toEntity());
     }
+
+    @Test
+    public void userAdd() {
+        for(int i = 0; i <= 10; i++) {
+            UserDto userDto = new UserDto(null, "user" + i, "1234", "user" + i, "user" + i, "user" + i, UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userRepository.save(userDto.toEntity());
+        }
+        userRepository.flush();
+    }
+
+
 
     @Test
     public void select() {
