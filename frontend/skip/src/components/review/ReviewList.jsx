@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAverageRatingApi, getItemReviewsApi } from "../../api/reviewApi";
+// import { getAverageRatingApi, getItemReviewsApi } from "../../api/reviewApi";
 
 const ReviewList=({ rentId, itemId })=>{
   const [reviews, setReviews] = useState([]);
@@ -16,7 +16,7 @@ const ReviewList=({ rentId, itemId })=>{
         setReviews(res.content);
         setTotalElements(res.totalElements);
       } catch (err) {
-        console.error("리뷰 조회 실패:", err);
+        // console.error("리뷰 조회 실패:", err);
       }
     };
     fetchReviews();
@@ -28,7 +28,7 @@ const ReviewList=({ rentId, itemId })=>{
         const avg = await getAverageRatingApi(rentId, itemId);
         setAverageRating(avg.toFixed(1));
       } catch (err) {
-        console.error("평균 평점 조회 실패:", err);
+        // console.error("평균 평점 조회 실패:", err);
       }
     };
     fetchAverage();

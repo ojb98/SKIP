@@ -83,16 +83,17 @@ function App() {
                     </Route>
 
                     {/* 관리자 라우트 */}
-                        <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<AdminDashboard />} />
-                            {/* 추가 라우트 */}
-                            <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
-                            <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                            <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
-                            <Route path="/admin/userlist" element={<UsersList></UsersList>} />
-                            <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                            <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                        </Route>
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<AdminDashboard />} />
+                        {/* 추가 라우트 */}
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
+                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/userlist" element={<UsersList></UsersList>} />
+                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
+                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
+                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                    </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}

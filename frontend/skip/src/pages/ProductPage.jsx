@@ -51,7 +51,6 @@ const ProductPage=()=>{
   useEffect(() => {
     fetchItemDetailPage(parsedRentId, parsedItemId)
       .then((data) => {
-        console.log("itemData ==>", data);
         setItemData(data);
       })
       .catch((err) => console.error("아이템 로딩 실패: ", err));
@@ -172,7 +171,7 @@ const ProductPage=()=>{
             !isSizeFree && (
               <div className="product-option">
                 <select onChange={(e) => setSize(e.target.value)} value={size}>
-                  <option value="" disabled selected hidden>사이즈를 선택하세요.</option>
+                  <option value="" disabled hidden>사이즈를 선택하세요.</option>
                   {[...new Set(itemData.detailList.map((d) => d.size))].map((size, i) => (
                     <option key={i} value={size}>
                       {size}
@@ -184,7 +183,7 @@ const ProductPage=()=>{
           }
           <div className="product-option">
             <select onChange={(e) => setStartTime(e.target.value)} value={startTime}>
-              <option value="" disabled selected hidden>대여시작시간을 선택하세요.</option>
+              <option value="" disabled hidden>대여시작시간을 선택하세요.</option>
               {
                 Array.from({length: 24}, (_, i) => {
                   const hour = i.toString().padStart(2, "0") + ":00";
@@ -195,7 +194,7 @@ const ProductPage=()=>{
           </div>
           <div className="product-option">
             <select onChange={(e) => setDuration(e.target.value)} value={duration}>
-              <option value="" disabled selected hidden>이용시간을 선택하세요.</option>
+              <option value="" disabled hidden>이용시간을 선택하세요.</option>
               {
                 Array.from(
                   new Map(itemData.detailList.map(d => [d.rentHour, d.price])).entries()
@@ -229,8 +228,8 @@ const ProductPage=()=>{
           </div>
           <div className="product-actions">
             <button onClick={handleAddToCart} className="cart-btn">장바구니에 담기</button>
-            <a href="#none" className="wish-btn">찜하기</a>
-            <a href="#none" className="buy-btn">구매하기</a>
+            <button href="#none" className="wish-btn">찜하기</button>
+            <button href="#none" className="buy-btn">구매하기</button>
           </div>
         </div>
       </div>

@@ -12,7 +12,6 @@ const ProductList=({ rentId, category })=>{
   const pageBlockSize = 10;
 
   useEffect(() => {
-    console.log("탭 변경 ==> ", category);
     fetchPagedItems(rentId, category, page, size).then((data) => {
       setItems(data.content);
       setTotalPages(data.totalPages);

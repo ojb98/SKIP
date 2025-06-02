@@ -31,7 +31,8 @@ public class Qna {
     private String content;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private QnaStatus status;
+    @Builder.Default
+    private QnaStatus status = QnaStatus.WAITING;
     @Column(nullable = false)
     private boolean secret;
     @CreationTimestamp
