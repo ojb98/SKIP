@@ -28,10 +28,10 @@ public class AdminDashboardController {
         return ResponseEntity.ok(summary);
     }
 
-    @GetMapping("/sales-list")
+    @GetMapping("/sales/list")
     public ResponseEntity<List<?>> getSalesList(
-            @RequestParam("atStart") String startDate,
-            @RequestParam("atEnd") String endDate
+            @RequestParam("atStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam("atEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
     ) {
 //        // startDate와 endDate를 이용해 서비스에서 매출 리스트 가져오기
 //        List<SalesDto> sales = salesService.getSalesBetween(startDate, endDate);
@@ -40,15 +40,18 @@ public class AdminDashboardController {
 
     }
 
-    @GetMapping("/sales-chart-data")
-    public ResponseEntity<Map<String, Object>> getSalesChartData(
-            @RequestParam(required = false) String atStart,
-            @RequestParam(required = false) String atEnd) {
-        Map<String, Object> data = adminDashboardService.getSalesChartData(atStart, atEnd);
+    @GetMapping("/sales/chart")
+    public ResponseEntity<List<Map<String, Object>>> getSalesChartData(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        List<Map<String, Object>> data = adminDashboardService.getSalesChartData(start, end);
+        System.out.println(start);
+        System.out.println(end);
+        System.out.println(data);
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/today-sales-data")
+    @GetMapping("/sales/today")
     public ResponseEntity<Map<String, Object>> getStatOverviewCard(@RequestParam String todaysDate){
         return ResponseEntity.ok(adminDashboardService.getSummary(LocalDate.parse(todaysDate), LocalDate.parse(todaysDate)));
     }
