@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 package com.example.skip.dto.rent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,4 +22,8 @@ public class BizApiDTO {
     @JsonProperty("utcc_yn")
     private String bizClosureFlag;  // (Y:휴업:폐업/N:정상)
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1

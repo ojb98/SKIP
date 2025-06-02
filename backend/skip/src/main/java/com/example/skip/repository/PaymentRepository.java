@@ -16,6 +16,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 
+<<<<<<< HEAD
     List<Payment> findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(Long userId);
 
     @Query("""
@@ -101,4 +102,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     """)
     Long getBannerWaitingCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+=======
+    List<Payment> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 }

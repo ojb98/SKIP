@@ -18,28 +18,31 @@ const MainHeader = () => {
                     {
                         !isLoading ? 
                             <ul className="flex gap-5">
-                                <li><Link to={"/"}>Home</Link></li>
                                 {
                                     isLoggedIn === true ?
                                     <>
-                                        <li><Link onClick={() => {
-                                            dispatch(logout())
-                                                .unwrap()
-                                                .then(res => {
-                                                    dispatch(setProfile());
-                                                    navigate('/');
-                                                });
-                                            }}>Logout</Link></li>
+                                        <li>
+                                            <Link onClick={() => {
+                                                dispatch(logout())
+                                                    .unwrap()
+                                                    .then(res => {
+                                                        dispatch(setProfile());
+                                                        navigate('/');
+                                                    });
+                                                }}>Logout</Link>
+                                        </li>
                                         <li><Link to={"/mypage/account"}>mypage</Link></li>
+                                        <li><Link to="/cart/list">장바구니</Link></li>
                                     </> :
                                     <li><Link to={"/login"}>Login</Link></li>
+                                    
                                 }
 
                                 <li><button onClick={()=>window.open("/mypage/review/write","_blank","width=600,height=850")}>리뷰작성하기</button></li>
 
                                 <li><Link to="/rentAdmin/insert">가맹점 등록</Link></li>
                                 <li><Link to="/rentAdmin/list">가맹점 목록</Link></li>
-                                <li><Link to="/ItemAdmin/list">장비목록</Link></li>
+                                <li><Link to="/rentAdmin/select">장비 관리</Link></li>
                             </ul> : <></>
                     }
                 </div>

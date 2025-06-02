@@ -28,6 +28,13 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void user() {
+        UserDto userDto = new UserDto(null, "user", "1234", "user", "user", "user", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userRepository.saveAndFlush(userDto.toEntity());
+    }
+
+    @Test
     public void select() {
         System.out.println(userRepository.getUserWithRolesByUsername("admin"));
     }

@@ -1,6 +1,6 @@
 package com.example.skip.dto;
 
-import com.example.skip.entity.Reservations;
+import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import lombok.*;
 
@@ -23,22 +23,20 @@ public class ReviewDTO {
 
     public ReviewDTO(Review review) {
         this.reviewId = review.getReviewId();
-        this.reserveId = review.getReservations().getReserveId();
+        this.reserveId = review.getReservation().getReserveId();
         this.rating = review.getRating();
         this.content = review.getContent();
         this.image = review.getImage();
         this.createdAt = review.getCreatedAt();
         this.updatedAt = review.getUpdatedAt();
     }
-    public Review toEntity(Reservations reservations) {
+    public Review toEntity(Reservation reservation) {
         Review review = Review.builder()
                 .reviewId(reviewId)
-                .reservations(reservations)
+                .reservation(reservation)
                 .rating(rating)
                 .content(content)
                 .image(image)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .build();
         return review;
     }

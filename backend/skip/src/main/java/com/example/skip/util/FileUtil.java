@@ -1,4 +1,4 @@
-package com.example.skip.service;
+package com.example.skip.util;
 
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class FileService {
+public class FileUtil {
 
     @Value("${file.upload-path}")
     private String uploadDir;

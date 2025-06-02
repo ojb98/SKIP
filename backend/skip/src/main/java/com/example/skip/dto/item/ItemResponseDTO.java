@@ -1,10 +1,14 @@
 package com.example.skip.dto.item;
 
 import com.example.skip.enumeration.YesNo;
+<<<<<<< HEAD
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+=======
+import lombok.*;
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 
 import java.util.List;
 
@@ -32,4 +36,8 @@ public class ItemResponseDTO {
         private Integer stockQuantity;
         private YesNo isActive;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1

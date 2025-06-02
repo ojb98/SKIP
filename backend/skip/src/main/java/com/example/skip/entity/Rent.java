@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -50,19 +51,15 @@ public class Rent {
     @Column(nullable = false)
     private String detailedAddress;
 
-    @Lob
     @Column(nullable = false)
     private String thumbnail;
 
-    @Lob
     @Column(nullable = true)
     private String image1;
 
-    @Lob
     @Column(nullable = true)
     private String image2;
 
-    @Lob
     @Column(nullable = true)
     private String image3;
 

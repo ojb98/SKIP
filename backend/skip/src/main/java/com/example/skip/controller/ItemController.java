@@ -1,8 +1,20 @@
 package com.example.skip.controller;
 
 import com.example.skip.dto.item.*;
+<<<<<<< HEAD
+=======
+import com.example.skip.dto.item.ItemDelDTO;
+import com.example.skip.dto.ItemDetailPageDTO;
+import com.example.skip.dto.item.ItemRequestDTO;
+import com.example.skip.dto.item.ItemResponseDTO;
+import com.example.skip.dto.item.ItemRequestDTO;
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 import com.example.skip.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +45,11 @@ public class ItemController {
         return new ResponseEntity<>(itemId, HttpStatus.OK);
     }
 
+<<<<<<< HEAD
     //리스트 조회(장비 + 디테일)
+=======
+    //장비 + 디테일 리스트 조회
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
@@ -47,6 +63,17 @@ public class ItemController {
             itemService.setItemDetailDelete(dto.getItemId(), dto.getItemDetailId());
         }
         return new ResponseEntity<>("deletedItemDetailSuccess",HttpStatus.OK);
+<<<<<<< HEAD
+    }
+
+    //장비 수정하기 위한 조회
+    @GetMapping("/{rentId}/{itemId}")
+    public ResponseEntity<ItemConfirmDTO> getItem(@PathVariable("rentId") Long rentId,
+                                                  @PathVariable("itemId") Long itemId){
+        ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
+        return new ResponseEntity<>(dto,HttpStatus.OK);
+=======
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
     }
 
     //장비 수정하기 위한 조회
@@ -56,6 +83,7 @@ public class ItemController {
         ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
+
 
     //장비 수정
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -75,6 +103,26 @@ public class ItemController {
         itemService.addItemOption(itemId, dto);
         return new ResponseEntity<>("AddOptionItemSuccess",HttpStatus.OK);
 
+<<<<<<< HEAD
+=======
+    }
+
+    // 아이템 리스트 페이징
+    @GetMapping("/paging/{rentId}")
+    public ResponseEntity<Page<ItemResponseDTO>> getPagingItems(@PathVariable("rentId") Long rentId,
+                                                                @RequestParam String category,
+                                                                @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+        Page<ItemResponseDTO> result = itemService.getRentItemPaging(rentId, category, pageable);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    // 아이템 상세 페이지
+    @GetMapping("/detail/{rentId}/{itemId}")
+    public ResponseEntity<ItemDetailPageDTO> getItemDetail(@PathVariable Long rentId,
+                                                           @PathVariable Long itemId) {
+        ItemDetailPageDTO dto = itemService.getItemDetailPage(rentId, itemId);
+        return ResponseEntity.ok(dto);
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
     }
 
 }

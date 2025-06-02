@@ -53,4 +53,8 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemDetail> itemDetails = new ArrayList<>();
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1

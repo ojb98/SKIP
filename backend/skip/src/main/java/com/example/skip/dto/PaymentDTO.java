@@ -31,8 +31,8 @@ public class PaymentDTO {
 
     public PaymentDTO(Payment payment) {
         this.paymentId = payment.getPaymentId();
-        if (payment.getReservations() != null) {
-            this.reservationId = payment.getReservations().getReserveId();
+        if (payment.getReservation() != null) {
+            this.reservationId = payment.getReservation().getReserveId();
         }
         this.merchantUid = payment.getMerchantUid();
         this.impUid = payment.getImpUid();

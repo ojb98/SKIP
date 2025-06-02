@@ -1,8 +1,19 @@
 package com.example.skip.service;
 
+<<<<<<< HEAD
 import com.example.skip.dto.item.*;
 import com.example.skip.dto.item.ItemRequestDTO.DetailGroup;
 import com.example.skip.dto.item.ItemRequestDTO.SizeStock;
+=======
+import com.example.skip.dto.ItemDetailFlatDTO;
+import com.example.skip.dto.ItemDetailPageDTO;
+import com.example.skip.dto.item.ItemRequestDTO;
+import com.example.skip.dto.item.ItemRequestDTO.DetailGroup;
+import com.example.skip.dto.item.ItemRequestDTO.SizeStock;
+import com.example.skip.dto.item.ItemResponseDTO.ItemDetailDTO;
+import com.example.skip.dto.item.ItemResponseDTO;
+import com.example.skip.dto.item.*;
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 import com.example.skip.entity.Item;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Rent;
@@ -12,8 +23,14 @@ import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.util.FileUploadUtil;
+import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
+=======
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 import org.springframework.stereotype.Service;
 
 
@@ -27,7 +44,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemDetailRepository itemDetailRepository;
     private final RentRepository rentRepository;
-    private final FileService fileService;
+    private final FileUtil fileUtil;
     private final FileUploadUtil fileUploadUtil;
 
     //장비 등록
@@ -35,7 +52,11 @@ public class ItemService {
         Rent rent = rentRepository.findById(dto.getRentId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 렌트샵을 찾을 수 없습니다."));
 
+<<<<<<< HEAD
         String imageUrl = fileService.uploadFile(dto.getImage(),"items");
+=======
+        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 
         Item item = Item.builder()
                 .rent(rent)
@@ -76,6 +97,7 @@ public class ItemService {
                     // 활성 상태의 디테일만 추림
                     List<ItemResponseDTO.ItemDetailDTO> sortedDetailList =
                             item.getItemDetails().stream()
+<<<<<<< HEAD
                                     // 비활성화된 상세정보는 제외 ('Y'인 경우만)
                                     // 그 장비가 가진 상세 옵션들 중 활성 상태인 것만 추려내는 것
                                     .filter(d -> d.getIsActive() == YesNo.Y)
@@ -93,6 +115,25 @@ public class ItemService {
                                             d.getIsActive()
                                     ))
                                     .toList();
+=======
+                                // 비활성화된 상세정보는 제외 ('Y'인 경우만)
+                                // 그 장비가 가진 상세 옵션들 중 활성 상태인 것만 추려내는 것
+                                .filter(d -> d.getIsActive() == YesNo.Y)
+                                // 사이즈 → 렌트 시간 기준 정렬 (복합 정렬)
+                                .sorted(Comparator
+                                        .comparing(ItemDetail::getSize, Comparator.nullsLast(String::compareTo))
+                                        .thenComparing(ItemDetail::getRentHour, Comparator.nullsLast(Integer::compareTo)))
+                                .map(d -> new ItemResponseDTO.ItemDetailDTO(
+                                        d.getItemDetailId(),
+                                        d.getRentHour(),
+                                        d.getPrice(),
+                                        d.getSize(),
+                                        d.getTotalQuantity(),
+                                        d.getStockQuantity(),
+                                        d.getIsActive()
+                                ))
+                                .toList();
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
 
                     // 3. 최종적으로 ItemResponseDTO로 감싸서 List<ItemResponseDTO>로 반환
                     return new ItemResponseDTO(
@@ -105,6 +146,10 @@ public class ItemService {
                 }).toList();
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
         Item item = itemRepository.findById(itemId)
@@ -226,4 +271,62 @@ public class ItemService {
         }
     }
 
+<<<<<<< HEAD
 }
+=======
+
+    // 렌탈샵 아이템 페이징
+    public Page<ItemResponseDTO> getRentItemPaging(Long rentId, String category, Pageable pageable) {
+        System.out.println("요청 카테고리: " + category);
+        Page<Item> items = itemRepository.rentItemPaging(rentId, ItemCategory.valueOf(category), pageable);
+
+        return items.map(item -> {
+            List<ItemDetailDTO> details = item.getItemDetails().stream()
+                    .filter(d -> d.getIsActive() == YesNo.Y)
+                    .map(d -> new ItemDetailDTO(
+                            d.getItemDetailId(),
+                            d.getRentHour(),
+                            d.getPrice(),
+                            d.getSize(),
+                            d.getTotalQuantity(),
+                            d.getStockQuantity(),
+                            d.getIsActive()
+                    ))
+                    .toList();
+
+            return new ItemResponseDTO(
+                    item.getItemId(),
+                    item.getName(),
+                    item.getCategory().name(),
+                    item.getImage(),
+                    details
+            );
+        });
+    }
+
+    // 렌탈샵 아이템 상세 페이지
+    public ItemDetailPageDTO getItemDetailPage(Long rentId, Long itemId) {
+        Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
+
+        List<ItemDetailFlatDTO> detailList = item.getItemDetails().stream()
+                .filter(d -> d.getIsActive() == YesNo.Y)
+                .map(d -> new ItemDetailFlatDTO(
+                        d.getItemDetailId(),
+                        d.getRentHour(),
+                        d.getPrice(),
+                        d.getSize(),
+                        d.getStockQuantity()
+                ))
+                .toList();
+
+        return new ItemDetailPageDTO(
+                item.getItemId(),
+                item.getName(),
+                item.getImage(),
+                item.getCategory().name(),
+                detailList
+        );
+    }
+}
+>>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1
