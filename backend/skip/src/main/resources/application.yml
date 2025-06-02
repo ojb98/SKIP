@@ -14,10 +14,13 @@ spring:
 #    url: jdbc:mariadb://localhost:3306/testdb # 권새미 데이터베이스 설정
 #    username: hello
 #    password: hello1234
+    url: jdbc:mariadb://192.168.80.13:3306/sy
+    username: hello
+    password: hello1234
 
-    url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
-    username: ${MARIADB_USERNAME}
-    password: ${MARIADB_PASSWORD}
+    #url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
+    #username: ${MARIADB_USERNAME}
+    #password: ${MARIADB_PASSWORD}
 
   #    url: jdbc:mariadb://localhost:3306/projectdb # 지봉필 데이터베이스 설정
   #    username: root
