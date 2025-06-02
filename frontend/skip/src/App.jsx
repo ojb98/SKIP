@@ -72,6 +72,8 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        
+                        {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>
 
 

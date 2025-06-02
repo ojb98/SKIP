@@ -16,5 +16,6 @@ public class CartItemDTO {
     private String size;    //itemDetail.size
     private Integer quantity;
     private Integer price;
-    
+    private String rentStart;  // yyyy-MM-dd'T'HH:mm:ss 형식의 문자열
+    private String rentEnd;    // yyyy-MM-dd'T'HH:mm:ss 형식의 문자열
 }
