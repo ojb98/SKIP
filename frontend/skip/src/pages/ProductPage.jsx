@@ -14,13 +14,16 @@ const ProductPage=()=>{
   const parsedRentId = parseInt(rentId, 10);
   const parsedItemId = parseInt(itemId, 10);
 
+  //상품 상세 정보 저장
   const [itemData, setItemData] = useState(null);
   const [date, setDate] = useState("");
   const [size, setSize] = useState("");
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
+  //유저가 선택한 옵션들 저장 (장바구니 담기 전 리스트)
   const [selectedOptions, setSelectedOptions] = useState([]);
   
+  //선택 항목들을 초기화하는 함수
   const resetOptions=()=>{
     setDate("");
     setSize("");
