@@ -53,3 +53,7 @@
 @keyframes spinner_AtaB {
     100%{transform:rotate(360deg)}
 }
+
+#modal-root {
+    font-family: 'NanumSquare';
+}

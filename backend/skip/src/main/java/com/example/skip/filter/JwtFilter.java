@@ -18,6 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -31,11 +33,16 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
+
         // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
-        if (path.startsWith("/user/logout") || path.startsWith("/user/profile") || path.startsWith("/user/password")) {
-            return false;
-        }
-        return true;
+        List<String> excludePaths = Arrays.asList(
+                "/user/logout",
+                "/user/profile",
+                "/user/password",
+                "/user/delete"
+        );
+
+        return excludePaths.stream().noneMatch(path::startsWith);
     }
 
     @Override

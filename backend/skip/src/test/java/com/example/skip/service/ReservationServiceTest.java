@@ -1,6 +1,5 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.ReservationItemsDTO;
 import com.example.skip.entity.*;
 import com.example.skip.repository.*;
 import jakarta.transaction.Transactional;
@@ -24,11 +23,9 @@ public class ReservationServiceTest {
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
-    private ReservationsService reservationService;
+    private ReservationRepository reservationRepository;
     @Autowired
-    private ReservationsRepository reservationRepository;
-    @Autowired
-    private ReservationItemsRepository reservationItemRepository;
+    private ReservationItemRepository reservationItemRepository;
 
 //    @Test
 //    public void reservationInsert(){

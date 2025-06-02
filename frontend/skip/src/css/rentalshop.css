@@ -33,7 +33,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 10px;
+  gap: 20px;
 }
 
 .product-list ul li div {
@@ -47,6 +47,7 @@
 
 .product-list img {
   width: 300px;
+  height: 180px;
 }
 
 .item-price {
@@ -59,16 +60,17 @@
   margin-top: 30px;
 }
 
-.pagelist a {
+.pagelist button {
   margin: 0 10px;
   display: inline-block;
   padding: 7px 15px;
 }
 
-.pagelist a:hover,
-.pagelist a.active {
+.pagelist button:hover,
+.pagelist button.active {
   background-color: #5399f5;
   color: #fff;
+  cursor: pointer;
 }
 
 /* Review */
@@ -94,9 +96,10 @@
   gap: 15px;
 }
 
-.review-sort a:hover,
-.review-sort a.active {
+.review-sort button:hover,
+.review-sort button.active {
   font-weight: 900;
+  cursor: pointer;
 }
 
 /* Review-List*/
@@ -126,6 +129,7 @@
 
 .review-right img {
   width: 130px;
+  height: 100px;
 }
 
 /* Q&A */
@@ -139,16 +143,17 @@
   align-items: center;
 }
 
-.qna-btn {
+.qna-write-btn {
   display: inline-block;
-  padding: 6px;
-  border: 1px solid #000;
+  color: #fff;
+  padding: 6px 10px;
+  background-color: #5399f5;
   border-radius: 3px;
+  cursor: pointer;
 }
 
-.qna-btn:hover {
-  border: 1px solid #5399f5;
-  background-color: #5399f5;
+.qna-write-btn:hover {
+  background-color: #4b89da;
   color: #fff;
 }
 
@@ -171,6 +176,7 @@
 
 .qna-question {
   display: flex;
+  padding: 10px 0;
 }
 
 .qna-question div {
@@ -186,7 +192,12 @@
 }
 
 .qna-question-detail {
-  margin-top: 30px;
+  display: none;
+  margin-top: 15px;
+}
+
+.qna-question-detail.active {
+  display: block;
 }
 
 .qna-question-content {
@@ -222,6 +233,85 @@
   text-align: center;
 }
 
+/* Q&A PopupPage */
+.qna-popup-header {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  background-color: #353b4c;
+}
+
+.qna-popup-form {
+  margin: 20px;
+}
+
+.qna-popup-title,
+.qna-popup-content {
+  width: 100%;
+  border: 1px solid #cfcfcf;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.qna-popup-content {
+  height: 250px;
+  margin-top: 10px;
+  resize: none;
+}
+
+.qna-secret {
+  padding: 10px;
+}
+
+.qna-secret input[type=checkbox] {
+  scale: 1.4;
+  margin-right: 10px;
+  position: relative;
+  top: 1px;
+}
+
+.qna-secret span {
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.qna-popup-btns {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.qna-popup-btns button {
+  flex: 1;
+  border: 1px solid #cfcfcf;
+  border-radius: 5px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.add-btn {
+  color: #fff;
+  background-color: #5399f5;
+}
+
+.add-btn:hover {
+  background-color: #4b89da;
+}
+
+.close-btn:hover {
+  background-color: #dadada;
+}
+
+.qna-error-msg {
+  font-size: 14px;
+  color: red;
+  margin-top: 5px;
+}
+
 /* 상품상세페이지 */
 .product-wrapper {
   margin-top: 100px;
@@ -236,8 +326,16 @@
   border: 1px solid #000;
 }
 
+.product-image {
+  position: relative;
+}
+
 .product-image img {
+  position: absolute;
   width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 .product-info {

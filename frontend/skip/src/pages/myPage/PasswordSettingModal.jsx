@@ -5,6 +5,7 @@ import { inputText } from "../../components/inputs";
 import { button } from "../../components/buttons";
 import { useRef, useState } from "react";
 import { setPassword } from "../../api/userApi";
+import ModalFooter from "../../components/modal/ModalFooter";
 
 const PasswordSettingModal = ({ onClose }) => {
     const password = useRef();
@@ -32,9 +33,9 @@ const PasswordSettingModal = ({ onClose }) => {
 
     const modalContent = (
         <>
-            <Modal>
-                <div className="w-[460px] rounded-lg bg-white p-6 shadow-lg space-y-10">
-                    <ModalHeader title="비밀번호 변경" onClose={onClose}></ModalHeader>
+            <Modal onClose={onClose}>
+                <div onClick={e => e.stopPropagation()} className="w-[460px] rounded-lg bg-white p-6 shadow-lg space-y-7">
+                    <ModalHeader title="비밀번호 설정" onClose={onClose}></ModalHeader>
 
                     <div className="space-y-3">
                         <div className="text-right">
@@ -47,7 +48,7 @@ const PasswordSettingModal = ({ onClose }) => {
                                     type="password"
                                     ref={password}
                                     id="password"
-                                    className={inputText({ className: 'w-[200px] h-[30px]' })}
+                                    className={inputText({ className: 'w-[200px] h-[40px]' })}
                                 ></input>
                             </label>
 
@@ -68,7 +69,7 @@ const PasswordSettingModal = ({ onClose }) => {
                                     type="password"
                                     ref={confirmPassword}
                                     id="confirmPassword"
-                                    className={inputText({ className: 'w-[200px] h-[30px]' })}
+                                    className={inputText({ className: 'w-[200px] h-[40px]' })}
                                 ></input>
                             </label>
 
@@ -80,21 +81,7 @@ const PasswordSettingModal = ({ onClose }) => {
                         </div>
                     </div>
 
-                    <div className="flex justify-center gap-5">
-                        <button
-                            onClick={onClose}
-                            className={button({ color: "secondary", className: 'w-[100px] h-[40px]' })}
-                        >
-                            취소
-                        </button>
-
-                        <button
-                            onClick={setPasswordHandler}
-                            className={button({ color: "primary", className: 'w-[100px] h-[40px]' })}
-                        >
-                            저장
-                        </button>
-                    </div>
+                    <ModalFooter cancel="취소" confirm="저장" onCancel={onClose} onConfirm={setPasswordHandler}></ModalFooter>
                 </div>
             </Modal>
         </>

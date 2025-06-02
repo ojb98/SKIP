@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { rentDetailApi } from "../../api/rentListApi";
 import { useNavigate, useParams } from "react-router-dom";
+import '../../css/rentDetail.css';
 
 const RentDetail=()=>{
 
@@ -24,14 +25,14 @@ const RentDetail=()=>{
     }
 
     return(
-        <div>
-            <h1>가맹점 상세정보</h1>
-            <div>
+        <div className="rent-detail-container">
+            <h1 className="top-subject">가맹점 상세정보</h1>
+            <div className="button-div">
                 <button className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     onClick={()=> navigate(`/rentAdmin/update/${rentId}`)}>수정</button>
             </div>
-            <table>
-                <tbody>
+            <table className="detail-table">
+                <tbody className="detail-tbody">
                     <tr>
                         <th>사업자등록번호</th>
                         <td>{rentDetail.bizRegNumber}</td>

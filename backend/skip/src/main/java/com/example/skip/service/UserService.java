@@ -9,6 +9,7 @@ import com.example.skip.entity.QNaverLinkage;
 import com.example.skip.entity.QUser;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserSocial;
+import com.example.skip.enumeration.UserStatus;
 import com.example.skip.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,15 +44,15 @@ public class UserService {
 
 
     public UserDto signup(SignupRequestDto signupRequestDto, BindingResult bindingResult) {
-        if (isUser(signupRequestDto.getUsername())) {
-            bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
-            return null;
-        }
-
-        if (!signupRequestDto.isVerified()) {
-            bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
-            return null;
-        }
+//        if (isUser(signupRequestDto.getUsername())) {
+//            bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
+//            return null;
+//        }
+//
+//        if (!signupRequestDto.isVerified()) {
+//            bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
+//            return null;
+//        }
 
         UserDto userDto = signupRequestDto.toUserDto();
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -86,35 +89,37 @@ public class UserService {
     }
 
     @CacheEvict(value = "users", key = "#userDto.userId")
-    public boolean setPassword(UserDto userDto, PasswordSetRequestDto passwordSetRequestDto, BindingResult bindingResult) {
-        System.out.println(passwordSetRequestDto);
-        String password = passwordSetRequestDto.getPassword();
-        if (password.equals(passwordSetRequestDto.getConfirmPassword())) {
-            Long userId = userDto.getUserId();
-            User user = userRepository.findByUserId(userId).orElseThrow();
-            user.setPassword(passwordEncoder.encode(password));
+    public boolean setPassword(UserDto userDto, String password) {
+        Long userId = userDto.getUserId();
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setPassword(passwordEncoder.encode(password));
 
-            long affected = 0;
-            if (user.getSocial() == UserSocial.NAVER) {
-                affected = jpaQueryFactory
-                        .update(naverLinkage)
-                        .set(naverLinkage.passwordSet, true)
-                        .where(naverLinkage.user.userId.eq(userId))
-                        .execute();
-            } else if (user.getSocial() == UserSocial.KAKAO) {
-                affected = jpaQueryFactory
-                        .update(kakaoLinkage)
-                        .set(kakaoLinkage.passwordSet, true)
-                        .where(kakaoLinkage.user.userId.eq(userId))
-                        .execute();
-            }
-
-            if (affected > 0) {
-                return true;
-            }
+        long affected = 0;
+        if (user.getSocial() == UserSocial.NAVER) {
+            affected = jpaQueryFactory
+                    .update(naverLinkage)
+                    .set(naverLinkage.passwordSet, true)
+                    .where(naverLinkage.user.userId.eq(userId))
+                    .execute();
+        } else if (user.getSocial() == UserSocial.KAKAO) {
+            affected = jpaQueryFactory
+                    .update(kakaoLinkage)
+                    .set(kakaoLinkage.passwordSet, true)
+                    .where(kakaoLinkage.user.userId.eq(userId))
+                    .execute();
         }
 
-        bindingResult.rejectValue("confirmPassword", null, "비밀번호 확인이 일치하지 않습니다.");
+        if (affected > 0) {
+            return true;
+        }
+
         return false;
+    }
+
+    @CacheEvict(value = "users", key = "#userDto.userId")
+    public void deleteAccount(UserDto userDto) {
+        User user = userRepository.findByUserId(userDto.getUserId()).orElseThrow();
+        user.setStatus(UserStatus.WITHDRAWN);
+        user.setUsername(user.getUsername() + "_deleted_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
     }
 }

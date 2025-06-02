@@ -40,7 +40,7 @@ public class UserListService {
 
     public List<ReviewDTO> getUserRecentReviews(Long userId) {
         List<Review> reviews = reviewRepository
-                .findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(userId);
+                .findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(userId);
 
         return reviews.stream()
                 .map(ReviewDTO::new)
@@ -49,7 +49,7 @@ public class UserListService {
 
     public List<PaymentDTO> getUserRecentPayments(Long userId) {
         List<Payment> payments = paymentRepository
-                .findTop5ByReservations_User_UserIdOrderByCreatedAtDesc(userId);
+                .findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(userId);
 
         return payments.stream()
                 .map(PaymentDTO::new)

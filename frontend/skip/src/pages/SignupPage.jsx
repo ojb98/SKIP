@@ -220,7 +220,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquare] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify1}`}
                                 onClick={verifyHandler}
                             >
                                 인증
@@ -245,7 +245,7 @@ const JoinPage = () => {
                             {/* 인증번호 재전송 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
+                                className={`w-[90px] h-[50px] rounded bg-blue-400 text-sm font-[NanumSquare] font-medium text-white hover:bg-blue-500 cursor-pointer ${verify3}`}
                                 onClick={verifyHandler}
                             >
                                 재전송
@@ -254,7 +254,7 @@ const JoinPage = () => {
                             {/* 인증번호 전송 비활성화 */}
                             <button
                                 type="button"
-                                className={`w-[90px] h-[50px] rounded bg-gray-400/60 text-sm font-[NanumSquareNeo] font-medium text-white ${verify4}`}
+                                className={`w-[90px] h-[50px] rounded bg-gray-400/60 text-sm font-[NanumSquare] font-medium text-white ${verify4}`}
                             >
                                 인증
                             </button>
@@ -493,7 +493,7 @@ const JoinPage = () => {
                         // 가입버튼
                         <input
                             type="submit"
-                            className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer"
+                            className="h-[50px] w-full rounded bg-blue-400 font-[NanumSquare] font-medium text-white hover:bg-blue-500 cursor-pointer"
                             value="가입하기"
                         ></input>
 
@@ -502,7 +502,7 @@ const JoinPage = () => {
                         // 비활성화
                         <input
                             type="button"
-                            className="h-[50px] w-full rounded bg-gray-400/60 font-[NanumSquareNeo] font-medium text-white"
+                            className="h-[50px] w-full rounded bg-gray-400/60 font-[NanumSquare] font-medium text-white"
                             value="가입하기"
                         ></input>
                     }
