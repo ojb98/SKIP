@@ -78,11 +78,13 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
         WHERE r.rentId =:rentId
         AND(:status IS NULL OR q.status =:status)
         AND(:username IS NULL OR u.username LIKE %:username%)
+        AND(:itemName IS NULL OR i.name LIKE %:itemName%)
         AND(:secret IS NULL OR q.secret =:secret)
     """)
     Page<QnaListDTO> findQnaListByRentalshopWithFilters(@Param("rentId")Long rentId,
                                                         @Param("status")QnaStatus status,
                                                         @Param("username")String username,
+                                                        @Param("itemName")String itemName,
                                                         @Param("secret")Boolean secret,
                                                         Pageable pageable);
 

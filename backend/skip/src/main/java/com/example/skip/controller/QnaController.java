@@ -72,8 +72,9 @@ public class QnaController {
     public Page<QnaListDTO> getQnaListByRent(@PathVariable Long rentId,
                                              @RequestParam(required = false) QnaStatus status,
                                              @RequestParam(required = false) String username,
+                                             @RequestParam(required = false) String itemName,
                                              @RequestParam(required = false) Boolean secret,
                                              Pageable pageable){
-        return qnaService.getQnaListByRent(rentId, status, username, secret, pageable);
+        return qnaService.getQnaListByRent(rentId, status, username, itemName, secret, pageable);
     }
 }
