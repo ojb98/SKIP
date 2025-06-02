@@ -38,17 +38,23 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
       
     };
 
-    const handleSearch = () =>{
+    const handleSearch = async () =>{
       if (!keyword.trim()) {
-        fetchUsers();
+        loadUsers();
         setSelectedUser(null);
         return;
       }
-
-      if (filter === "username") {
-        findUsersByUsername(keyword)
-      } else {
-        findUsersByName(keyword)
+      try{
+        let data;
+        if (filter === "username") {
+          data = await findUsersByUsername(keyword)
+        } else {
+          data = await findUsersByName(keyword)
+        }
+        setUsers(data);
+        setCurrentPage(1);
+      }catch(e){
+        console.error("검색 실패",e)
       }
       setSelectedUser(null)
     };
@@ -83,7 +89,7 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
             </select>
             <input type="text" placeholder="검색어 입력" onChange={(e)=>setKeyword(e.target.value)} onKeyDown={(e)=>{if(e.key==='Enter'){handleSearch();}}}/>
             <button onClick={handleSearch}>검색</button>
-            <button onClick={fetchUsers}>전체보기</button>
+            <button onClick={loadUsers}>전체보기</button>
           </div>
         </div>
         <table className="user-table">
@@ -96,7 +102,7 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
               <th>이메일</th>
               <th>전화번호</th>
               <th>소셜 구분</th>
-              <th>권한</th>
+              <th style={{width:"300px"}}>권한</th>
               <th>가입일</th>            
             </tr>
           </thead>
@@ -150,8 +156,20 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
               <button
                 className="delete-btn"
                 onClick={(e) => {
-                  e.stopPropagation()
+                  e.stopPropagation();
+                  const isConfirmed = window.confirm(`정말로 ${selectedUser.name} 님을 탈퇴 처리하시겠습니까?`);
+                  if (!isConfirmed) return;
+
                   requestDelete(selectedUser.userId)
+                  .then(()=>{
+                    alert("탈퇴 처리되었습니다.");
+                    setSelectedUser(null);
+                    loadUsers();
+                  })
+                  .catch(()=> {
+                    alert("탈퇴 처리에 실패하였습니다.");
+                    console.error("탈퇴 실패", err);
+                  })
                 }}
               >
                 탈퇴

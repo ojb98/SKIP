@@ -13,8 +13,4 @@ public class SizeStockDTO {
     private String size;
     private int totalQuantity;
     private int stockQuantity;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { fetchDaySalesSummary,fetchSalesSummary, fetchSalesChartData, fetchSalesList } from "../../services/admin/salesService";
 import SalesSummaryChart from "../../components/adminpage/SalesSummaryChart";
 import SalesCategoryChart from "../../components/adminpage/SalesCategoryChart";
 import SalesTable from "../../components/adminpage/SalesTable";
-import { fetchDaySalesSummary,fetchSalesSummary, fetchSalesChartData, fetchSalesList } from "../../services/admin/salesService";
 import StatOverviewCard from "../../components/adminpage/StatOverviewCard";
-import axios from "axios";
-import Odometer from 'react-odometerjs'
-import 'odometer/themes/odometer-theme-default.css'
+import Odometer from 'react-odometerjs';
 import DateInput from "../../components/adminpage/DateInput";
+import 'odometer/themes/odometer-theme-default.css';
 
 
 const AdminDashboard = () => {
@@ -74,13 +73,8 @@ const AdminDashboard = () => {
     const [mounted, setMounted] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
     const [beforeStartDate, setBeforeStartDate] = useState();
-    const [beforeEndDate, setBeforeEndDate] = useState();
-    
-    
-
-    
-    const [summaryData, setSummaryData] = useState({
-        
+    const [beforeEndDate, setBeforeEndDate] = useState();    
+    const [summaryData, setSummaryData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -93,8 +87,7 @@ const AdminDashboard = () => {
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
-    const [beforeSummaryData, setBeforeSummaryData] = useState({
-        
+    const [beforeSummaryData, setBeforeSummaryData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -107,8 +100,7 @@ const AdminDashboard = () => {
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
-    const [summaryTodaysData, setSummaryTodaysData] = useState({
-        
+    const [summaryTodaysData, setSummaryTodaysData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -121,8 +113,7 @@ const AdminDashboard = () => {
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
-    const [summaryDaysAgoData, setSummaryDaysAgoData] = useState({
-        
+    const [summaryDaysAgoData, setSummaryDaysAgoData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -135,8 +126,7 @@ const AdminDashboard = () => {
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
-    const [summaryWeeksAgoData, setSummaryWeeksAgoData] = useState({
-        
+    const [summaryWeeksAgoData, setSummaryWeeksAgoData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -149,8 +139,7 @@ const AdminDashboard = () => {
         totalAdAmount : 0,
         totalBannerWating : 0,
     });
-    const [summaryYearsAgoData, setSummaryYearsAgoData] = useState({
-        
+    const [summaryYearsAgoData, setSummaryYearsAgoData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
         totalProfit: 0,
@@ -304,14 +293,14 @@ const loadDashboardData = async () => {
                 <SalesSummaryChart summaryData={summaryData}/>
                 <SalesCategoryChart categoryData={categoryData} />
                 <StatOverviewCard 
-                stats={{
-                    current: summaryData,
-                    before: beforeSummaryData,
-                    today: summaryTodaysData,
-                    dayAgo: summaryDaysAgoData,
-                    weekAgo: summaryWeeksAgoData,
-                    yearAgo: summaryYearsAgoData
-                }} 
+                    stats={{
+                        current: summaryData,
+                        before: beforeSummaryData,
+                        today: summaryTodaysData,
+                        dayAgo: summaryDaysAgoData,
+                        weekAgo: summaryWeeksAgoData,
+                        yearAgo: summaryYearsAgoData
+                    }} 
                 />
             </div>
             {/* <SalesTable salesList={salesList} /> */}
