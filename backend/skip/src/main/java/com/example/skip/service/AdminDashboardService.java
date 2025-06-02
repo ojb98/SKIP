@@ -23,7 +23,7 @@ public class AdminDashboardService {
     @Autowired
     private BoostRepository boostRepository;
     @Autowired
-    private ReservationItemsRepository reservationItemsRepository;
+    private ReservationItemRepository reservationItemRepository;
 
     // ***DB에서 가공된 결과 가져오기
     public Map<String, Object> getSummary(LocalDate start, LocalDate end) {
@@ -76,7 +76,7 @@ public class AdminDashboardService {
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (ItemCategory category: ItemCategory.values()) {
-            long count = reservationItemsRepository.countPaymentsByItemCategory(
+            long count = reservationItemRepository.countPaymentsByItemCategory(
                     category,
                     start.atStartOfDay(),
                     end.plusDays(1).atStartOfDay()
