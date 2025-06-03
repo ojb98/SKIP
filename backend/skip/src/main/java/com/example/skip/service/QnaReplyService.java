@@ -62,4 +62,19 @@ public class QnaReplyService {
         return qnaReplyRepository.findByQnaId(qnaId).orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
     }
 
+    // 답변 수정
+    public void updateReply(Long qnaId, String updatedContent) {
+        QnaReply qnaReply = qnaReplyRepository.findByQna_QnaId(qnaId)
+                .orElseThrow(() -> new EntityNotFoundException("수정할 답변이 존재하지 않습니다."));
+        qnaReply.setContent(updatedContent);
+        qnaReplyRepository.save(qnaReply);
+    }
+
+    // 답변 삭제
+    public void deleteReply(Long qnaId) {
+        QnaReply qnaReply = qnaReplyRepository.findByQna_QnaId(qnaId)
+                .orElseThrow(() -> new EntityNotFoundException("삭제할 답변이 존재하지 않습니다."));
+        qnaReplyRepository.delete(qnaReply);
+    }
+
 }
