@@ -17,6 +17,7 @@ spring:
     url: jdbc:mariadb://192.168.80.13:3306/sy
     username: hello
     password: hello1234
+#    url: jdbc:mariadb://localhost:3306/spring
 
     #url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
     #username: ${MARIADB_USERNAME}
