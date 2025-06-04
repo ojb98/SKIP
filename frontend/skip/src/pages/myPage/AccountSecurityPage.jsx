@@ -22,7 +22,7 @@ const AccountSecurityPage = () => {
                 <li>
                     <MyContainer
                         title="비밀번호 변경"
-                        component={
+                        content={
                             <>
                                 <div className="w-full flex justify-between items-center">
                                     <span className="text-gray-500 font-semibold">
@@ -75,7 +75,7 @@ const AccountSecurityPage = () => {
                 <li>
                     <MyContainer
                         title="회원 탈퇴"
-                        component={
+                        content={
                             <>
                                 <div className="w-full flex justify-between items-center">
                                     <span className="text-gray-500 font-semibold">

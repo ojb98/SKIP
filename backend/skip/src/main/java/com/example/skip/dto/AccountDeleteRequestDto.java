@@ -6,8 +6,13 @@ import lombok.Data;
 
 @Data
 public class AccountDeleteRequestDto {
-    @NotBlank(message = "비밀번호를 입력해주세요.")
+    private Boolean isPassword;
+
     private String password;
+
+    private String email;
+
+    private Boolean isVerified;
 
     @NotBlank(message = "확인값을 입력해주세요.")
     @Pattern(regexp = "^delete$", message = "확인값이 일치하지 않습니다.")

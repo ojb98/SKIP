@@ -20,11 +20,18 @@ export const isUser = async req => {
 }
 
 export const verifyEmail = async req => {
-    return caxios.post(`/user/email/verify`, req).then(res => res.data);
+    const params = new URLSearchParams();
+    params.append('email', req);
+
+    return caxios.post(`/user/email/verify`, params).then(res => res.data);
 }
 
 export const confirmCode = async req => {
-    const data = await caxios.post(`/user/email/confirm`, req).then(req => req.data);
+    const params = new URLSearchParams();
+    params.append('email', req.email);
+    params.append('verificationCode', req.verificationCode);
+
+    const data = await caxios.post(`/user/email/confirm`, params).then(req => req.data);
 
     return data;
 }
@@ -83,4 +90,21 @@ export const deleteAccount = async req => {
     });
 
     return data;
+};
+
+export const link = async req => {
+    const params = new URLSearchParams();
+    params.append('client', req);
+
+    const data = await caxios.post(`/user/social/link`, params).then(res => {
+
+    });
 }
+
+export const unlink = async () => {
+    const data = await caxios.delete(`/user/social/unlink`).then(res => {
+        return res.data;
+    });
+
+    return data;
+};

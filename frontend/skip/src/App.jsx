@@ -2,8 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
-import JoinPage from "./pages/SignupPage"
-import SignupVerifyPage from "./pages/SignupVerifyPage"
+import SignupPage from "./pages/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -101,9 +100,7 @@ function App() {
                     <Route element={<LoginLayout></LoginLayout>}>
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

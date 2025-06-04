@@ -5,6 +5,7 @@ import com.example.skip.enumeration.UserSocial;
 import com.example.skip.exception.CustomEmailException;
 import com.example.skip.service.EmailVerifyService;
 import com.example.skip.service.UserService;
+import com.example.skip.service.UserSocialService;
 import com.example.skip.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ public class UserController {
     private final UserService userService;
 
     private final EmailVerifyService emailVerifyService;
+
+    private final UserSocialService userSocialService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -60,16 +64,19 @@ public class UserController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping("/find/{username}")
-    public boolean isUser(@PathVariable("username") String username) {
-        return userService.isUser(username);
-    }
-
     @PostMapping("/email/verify")
     public ApiResponseDto verifyEmail(@RequestParam("email") String email) {
         emailVerifyService.sendVerificationCode(email);
 
         return new ApiResponseDto(true, email);
+    }
+
+    @ExceptionHandler(CustomEmailException.class)
+    public ApiResponseDto emailError(CustomEmailException e) {
+        if (e.getMessage().equals("Invalid Email")) {
+            return new ApiResponseDto(false, "존재하지 않는 이메일입니다.");
+        }
+        return new ApiResponseDto(false, "인증번호를 재전송해주세요.");
     }
 
     @PostMapping("/email/confirm")
@@ -81,12 +88,16 @@ public class UserController {
         return new ApiResponseDto(false, "잘못된 인증번호입니다.");
     }
 
-    @ExceptionHandler(CustomEmailException.class)
-    public ApiResponseDto emailError(CustomEmailException e) {
-        if (e.getMessage().equals("Invalid Email")) {
-            return new ApiResponseDto(false, "존재하지 않는 이메일입니다.");
-        }
-        return new ApiResponseDto(false, "인증번호를 재전송해주세요.");
+    @PostMapping("/social/link")
+    public ApiResponseDto link(@RequestParam("client") UserSocial userSocial) {
+        System.out.println(userSocial);
+
+        return null;
+    }
+
+    @GetMapping("/find/{username}")
+    public boolean isUser(@PathVariable("username") String username) {
+        return userService.isUser(username);
     }
 
     @GetMapping("/profile")
@@ -151,9 +162,21 @@ public class UserController {
                                         @Valid @RequestBody AccountDeleteRequestDto accountDeleteRequestDto,
                                         BindingResult bindingResult) {
         UserDto userDto = (UserDto) userDetails;
+        System.out.println(accountDeleteRequestDto);
 
-        if (!passwordEncoder.matches(accountDeleteRequestDto.getPassword(), userDto.getPassword())) {
+        Boolean isPassword = accountDeleteRequestDto.getIsPassword();
+
+        if (isPassword && !passwordEncoder.matches(accountDeleteRequestDto.getPassword(), userDto.getPassword())) {
             bindingResult.rejectValue("password", null, "비밀번호가 일치하지 않습니다.");
+        }
+
+        if (!isPassword) {
+            if (!accountDeleteRequestDto.getEmail().equals(userDto.getEmail())) {
+                bindingResult.rejectValue("email", null, "이메일이 일치하지 않습니다.");
+            }
+            if (!accountDeleteRequestDto.getIsVerified()) {
+                bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
+            }
         }
 
         if (!bindingResult.hasErrors()) {
@@ -172,11 +195,27 @@ public class UserController {
                 fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
             }
 
-            System.out.println(bindingResult.getFieldErrors());
-
             return ApiResponseDto.builder()
                     .success(false)
                     .data(fieldErrors).build();
         }
+    }
+
+    @DeleteMapping("/social/unlink")
+    public ApiResponseDto unlink(@AuthenticationPrincipal UserDetails userDetails,
+                                 OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+        UserDto userDto = (UserDto) userDetails;
+        try {
+            String accessToken = userSocialService.getAccessToken(oAuth2AuthenticationToken);
+            userSocialService.unlink(userDto, accessToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseDto.builder()
+                    .success(false)
+                    .data(e.getMessage()).build();
+        }
+        return ApiResponseDto.builder()
+                .success(true)
+                .data("연결을 해제했습니다.").build();
     }
 }
