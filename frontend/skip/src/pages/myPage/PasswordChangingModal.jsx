@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { changePassword } from "../../api/userApi";
 import { inputText } from "../../components/inputs";
 import { button } from "../../components/buttons";
+import ModalFooter from "../../components/modal/ModalFooter";
 
 const PasswordChangingModal = ({ onClose }) => {
     const currentPassword = useRef();
@@ -67,9 +68,9 @@ const PasswordChangingModal = ({ onClose }) => {
 
     const modalContent = (
         <>
-            <Modal>
+            <Modal onClose={onClose}>
                 {/* 모달 창 */}
-                <div className="w-[460px] rounded-lg bg-white p-6 shadow-lg space-y-10">
+                <div onClick={e => e.stopPropagation()} className="w-[460px] rounded-lg bg-white p-6 shadow-lg space-y-7">
                     <ModalHeader title="비밀번호 변경" onClose={onClose}></ModalHeader>
 
                     <div className="space-y-3">
@@ -83,7 +84,7 @@ const PasswordChangingModal = ({ onClose }) => {
                                     type="password"
                                     ref={currentPassword}
                                     id="currentPassword"
-                                    className={inputText({ className: 'w-[200px] h-[30px]' })}
+                                    className={inputText({ className: 'w-[200px] h-[40px]' })}
                                 ></input>
                             </label>
 
@@ -104,7 +105,7 @@ const PasswordChangingModal = ({ onClose }) => {
                                     type="password"
                                     ref={newPassword}
                                     id="newPassword"
-                                    className={inputText({ className: 'w-[200px] h-[30px]' })}
+                                    className={inputText({ className: 'w-[200px] h-[40px]' })}
                                 ></input>
                             </label>
 
@@ -125,7 +126,7 @@ const PasswordChangingModal = ({ onClose }) => {
                                     type="password"
                                     ref={confirmNewPassword}
                                     id="confirmNewPassword"
-                                    className={inputText({ className: 'w-[200px] h-[30px]' })}
+                                    className={inputText({ className: 'w-[200px] h-[40px]' })}
                                 ></input>
                             </label>
 
@@ -141,22 +142,8 @@ const PasswordChangingModal = ({ onClose }) => {
                         <span className="text-gray-500">혹시 비밀번호를 잊으셨나요?</span>
                         <Link className="text-blue-500 hover:underline hover:underline-offset-4">비밀번호 재설정</Link>
                     </div>
-
-                    <div className="flex justify-center gap-5">
-                        <button
-                            onClick={onClose}
-                            className={button({ color: "secondary", className: 'w-[100px] h-[40px]' })}
-                        >
-                            취소
-                        </button>
-
-                        <button
-                            onClick={changePasswordHandler}
-                            className={button({ color: "primary", className: 'w-[100px] h-[40px]' })}
-                        >
-                            저장
-                        </button>
-                    </div>
+                    
+                    <ModalFooter cancel="취소" confirm="저장" onCancel={onClose} onConfirm={changePasswordHandler}></ModalFooter>
                 </div>
             </Modal>
         </>
