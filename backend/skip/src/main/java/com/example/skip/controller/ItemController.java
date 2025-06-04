@@ -1,11 +1,8 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.item.*;
-import com.example.skip.dto.item.ItemDelDTO;
 import com.example.skip.dto.ItemDetailPageDTO;
-import com.example.skip.dto.item.ItemRequestDTO;
-import com.example.skip.dto.item.ItemResponseDTO;
-import com.example.skip.dto.item.ItemRequestDTO;
+import com.example.skip.dto.item.*;
+
 import com.example.skip.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,7 +39,6 @@ public class ItemController {
         return new ResponseEntity<>(itemId, HttpStatus.OK);
     }
 
-    //장비 + 디테일 리스트 조회
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
@@ -56,6 +52,7 @@ public class ItemController {
             itemService.setItemDetailDelete(dto.getItemId(), dto.getItemDetailId());
         }
         return new ResponseEntity<>("deletedItemDetailSuccess",HttpStatus.OK);
+
     }
 
     //장비 수정하기 위한 조회

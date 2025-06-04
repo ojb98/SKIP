@@ -1,7 +1,5 @@
 package com.example.skip.filter;
 
-import com.example.skip.dto.UserDto;
-import com.example.skip.service.CustomUserDetailsService;
 import com.example.skip.service.UserService;
 import com.example.skip.util.JwtUtil;
 import com.google.gson.Gson;
@@ -39,7 +37,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/user/logout",
                 "/user/profile",
                 "/user/password",
-                "/user/delete"
+                "/user/delete",
+                "/user/social/unlink"
         );
 
         return excludePaths.stream().noneMatch(path::startsWith);

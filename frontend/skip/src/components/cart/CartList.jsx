@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { cartListApi } from "../../api/cartApi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CartList=()=>{
+    const navigate = useNavigate();
 
     const [cartGroups, setCartGroups] = useState([]);
 
@@ -21,8 +24,32 @@ const CartList=()=>{
     }
 
     useEffect(()=>{
+        // userId 없으면 로그인 페이지로 리디렉트
+        if (!profile?.userId) {
+            navigate("/login");
+            return;
+        }
+
         getcartList();
     },[profile.userId]);
+
+    // 대여시간/반납시간 날짜포맷
+    const formatDate = (rentDate) => {
+        if (!rentDate) return "-";
+        const date = new Date(rentDate);
+        const year = date.getFullYear();
+        const month = `${date.getMonth() + 1}`.padStart(2, "0");
+        const day = `${date.getDate()}`.padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const formatTime = (rentDate) => {
+        if (!rentDate) return "-";
+        const date = new Date(rentDate);
+        const hours = `${date.getHours()}`.padStart(2, "0");
+        const minutes = `${date.getMinutes()}`.padStart(2, "0");
+        return `${hours}:${minutes}`;
+    };
 
     // 개별선택 체크박스
     const toggleCheck=(cartId)=>{
@@ -66,10 +93,71 @@ const CartList=()=>{
         .filter((item)=> checkedItems.has(item.cartId))
         .reduce((sum,item) => sum + item.price, 0);
     
-    const handlePayment=()=>{
-        const selectedItems = Array.from(checkedItems);
-        alert(`총 ${totalPrice.toLocaleString()}원 결제를 진행합니다.`);
-        //결제로직
+
+    // 결제   
+    const handlePayment = async () => {
+        if (checkedItems.size === 0) {
+            alert("결제할 상품을 선택해주세요.");
+            return;
+        }
+
+        const selectedItems = cartGroups.flatMap(group => group.items)
+            .filter(item => checkedItems.has(item.cartId));
+
+        const rentId = cartGroups[0]?.rentId || null;
+        if (!rentId) {
+            alert("예약할 상품이 없습니다.");
+            return;
+        }
+
+        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+
+        const reservationItems = selectedItems.map(item => ({
+            cartItemId: item.cartId,
+            rentStart: new Date(item.rentStart).toISOString(),
+            rentEnd: new Date(item.rentEnd).toISOString(),
+            quantity: item.quantity,
+            subtotalPrice: item.price,
+        }));
+
+        const IMP = window.IMP;
+        IMP.init("imp57043461");
+
+        const merchantUid = `order_${new Date().getTime()}`;
+
+        IMP.request_pay({
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: merchantUid,
+            name: "대여 결제",
+            amount: totalPrice,
+            buyer_email: profile.email,
+            buyer_name: profile.name,
+        }, async (rsp) => {
+            if (rsp.success) {
+                try {
+                    const completeRes = await axios.post("/api/payments/complete", {
+                        impUid: rsp.imp_uid,
+                        merchantUid: rsp.merchant_uid,
+                        amount: rsp.paid_amount,
+                        userId: profile.userId,
+                        rentId: rentId,
+                        totalPrice: totalPrice,
+                        reservationItems: reservationItems,
+                    });
+
+                    console.log("예약 완료:", completeRes.data);
+                    alert("예약이 완료되었습니다!");
+                    // navigate("/payment", { state: { reservation: completeRes.data } });
+
+                } catch (err) {
+                    console.error("결제 검증 또는 예약 실패:", err);
+                    alert("결제 완료 처리 중 오류가 발생했습니다.");
+                }
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
     }
 
 
@@ -96,6 +184,11 @@ const CartList=()=>{
                                                 <div className="">
                                                     <div className="">
                                                         <strong>{item.itemName}</strong><br/>
+                                                        <p>대여날짜: 
+                                                            {formatDate(item.rentStart) === formatDate(item.rentEnd)
+                                                                ? formatDate(item.rentStart)
+                                                                : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`}</p>
+                                                        <p>대여시간: {formatTime(item.rentStart)} ~{formatTime(item.rentEnd)}</p>
                                                         <p>사이즈 : {item.size}</p>
                                                     </div>
                                                     <div className="">

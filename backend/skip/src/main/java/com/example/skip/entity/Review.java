@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"reservations"})
+@ToString(exclude = {"reservation"})
 @Builder
 public class Review {
     @Id

@@ -65,7 +65,13 @@ public class SecurityConfig {
                 // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
-                            .requestMatchers("/user/logout", "/user/profile", "/user/password/**").authenticated()
+                            .requestMatchers(
+                                    "/user/logout",
+                                    "/user/profile",
+                                    "/user/password/**",
+                                    "/user/delete",
+                                    "/user/social/unlink"
+                                    ).authenticated()
                             .anyRequest()
                             .permitAll();
                 })

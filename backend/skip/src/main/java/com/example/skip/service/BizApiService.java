@@ -91,6 +91,4 @@ public class BizApiService {
     public boolean isBizRegNumberDuplicate(String bizRegNumber) {
         return rentRepository.existsByBizRegNumber(bizRegNumber);
     }
-
-
 }

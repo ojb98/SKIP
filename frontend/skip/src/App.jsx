@@ -1,19 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
-
+import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
-import JoinPage from "./pages/SignupPage"
-import SignupVerifyPage from "./pages/SignupVerifyPage"
+import SignupPage from "./pages/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
-
-import MainLayout from "./pages/MainLayout"
-
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
 import ReviewPopupPage from "./pages/ReviewPopupPage"
-
 import RentInsertForm from "./components/rentAdmin/RentInsertForm"
 import RentList from "./components/rentAdmin/RentList"
 import RentDetail from "./components/rentAdmin/RentDetail"
@@ -33,6 +28,7 @@ import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
+import UserApprovalList from "./pages/admin/UserApprovalList"
 
 
 
@@ -72,6 +68,8 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        
+                        {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>
 
 
@@ -84,10 +82,10 @@ function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         {/* 추가 라우트 */}
-                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/pendinglist" element={<UserApprovalList/>} />
                         <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
                         <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
-                        <Route path="/admin/userlist" element={<UsersList></UsersList>} />
+                        <Route path="/admin/userlist" element={<UsersList/>} />
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                         <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
@@ -102,9 +100,7 @@ function App() {
                     <Route element={<LoginLayout></LoginLayout>}>
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

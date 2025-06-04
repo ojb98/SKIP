@@ -20,6 +20,7 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "chart.js": "^4.4.9",
+    "dayjs": "^1.11.13",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "odometer": "^0.4.8",
@@ -34,6 +35,7 @@
     "swr": "^2.3.3",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.7",
+    "xlsx": "^0.18.5",
     "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {

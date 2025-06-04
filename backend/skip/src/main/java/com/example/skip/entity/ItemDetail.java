@@ -44,5 +44,4 @@ public class ItemDetail {
     @Column(nullable = false)
     @Builder.Default
     private YesNo isActive = YesNo.Y;
-
 }

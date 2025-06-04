@@ -20,11 +20,11 @@ const slide=({ rentId })=>{
   return(
     <Swiper
       modules={[Pagination, Navigation, Autoplay]}
-      spaceBetween={20}
-      slidesPerView={1}
+      spaceBetween={10}
+      slidesPerView={"auto"}
       pagination={{ clickable: true }}
       autoplay={{delay:3000}}
-      loop
+      loop = {images.length > 1}
     >
       {images.map((img, idx) => (
         <SwiperSlide key={idx}>
