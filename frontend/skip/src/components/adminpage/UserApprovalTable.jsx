@@ -61,6 +61,7 @@ const UserApprovalTable = ({
                   <td>{user.name}</td>
                   <td>{user.phone}</td>
                   <td>{user.biz_status}</td>
+                  <td>{user.biz_status}</td>
                   <td>{user.email}</td>
                   <td>{formatDate(user.regdate)}</td>
                   <td>
