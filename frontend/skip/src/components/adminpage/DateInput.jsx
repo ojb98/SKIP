@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 const DateInput = ({ startDate, setStartDate, endDate, setEndDate }) => {
    return (
     <div className="date-input-group">

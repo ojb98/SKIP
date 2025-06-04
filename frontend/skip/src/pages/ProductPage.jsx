@@ -1,20 +1,31 @@
 import { useEffect, useState } from "react";
 import BoardTabs from "../components/rentalshop/BoardTabs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchItemDetailPage } from "../api/itemApi";
+import { addCartItemApi } from "../api/cartApi";
+import { useSelector } from "react-redux";
+import { addWishApi } from "../api/wishApi";
+
 
 const ProductPage=()=>{
   const { rentId, itemId } = useParams();
+  // 유저아이디 꺼내오기
+  const profile = useSelector(status=> status.loginSlice);
+  const navigate = useNavigate();
+
   const parsedRentId = parseInt(rentId, 10);
   const parsedItemId = parseInt(itemId, 10);
 
+  // 상품 상세 정보 저장
   const [itemData, setItemData] = useState(null);
   const [date, setDate] = useState("");
   const [size, setSize] = useState("");
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
+  // 유저가 선택한 옵션들을 배열로 저장
   const [selectedOptions, setSelectedOptions] = useState([]);
   
+  // 선택 항목들을 초기화하는 함수
   const resetOptions=()=>{
     setDate("");
     setSize("");
@@ -22,6 +33,28 @@ const ProductPage=()=>{
     setDuration("");
   };
 
+  // 반납 예정시간 (대여시간시작 + 대여시간)
+  const calculateEndTime = (date, startTime, duration) => {
+
+    // 초 붙여주기 (파싱 문제 방지)
+    const start = new Date(`${date}T${startTime}:00`);
+    const durationNum = Number(duration);
+    start.setHours(start.getHours() + durationNum);
+
+    // 로컬 시간을 YYYY-MM-DDTHH:mm:ss 형식으로 반환
+    //padStart(2, "0") : 항상 두 자리로 만들기
+    const year = start.getFullYear();
+    const month = String(start.getMonth() + 1).padStart(2, "0");
+    const day = String(start.getDate()).padStart(2, "0");
+    const h = String(start.getHours()).padStart(2, "0");
+    const m = String(start.getMinutes()).padStart(2, "0");
+    const s = String(start.getSeconds()).padStart(2, "0");
+
+    // 시간 정보를 문자열로 변환
+    return `${year}-${month}-${day}T${h}:${m}:${s}`;
+  };
+
+  // 상품 정보 불러오기
   useEffect(() => {
     fetchItemDetailPage(parsedRentId, parsedItemId)
       .then((data) => {
@@ -30,23 +63,27 @@ const ProductPage=()=>{
       .catch((err) => console.error("아이템 로딩 실패: ", err));
   }, [parsedRentId, parsedItemId]);
 
+  // 모든 상세 항목의 사이즈가 없거나 "Free"이면 true
   const isSizeFree = itemData &&
     itemData.detailList.every(d => !d.size || d.size.toLowerCase() == "free" || d.size == null)
 
   useEffect(()=>{
     if(!date || !startTime || !duration) return;
-    if(!isSizeFree && !size) return; // 사이즈가 필요한 경우
+    if(!isSizeFree && !size) return; 
 
     const hour = parseInt(duration, 10);
 
-    const matched = itemData.detailList.find(d => d.rentHour === hour && (isSizeFree || d.size === size));
+
+    const matched = itemData.detailList.find(d => d.rentHour === hour && (isSizeFree || d.size?.trim() === size));
     if(!matched) {
       alert("해당 조건에 맞는 상품이 존재하지 않습니다.");
       return;
     }
 
+    // 동일한 옵션이 이미 선택되었는지 확인
     const optionText = `${date} / ${isSizeFree ? '' : size + '/'} ${startTime} / ${duration} 시간`;
 
+    // selectedOptions 배열에 같은 옵션 텍스트가 이미 있으면 중복으로 간주
     const exists = selectedOptions.find((opt) => opt.text === optionText);
     if (exists) {
       alert("이미 선택된 옵션입니다.");
@@ -54,13 +91,29 @@ const ProductPage=()=>{
       return;
     } 
 
-    // 기본 가격 0, 나중에 itemDetail에서 가격 찾으면 반영 가능
-    setSelectedOptions((prev) => [...prev, {text: optionText, count: 1, price: matched.price}]); 
+    // 반납예정시간
+    const endTime = calculateEndTime(date,startTime,hour);
 
+    // 기본 가격 0, 나중에 itemDetail에서 가격 찾으면 반영 가능
+    setSelectedOptions((prev) => [...prev, 
+      {
+        text: optionText,
+        count: 1,
+        price: matched.price,
+        itemDetailId: matched.itemDetailId,
+        size: matched.size,
+        date,
+        startTime,
+        duration: hour,
+        endTime,
+      }
+    ]); 
+
+    //초기화하는 함수 호출
     resetOptions();
   }, [date, size, startTime, duration]);
 
-
+  // 옵션 수량을 증가/감소
   const changeCount = (idx, delta)=>{
     setSelectedOptions(prev =>
       prev.map((opt, i) =>
@@ -69,9 +122,65 @@ const ProductPage=()=>{
     );
   };
 
+  // 옵션 항목을 삭제
   const removeOption = (idx) => {
     setSelectedOptions((prev) => prev.filter((_, i) => i !== idx));
   };
+
+  //장바구니 담기
+  const handleAddToCart = async() => {
+    if(selectedOptions.length === 0){
+      alert("장비을 선택해주세요");
+      return;
+    }
+
+    try{
+      for(const opt of selectedOptions){
+        console.log("옵션 확인:", opt);
+
+        //서버에 cartItem 저장, quantity는 count사용
+        await addCartItemApi(profile.userId,[{
+            itemDetailId: opt.itemDetailId,
+            quantity: opt.count,
+            rentStart: `${opt.date}T${opt.startTime}`,
+            rentEnd: opt.endTime,
+        }])
+      }
+
+      setSelectedOptions([]);  //선택된 옵션 목록을 초기화
+
+      const goToCart = window.confirm("장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?");
+      if(goToCart){
+        navigate("/cart/list")
+      }
+
+    }catch(error){
+      alert("장바구니 추가 실패");
+    }
+
+  }
+
+
+  // 찜 추가
+  const handleAddToWish = async() =>{
+    if (!itemData || !itemData.detailList || itemData.detailList.length === 0) {
+    alert("찜 등록할 수 있는 상품이 없습니다.");
+    return;
+    }
+
+    const defaultDetail = itemData.detailList[0];
+
+    try {
+      await addWishApi(profile.userId, defaultDetail.itemDetailId);
+      alert("찜에 추가되었습니다.");
+    } catch (err) {
+      if (err.response?.status === 400 || err.response?.status === 500) {
+        alert(err.response.data?.message || "이미 찜한 상품이거나 오류가 발생했습니다.");
+      } else {
+        alert("찜 등록 중 오류가 발생했습니다.");
+      }
+    }
+  }
 
   return(
     <main className="w-[900px]">
@@ -151,8 +260,8 @@ const ProductPage=()=>{
             ))}
           </div>
           <div className="product-actions">
-            <button href="#none" className="cart-btn">장바구니</button>
-            <button href="#none" className="wish-btn">찜하기</button>
+            <button onClick={handleAddToCart} className="cart-btn">장바구니에 담기</button>
+            <button onClick={handleAddToWish} className="wish-btn">찜하기</button>
             <button href="#none" className="buy-btn">구매하기</button>
           </div>
         </div>

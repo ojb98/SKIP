@@ -36,4 +36,5 @@ public class ItemConfirmDTO {
         private Integer totalQuantity;
         private Integer stockQuantity;
     }
+
 }

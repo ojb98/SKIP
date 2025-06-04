@@ -5,11 +5,13 @@ import { button } from "../../components/buttons";
 import PasswordChangingModal from "./PasswordChangingModal";
 import NotSetBadge from "../../components/MyPage/NotSetBadge";
 import PasswordSettingModal from "./PasswordSettingModal";
+import AccountDeleteModal from "./AccountDeleteModal";
 
 const AccountSecurityPage = () => {
     const profile = useSelector(state => state.loginSlice);
     const [passwordSettingModalVisible, setPasswordSettingModalVisible] = useState(false);
     const [passwordChangingModalVisible, setPasswordChangingModalVisible] = useState(false);
+    const [accountDeleteModalVisible, setAccountDeleteModalVisible] = useState(false);
 
 
     return (
@@ -82,6 +84,7 @@ const AccountSecurityPage = () => {
 
                                     <span>
                                         <button
+                                            onClick={() => setAccountDeleteModalVisible(true)}
                                             className={`w-[140px] h-[50px] rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
                                         >
                                             탈퇴
@@ -106,6 +109,13 @@ const AccountSecurityPage = () => {
                 passwordSettingModalVisible
                 &&
                 <PasswordSettingModal onClose={() => setPasswordSettingModalVisible(false)}></PasswordSettingModal>
+            }
+
+            {/* 회원 탈퇴 모달 */}
+            {
+                accountDeleteModalVisible
+                &&
+                <AccountDeleteModal onClose={() => setAccountDeleteModalVisible(false)}></AccountDeleteModal>
             }
         </>
     )

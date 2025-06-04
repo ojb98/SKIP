@@ -21,4 +21,5 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     //사업자등록번호 존재 여부
     boolean existsByBizRegNumber(String bizRegNumber);
+
 }
