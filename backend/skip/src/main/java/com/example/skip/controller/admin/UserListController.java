@@ -2,6 +2,7 @@ package com.example.skip.controller.admin;
 
 import com.example.skip.dto.PaymentDTO;
 import com.example.skip.dto.ReviewDTO;
+import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.UserRepository;
@@ -55,6 +56,7 @@ public class UserListController {
     public void deleteUser(@PathVariable("id") Long id){
         userRepository.deleteById(id);
     }
+
 
 
 }
