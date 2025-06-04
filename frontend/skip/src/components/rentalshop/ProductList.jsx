@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchPagedItems } from "../../api/itemApi";
 
+
 const ProductList=({ rentId, category })=>{
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);

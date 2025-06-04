@@ -70,7 +70,7 @@ const LoginPage = () => {
 
                     <input
                         type="submit"
-                        className={`${input_size} rounded mt-3 bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
+                        className={`${input_size} rounded mt-3 bg-blue-400 font-[NanumSquare] font-medium text-white hover:bg-blue-500 cursor-pointer`}
                         value="로그인"
                     ></input>
 
@@ -96,7 +96,7 @@ const LoginPage = () => {
                         onClick={() => socialLoginHandler('naver')}
                     >
                         <img src="/images/naver.svg" className="-ml-2 w-10 h-10"></img>
-                        <span className="text-white font-[NanumSquareNeo] font-medium">네이버 로그인</span>
+                        <span className="text-white font-[NanumSquare] font-medium">네이버 로그인</span>
                     </button>
 
                     <button
@@ -105,7 +105,7 @@ const LoginPage = () => {
                         onClick={() => socialLoginHandler('kakao')}
                     >
                         <img src="/images/kakao.svg" className="w-6 h-6"></img>
-                        <span className="text-black/85 font-[NanumSquareNeo] font-medium">카카오 로그인</span>
+                        <span className="text-black/85 font-[NanumSquare] font-medium">카카오 로그인</span>
                     </button>
                 </form>
             </div>

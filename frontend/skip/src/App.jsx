@@ -30,6 +30,7 @@ import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import UserApprovalList from "./pages/admin/UserApprovalList"
+import WishList from "./components/wishList"
 
 
 
@@ -69,8 +70,11 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        
+                        {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>
-
+                        {/* 사용자 찜 */}
+                        <Route path="/wish/list" element={<WishList/>}></Route>
 
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rent/detail/:rentId" element={<RentalshopPage/>}></Route>

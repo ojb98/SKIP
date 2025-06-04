@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import useCategoryOptions from "../../hooks/useCategoryoptions";
+import useCategoryOptions from "../../hooks/useCategoryOptions";
 import axios from "axios";
 import '../../css/itemInsertForm.css';
 

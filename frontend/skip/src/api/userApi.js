@@ -74,3 +74,13 @@ export const setPassword = async req => {
 
     return data;
 }
+
+export const deleteAccount = async req => {
+    const data = await caxios.delete(`/user/delete`, {
+        data: req
+    }).then(res => {
+        return res.data;
+    });
+
+    return data;
+}

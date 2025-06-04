@@ -4,10 +4,12 @@ import com.example.skip.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,9 +19,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserveId", nullable = false)
-    private Reservation reservation;
+    @Builder.Default
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    private List<Reservation> reservations = new ArrayList<>();
 
     @Column(nullable = false, length = 100)
     private String merchantUid;

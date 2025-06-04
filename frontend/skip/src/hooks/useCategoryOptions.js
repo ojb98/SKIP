@@ -20,7 +20,7 @@ const useCategoryOptions = (category) => {
         },
 
         PROTECTIVE_GEAR: { sizes: ["SS", "S", "M", "L"],
-            hours: [] //보호구는 시간이 없음
+            hours: [24] 
         },
 
         TOP: { sizes: ["S", "M", "L", "XL", "2XL", "3XL"],

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { cartListApi } from "../../api/cartApi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CartList=()=>{
+    const navigate = useNavigate();
 
     const [cartGroups, setCartGroups] = useState([]);
 
@@ -10,24 +13,61 @@ const CartList=()=>{
     const [checkedItems, setCheckedItems] = useState(new Set());  
 
     const profile = useSelector(status => status.loginSlice);
+
+    useEffect(()=>{
+        // userId 없으면 로그인 페이지로 리디렉트
+        if (!profile?.userId) {
+            navigate("/login");
+            return;
+        }
+
+        getcartList();
+    },[profile.userId]);
+
     
     //장바구니 목록 불러오기
     const getcartList=()=>{
         //userId값 넣어주기
         cartListApi(profile.userId).then(data=>{
             setCartGroups([...data]);
-            setCheckedItems(new Set());
+            setCheckedItems(new Set());  //선택된 항목들을 초기화
         })
     }
 
-    useEffect(()=>{
-        getcartList();
-    },[profile.userId]);
+
+    // 대여시간/반납시간 날짜포맷
+    const formatDate = (rentDate) => {
+        if (!rentDate) return "-";
+        const date = new Date(rentDate);
+        const year = date.getFullYear();
+        const month = `${date.getMonth() + 1}`.padStart(2, "0");
+        const day = `${date.getDate()}`.padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const formatTime = (rentDate) => {
+        if (!rentDate) return "-";
+        const date = new Date(rentDate);
+        const hours = `${date.getHours()}`.padStart(2, "0");
+        const minutes = `${date.getMinutes()}`.padStart(2, "0");
+        return `${hours}:${minutes}`;
+    };
+
+    // const formatDate = (dateStr) => {
+    //     const date = new Date(dateStr);
+    //     return dateStr ? `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}` : "-";
+    // };
+
+    // const formatTime = (dateStr) => {
+    //     const date = new Date(dateStr);
+    //     return dateStr ? `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}` : "-";
+    // };
 
     // 개별선택 체크박스
     const toggleCheck=(cartId)=>{
         setCheckedItems((prev)=>{
             const newSet = new Set(prev);
+            //has() : Set 안에 특정 값이 존재하는지 여부
             if(newSet.has(cartId)){
                 newSet.delete(cartId);
             }else{
@@ -61,15 +101,81 @@ const CartList=()=>{
         }
     }
 
+
+    // 실제로 결제할 항목들만 배열로 추출
+    // flatMap() : 배열들을 하나로 쭉 펼쳐(flatten)서(1차원 배열로) 반환
+    const selectedItems = cartGroups.flatMap(group => group.items)
+        .filter(item => checkedItems.has(item.cartId));
+
     // 선택된 항목의 총 가격 계산
-    const totalPrice = cartGroups.flatMap((group)=> group.items)
-        .filter((item)=> checkedItems.has(item.cartId))
-        .reduce((sum,item) => sum + item.price, 0);
-    
-    const handlePayment=()=>{
-        const selectedItems = Array.from(checkedItems);
-        alert(`총 ${totalPrice.toLocaleString()}원 결제를 진행합니다.`);
-        //결제로직
+    // reduce() : 배열의 모든 요소를 하나의 값으로 축약(누적)할 때 사용
+    const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+
+    // 결제   
+    const handlePayment = async () => {
+        if (checkedItems.size === 0) {
+            alert("결제할 상품을 선택해주세요.");
+            return;
+        }
+        
+        if (cartGroups.length === 0) {
+        alert("예약할 상품이 없습니다.");
+        return;
+    }
+
+    // reservationItems를 group.rentId 기준으로 만들어서 rentId undefined 문제 해결
+    const reservationItems = cartGroups.flatMap(group =>
+        group.items
+            .filter(item => checkedItems.has(item.cartId))
+            .map(item => ({
+                cartItemId: item.cartId,
+                rentId: group.rentId,
+                rentStart: new Date(item.rentStart).toISOString(),
+                rentEnd: new Date(item.rentEnd).toISOString(),
+                quantity: item.quantity,
+                subtotalPrice: item.price,
+            }))
+    );
+
+    console.log("reservationItems ==>",reservationItems);
+
+
+        const merchantUid = `order_${new Date().getTime()}`;
+        const IMP = window.IMP;
+        IMP.init("imp57043461");
+
+        IMP.request_pay({
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: merchantUid,
+            name: "대여 결제",
+            amount: totalPrice,
+            buyer_email: profile.email,
+            buyer_name: profile.name,
+        }, async (rsp) => {
+            if (rsp.success) {
+                try {
+                    const res = await axios.post("/api/payments/complete", {
+                        impUid: rsp.imp_uid,
+                        merchantUid: rsp.merchant_uid,
+                        amount: rsp.paid_amount,
+                        userId: profile.userId,
+                        totalPrice,
+                        reservationItems, // 리스트 전송
+                    });
+
+                        console.log("결제 완료:", res.data);
+                        alert("결제가 완료되었습니다!");
+                        // navigate("/payment", { state: { payment: res.data } });
+
+                } catch (err) {
+                    console.error("결제 검증 또는 예약 실패:", err);
+                    alert("결제 완료 처리 중 오류가 발생했습니다.");
+                }
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
     }
 
 
@@ -96,6 +202,11 @@ const CartList=()=>{
                                                 <div className="">
                                                     <div className="">
                                                         <strong>{item.itemName}</strong><br/>
+                                                        <p>대여날짜: 
+                                                            {formatDate(item.rentStart) === formatDate(item.rentEnd)
+                                                                ? formatDate(item.rentStart)
+                                                                : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`}</p>
+                                                        <p>대여시간: {formatTime(item.rentStart)} ~{formatTime(item.rentEnd)}</p>
                                                         <p>사이즈 : {item.size}</p>
                                                     </div>
                                                     <div className="">
