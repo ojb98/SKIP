@@ -49,7 +49,7 @@ public class UserListService {
 
     public List<PaymentDTO> getUserRecentPayments(Long userId) {
         List<Payment> payments = paymentRepository
-                .findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(userId);
+                .findTop5ByUserIdInReservations(userId);
 
         return payments.stream()
                 .map(PaymentDTO::new)

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import useCategoryOptions from "../../hooks/useCategoryoptions";
+import useCategoryOptions from "../../hooks/useCategoryOptions";
 import '../../css/itemInsertForm.css';
 
 const ItemInsertForm=()=>{

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import useCategoryOptions from "../../hooks/useCategoryoptions";
+import useCategoryOptions from "../../hooks/useCategoryOptions";
 import '../../css/itemInsertForm.css';
 
 const ItemInsertForm=()=>{
@@ -112,16 +112,15 @@ const ItemInsertForm=()=>{
         const { category } = formData;
 
         // 시간/가격 검증
-        if (category === "LIFT_TICKET" || category !== "PROTECTIVE_GEAR") {
-            // some() : 배열 안의 요소 중 하나라도 조건을 만족하면 true를 반환
-            if (timePrices.some(tp => !tp.rentHour || !tp.price)) {
-                alert("모든 대여 시간/가격 정보를 입력하세요.");
-                return;
-            }
+        // some() : 배열 안의 요소 중 하나라도 조건을 만족하면 true를 반환
+        if (timePrices.some(tp => !tp.rentHour || !tp.price)) {
+            alert("모든 대여 시간/가격 정보를 입력하세요.");
+            return;
         }
+        
 
         // 사이즈/수량 검증
-        if (category === "PROTECTIVE_GEAR" || category !== "LIFT_TICKET") {
+        if (category !== "LIFT_TICKET") {
             // some() : 배열 안의 요소 중 하나라도 조건을 만족하면 true를 반환
             if (commonSizeStocks.some(s => !s.size || !s.quantity)) {
                 alert("모든 사이즈/수량 정보를 입력하세요.");

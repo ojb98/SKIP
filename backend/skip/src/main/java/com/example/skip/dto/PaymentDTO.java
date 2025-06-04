@@ -16,7 +16,7 @@ import lombok.*;
 @Builder
 public class PaymentDTO {
     private Long paymentId;
-    private Long reservationId;
+    private List<Long> reservationIds;
     private String merchantUid;
     private String impUid;
     private Double totalPrice;
@@ -32,9 +32,11 @@ public class PaymentDTO {
 
     public PaymentDTO(Payment payment) {
         this.paymentId = payment.getPaymentId();
-        if (payment.getReservation() != null) {
-            this.reservationId = payment.getReservation().getReserveId();
-        }
+        this.reservationIds = payment.getReservations() != null
+                ? payment.getReservations().stream()
+                .map(reservation -> reservation.getReserveId())
+                .collect(Collectors.toList())
+                : List.of();
         this.merchantUid = payment.getMerchantUid();
         this.impUid = payment.getImpUid();
         this.totalPrice = payment.getTotalPrice();

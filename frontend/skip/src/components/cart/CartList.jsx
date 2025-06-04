@@ -13,15 +13,6 @@ const CartList=()=>{
     const [checkedItems, setCheckedItems] = useState(new Set());  
 
     const profile = useSelector(status => status.loginSlice);
-    
-    //장바구니 목록 불러오기
-    const getcartList=()=>{
-        //userId값 넣어주기
-        cartListApi(profile.userId).then(data=>{
-            setCartGroups([...data]);
-            setCheckedItems(new Set());
-        })
-    }
 
     useEffect(()=>{
         // userId 없으면 로그인 페이지로 리디렉트
@@ -32,6 +23,17 @@ const CartList=()=>{
 
         getcartList();
     },[profile.userId]);
+
+    
+    //장바구니 목록 불러오기
+    const getcartList=()=>{
+        //userId값 넣어주기
+        cartListApi(profile.userId).then(data=>{
+            setCartGroups([...data]);
+            setCheckedItems(new Set());  //선택된 항목들을 초기화
+        })
+    }
+
 
     // 대여시간/반납시간 날짜포맷
     const formatDate = (rentDate) => {
@@ -51,10 +53,21 @@ const CartList=()=>{
         return `${hours}:${minutes}`;
     };
 
+    // const formatDate = (dateStr) => {
+    //     const date = new Date(dateStr);
+    //     return dateStr ? `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}` : "-";
+    // };
+
+    // const formatTime = (dateStr) => {
+    //     const date = new Date(dateStr);
+    //     return dateStr ? `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}` : "-";
+    // };
+
     // 개별선택 체크박스
     const toggleCheck=(cartId)=>{
         setCheckedItems((prev)=>{
             const newSet = new Set(prev);
+            //has() : Set 안에 특정 값이 존재하는지 여부
             if(newSet.has(cartId)){
                 newSet.delete(cartId);
             }else{
@@ -88,11 +101,15 @@ const CartList=()=>{
         }
     }
 
+
+    // 실제로 결제할 항목들만 배열로 추출
+    // flatMap() : 배열들을 하나로 쭉 펼쳐(flatten)서(1차원 배열로) 반환
+    const selectedItems = cartGroups.flatMap(group => group.items)
+        .filter(item => checkedItems.has(item.cartId));
+
     // 선택된 항목의 총 가격 계산
-    const totalPrice = cartGroups.flatMap((group)=> group.items)
-        .filter((item)=> checkedItems.has(item.cartId))
-        .reduce((sum,item) => sum + item.price, 0);
-    
+    // reduce() : 배열의 모든 요소를 하나의 값으로 축약(누적)할 때 사용
+    const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
     // 결제   
     const handlePayment = async () => {
@@ -100,30 +117,32 @@ const CartList=()=>{
             alert("결제할 상품을 선택해주세요.");
             return;
         }
+        
+        if (cartGroups.length === 0) {
+        alert("예약할 상품이 없습니다.");
+        return;
+    }
 
-        const selectedItems = cartGroups.flatMap(group => group.items)
-            .filter(item => checkedItems.has(item.cartId));
+    // reservationItems를 group.rentId 기준으로 만들어서 rentId undefined 문제 해결
+    const reservationItems = cartGroups.flatMap(group =>
+        group.items
+            .filter(item => checkedItems.has(item.cartId))
+            .map(item => ({
+                cartItemId: item.cartId,
+                rentId: group.rentId,
+                rentStart: new Date(item.rentStart).toISOString(),
+                rentEnd: new Date(item.rentEnd).toISOString(),
+                quantity: item.quantity,
+                subtotalPrice: item.price,
+            }))
+    );
 
-        const rentId = cartGroups[0]?.rentId || null;
-        if (!rentId) {
-            alert("예약할 상품이 없습니다.");
-            return;
-        }
+    console.log("reservationItems ==>",reservationItems);
 
-        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-
-        const reservationItems = selectedItems.map(item => ({
-            cartItemId: item.cartId,
-            rentStart: new Date(item.rentStart).toISOString(),
-            rentEnd: new Date(item.rentEnd).toISOString(),
-            quantity: item.quantity,
-            subtotalPrice: item.price,
-        }));
-
-        const IMP = window.IMP;
-        IMP.init("imp57043461");
 
         const merchantUid = `order_${new Date().getTime()}`;
+        const IMP = window.IMP;
+        IMP.init("imp57043461");
 
         IMP.request_pay({
             pg: "kakaopay.TC0ONETIME",
@@ -136,19 +155,18 @@ const CartList=()=>{
         }, async (rsp) => {
             if (rsp.success) {
                 try {
-                    const completeRes = await axios.post("/api/payments/complete", {
+                    const res = await axios.post("/api/payments/complete", {
                         impUid: rsp.imp_uid,
                         merchantUid: rsp.merchant_uid,
                         amount: rsp.paid_amount,
                         userId: profile.userId,
-                        rentId: rentId,
-                        totalPrice: totalPrice,
-                        reservationItems: reservationItems,
+                        totalPrice,
+                        reservationItems, // 리스트 전송
                     });
 
-                    console.log("예약 완료:", completeRes.data);
-                    alert("예약이 완료되었습니다!");
-                    // navigate("/payment", { state: { reservation: completeRes.data } });
+                        console.log("결제 완료:", res.data);
+                        alert("결제가 완료되었습니다!");
+                        // navigate("/payment", { state: { payment: res.data } });
 
                 } catch (err) {
                     console.error("결제 검증 또는 예약 실패:", err);

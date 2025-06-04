@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import '../../css/itemList.css';
-import useCategoryOptions from "../../hooks/useCategoryoptions";
+import useCategoryOptions from "../../hooks/useCategoryOptions";
 
 const ItemListAndDetails=()=>{
 

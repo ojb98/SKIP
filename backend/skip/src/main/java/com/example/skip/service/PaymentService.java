@@ -5,6 +5,7 @@ import com.example.skip.dto.ImpAuthRequest;
 import com.example.skip.dto.PaymentCompleteDTO;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.PaymentStatus;
+import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +28,7 @@ public class PaymentService {
     private final ReservationRepository reservationRepository;
     private final ReservationItemRepository reservationItemRepository;
     private final UserRepository userRepository;
-    private final RentRepository rentRepository;
+    private final ItemDetailRepository itemDetailRepository;
     private final CartItemRepository cartItemRepository;
     private final IamPortConfig iamPortConfig;
     private final PaymentRepository paymentRepository;
@@ -76,27 +77,49 @@ public class PaymentService {
         // 4. 예약 생성
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
-        Rent rent = rentRepository.findById(dto.getRentId())
-                .orElseThrow(() -> new IllegalArgumentException("렌트 없음"));
 
+        // 결제 총액은 ReservationItemDTO들의 합산으로 재계산해도 됨
         Long totalPrice = dto.getReservationItems().stream()
                 .mapToLong(PaymentCompleteDTO.ReservationItemDTO::getSubtotalPrice)
                 .sum();
 
-        Reservation reservation = Reservation.builder()
-                .user(user)
-                .rent(rent)
-                .totalPrice(totalPrice)
+        // 4. Payment 생성
+        Payment payment = Payment.builder()
                 .merchantUid(merchantUid)
                 .impUid(dto.getImpUid())
+                .totalPrice((double) totalPrice)
+                .commissionRate(0.1)
+                .adminPrice(totalPrice * 0.1)
+                .rentPrice(totalPrice * 0.9)
+                .method("card")
+                .pgProvider("kakaopay.TC0ONETIME")
+                .status(PaymentStatus.PAID)
+                .createdAt(LocalDateTime.now())
                 .build();
-        reservation = reservationRepository.save(reservation);
 
-        // 5. 예약아이템 생성
+        paymentRepository.save(payment);
+
+        // 5. Reservation 여러 건 생성 및 Payment에 연결
         for (PaymentCompleteDTO.ReservationItemDTO itemDto : dto.getReservationItems()) {
             CartItem cartItem = cartItemRepository.findById(itemDto.getCartItemId())
                     .orElseThrow(() -> new IllegalArgumentException("카트 아이템 없음: " + itemDto.getCartItemId()));
 
+            Rent rent = cartItem.getItemDetail().getItem().getRent();
+
+            Reservation reservation = Reservation.builder()
+                    .user(user)
+                    .rent(rent)
+                    .totalPrice(itemDto.getSubtotalPrice())
+                    .merchantUid(merchantUid)
+                    .impUid(dto.getImpUid())
+                    .payment(payment)   // 여기서 연관관계 설정
+                    .status(ReservationStatus.RESERVED)
+                    .build();
+
+            reservationRepository.save(reservation);
+            payment.getReservations().add(reservation);
+
+            // 예약 아이템도 생성
             ReservationItem reservationItem = ReservationItem.builder()
                     .reservation(reservation)
                     .itemDetail(cartItem.getItemDetail())
@@ -107,40 +130,22 @@ public class PaymentService {
                     .build();
             reservationItemRepository.save(reservationItem);
 
-            // 6. 재고 차감 로직 추가
-            ItemDetail itemDetail = cartItem.getItemDetail();
-            int currentStock = itemDetail.getStockQuantity(); // 현재 재고 가져오기
-            int reservedQty = cartItem.getQuantity();  // 사용자가 예약한 수량
+            // 락 걸린 상태로 ItemDetail 조회
+            ItemDetail itemDetail = itemDetailRepository.findByIdWithLock(cartItem.getItemDetail().getItemDetailId())
+                    .orElseThrow(() -> new IllegalArgumentException("아이템 상세 정보 없음"));
+
+            // 재고 차감
+            int currentStock = itemDetail.getStockQuantity();
+            int reservedQty = cartItem.getQuantity();
 
             if (currentStock < reservedQty) {
                 throw new IllegalStateException("재고가 부족합니다. 남은 수량: " + currentStock);
             }
-            // 현재 재고 - 예약 수량 = 남은 재고
             itemDetail.setStockQuantity(currentStock - reservedQty);
 
-            // 7.  장바구니 항목 제거(선택)
+            // 장바구니 삭제
             cartItemRepository.delete(cartItem);
         }
-        // 8. 결제 정보 저장
-        double commissionRate = 0.1;  //10% 수수료
-        double adminPrice = totalPrice * commissionRate;
-        double rentPrice = totalPrice - adminPrice;
-
-        Payment payment = Payment.builder()
-                .reservation(reservation)
-                .merchantUid(merchantUid)
-                .impUid(dto.getImpUid())
-                .totalPrice((double) totalPrice) // Long -> Double 변환
-                .commissionRate(commissionRate)
-                .adminPrice(adminPrice)
-                .rentPrice(rentPrice)
-                .method("card") // 또는 실제 결제 수단을 포트원 응답에서 받아올 수도 있음
-                .pgProvider("kakaopay.TC0ONETIME") // 또는 실제 응답에서 추출
-                .status(PaymentStatus.PAID)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        paymentRepository.save(payment);
 
         return true;
     }

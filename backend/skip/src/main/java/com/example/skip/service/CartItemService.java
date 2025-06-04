@@ -59,11 +59,17 @@ public class CartItemService {
         // 렌탈샵 기준 그룹화
         return cartItems.stream()
                 .sorted(Comparator.comparing(CartItem::getCreatedAt).reversed())  //내림차순 정렬
-                .collect(Collectors.groupingBy(cart->
-                        cart.getItemDetail().getItem().getRent(), LinkedHashMap::new, Collectors.toList()))  //순서유지
+                .collect(Collectors.groupingBy(
+                        cart-> cart.getItemDetail().getItem().getRent(),  // 그룹 기준: 렌탈샵(Rent)
+                        LinkedHashMap::new,  //정렬 순서 유지
+                        Collectors.toList()  // 같은 그룹은 List<CartItem>으로 묶음
+                ))
+                // Map<Rent, List<CartItem>> : Map은 스트림을 바로 지원하지 않기 때문에
+                // .entrySet()으로 쌍(key-value) 목록을 꺼내고, 그걸 스트림으로 변환해서 유연하게 처리하기 위해서
                 .entrySet().stream()
                 .map(entry -> {
-                    Rent rent = entry.getKey();
+                    Rent rent = entry.getKey();  // 그룹의 기준이 된 렌탈샵
+                    // entry.getValue()는 이 렌탈샵에 속한 List<CartItem>
                     List<CartItemDTO> itemDTO = entry.getValue().stream()
                             .map(ci -> CartItemDTO.builder()
                                     .cartId(ci.getCartId())
