@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { getQnaListByItemApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../pagination";
 
 const QnaList = () => {
   const { rentId, itemId } = useParams();
@@ -12,14 +13,13 @@ const QnaList = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const size = 10;
 
   const profile = useSelector(state => state.loginSlice);
   const isLogin = !!profile.username;
 
   const fetchQnaList = async (pageNum) => {
     try {
-      const res = await getQnaListByItemApi(itemId, null, null, pageNum, size);
+      const res = await getQnaListByItemApi(itemId, null, null, pageNum);
       setQnaList(res.content);
       setTotalElements(res.totalElements);
       setTotalPages(res.totalPages);
@@ -57,32 +57,6 @@ const QnaList = () => {
     return visible + masked;
   }
 
-  const pagenation = () => {
-    const pageButtons = [];
-    const startPage = Math.floor(page / 10) * 10;
-    const endPage = Math.min(startPage + 10, totalPages);
-
-    for (let i = startPage; i < endPage; i++) {
-      pageButtons.push(
-        <button
-          key={i}
-          className={i === page ? "active" : ""}
-          onClick={() => setPage(i)}
-        >
-          {i + 1}
-        </button>
-      );
-    }
-
-    return (
-      <div className="pagelist">
-        {startPage > 0 && <button onClick={() => setPage(startPage - 1)}>이전</button>}
-        {pageButtons}
-        {endPage < totalPages && <button onClick={() => setPage(endPage)}>다음</button>}
-      </div>
-    )
-  }
-
 
   return (
     <div className="qna-wrapper">
@@ -115,7 +89,7 @@ const QnaList = () => {
         {qnaList.map((qna, index) => (
           <div key={qna.qnaId} className="qna-item">
             <div className="qna-question">
-              <div>{qna.answer ? "답변완료" : "답변대기"}</div>
+              <div>{qna.replyId ? "답변완료" : "미답변"}</div>
               <div
                 className="qna-question-title"
                 onClick={() => toggleDetail(index, qna.secret, qna.username)}
@@ -141,14 +115,15 @@ const QnaList = () => {
                   <div className="qna-question-content">
                     <p>{qna.content}</p>
                   </div>
-                  {qna.answer && (
+                  {qna.replyId && (
                     <div className="qna-answer">
                       <div className="qna-answer-content">
+                        <span>└</span>
                         <span className="answer-icon">답변</span>
-                        <span>{qna.answer.content}</span>
+                        <span>{qna.replyContent}</span>
                       </div>
-                      <div>{qna.answer.username}</div>
-                      <div>{qna.answer.createdAt.slice(0, 10)}</div>
+                      <div>{qna.replyUsername}</div>
+                      <div>{qna.replyCreatedAt.slice(0, 10)}</div>
                     </div>
                   )}
                 </div>
@@ -157,7 +132,13 @@ const QnaList = () => {
           </div>
         ))}
       </div>
-      {pagenation()}
+      {qnaList.length > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
+      )}
     </div>
   );
 };

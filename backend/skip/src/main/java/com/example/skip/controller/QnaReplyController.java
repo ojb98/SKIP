@@ -18,14 +18,16 @@ public class QnaReplyController {
 
     // 저장
     @PostMapping
-    public ResponseEntity<Long> createReply(@RequestBody @Valid QnaReplyRequestDTO dto) {
+    public ResponseEntity<Long> createReply(@Valid
+                                            @RequestBody QnaReplyRequestDTO dto) {
         Long replyId = qnaReplyService.saveReply(dto);
         return ResponseEntity.ok(replyId);
     }
 
     // 조회(수정, 삭제)
     @GetMapping("/{qnaId}")
-    public ResponseEntity<QnaReplyResponseDTO> getReply(@PathVariable Long qnaId) {
+    public ResponseEntity<QnaReplyResponseDTO> getReply(@Valid
+                                                        @PathVariable Long qnaId) {
         QnaReplyResponseDTO dto = qnaReplyService.getReply(qnaId);
         return ResponseEntity.ok(dto);
     }

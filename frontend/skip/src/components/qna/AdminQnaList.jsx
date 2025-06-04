@@ -4,6 +4,7 @@ import { deleteQnaByAdminApi, getQnaListByAdminApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
+import AdminPagination from "../adminpage/AdminPagenation";
 
 const AdminQnaList = () => {
 
@@ -32,22 +33,31 @@ const AdminQnaList = () => {
         setQnaList(data.content);
         setCheckedItems(Array(data.content.length).fill(false));
 
-        // Q&A별 답변 요약 조회해서 answers 초기화
         const answerStates = await Promise.all(
           data.content.map(async (qna) => {
             try {
               const reply = await getReplySummary(qna.qnaId);
-              return {
-                answer: reply.content,
-                originalAnswer: reply.content,
-                userId: reply.userId,
-                username: reply.username,
-                updatedAt: reply.updatedAt,
-                createdAt: reply.createdAt,
-                saved: true,
-                editing: false,
-              };
+              if (reply) {
+                return {
+                  answer: reply.content,
+                  originalAnswer: reply.content,
+                  userId: reply.userId,
+                  username: reply.username,
+                  updatedAt: reply.updatedAt,
+                  createdAt: reply.createdAt,
+                  saved: true,
+                  editing: false,
+                };
+              } else {
+                return {
+                  answer: "",
+                  originalAnswer: "",
+                  saved: false,
+                  editing: false,
+                };
+              }
             } catch (err) {
+              console.error("답변 조회 실패:", err);
               return {
                 answer: "",
                 originalAnswer: "",
@@ -169,32 +179,6 @@ const AdminQnaList = () => {
     }
   }
 
-  const pagenation = () => {
-    const pageButtons = [];
-    const startPage = Math.floor(page / 10) * 10;
-    const endPage = Math.min(startPage + 10, totalPages);
-
-    for (let i = startPage; i < endPage; i++) {
-      pageButtons.push(
-        <button
-          key={i}
-          className={i === page ? "active" : ""}
-          onClick={() => setPage(i)}
-        >
-          {i + 1}
-        </button>
-      );
-    }
-
-    return (
-      <div className="admin-pagenation">
-        {startPage > 0 && <button onClick={() => setPage(startPage - 1)}>이전</button>}
-        {pageButtons}
-        {endPage < totalPages && <button onClick={() => setPage(endPage)}>다음</button>}
-      </div>
-    )
-  }
-
   // Q&A 삭제
   const handleDelete = async () => {
     const toDelete = qnaList.filter((_, index) => checkedItems[index]);
@@ -233,6 +217,17 @@ const AdminQnaList = () => {
       console.error("삭제 실패:", err);
       alert("답변 삭제 실패");
     }
+  }
+
+  // 수정 취소 버튼
+  const handleCancelEdit = (index) => {
+    const updated = [...answers];
+    updated[index] = {
+      ...updated[index],
+      answer: updated[index].originalAnswer,
+      editing: false,
+    };
+    setAnswers(updated);
   }
 
   return (
@@ -307,14 +302,21 @@ const AdminQnaList = () => {
                   <tr className="no-hover">
                     <td colSpan={6}>
                       <div className="p-4 bg-gray-50">
-                        <p className="mb-2 text-left"><strong>문의 내용:</strong> {qna.content}</p>
+                        <p className="mb-2 text-left">
+                          <strong>문의 내용:</strong> {qna.content}
+                        </p>
                         {answers[index].saved && !answers[index].editing ? (
                           <div className="text-left mt-3 flex items-center">
                             <div className="flex-1">
-                              <p className="inline-block"><strong>답변:</strong> {answers[index].answer}</p>
+                              <p className="inline-block">
+                                <span>┗</span>
+                                <strong className="ml-0.5 answer-icon">답변</strong> {answers[index].answer}
+                              </p>
                               <div className="text-right mt-2.5 mr-5">
                                 {answers[index].updatedAt && answers[index].createdAt !== answers[index].updatedAt && (
-                                  <span className="text-[12px] text-gray-600 ml-2">수정일: {answers[index].updatedAt.substring(0, 10)}</span>
+                                  <span className="text-[12px] text-gray-600 ml-2">
+                                    수정일: {answers[index].updatedAt.substring(0, 10)}
+                                  </span>
                                 )}
                                 <button
                                   onClick={() => {
@@ -326,7 +328,7 @@ const AdminQnaList = () => {
                                     };
                                     setAnswers(updated);
                                   }}
-                                  className="ml-2 px-2 py-1 text-sm bg-blue-400 text-white rounded cursor-pointer"
+                                  className="ml-2 px-2 py-1 text-sm bg-[#5399f5] text-white rounded cursor-pointer"
                                 >
                                   수정
                                 </button>
@@ -346,21 +348,40 @@ const AdminQnaList = () => {
                         ) : (
                           <>
                             <textarea
-                              placeholder="답변을 입력하세요."
+                              placeholder="답변을 입력하세요. (100자를 초과할 수 없습니다.)"
                               className="w-full mt-2 p-2 border rounded resize-none"
                               rows="3"
+                              maxLength={100}
                               value={answers[index].answer}
                               onChange={(e) => handleAnswerchange(index, e.target.value)}
                             />
                             {answerErrors[index] && (
                               <p className="text-red-500 text-sm mt-1.5">{answerErrors[index]}</p>
                             )}
-                            <button
-                              className="mt-2 px-4 py-1 bg-blue-500 text-white rounded cursor-pointer"
-                              onClick={() => handleSave(index, qna.qnaId)}
-                            >
-                              {answers[index].saved ? "수정 완료" : "답변 저장"}
-                            </button>
+
+                            {answers[index].saved ? (
+                              <div className="mt-2 flex justify-center gap-2">
+                                <button
+                                  className="px-4 py-1 bg-[#5399f5] text-white rounded cursor-pointer"
+                                  onClick={() => handleSave(index, qna.qnaId)}
+                                >
+                                  수정 완료
+                                </button>
+                                <button
+                                  className="px-4 py-1 bg-gray-400 text-white rounded cursor-pointer"
+                                  onClick={() => handleCancelEdit(index)}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="mt-2 px-4 py-1 bg-[#5399f5] text-white rounded cursor-pointer"
+                                onClick={() => handleSave(index, qna.qnaId)}
+                              >
+                                답변 저장
+                              </button>
+                            )}
                           </>
                         )}
                       </div>
@@ -376,7 +397,13 @@ const AdminQnaList = () => {
             문의가 존재하지 않습니다.
           </div>
         ) : (
-          pagenation()
+          <AdminPagination
+            currentPage={page + 1}
+            totalItems={totalElements}
+            pageSize={size}
+            groupSize={10}
+            onPageChange={(newPage) => setPage(newPage - 1)}
+          />
         )}
       </div>
     </div>

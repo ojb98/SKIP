@@ -1,6 +1,7 @@
 package com.example.skip.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,6 +27,7 @@ public class QnaReply {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
     @Column(nullable = false)
+    @Size(max = 100)
     private String content;
     @CreationTimestamp
     @Column(nullable = false)

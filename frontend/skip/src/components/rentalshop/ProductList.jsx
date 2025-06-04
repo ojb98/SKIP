@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchPagedItems } from "../../api/itemApi";
+import Pagination from "../pagination";
 
 const ProductList = ({ rentId, category }) => {
   const [items, setItems] = useState([]);
@@ -8,18 +9,13 @@ const ProductList = ({ rentId, category }) => {
   const [totalPages, setTotalPages] = useState(1);
 
   const size = 10;
-  const pageBlockSize = 10;
 
   useEffect(() => {
-    fetchPagedItems(rentId, category, page, size).then((data) => {
+    fetchPagedItems(rentId, category, page).then((data) => {
       setItems(data.content);
       setTotalPages(data.totalPages);
     });
   }, [rentId, category, page]);
-
-  const currentBlock = Math.floor(page / pageBlockSize);
-  const startPage = currentBlock * pageBlockSize;
-  const endPage = Math.min(startPage + pageBlockSize, totalPages);
 
   return (
     <div className="product-list">
@@ -44,27 +40,12 @@ const ProductList = ({ rentId, category }) => {
               </li>
             ))}
           </ul>
-          <div className="pagelist">
-            {/* 이전 블록 이동 버튼 */}
-            {currentBlock > 0 && (
-              <button onClick={() => setPage(startPage - 1)}>이전</button>
-            )}
-
-            {Array.from({ length: endPage - startPage }, (_, idx) => (
-              <button
-                key={idx}
-                className={page === startPage + idx ? "active" : ""}
-                onClick={() => setPage(startPage + idx)}
-              >
-                {startPage + idx + 1}
-              </button>
-            ))}
-
-            {/* 다음 블록 이동 버튼 */}
-            {endPage < totalPages && (
-              <button onClick={() => setPage(endPage)}>다음</button>
-            )}
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+            size={5}
+          />
         </>
       )}
     </div>
