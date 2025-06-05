@@ -272,12 +272,12 @@ const CartList=()=>{
                                 onChange={() => toggleCheck(item.cartId)} className="checkbox-btn" />    
                                 <div className="item-content">
                                     <button type="button" onClick={(e) => {
-                                            e.preventDefault(); 
-                                            e.stopPropagation(); 
+                                        // 버튼 클릭 시 오직 삭제 기능만 작동하기 위함
+                                            e.preventDefault();  // label의 기본 동작 (checkbox 토글)을 막음
+                                            e.stopPropagation();  // label까지 이벤트가 전달되지 않도록 막음
                                             deleteCartItem(item.cartId);
                                         }} 
-                                        className="remove-btn" 
-                                        title="장바구니에서 제거">
+                                        className="remove-btn" title="장바구니에서 제거">
                                         X
                                     </button>
 

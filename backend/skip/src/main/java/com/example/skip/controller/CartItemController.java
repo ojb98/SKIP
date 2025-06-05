@@ -2,11 +2,14 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.cart.CartAddDTO;
 import com.example.skip.dto.cart.CartGroupDTO;
+import com.example.skip.scheduler.CartCleanupScheduler;
 import com.example.skip.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +19,7 @@ import java.util.Map;
 public class CartItemController {
 
     private final CartItemService cartItemService;
+    private final CartCleanupScheduler cartCleanupScheduler;
 
     // userId기준으로 장바구니 추가
     @PostMapping("/{userId}")
@@ -40,6 +44,7 @@ public class CartItemController {
         return ResponseEntity.ok().build();
     }
 
+    // 장바구니 수정(수량,가격)
     @PatchMapping("/{cartId}")
     public ResponseEntity<?> updateQuantity(@PathVariable("cartId") Long cartId,
                                              @RequestBody Map<String, Integer> body){

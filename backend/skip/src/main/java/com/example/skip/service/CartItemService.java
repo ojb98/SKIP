@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -96,7 +98,6 @@ public class CartItemService {
         cartItemRepository.deleteAllByCartIdIn(cartIds);
     }
 
-
     //장바구니 수량 변경(+가격)
     public void updateCartItemQuantity(Long cartId, int quantity){
         if (quantity < 1) {
@@ -114,4 +115,5 @@ public class CartItemService {
 
         cartItemRepository.save(cartItem);
     }
+
 }

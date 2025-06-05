@@ -6,9 +6,9 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableCaching
-@EnableScheduling
-@EnableJpaAuditing
+@EnableCaching  //캐시(Cache) 기능을 활성화
+@EnableScheduling   //스케줄링 기능을 활성화
+@EnableJpaAuditing  // JPA 엔티티 생성/수정 시간 자동 처리
 @SpringBootApplication
 public class SkipApplication {
 
