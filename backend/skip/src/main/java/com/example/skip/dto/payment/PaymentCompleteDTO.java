@@ -8,8 +8,7 @@ import java.util.List;
 public class PaymentCompleteDTO {
     private String impUid;
     private String merchantUid;
-    private Long amount;  //실제 아임포트 결제금액이 일치하는지 검증
-
+    private Long amount;  //실제 아임포트 결제금액
     private Long userId;
     private Long totalPrice;   // 프론트 계산된 전체 금액
 
