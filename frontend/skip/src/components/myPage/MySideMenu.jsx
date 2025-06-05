@@ -14,15 +14,24 @@ const MySideMenu = ({group, active}) => {
         <>
             <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white shadow-xl">
                 <div className="px-4 py-6">
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-2 mt-6 mb-12">
                         <img src={profile.image ? `http://localhost:8080/${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
 
-                        <div>
-                            <span className="text-sm font-semibold">{profile.showname} </span><span className="text-sm text-gray-500">님</span>
+                        <div className="flex items-center gap-2">
+                            {
+                                profile.social == 'KAKAO'
+                                &&
+                                <img src="/images/kakao_link.png" width={20}></img>
+                                ||
+                                profile.social == 'NAVER'
+                                &&
+                                <img src="/images/naver_link.png" width={20}></img>
+                            }
+                            <span className="text-sm font-semibold">{profile.showname}</span><span className="text-sm text-gray-500">님</span>
                         </div>
                     </div>
 
-                    <ul className="mt-6 space-y-3">
+                    <ul className="space-y-3">
                         <li>
                             <details className="group [&_summary::-webkit-details-marker]:hidden" open={group == 'account' ? true : false}>
                                 <summary

@@ -1,8 +1,7 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.PasswordChangeRequestDto;
-import com.example.skip.dto.PasswordSetRequestDto;
-import com.example.skip.dto.SignupRequestDto;
+import com.example.skip.dto.request.PasswordChangeRequestDto;
+import com.example.skip.dto.request.SignupRequestDto;
 import com.example.skip.dto.UserDto;
 import com.example.skip.entity.QKakaoLinkage;
 import com.example.skip.entity.QNaverLinkage;
@@ -10,35 +9,30 @@ import com.example.skip.entity.QUser;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
+import com.example.skip.repository.KakaoLinkageRepository;
+import com.example.skip.repository.NaverLinkageRepository;
 import com.example.skip.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.Objects;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    private final KakaoLinkageRepository kakaoLinkageRepository;
+
+    private final NaverLinkageRepository naverLinkageRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -130,7 +124,9 @@ public class UserService {
         user.setStatus(UserStatus.WITHDRAWN);
         user.setUsername(user.getUsername() + "_deleted_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
         if (user.getSocial() == UserSocial.KAKAO) {
-
+            user.getKakaoLinkage().setKakaoId(user.getKakaoLinkage().getKakaoId() + "_deleted_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
+        } else if (user.getSocial() == UserSocial.NAVER) {
+            user.getNaverLinkage().setNaverId(user.getNaverLinkage().getNaverId() + "_deleted_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
         }
     }
 }

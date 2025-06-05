@@ -1,6 +1,7 @@
-package com.example.skip.dto;
+package com.example.skip.dto.request;
 
 import com.example.skip.annotation.PasswordMatch;
+import com.example.skip.dto.UserDto;
 import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;

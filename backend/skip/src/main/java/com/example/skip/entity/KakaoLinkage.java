@@ -23,8 +23,8 @@ public class KakaoLinkage {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private Long kakaoId;
+    @Column(nullable = false, unique = true)
+    private String kakaoId;
 
     @Column(nullable = false)
     private Boolean usernameSet;

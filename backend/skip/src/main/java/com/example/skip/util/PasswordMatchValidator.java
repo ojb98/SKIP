@@ -1,7 +1,7 @@
 package com.example.skip.util;
 
 import com.example.skip.annotation.PasswordMatch;
-import com.example.skip.dto.SignupRequestDto;
+import com.example.skip.dto.request.SignupRequestDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -1,6 +1,6 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.ApiResponseDto;
+import com.example.skip.dto.response.ApiResponseDto;
 import com.example.skip.dto.UserDto;
 import com.example.skip.exception.CustomJwtException;
 import com.example.skip.service.CustomUserDetailsService;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

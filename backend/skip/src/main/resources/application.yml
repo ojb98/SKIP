@@ -56,7 +56,14 @@ spring:
 
     oauth2:
       client:
+        custom-naver:
+          redirect-uri: http://${api.host}:${api.port}/user/social/link/naver
+
+        custom-kakao:
+          redirect-uri: http://${api.host}:${api.port}/user/social/link/kakao
+
         registration:
+
           naver:
             client-name: Naver
             client-id: ${NAVER_CLIENT_ID}

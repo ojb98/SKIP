@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;

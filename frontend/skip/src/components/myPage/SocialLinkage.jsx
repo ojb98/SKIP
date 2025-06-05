@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { button } from "../buttons";
 import MyContainer from "./MyContainer"
-import { link, unlink } from "../../api/userApi";
+import { unlink } from "../../api/userApi";
 import { setProfile } from "../../slices/loginSlice";
 
 const SocialLinkage = () => {
@@ -11,9 +11,7 @@ const SocialLinkage = () => {
 
 
     const linkHandler = client => {
-        link(client).then(res => {
-            
-        });
+        window.location.href = `http://localhost:8080/user/social/redirect/${client}`;
     };
 
     const unlinkHandler = () => {
@@ -41,7 +39,7 @@ const SocialLinkage = () => {
                                     profile.social == 'NONE'
                                     &&
                                     <button
-                                        onClick={() => linkHandler('KAKAO')}
+                                        onClick={() => linkHandler('kakao')}
                                         className={button({ color: "warning-outline", className: "w-[110px] h-[45px]" })}
                                     >
                                         연결하기
@@ -64,7 +62,7 @@ const SocialLinkage = () => {
                                 }
                             </li>
 
-                            <li className="flex justify-between p-4">
+                            <li className="flex justify-between items-center p-4">
                                 <div className="flex items-center gap-5">
                                     <img src="/images/naver_link.png" width={60} height={60}></img>
 
@@ -75,7 +73,7 @@ const SocialLinkage = () => {
                                     profile.social == 'NONE'
                                     &&
                                     <button
-                                        onClick={() => linkHandler('NAVER')}
+                                        onClick={() => linkHandler('naver')}
                                         className={button({ color: "success-outline", className: "w-[110px] h-[45px]" })}
                                     >
                                         연결하기
@@ -89,7 +87,7 @@ const SocialLinkage = () => {
                                         연결하기
                                     </button>
                                     ||
-                                    profile.social == 'NAVER'
+                                    profile.social == 'NAVER'// && profile.linkage.usernameSet && profile.linkage.passwordSet
                                     &&
                                     <button
                                         onClick={unlinkHandler}
@@ -97,6 +95,18 @@ const SocialLinkage = () => {
                                     >
                                         연결 끊기
                                     </button>
+                                    // ||
+                                    // profile.social == 'NAVER'
+                                    // &&
+                                    // <>
+                                    //     <span className="text-xs text-gray-400">*아이디, 비밀번호를 설정하시면 연결을 끊을 수 있어요.</span>
+
+                                    //     <button
+                                    //         className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}
+                                    //     >
+                                    //         연결 끊기
+                                    //     </button>
+                                    // </>
                                 }
                             </li>
                         </ul>

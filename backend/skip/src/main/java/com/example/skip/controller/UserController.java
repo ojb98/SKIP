@@ -1,16 +1,19 @@
 package com.example.skip.controller;
 
 import com.example.skip.dto.*;
+import com.example.skip.dto.request.AccountDeleteRequestDto;
+import com.example.skip.dto.request.PasswordChangeRequestDto;
+import com.example.skip.dto.request.PasswordSetRequestDto;
+import com.example.skip.dto.request.SignupRequestDto;
+import com.example.skip.dto.response.ApiResponseDto;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.exception.CustomEmailException;
 import com.example.skip.service.EmailVerifyService;
 import com.example.skip.service.UserService;
 import com.example.skip.service.UserSocialService;
 import com.example.skip.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -86,13 +89,6 @@ public class UserController {
             return new ApiResponseDto(true, email);
         }
         return new ApiResponseDto(false, "잘못된 인증번호입니다.");
-    }
-
-    @PostMapping("/social/link")
-    public ApiResponseDto link(@RequestParam("client") UserSocial userSocial) {
-        System.out.println(userSocial);
-
-        return null;
     }
 
     @GetMapping("/find/{username}")
@@ -199,23 +195,5 @@ public class UserController {
                     .success(false)
                     .data(fieldErrors).build();
         }
-    }
-
-    @DeleteMapping("/social/unlink")
-    public ApiResponseDto unlink(@AuthenticationPrincipal UserDetails userDetails,
-                                 OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-        UserDto userDto = (UserDto) userDetails;
-        try {
-            String accessToken = userSocialService.getAccessToken(oAuth2AuthenticationToken);
-            userSocialService.unlink(userDto, accessToken);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ApiResponseDto.builder()
-                    .success(false)
-                    .data(e.getMessage()).build();
-        }
-        return ApiResponseDto.builder()
-                .success(true)
-                .data("연결을 해제했습니다.").build();
     }
 }

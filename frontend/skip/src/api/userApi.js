@@ -92,14 +92,14 @@ export const deleteAccount = async req => {
     return data;
 };
 
-export const link = async req => {
-    const params = new URLSearchParams();
-    params.append('client', req);
+// export const link = async req => {
+//     const params = new URLSearchParams();
+//     params.append('client', req);
 
-    const data = await caxios.post(`/user/social/link`, params).then(res => {
+//     const data = await caxios.post(`/user/social/link`, params).then(res => {
 
-    });
-}
+//     });
+// }
 
 export const unlink = async () => {
     const data = await caxios.delete(`/user/social/unlink`).then(res => {

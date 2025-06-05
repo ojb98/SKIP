@@ -57,7 +57,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return httpSecurity
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> {
-                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
+                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .csrf(httpSecurityCsrfConfigurer -> {
                     httpSecurityCsrfConfigurer.disable();
@@ -70,7 +70,7 @@ public class SecurityConfig {
                                     "/user/profile",
                                     "/user/password/**",
                                     "/user/delete",
-                                    "/user/social/unlink"
+                                    "/user/social/**"
                                     ).authenticated()
                             .anyRequest()
                             .permitAll();
