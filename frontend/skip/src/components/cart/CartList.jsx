@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { cartListApi } from "../../api/cartApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { removeCartItemApi } from "../../api/cartApi";
+import { updateCartItemApi } from "../../api/cartApi";
 import axios from "axios";
+import "../../css/cartList.css";
 
 const CartList=()=>{
     const navigate = useNavigate();
@@ -53,15 +56,6 @@ const CartList=()=>{
         return `${hours}:${minutes}`;
     };
 
-    // const formatDate = (dateStr) => {
-    //     const date = new Date(dateStr);
-    //     return dateStr ? `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}` : "-";
-    // };
-
-    // const formatTime = (dateStr) => {
-    //     const date = new Date(dateStr);
-    //     return dateStr ? `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}` : "-";
-    // };
 
     // 개별선택 체크박스
     const toggleCheck=(cartId)=>{
@@ -101,6 +95,73 @@ const CartList=()=>{
         }
     }
 
+    // 장바구니 개별 삭제
+    const deleteCartItem= async(cartId)=>{
+        try {
+            await removeCartItemApi([cartId]);   
+            getcartList();                     // 장바구니 목록 다시 불러오기
+        } catch (err) {
+            console.error("삭제 실패:", err);
+            alert("삭제 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 장바구니 선택 삭제
+    const deleteSelectedCheck = async()=>{
+        if (checkedItems.size === 0) {
+            alert("삭제할 장비를 선택해주세요.");
+            return;
+        }
+
+        const itemCount = checkedItems.size;
+        const confirmDelete = window.confirm(`${itemCount}개의 장비를 삭제하시겠습니까?`);
+        if (!confirmDelete) return;
+
+        try {
+            // Array.from() : Set을 배열로 변환
+            const cartIds = Array.from(checkedItems);
+            await removeCartItemApi(cartIds);
+
+            getcartList(); // 삭제 후 장바구니 목록 다시 불러오기
+        } catch (err) {
+            console.error("선택 삭제 실패:", err);
+            alert("선택 삭제 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 수량 변경
+    const updateQuantity = async(cartId, delta) => {
+        // 현재 수량 찾기
+        const currentItem = cartGroups.flatMap(group => group.items).find(item => item.cartId === cartId);
+        if (!currentItem) return;
+
+        // 새 수량 계산 (최소 1 이상)
+        const newQuantity = Math.max(1, currentItem.quantity + delta);
+
+        try {
+            // 서버에 수량 변경 요청
+            await updateCartItemApi(cartId, newQuantity);
+
+            // 성공하면 상태(화면) 업데이트
+            setCartGroups(prevGroups => prevGroups.map(group => ({
+                ...group,
+                items: group.items.map(item =>
+                    item.cartId === cartId? {
+                        ...item,
+                        quantity: newQuantity,
+                        // 단가 = (기존 총 가격 / 기존 수량) 
+                        // 총 가격 = 단가 * 새로운 수량
+                        price: (item.price / item.quantity) * newQuantity
+                    }
+                    : item
+                )
+            })));
+
+        } catch (error) {
+            console.error("수량 변경 실패", error);
+            alert("수량 변경 중 오류가 발생했습니다.");
+        }
+    }
 
     // 실제로 결제할 항목들만 배열로 추출
     // flatMap() : 배열들을 하나로 쭉 펼쳐(flatten)서(1차원 배열로) 반환
@@ -113,37 +174,39 @@ const CartList=()=>{
 
     // 결제   
     const handlePayment = async () => {
+
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
             return;
         }
         
         if (cartGroups.length === 0) {
-        alert("예약할 상품이 없습니다.");
-        return;
-    }
+            alert("예약할 상품이 없습니다.");
+            return;
+        }
 
-    // reservationItems를 group.rentId 기준으로 만들어서 rentId undefined 문제 해결
-    const reservationItems = cartGroups.flatMap(group =>
-        group.items
-            .filter(item => checkedItems.has(item.cartId))
-            .map(item => ({
-                cartItemId: item.cartId,
-                rentId: group.rentId,
-                rentStart: new Date(item.rentStart).toISOString(),
-                rentEnd: new Date(item.rentEnd).toISOString(),
-                quantity: item.quantity,
-                subtotalPrice: item.price,
-            }))
-    );
+        // 선택된 장바구니만 필터링해서 결제에 사용할 예약 데이터 
+        const reservationItems = cartGroups.flatMap(group =>
+            group.items.filter(item => checkedItems.has(item.cartId))
+                // 새로운 객체 형태로 변환
+                .map(item => ({
+                    cartItemId: item.cartId,
+                    rentId: group.rentId,
+                    rentStart: new Date(item.rentStart).toISOString(),
+                    rentEnd: new Date(item.rentEnd).toISOString(),
+                    quantity: item.quantity,
+                    subtotalPrice: item.price,
+                }))
+        );
 
-    console.log("reservationItems ==>",reservationItems);
+        console.log("reservationItems ==>",reservationItems);
 
 
         const merchantUid = `order_${new Date().getTime()}`;
         const IMP = window.IMP;
         IMP.init("imp57043461");
 
+        //결제 요청(아임포트에 보낼 결제 정보)
         IMP.request_pay({
             pg: "kakaopay.TC0ONETIME",
             pay_method: "card",
@@ -152,28 +215,30 @@ const CartList=()=>{
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
-        }, async (rsp) => {
-            if (rsp.success) {
+        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (rsp는 아임포트 응답 객체)
+            console.log("결제 응답 ===>",resp);
+            if (resp.success) {  
                 try {
+                    // 결제 정보를 보내어 결제 검증 및 예약 처리 
                     const res = await axios.post("/api/payments/complete", {
-                        impUid: rsp.imp_uid,
-                        merchantUid: rsp.merchant_uid,
-                        amount: rsp.paid_amount,
+                        impUid: resp.imp_uid,
+                        merchantUid: resp.merchant_uid,
+                        amount: resp.paid_amount,
                         userId: profile.userId,
                         totalPrice,
                         reservationItems, // 리스트 전송
                     });
 
-                        console.log("결제 완료:", res.data);
-                        alert("결제가 완료되었습니다!");
-                        // navigate("/payment", { state: { payment: res.data } });
+                    console.log("결제 완료:", res.data);
+                    alert("결제가 완료되었습니다!");
+                    // navigate("/payment", { state: { payment: resp.data } });
 
                 } catch (err) {
                     console.error("결제 검증 또는 예약 실패:", err);
                     alert("결제 완료 처리 중 오류가 발생했습니다.");
                 }
             } else {
-                alert("결제 실패: " + rsp.error_msg);
+                alert("결제 실패: " + resp.error_msg);
             }
         });
     }
@@ -181,56 +246,84 @@ const CartList=()=>{
 
     return(
         <>
-            <h1 className="top=subject">장바구니</h1>
-            <div className="">
-                <div className="">
+        <div className="cart-container">
+            <h1 className="top-subject">장바구니</h1>
+
+            <div className="select-group">
+                <div className="left-btn">
                     <button onClick={toggleAllCheck} className="select-btn">전체 선택</button>
                 </div>
-                {
-                    cartGroups.map((group,groupIdx)=>(
-                        <div key={group.rentId} className="">
-                            <h3>{group.name}</h3>
-                                {
-                                    group.items.map((item,itemIdx) => (
-                                        
-                                        <div key={item.cartId} className="border-1">
-                                            <input type="checkbox" id={`checkbox-${item.cartId}`}  checked={checkedItems.has(item.cartId)} onChange={()=>toggleCheck(item.cartId)}/>
-                                            
-                                            <label htmlFor={`checkbox-${item.cartId}`} className="flex items-center">
-                                                <img className="item-img" src={`http://localhost:8080${item.image}`} style={{ width: '120px', height: 'auto', objectFit: 'cover', marginRight: '10px' }}/>
-                                                
-                                                <div className="">
-                                                    <div className="">
-                                                        <strong>{item.itemName}</strong><br/>
-                                                        <p>대여날짜: 
-                                                            {formatDate(item.rentStart) === formatDate(item.rentEnd)
-                                                                ? formatDate(item.rentStart)
-                                                                : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`}</p>
-                                                        <p>대여시간: {formatTime(item.rentStart)} ~{formatTime(item.rentEnd)}</p>
-                                                        <p>사이즈 : {item.size}</p>
-                                                    </div>
-                                                    <div className="">
-                                                        <p>수량: {item.quantity}개</p><br/>
-                                                        <p>가격: {item.price.toLocaleString()}원</p>
-                                                    </div>
-                                                </div>    
-                                            </label>
-                                        </div>
-                                    ))
-                                }
-                        </div>
-                    ))
-                }
-                {/* 총 금액 및 결제 버튼 */}
-                <div>
-                    <div>
-                        총 결제 금액: {totalPrice.toLocaleString()}원
-                    </div>
-                    <div>
-                        <button onClick={handlePayment} disabled={checkedItems.size === 0}>결제하기</button>
-                    </div>
+                <div className="right-btn">
+                    <button onClick={deleteSelectedCheck} className="select-del-btn">선택 삭제</button>
                 </div>
             </div>
+
+            <div className="cart-items-container">
+            {
+                cartGroups.map(group => (
+                    <div key={group.rentId} className="cart-group">
+                    {
+                        group.items.map(item => (
+                        <div key={item.cartId} className="item-group">
+                   
+                            <label htmlFor={`checkbox-${item.cartId}`} className={`item-wrapper ${checkedItems.has(item.cartId) ? "checked" : ""}`}>
+                        
+                            <input type="checkbox" id={`checkbox-${item.cartId}`} checked={checkedItems.has(item.cartId)}
+                                onChange={() => toggleCheck(item.cartId)} className="checkbox-btn" />    
+                                <div className="item-content">
+                                    <button type="button" onClick={(e) => {
+                                            e.preventDefault(); 
+                                            e.stopPropagation(); 
+                                            deleteCartItem(item.cartId);
+                                        }} 
+                                        className="remove-btn" 
+                                        title="장바구니에서 제거">
+                                        X
+                                    </button>
+
+                                    <img className="item-img" src={`http://localhost:8080${item.image}`} alt={item.itemName} />
+
+                                    <div className="itemdatail-group">
+                                        <div className="item-content-group">
+                                            <h4><strong>{group.name}</strong></h4>
+                                            <span>{item.itemName}</span><br />
+                                            <p>대여날짜: {
+                                            formatDate(item.rentStart) === formatDate(item.rentEnd)
+                                                ? formatDate(item.rentStart)
+                                                : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`
+                                            }</p>
+                                            <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
+                                            <p>사이즈: {item.size}</p>
+                                        </div>
+                                        <div className="update-div">
+                                            <div className="count-btn">
+                                                <p>수량:</p>
+                                                <div className="quantity-btn">
+                                                    <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, -1); }}>-</button>
+                                                    <span>{item.quantity}</span>
+                                                    <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, 1); }}>+</button> 개
+                                                </div>
+                                            </div>
+                                            <p>가격: {item.price.toLocaleString()}원</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        ))
+                    }
+                    </div>
+                ))
+            }
+            </div>
+
+            <div className="payment-group">
+                <div className="totalPrice-div">
+                    <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
+                </div>
+                    <button onClick={handlePayment} className="payment-btn" disabled={checkedItems.size === 0}>결제하기</button>
+            </div>
+        </div>
         </>
     )
 }

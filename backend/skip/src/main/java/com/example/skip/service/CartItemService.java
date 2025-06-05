@@ -41,7 +41,7 @@ public class CartItemService {
             cartItem.setUser(user);
             cartItem.setItemDetail(itemDetail);
             cartItem.setQuantity(dto.getQuantity());
-            cartItem.setPrice(itemDetail.getPrice());
+            cartItem.setPrice(dto.getQuantity() * itemDetail.getPrice());
             cartItem.setRentStart(dto.getRentStart());
             cartItem.setRentEnd(dto.getRentEnd());
 
@@ -91,4 +91,27 @@ public class CartItemService {
                 }).toList();
     }
 
+    // 장바구니 삭제
+    public void deleteCartItems(List<Long> cartIds){
+        cartItemRepository.deleteAllByCartIdIn(cartIds);
+    }
+
+
+    //장바구니 수량 변경(+가격)
+    public void updateCartItemQuantity(Long cartId, int quantity){
+        if (quantity < 1) {
+            throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
+        }
+
+        CartItem cartItem = cartItemRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("장바구니 아이템을 찾을 수 없습니다."));
+
+        cartItem.setQuantity(quantity);
+
+        // 단가 * 수량으로 가격 재계산
+        int unitPrice = cartItem.getItemDetail().getPrice();
+        cartItem.setPrice(unitPrice * quantity);
+
+        cartItemRepository.save(cartItem);
+    }
 }

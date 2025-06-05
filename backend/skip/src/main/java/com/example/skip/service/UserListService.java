@@ -1,18 +1,14 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.PaymentDTO;
+import com.example.skip.dto.payment.PaymentDTO;
 import com.example.skip.dto.ReviewDTO;
 import com.example.skip.entity.Payment;
 import com.example.skip.entity.Review;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.ReviewRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service

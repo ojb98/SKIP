@@ -40,12 +40,12 @@ public class Reservation {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
+    @JoinColumn(name = "payment_id",  nullable = false)
     private Payment payment;
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = false)
     private String merchantUid;  // 아임포트 주문번호
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String impUid;       // 아임포트 결제 고유번호
 }

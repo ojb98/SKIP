@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.reservation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

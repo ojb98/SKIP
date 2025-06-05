@@ -1,6 +1,6 @@
 package com.example.skip.controller.admin;
 
-import com.example.skip.dto.PaymentDTO;
+import com.example.skip.dto.payment.PaymentDTO;
 import com.example.skip.dto.ReviewDTO;
 import com.example.skip.entity.User;
 import com.example.skip.repository.PaymentRepository;

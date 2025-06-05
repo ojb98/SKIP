@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +32,23 @@ public class CartItemController {
         return ResponseEntity.ok(cart);
     }
 
+    // 장바구니 삭제(단건, 다건)
+    @DeleteMapping
+    public ResponseEntity<String> removeCartItem(@RequestBody Map<String, List<Long>> body){
+        List<Long> cartIds = body.get("cartIds");
+        cartItemService.deleteCartItems(cartIds);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{cartId}")
+    public ResponseEntity<?> updateQuantity(@PathVariable("cartId") Long cartId,
+                                             @RequestBody Map<String, Integer> body){
+
+        int quantity = body.getOrDefault("quantity", 1);  // 수량 없으면 기본 1
+        cartItemService.updateCartItemQuantity(cartId, quantity);
+
+        return ResponseEntity.ok().build();
+
+    }
 
 }
