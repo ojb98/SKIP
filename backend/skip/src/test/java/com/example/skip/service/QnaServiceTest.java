@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.QnaDTO;
 import com.example.skip.dto.QnaRequestDTO;
 import com.example.skip.dto.projection.QnaListDTO;
+import com.example.skip.dto.projection.QnaWithReplyDTO;
 import com.example.skip.entity.Qna;
 import com.example.skip.repository.QnaRepository;
 import jakarta.transaction.Transactional;
@@ -13,7 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
+
+import java.time.LocalDateTime;
 
 @SpringBootTest
 @Transactional
@@ -26,7 +30,9 @@ public class QnaServiceTest {
     Long userId = 1L;
     Long itemId = 5L;
     Long rentId = 2L;
-    
+    @Autowired
+    private QnaRepository qnaRepository;
+
     // qna 등록
     @Test
     public void qnaInsertTest() {
@@ -76,34 +82,43 @@ public class QnaServiceTest {
     }
 
     // 조회
-    // 렌탈샵 페이지 조회
-    @Test
-    public void qnaListByItemTest() {
-        Pageable pageable = PageRequest.of(0,10);
-        Page<QnaListDTO> list = qnaService.getQnaListByItem(itemId, null, null, pageable);
-
-        Assertions.assertFalse(list.isEmpty());
-        list.forEach(System.out::println);
-        list.forEach(qna -> System.out.println("qnaId:" + qna.getQnaId() + "제목: " + qna.getTitle() + "내용: " + qna.getContent()));
-    }
 
     // 마이페이지 조회
     @Test
-    public void qnaListByUserTest() {
-        Pageable pageable = PageRequest.of(0,10);
-        Page<QnaListDTO> list = qnaService.getQnaListByUser(userId, null, null, pageable);
+    public void qnaListByUserIdTest() {
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("createdAt").descending());
 
-        Assertions.assertFalse(list.isEmpty());
-        list.forEach(System.out::println);
+        Page<QnaWithReplyDTO> result = qnaService.getQnaWithReplyByUserId(1L,null, null, pageable);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.getContent().isEmpty());
+
+        for(QnaWithReplyDTO dto : result.getContent()) {
+            System.out.println("QnaId: " + dto.getQnaId());
+            System.out.println("itemName: " + dto.getItemName());
+            System.out.println("itemImage: " + dto.getItemImage());
+            System.out.println("Title: " + dto.getTitle());
+            System.out.println("content: " + dto.getContent());
+            System.out.println("username: " + dto.getUsername());
+            System.out.println("CreatedAt: " + dto.getCreatedAt());
+            System.out.println("replyContent: " + dto.getReplyContent());
+            System.out.println("replyName: " + dto.getReplyUsername());
+            System.out.println("replyCreatedAt: " + dto.getReplyCreatedAt());
+            System.out.println("----------------------------------------------");
+        }
     }
 
-    // 관리자페이지 조회
     @Test
-    public void qnaListByAdminTest() {
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<QnaListDTO> list = qnaService.getQnaListByRent(rentId, null, null, null, null, pageable);
+    void testDeleteOldQna() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(3);
 
-        Assertions.assertFalse(list.isEmpty());
-        list.forEach(System.out::println);
+        long beforeCount = qnaRepository.count();
+
+        qnaRepository.deleteByCreatedAtBefore(cutoffDate);
+
+        long afterCount = qnaRepository.count();
+
+        Assertions.assertTrue(beforeCount >= afterCount);
+
     }
 }

@@ -13,6 +13,7 @@ public interface QnaReplyRepository extends JpaRepository<QnaReply, Long > {
         SELECT 
             r.replyId AS replyId,
             r.qna.qnaId AS qnaId,
+            r.user.userId AS userId,
             r.user.username AS username,
             r.content AS content,
             r.createdAt AS createdAt,

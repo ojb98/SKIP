@@ -8,7 +8,7 @@ export const createReply = async (replyData) => {
   return response.data;
 }
 
-// 조회 (수정/삭제)
+// 조회 (수정/삭제용)
 export const getReply = async (qnaId) => {
   const response = await axios.get(`${host}/${qnaId}`);
   return response.data;
@@ -21,15 +21,18 @@ export const getReplySummary = async (qnaId) => {
 }
 
 // 수정
-export const updateReply = async (qnaId, updatedContent) => {
-  const response = await axios.put(`${host}/${qnaId}`, updatedContent, {
-    headers: { 'Content-Type': 'text/plain' },
-  });
+export const updateReply = async (qnaId, replyData) => {
+  const response = await axios.put(`${host}/${qnaId}`, replyData);
   return response.data;
 }
 
 // 삭제
-export const deleteReply = async (qnaId) => {
-  const response = await axios.delete(`${host}/${qnaId}`);
+export const deleteReply = async (qnaId, userId) => {
+  const response = await axios.delete(`${host}/${qnaId}`, {
+    data: {
+      qnaId,
+      userId,
+    }
+  });
   return response.data;
 }

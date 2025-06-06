@@ -100,6 +100,7 @@ function App() {
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
+                    <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>
 
 
                     {/* 로그인 */}

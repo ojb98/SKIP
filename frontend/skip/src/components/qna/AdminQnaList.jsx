@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { deleteQnaByAdminApi, getQnaListByAdminApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
 import AdminPagination from "../adminpage/AdminPagenation";
+import { useSelector } from "react-redux";
 
 const AdminQnaList = () => {
+  const profile = useSelector((state) => state.loginSlice);
+  const userId = profile?.userId;
 
   const [qnaList, setQnaList] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
@@ -57,7 +60,6 @@ const AdminQnaList = () => {
                 };
               }
             } catch (err) {
-              console.error("답변 조회 실패:", err);
               return {
                 answer: "",
                 originalAnswer: "",
@@ -152,10 +154,10 @@ const AdminQnaList = () => {
     try {
       if (answers[index].saved) {
         // 저장된 답변이면 -> 수정
-        await updateReply(qnaId, answerText);
+        await updateReply(qnaId, { content: answerText, userId: userId, });
       } else {
         // 없던 답변이면 -> 새로 저장
-        await createReply({ qnaId, userId: 2, content: answerText });
+        await createReply({ qnaId, userId, content: answerText });
       }
 
       // 다시 요약 조회 후 상태 갱신
@@ -208,9 +210,9 @@ const AdminQnaList = () => {
     const confirmed = window.confirm("정말 삭제하시겠습니까?");
     if (!confirmed) return;
     try {
-      await deleteReply(qnaId);
+      await deleteReply(qnaId, userId);
       const updated = [...answers];
-      updated[index] = { answers: "", saved: false, editing: false };
+      updated[index] = { answer: "", saved: false, editing: false };
       setAnswers(updated);
       alert("답변이 삭제되었습니다.");
     } catch (err) {
@@ -294,7 +296,12 @@ const AdminQnaList = () => {
                     {answers[index]?.saved ? "답변 완료" : "미답변"}
                   </td>
                   <td onClick={() => handleToggle(index)}>{qna.itemName}</td>
-                  <td onClick={() => handleToggle(index)}>{qna.title}</td>
+                  <td onClick={() => handleToggle(index)}>
+                    {qna.title}
+                    {qna.secret && (
+                      <FontAwesomeIcon icon={faLock} className="ml-1.5" />
+                    )}
+                  </td>
                   <td onClick={() => handleToggle(index)}>{qna.username}</td>
                   <td onClick={() => handleToggle(index)}>{qna.createdAt?.substring(0, 10)}</td>
                 </tr>
@@ -304,7 +311,13 @@ const AdminQnaList = () => {
                       <div className="p-4 bg-gray-50">
                         <p className="mb-2 text-left">
                           <strong>문의 내용:</strong> {qna.content}
+                          {qna.updatedAt && qna.updatedAt !== qna.createdAt && (
+                            <span className="text-[12px] text-gray-500 ml-6 self-center">
+                              (수정일: {qna.updatedAt.replace('T', ' ').substring(0, 19)})
+                            </span>
+                          )}
                         </p>
+
                         {answers[index].saved && !answers[index].editing ? (
                           <div className="text-left mt-3 flex items-center">
                             <div className="flex-1">
@@ -315,15 +328,23 @@ const AdminQnaList = () => {
                               <div className="text-right mt-2.5 mr-5">
                                 {answers[index].updatedAt && answers[index].createdAt !== answers[index].updatedAt && (
                                   <span className="text-[12px] text-gray-600 ml-2">
-                                    수정일: {answers[index].updatedAt.substring(0, 10)}
+                                    수정일: {answers[index].updatedAt.replace('T', ' ').substring(0, 19)}
                                   </span>
                                 )}
+                                {/* ✅ 버튼은 항상 보이되 클릭 시 권한 체크 */}
                                 <button
                                   onClick={() => {
+                                    console.log("현재 로그인 userId:", userId);
+                                    console.log("답변 작성자 userId:", answers[index]?.userId);
+
+                                    if (Number(answers[index]?.userId) !== Number(userId)) {
+                                      alert("작성자만 수정할 수 있습니다.");
+                                      return;
+                                    }
                                     const updated = [...answers];
                                     updated[index] = {
                                       ...updated[index],
-                                      answer: updated[index].originalAnswer, // 항상 원본에서 복사
+                                      answer: updated[index].originalAnswer,
                                       editing: true,
                                     };
                                     setAnswers(updated);
@@ -332,8 +353,15 @@ const AdminQnaList = () => {
                                 >
                                   수정
                                 </button>
+
                                 <button
-                                  onClick={() => handleDeleteReply(index, qna.qnaId)}
+                                  onClick={() => {
+                                    if (Number(answers[index]?.userId) !== Number(userId)) {
+                                      alert("작성자만 삭제할 수 있습니다.");
+                                      return;
+                                    }
+                                    handleDeleteReply(index, qna.qnaId);
+                                  }}
                                   className="ml-2 px-2 py-1 text-sm bg-red-500 text-white rounded cursor-pointer"
                                 >
                                   삭제
@@ -342,7 +370,7 @@ const AdminQnaList = () => {
                             </div>
                             <div className="flex gap-4 text-sm text-gray-600 items-center">
                               <span className="text-[13px]">답변자: {answers[index].username}</span>
-                              <span className="text-[13px]">작성일: {answers[index].updatedAt?.substring(0, 10)}</span>
+                              <span className="text-[13px]">작성일: {answers[index].updatedAt?.replace('T', ' ').substring(0, 19)}</span>
                             </div>
                           </div>
                         ) : (

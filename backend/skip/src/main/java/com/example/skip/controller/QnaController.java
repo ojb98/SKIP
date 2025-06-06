@@ -3,6 +3,7 @@ package com.example.skip.controller;
 import com.example.skip.dto.QnaDTO;
 import com.example.skip.dto.QnaRequestDTO;
 import com.example.skip.dto.projection.QnaListDTO;
+import com.example.skip.dto.projection.QnaWithReplyDTO;
 import com.example.skip.enumeration.QnaStatus;
 import com.example.skip.service.QnaService;
 import jakarta.validation.Valid;
@@ -10,7 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/qna")
@@ -51,25 +57,6 @@ public class QnaController {
         qnaService.deleteQnaByAdmin(qnaId, rentId);
     }
 
-    // Q&A 조회 (아이템 페이지)
-    @GetMapping("/item/{itemId}")
-    public Page<QnaListDTO> getQnaListByItem(@PathVariable Long itemId,
-                                             @RequestParam(required = false) QnaStatus status,
-                                             @RequestParam(required = false) Boolean secret,
-                                             Pageable pageable) {
-
-        return qnaService.getQnaListByItem(itemId, status, secret, pageable);
-    }
-
-    // Q&A 조회 (마이페이지)
-    @GetMapping("/user/{userId}")
-    public Page<QnaListDTO> getQnaListByUser(@PathVariable Long userId,
-                                             @RequestParam(required = false) QnaStatus status,
-                                             @RequestParam(required = false) Boolean secret,
-                                             Pageable pageable) {
-        return qnaService.getQnaListByUser(userId, status, secret, pageable);
-    }
-
     // Q&A 조회 (관리자 페이지)
     @GetMapping("/admin/rent/{rentId}")
     public Page<QnaListDTO> getQnaListByRent(@PathVariable Long rentId,
@@ -79,5 +66,31 @@ public class QnaController {
                                              @RequestParam(required = false) Boolean secret,
                                              Pageable pageable){
         return qnaService.getQnaListByRent(rentId, status, username, itemName, secret, pageable);
+    }
+
+    // Q&A 조회 (마이페이지) Projection
+    @GetMapping("/user")
+    public Page<QnaWithReplyDTO> getMyQnaList(@RequestParam Long userId,
+                                              @RequestParam(required = false) Boolean hasReply, // true: 답변, false: 미답변, null: 전체
+                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                              @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return qnaService.getQnaWithReplyByUserId(userId, hasReply, startDate, pageable);
+    }
+
+    // Q&A 조회 (아이템 페이지) Projection
+    @GetMapping("item/{itemId}")
+    public Page<QnaWithReplyDTO> getQnaListByItem(@PathVariable Long itemId,
+                                                  @RequestParam(required = false) Boolean hasReply,
+                                                  @RequestParam(required = false) QnaStatus status,
+                                                  @RequestParam(required = false) Boolean secret,
+                                                  @RequestParam(required = false) Long currentUserId,
+                                                  @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return qnaService.getQnaWithReplyByItemId(itemId, hasReply, status, secret, currentUserId, pageable);
+    }
+
+    // Q&A 단건 조회
+    @GetMapping("/{qnaId}")
+    public QnaWithReplyDTO getQnaDetail(@PathVariable Long qnaId) {
+        return qnaService.getQnaDetail(qnaId);
     }
 }
