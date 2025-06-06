@@ -15,6 +15,14 @@
   text-align: center;
 }
 
+/* 장바구니 항목이 없을때 메시지 */
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+    margin: 2rem 0;
+}
+
 /* 전체선택/선택삭제 버튼 */
 .select-group {
   display: flex;
@@ -82,7 +90,7 @@
 }
 
 /* 삭제 버튼 */
-.remove-btn {
+.cart-remove-btn {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -96,7 +104,7 @@
   cursor: pointer;
 }
 
-.remove-btn:hover {
+.cart-remove-btn:hover {
   background: #e04b4b;
 }
 

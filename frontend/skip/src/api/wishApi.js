@@ -20,7 +20,7 @@ export const wishListApi = async(userId) => {
 
 export const removeWishApi = async (wishlistId) => {
     const data = await axios.delete(`${host}/${wishlistId}`).then(res=>{
-        console.log("찜 목록 ==>", res);
+        console.log("찜 삭제 ==>", res);
         return res.data;
     });
     return data;

@@ -245,86 +245,90 @@ const CartList=()=>{
 
 
     return(
-        <>
         <div className="cart-container">
             <h1 className="top-subject">장바구니</h1>
-
-            <div className="select-group">
-                <div className="left-btn">
-                    <button onClick={toggleAllCheck} className="select-btn">전체 선택</button>
+            {cartGroups.length === 0 || cartGroups.every(group => group.items.length === 0) ? (
+                <div className="empty-cart-message">장바구니가 비어 있습니다.</div>
+            ) : (
+                <>
+                <div className="select-group">
+                    <div className="left-btn">
+                        <button onClick={toggleAllCheck} className="select-btn">전체 선택</button>
+                    </div>
+                    <div className="right-btn">
+                        <button onClick={deleteSelectedCheck} className="select-del-btn">선택 삭제</button>
+                    </div>
                 </div>
-                <div className="right-btn">
-                    <button onClick={deleteSelectedCheck} className="select-del-btn">선택 삭제</button>
-                </div>
-            </div>
 
-            <div className="cart-items-container">
-            {
-                cartGroups.map(group => (
-                    <div key={group.rentId} className="cart-group">
-                    {
-                        group.items.map(item => (
-                        <div key={item.cartId} className="item-group">
-                   
-                            <label htmlFor={`checkbox-${item.cartId}`} className={`item-wrapper ${checkedItems.has(item.cartId) ? "checked" : ""}`}>
-                        
-                            <input type="checkbox" id={`checkbox-${item.cartId}`} checked={checkedItems.has(item.cartId)}
-                                onChange={() => toggleCheck(item.cartId)} className="checkbox-btn" />    
-                                <div className="item-content">
-                                    <button type="button" onClick={(e) => {
-                                        // 버튼 클릭 시 오직 삭제 기능만 작동하기 위함
-                                            e.preventDefault();  // label의 기본 동작 (checkbox 토글)을 막음
-                                            e.stopPropagation();  // label까지 이벤트가 전달되지 않도록 막음
-                                            deleteCartItem(item.cartId);
-                                        }} 
-                                        className="remove-btn" title="장바구니에서 제거">
-                                        X
-                                    </button>
+                <span>* 자동으로 일주일단위로 비워집니다</span>
+                <div className="cart-items-container">
+                {
+                    cartGroups.map(group => (
+                        <div key={group.rentId} className="cart-group">
+                        {
+                            group.items.map(item => (
+                            <div key={item.cartId} className="item-group">
+                    
+                                <label htmlFor={`checkbox-${item.cartId}`} className={`item-wrapper ${checkedItems.has(item.cartId) ? "checked" : ""}`}>
+                            
+                                <input type="checkbox" id={`checkbox-${item.cartId}`} checked={checkedItems.has(item.cartId)}
+                                    onChange={() => toggleCheck(item.cartId)} className="checkbox-btn" />    
+                                    <div className="item-content">
+                                        <button type="button" onClick={(e) => {
+                                            // 버튼 클릭 시 오직 삭제 기능만 작동하기 위함
+                                                e.preventDefault();  // label의 기본 동작 (checkbox 토글)을 막음
+                                                e.stopPropagation();  // label까지 이벤트가 전달되지 않도록 막음
+                                                deleteCartItem(item.cartId);
+                                            }} 
+                                            className="cart-remove-btn" title="장바구니에서 제거">
+                                            X
+                                        </button>
 
-                                    <img className="item-img" src={`http://localhost:8080${item.image}`} alt={item.itemName} />
+                                        <img className="item-img" src={`http://localhost:8080${item.image}`} alt={item.itemName} />
 
-                                    <div className="itemdatail-group">
-                                        <div className="item-content-group">
-                                            <h4><strong>{group.name}</strong></h4>
-                                            <span>{item.itemName}</span><br />
-                                            <p>대여날짜: {
-                                            formatDate(item.rentStart) === formatDate(item.rentEnd)
-                                                ? formatDate(item.rentStart)
-                                                : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`
-                                            }</p>
-                                            <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
-                                            <p>사이즈: {item.size}</p>
-                                        </div>
-                                        <div className="update-div">
-                                            <div className="count-btn">
-                                                <p>수량:</p>
-                                                <div className="quantity-btn">
-                                                    <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, -1); }}>-</button>
-                                                    <span>{item.quantity}</span>
-                                                    <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, 1); }}>+</button> 개
-                                                </div>
+                                        <div className="itemdatail-group">
+                                            <div className="item-content-group">
+                                                <h4><strong>{group.name}</strong></h4>
+                                                <span>{item.itemName}</span><br />
+                                                <p>대여날짜: {
+                                                formatDate(item.rentStart) === formatDate(item.rentEnd)
+                                                    ? formatDate(item.rentStart)
+                                                    : `${formatDate(item.rentStart)} ~ ${formatDate(item.rentEnd)}`
+                                                }</p>
+                                                <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
+                                                <p>사이즈: {item.size}</p>
                                             </div>
-                                            <p>가격: {item.price.toLocaleString()}원</p>
+                                            <div className="update-div">
+                                                <div className="count-btn">
+                                                    <p>수량:</p>
+                                                    <div className="quantity-btn">
+                                                        <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, -1); }}>-</button>
+                                                        <span>{item.quantity}</span>
+                                                        <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, 1); }}>+</button> 개
+                                                    </div>
+                                                </div>
+                                                <p>가격: {item.price.toLocaleString()}원</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </label>
+                                </label>
+                            </div>
+                            ))
+                        }
                         </div>
-                        ))
-                    }
-                    </div>
-                ))
-            }
-            </div>
-
-            <div className="payment-group">
-                <div className="totalPrice-div">
-                    <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
+                    ))
+                }
                 </div>
-                    <button onClick={handlePayment} className="payment-btn" disabled={checkedItems.size === 0}>결제하기</button>
-            </div>
+
+                <div className="payment-group">
+                    <div className="totalPrice-div">
+                        <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
+                    </div>
+                        <button onClick={handlePayment} className="payment-btn" disabled={checkedItems.size === 0}>결제하기</button>
+                </div>
+                </>
+            )}
         </div>
-        </>
-    )
+    )    
 }
 export default CartList;

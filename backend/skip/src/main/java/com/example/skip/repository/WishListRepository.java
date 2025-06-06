@@ -13,9 +13,10 @@ public interface WishListRepository extends JpaRepository<WishList,Long> {
 
     // 찜 중복 확인
     boolean existsByUserAndItemDetail(User user, ItemDetail itemDetail);
+
     // 찜 개수 세기
     long countByUser(User user);
 
-    //사용자 기준 찜목록 불러오기
-    //List<WishListDTO> findAllByUser(User user, Sort sort);
+    // 유저기준으로 찜 목록 불러오기(생성일 - 내림차순)
+    List<WishList> findByUserOrderByCreatedAtDesc(User user);
 }

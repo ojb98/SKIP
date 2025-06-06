@@ -1,6 +1,7 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.WishAddDTO;
+import com.example.skip.dto.WishListDTO;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.User;
 import com.example.skip.entity.WishList;
@@ -48,12 +49,25 @@ public class WishListService {
     }
 
     //찜 목록 보여주기
-//    public List<WishListDTO> getWishList(Long userId){
-//        User user = userRepository.findByUserId(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
-//
-//        // 등록일 기준 내림차순 정렬
-//        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-//        return wishListRepository.findAllByUser(user,sort);
-//    }
+    public List<WishListDTO> getWishList(Long userId){
+        // 사용자 확인
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        // 찜 목록 조회 (최신순)
+        List<WishList> wishList = wishListRepository.findByUserOrderByCreatedAtDesc(user);
+
+        // DTO 변환
+        return wishList.stream().map(wish -> WishListDTO.from(wish)).toList();
+
+    }
+
+    //찜 삭제
+    public void removeWishList(Long wishlistId){
+        WishList wish = wishListRepository.findById(wishlistId)
+                .orElseThrow(() -> new IllegalArgumentException("찜 항목이 존재하지 않습니다."));
+        wishListRepository.delete(wish);
+    }
+
+
 }
