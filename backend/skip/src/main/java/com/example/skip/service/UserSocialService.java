@@ -15,6 +15,7 @@ import com.example.skip.repository.NaverLinkageRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.CacheEvict;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -155,11 +157,12 @@ public class UserSocialService {
 
     @CacheEvict(value = "users", key = "#userDto.userId")
     public void link(UserSocial client, String authorizationCode, UserDto userDto) throws OAuth2AuthenticationException {
-        Map<String, Object> response = requestAccessToken(client, authorizationCode);
+        Map<String, Object> body = requestAccessToken(client, authorizationCode);
+        log.info("Access token response: {}", body);
 
-        String accessToken = (String) response.get("access_token");
-        String refreshToken = (String) response.get("refresh_token");
-        Integer expiresIn = (Integer) response.get("expires_in");
+        String accessToken = (String) body.get("access_token");
+        String refreshToken = (String) body.get("refresh_token");
+        Integer expiresIn = (Integer) body.get("expires_in");
         Instant issuedAt = Instant.now();
         Instant expiresAt = issuedAt.plusSeconds(expiresIn);
 
@@ -281,9 +284,11 @@ public class UserSocialService {
                     Map.class
             );
 
-            System.out.println(response.getBody());
+            Map<String, Object> body = response.getBody();
 
-            return response.getBody();
+            body.put("expires_in", Integer.valueOf((String) body.get("expires_in")));
+
+            return body;
         }
 
         throw new OAuth2AuthenticationException("Unsupported Provider");

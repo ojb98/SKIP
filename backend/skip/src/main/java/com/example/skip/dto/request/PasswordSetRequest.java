@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class PasswordSetRequestDto {
+public class PasswordSetRequest {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @Pattern(message = "영문 대소문자, 숫자, 특수문자 중 2가지 조합 8자리 이상으로 작성해주세요.", regexp =
             "^(?=(" +

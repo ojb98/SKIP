@@ -70,7 +70,10 @@ public class SecurityConfig {
                                     "/user/profile",
                                     "/user/password/**",
                                     "/user/delete",
-                                    "/user/social/**"
+                                    "/user/social/**",
+                                    "/user/nickname/change",
+                                    "/user/username/change",
+                                    "/user/email/change"
                                     ).authenticated()
                             .anyRequest()
                             .permitAll();

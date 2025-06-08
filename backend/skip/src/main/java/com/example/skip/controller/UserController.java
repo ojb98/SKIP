@@ -1,12 +1,8 @@
 package com.example.skip.controller;
 
 import com.example.skip.dto.*;
-import com.example.skip.dto.request.AccountDeleteRequestDto;
-import com.example.skip.dto.request.PasswordChangeRequestDto;
-import com.example.skip.dto.request.PasswordSetRequestDto;
-import com.example.skip.dto.request.SignupRequestDto;
-import com.example.skip.dto.response.ApiResponseDto;
-import com.example.skip.enumeration.UserSocial;
+import com.example.skip.dto.request.*;
+import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.exception.CustomEmailException;
 import com.example.skip.service.EmailVerifyService;
 import com.example.skip.service.UserService;
@@ -14,18 +10,22 @@ import com.example.skip.service.UserSocialService;
 import com.example.skip.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -42,18 +42,18 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto,
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest,
                                     BindingResult bindingResult) {
-        if (userService.isUser(signupRequestDto.getUsername())) {
+        if (userService.isUser(signupRequest.getUsername())) {
             bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
         }
 
-        if (!signupRequestDto.isVerified()) {
+        if (!signupRequest.isVerified()) {
             bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
         }
 
         if (!bindingResult.hasErrors()) {
-            userService.signup(signupRequestDto, bindingResult);
+            userService.signup(signupRequest, bindingResult);
         } else {
             Map<String, Object> fieldErrors = new HashMap<>();
 
@@ -68,27 +68,28 @@ public class UserController {
     }
 
     @PostMapping("/email/verify")
-    public ApiResponseDto verifyEmail(@RequestParam("email") String email) {
+    public ApiResponse verifyEmail(@RequestParam("email") String email) {
         emailVerifyService.sendVerificationCode(email);
 
-        return new ApiResponseDto(true, email);
+        return new ApiResponse(true, email);
     }
 
     @ExceptionHandler(CustomEmailException.class)
-    public ApiResponseDto emailError(CustomEmailException e) {
+    public ApiResponse emailError(CustomEmailException e) {
         if (e.getMessage().equals("Invalid Email")) {
-            return new ApiResponseDto(false, "존재하지 않는 이메일입니다.");
+            return new ApiResponse(false, "존재하지 않는 이메일입니다.");
         }
-        return new ApiResponseDto(false, "인증번호를 재전송해주세요.");
+        return new ApiResponse(false, "인증번호를 재전송해주세요.");
     }
 
     @PostMapping("/email/confirm")
-    public ApiResponseDto confirmCode(@RequestParam("email") String email,
-                                      @RequestParam("verificationCode") String verificationCode) {
+    public ApiResponse confirmCode(@RequestParam("email") String email,
+                                   @RequestParam("verificationCode") String verificationCode) {
+
         if (emailVerifyService.confirmVerificationCode(email, verificationCode)) {
-            return new ApiResponseDto(true, email);
+            return new ApiResponse(true, email);
         }
-        return new ApiResponseDto(false, "잘못된 인증번호입니다.");
+        return new ApiResponse(false, "잘못된 인증번호입니다.");
     }
 
     @GetMapping("/find/{username}")
@@ -103,14 +104,95 @@ public class UserController {
         return ResponseEntity.ok(Map.of("success", true, "return", claims));
     }
 
+    @PutMapping("/nickname/change")
+    public ApiResponse changeNickname(@AuthenticationPrincipal UserDetails userDetails,
+                                      @Valid @RequestBody NicknameChangeRequest nicknameChangeRequest,
+                                      BindingResult bindingResult) {
+        log.info("닉네임: {}", nicknameChangeRequest.getNickname());
+
+        List<String> nicknameErrors = new ArrayList<>();
+        if (bindingResult.hasErrors()) {
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                nicknameErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(nicknameErrors).build();
+        }
+
+        UserDto userDto = (UserDto) userDetails;
+
+        try {
+            userService.changeNickname(userDto.getUserId(), nicknameChangeRequest.getNickname());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(List.of("중복된 닉네임입니다.")).build();
+        }
+
+        return ApiResponse.builder()
+                .success(true).build();
+    }
+
+    @PutMapping("/username/change")
+    public ApiResponse changeUsername(@AuthenticationPrincipal UserDetails userDetails,
+                                      @Valid @RequestBody UsernameChangeRequest usernameChangeRequest,
+                                      BindingResult bindingResult) {
+        log.info("아이디: {}", usernameChangeRequest.getUsername());
+
+        List<String> usernameErrors = new ArrayList<>();
+        if (bindingResult.hasErrors()) {
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                usernameErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(usernameErrors).build();
+        }
+
+        UserDto userDto = (UserDto) userDetails;
+
+        try {
+            userService.changeUsername(userDto.getUserId(), usernameChangeRequest.getUsername());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(List.of("중복된 아이디입니다.")).build();
+        }
+
+        return ApiResponse.builder()
+                .success(true).build();
+    }
+
+    @PutMapping("/email/change")
+    public ApiResponse changeEmail(@AuthenticationPrincipal UserDetails userDetails,
+                                   @RequestBody EmailChangeRequest emailChangeRequest) {
+        UserDto userDto = (UserDto) userDetails;
+
+        if (emailChangeRequest.getIsVerified() == true) {
+            userService.changeEmail(userDto.getUserId(), emailChangeRequest.getEmail());
+
+            return ApiResponse.builder()
+                    .success(true).build();
+        } else {
+            return ApiResponse.builder()
+                    .success(false)
+                    .data("이메일을 인증해주세요.").build();
+        }
+    }
+
     @PutMapping("/password/change")
-    public ApiResponseDto changePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                         @Valid @RequestBody PasswordChangeRequestDto passwordChangeRequestDto,
-                                         BindingResult bindingResult) {
+    public ApiResponse changePassword(@AuthenticationPrincipal UserDetails userDetails,
+                                      @Valid @RequestBody PasswordChangeRequest passwordChangeRequest,
+                                      BindingResult bindingResult) {
         UserDto userDto = (UserDto) userDetails;
         boolean result = false;
         if (!bindingResult.hasErrors()) {
-            result = userService.changePassword(userDto, passwordChangeRequestDto, bindingResult);
+            result = userService.changePassword(userDto, passwordChangeRequest, bindingResult);
         }
 
         Map<String, Object> fieldErrors = new HashMap<>();
@@ -118,59 +200,58 @@ public class UserController {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        return ApiResponseDto.builder()
+        return ApiResponse.builder()
                 .success(result)
                 .data(fieldErrors).build();
     }
 
     @PutMapping("/password/set")
-    public ApiResponseDto setPassword(@AuthenticationPrincipal UserDetails userDetails,
-                                      @Valid @RequestBody PasswordSetRequestDto passwordSetRequestDto,
-                                      BindingResult bindingResult) {
+    public ApiResponse setPassword(@AuthenticationPrincipal UserDetails userDetails,
+                                   @Valid @RequestBody PasswordSetRequest passwordSetRequest,
+                                   BindingResult bindingResult) {
         UserDto userDto = (UserDto) userDetails;
-        boolean result = false;
 
-        String password = passwordSetRequestDto.getPassword();
-        if (!password.equals(passwordSetRequestDto.getConfirmPassword())) {
+        String password = passwordSetRequest.getPassword();
+        if (!password.equals(passwordSetRequest.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", null, "비밀번호 확인이 일치하지 않습니다.");
         }
 
         if (!bindingResult.hasErrors()) {
-            result = userService.setPassword(userDto, password);
+            boolean result = userService.setPassword(userDto, password);
+
+            return ApiResponse.builder()
+                    .success(result)
+                    .data(null).build();
         } else {
             Map<String, Object> fieldErrors = new HashMap<>();
             for (FieldError fieldError: bindingResult.getFieldErrors()) {
                 fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
             }
 
-            return ApiResponseDto.builder()
+            return ApiResponse.builder()
                     .success(false)
                     .data(fieldErrors).build();
         }
-
-        return ApiResponseDto.builder()
-                .success(result)
-                .data(null).build();
     }
 
     @DeleteMapping("/delete")
-    public ApiResponseDto deleteAccount(@AuthenticationPrincipal UserDetails userDetails,
-                                        @Valid @RequestBody AccountDeleteRequestDto accountDeleteRequestDto,
-                                        BindingResult bindingResult) {
+    public ApiResponse deleteAccount(@AuthenticationPrincipal UserDetails userDetails,
+                                     @Valid @RequestBody AccountDeleteRequest accountDeleteRequest,
+                                     BindingResult bindingResult) {
         UserDto userDto = (UserDto) userDetails;
-        System.out.println(accountDeleteRequestDto);
+        System.out.println(accountDeleteRequest);
 
-        Boolean isPassword = accountDeleteRequestDto.getIsPassword();
+        Boolean isPassword = accountDeleteRequest.getIsPassword();
 
-        if (isPassword && !passwordEncoder.matches(accountDeleteRequestDto.getPassword(), userDto.getPassword())) {
+        if (isPassword && !passwordEncoder.matches(accountDeleteRequest.getPassword(), userDto.getPassword())) {
             bindingResult.rejectValue("password", null, "비밀번호가 일치하지 않습니다.");
         }
 
         if (!isPassword) {
-            if (!accountDeleteRequestDto.getEmail().equals(userDto.getEmail())) {
+            if (!accountDeleteRequest.getEmail().equals(userDto.getEmail())) {
                 bindingResult.rejectValue("email", null, "이메일이 일치하지 않습니다.");
             }
-            if (!accountDeleteRequestDto.getIsVerified()) {
+            if (!accountDeleteRequest.getIsVerified()) {
                 bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
             }
         }
@@ -178,10 +259,10 @@ public class UserController {
         if (!bindingResult.hasErrors()) {
             try {
                 userService.deleteAccount(userDto);
-                return ApiResponseDto.builder()
+                return ApiResponse.builder()
                         .success(true).build();
             } catch (Exception e) {
-                return ApiResponseDto.builder()
+                return ApiResponse.builder()
                         .success(false)
                         .data(e.getMessage()).build();
             }
@@ -191,7 +272,7 @@ public class UserController {
                 fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
             }
 
-            return ApiResponseDto.builder()
+            return ApiResponse.builder()
                     .success(false)
                     .data(fieldErrors).build();
         }

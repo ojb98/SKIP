@@ -1,16 +1,13 @@
 package com.example.skip.controller;
 
-import com.example.skip.config.properties.OAuth2Properties;
 import com.example.skip.dto.UserDto;
-import com.example.skip.dto.response.ApiResponseDto;
+import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.service.UserSocialService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,20 +44,18 @@ public class UserSocialController {
 
     @ResponseBody
     @DeleteMapping("/unlink")
-    public ApiResponseDto unlink(@AuthenticationPrincipal UserDetails userDetails,
-                                 OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-        System.out.println(oAuth2AuthenticationToken.getName());
+    public ApiResponse unlink(@AuthenticationPrincipal UserDetails userDetails) {
         UserDto userDto = (UserDto) userDetails;
         try {
             String accessToken = userSocialService.getAccessToken(userDto);
             userSocialService.unlink(userDto, accessToken);
         } catch (Exception e) {
             e.printStackTrace();
-            return ApiResponseDto.builder()
+            return ApiResponse.builder()
                     .success(false)
                     .data(e.getMessage()).build();
         }
-        return ApiResponseDto.builder()
+        return ApiResponse.builder()
                 .success(true)
                 .data("연결을 해제했습니다.").build();
     }

@@ -12,9 +12,9 @@ import java.util.Set;
 
 @Data
 @PasswordMatch
-public class SignupRequestDto {
+public class SignupRequest {
     @NotBlank(message = "아이디를 입력해주세요.")
-    @Pattern(message = "5자 이상의 영문 또는 숫자로 입력해주세요.", regexp = "^[a-zA-Z0-9]{5,}$")
+    @Pattern(message = "5~15자의 영문 또는 숫자로 입력해주세요.", regexp = "^[a-zA-Z0-9]{5,15}$")
     private String username;
 
     @Pattern(message = "영문 대소문자, 숫자, 특수문자 중 2가지 조합 8자리 이상으로 작성해주세요.", regexp =

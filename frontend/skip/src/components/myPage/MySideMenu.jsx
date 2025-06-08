@@ -27,7 +27,7 @@ const MySideMenu = ({group, active}) => {
                                 &&
                                 <img src="/images/naver_link.png" width={20}></img>
                             }
-                            <span className="text-sm font-semibold">{profile.showname}</span><span className="text-sm text-gray-500">님</span>
+                            <span className="text-sm font-semibold">{profile.myname}</span><span className="text-sm text-gray-500">님</span>
                         </div>
                     </div>
 

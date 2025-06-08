@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class AccountDeleteRequestDto {
+public class AccountDeleteRequest {
     private Boolean isPassword;
 
     private String password;

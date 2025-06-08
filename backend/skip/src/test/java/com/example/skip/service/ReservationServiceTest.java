@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //package com.example.skip.service;
 //
 //import com.example.skip.dto.ReservationItemsDTO;
@@ -73,7 +72,6 @@
 //        Assertions.assertEquals(3, reservationItems.size());
 //    }
 //}
-=======
 package com.example.skip.service;
 
 import com.example.skip.entity.*;
@@ -145,4 +143,3 @@ public class ReservationServiceTest {
 //        Assertions.assertEquals(3, reservationItems.size());
 //    }
 }
->>>>>>> fb6632eb9f5db4c55aa17840ded0afe6d41061f1

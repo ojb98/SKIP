@@ -1,6 +1,6 @@
 package com.example.skip.controller;
 
-import com.example.skip.dto.response.ApiResponseDto;
+import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.dto.UserDto;
 import com.example.skip.exception.CustomJwtException;
 import com.example.skip.service.CustomUserDetailsService;
@@ -31,7 +31,7 @@ public class RefreshController {
     }
 
     @PostMapping("/user/refresh")
-    public ApiResponseDto refresh(HttpServletRequest request, HttpServletResponse response) throws NullPointerException {
+    public ApiResponse refresh(HttpServletRequest request, HttpServletResponse response) throws NullPointerException {
         String accessToken = jwtUtil.extractToken("accessToken", request);
         String refreshToken = jwtUtil.extractToken("refreshToken", request);
 
@@ -48,21 +48,21 @@ public class RefreshController {
                     String newRefreshToken = jwtUtil.generateRefreshToken(userDto.getUsername());
                     jwtUtil.attachToken("refreshToken", newRefreshToken, response, JwtUtil.refreshTokenValidity);
                 }
-                return new ApiResponseDto(true, null);
+                return new ApiResponse(true, null);
             } else {
-                return new ApiResponseDto(false, "INVALID_REFRESH");
+                return new ApiResponse(false, "INVALID_REFRESH");
             }
         }
-        return new ApiResponseDto(false, "VALID_ACCESS_TOKEN");
+        return new ApiResponse(false, "VALID_ACCESS_TOKEN");
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ApiResponseDto handleNPE() {
-        return new ApiResponseDto(false, "NULL_POINTER");
+    public ApiResponse handleNPE() {
+        return new ApiResponse(false, "NULL_POINTER");
     }
 
     @ExceptionHandler(CustomJwtException.class)
-    public ApiResponseDto handleCJE() {
-        return new ApiResponseDto(false, "INVALID_REFRESH");
+    public ApiResponse handleCJE() {
+        return new ApiResponse(false, "INVALID_REFRESH");
     }
 }

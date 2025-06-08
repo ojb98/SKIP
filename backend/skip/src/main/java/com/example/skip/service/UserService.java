@@ -1,7 +1,7 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.request.PasswordChangeRequestDto;
-import com.example.skip.dto.request.SignupRequestDto;
+import com.example.skip.dto.request.PasswordChangeRequest;
+import com.example.skip.dto.request.SignupRequest;
 import com.example.skip.dto.UserDto;
 import com.example.skip.entity.QKakaoLinkage;
 import com.example.skip.entity.QNaverLinkage;
@@ -16,6 +16,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,7 @@ public class UserService {
     private static final QKakaoLinkage kakaoLinkage = QKakaoLinkage.kakaoLinkage;
 
 
-    public UserDto signup(SignupRequestDto signupRequestDto, BindingResult bindingResult) {
+    public UserDto signup(SignupRequest signupRequest, BindingResult bindingResult) {
 //        if (isUser(signupRequestDto.getUsername())) {
 //            bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
 //            return null;
@@ -56,7 +57,7 @@ public class UserService {
 //            return null;
 //        }
 
-        UserDto userDto = signupRequestDto.toUserDto();
+        UserDto userDto = signupRequest.toUserDto();
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         return new UserDto(userRepository.saveAndFlush(userDto.toEntity()));
@@ -71,12 +72,30 @@ public class UserService {
         return new UserDto(userRepository.findByUserId(userId).orElseThrow());
     }
 
+    @CacheEvict(value = "users", key = "#userId")
+    public void changeNickname(Long userId, String nickname) throws DataIntegrityViolationException {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setNickname(nickname);
+    }
+
+    @CacheEvict(value = "users", key = "#userId")
+    public void changeUsername(Long userId, String username) throws DataIntegrityViolationException {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setUsername(username);
+    }
+
+    @CacheEvict(value = "users", key = "#userId")
+    public void changeEmail(Long userId, String email) {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setEmail(email);
+    }
+
     @CacheEvict(value = "users", key = "#userDto.userId")
-    public boolean changePassword(UserDto userDto, PasswordChangeRequestDto passwordChangeRequestDto, BindingResult bindingResult) {
-        String inputPassword = passwordChangeRequestDto.getCurrentPassword();
+    public boolean changePassword(UserDto userDto, PasswordChangeRequest passwordChangeRequest, BindingResult bindingResult) {
+        String inputPassword = passwordChangeRequest.getCurrentPassword();
         if (passwordEncoder.matches(inputPassword, userDto.getPassword())) {
-            String newPassword = passwordChangeRequestDto.getNewPassword();
-            if (newPassword.equals(passwordChangeRequestDto.getConfirmNewPassword())) {
+            String newPassword = passwordChangeRequest.getNewPassword();
+            if (newPassword.equals(passwordChangeRequest.getConfirmNewPassword())) {
                 User user = userRepository.findByUserId(userDto.getUserId()).orElseThrow();
                 user.setPassword(passwordEncoder.encode(newPassword));
                 return true;

@@ -66,6 +66,33 @@ export const getProfile = async () => {
     return data;
 }
 
+// 닉네임 변경
+export const changeNickname = async req => {
+    const data = await caxios.put(`/user/nickname/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+// 아이디 변경
+export const changeUsername = async req => {
+    const data = await caxios.put(`/user/username/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+// 이메일 변경
+export const changeEmail = async req => {
+    const data = await caxios.put(`/user/email/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
 export const changePassword = async req => {
     const data = await caxios.put(`/user/password/change`, req).then(res => {
         return res.data;
@@ -91,15 +118,6 @@ export const deleteAccount = async req => {
 
     return data;
 };
-
-// export const link = async req => {
-//     const params = new URLSearchParams();
-//     params.append('client', req);
-
-//     const data = await caxios.post(`/user/social/link`, params).then(res => {
-
-//     });
-// }
 
 export const unlink = async () => {
     const data = await caxios.delete(`/user/social/unlink`).then(res => {
