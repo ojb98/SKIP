@@ -72,7 +72,8 @@ const QnaWrite = () => {
           <div>
             <textarea 
               className="qna-popup-content"
-              placeholder="문의하실 내용을 작성해주세요."
+              placeholder="문의하실 내용을 작성해주세요. (100자를 초과할 수 없습니다.)"
+              maxLength={100}
               value={content}
               onChange={(e) => setContent(e.target.value)}>
             </textarea>

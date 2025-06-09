@@ -29,7 +29,7 @@ export const deleteQnaByAdminApi = async (qnaId, rentId) => {
 // 아이템 페이지 Q&A 리스트
 export const getQnaListByItemApi = async (itemId, status, secret, page = 0, size = 10) => {
   const response = await axios.get(`${host}/item/${itemId}`, {
-    params: {status, secret, page, size, sort: "createdAt,DESC"},
+    params: {status, secret, page, size, sort: "qnaId,DESC"},
   });
   return response.data;
 }
@@ -37,15 +37,15 @@ export const getQnaListByItemApi = async (itemId, status, secret, page = 0, size
 // 마이페이지 Q&A 리스트
 export const getQnaListByUserApi = async (userId, status, secret, page = 0, size = 10) => {
   const response = await axios.get(`${host}/user/${userId}`, {
-    params: {status, secret, page, size, sort: "createdAt,DESC"},
+    params: {status, secret, page, size, sort: "qnaId,DESC"},
   });
   return response.data;
 }
 
 // 관리자 페이지 Q&A 리스트
-export const getQnaListByAdminApi = async (rentId, status, username, secret, page = 0, size = 10) => {
+export const getQnaListByAdminApi = async (rentId, status, username, itemName, secret, page = 0, size = 10) => {
   const response = await axios.get(`${host}/admin/rent/${rentId}`, {
-    params: {status, username, secret, page, size, sort: "createdAt,DESC"},
+    params: {status, username, itemName, secret, page, size, sort: "qnaId,DESC"},
   });
   return response.data;
 }

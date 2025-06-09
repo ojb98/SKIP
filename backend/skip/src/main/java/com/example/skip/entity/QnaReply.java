@@ -1,11 +1,11 @@
 package com.example.skip.entity;
 
-import com.example.skip.enumeration.QnaStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 
 import java.time.LocalDateTime;
 
@@ -14,34 +14,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude =  {"user", "item"})
+@ToString(exclude = {"qna", "user"})
 @Builder
-public class Qna {
+public class QnaReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long qnaId;
+    private Long replyId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "qnaId", nullable = false)
+    private Qna qna;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itemId", nullable = false)
-    private Item item;
-    @Column(nullable = false)
-    private String title;
     @Column(nullable = false)
     @Size(max = 100)
     private String content;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private QnaStatus status = QnaStatus.WAITING;
-    @Column(nullable = false)
-    private boolean secret;
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
 }

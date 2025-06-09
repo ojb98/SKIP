@@ -20,13 +20,18 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
                q.content as content,
                u.username as username,
                i.name as itemName,
-               q.status as status,
                q.secret as secret,
                q.createdAt as createdAt,
-               q.updatedAt as updatedAt
+               q.updatedAt as updatedAt,
+               r.replyId as replyId,
+               ru.username as replyUsername,
+               r.content as replyContent,
+               r.createdAt as replyCreatedAt
         FROM Qna q
         JOIN q.user u
         JOIN q.item i
+        LEFT JOIN QnaReply r ON r.qna.qnaId = q.qnaId
+        LEFT JOIN r.user ru
         WHERE i.itemId = :itemId
         AND (:status IS NULL OR q.status =:status)
         AND (:secret IS NULL OR q.secret =:secret)
@@ -78,11 +83,13 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
         WHERE r.rentId =:rentId
         AND(:status IS NULL OR q.status =:status)
         AND(:username IS NULL OR u.username LIKE %:username%)
+        AND(:itemName IS NULL OR i.name LIKE %:itemName%)
         AND(:secret IS NULL OR q.secret =:secret)
     """)
     Page<QnaListDTO> findQnaListByRentalshopWithFilters(@Param("rentId")Long rentId,
                                                         @Param("status")QnaStatus status,
                                                         @Param("username")String username,
+                                                        @Param("itemName")String itemName,
                                                         @Param("secret")Boolean secret,
                                                         Pageable pageable);
 

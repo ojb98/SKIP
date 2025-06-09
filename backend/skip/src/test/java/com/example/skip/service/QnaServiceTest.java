@@ -101,7 +101,7 @@ public class QnaServiceTest {
     @Test
     public void qnaListByAdminTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<QnaListDTO> list = qnaService.getQnaListByRent(rentId, null, null, null, pageable);
+        Page<QnaListDTO> list = qnaService.getQnaListByRent(rentId, null, null, null, null, pageable);
 
         Assertions.assertFalse(list.isEmpty());
         list.forEach(System.out::println);

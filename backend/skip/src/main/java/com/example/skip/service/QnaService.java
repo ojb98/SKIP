@@ -87,8 +87,8 @@ public class QnaService {
     }
 
     // 관리자 페이지 Q&A 조회
-    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, Boolean secret, Pageable pageable) {
-        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, secret, pageable);
+    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, String itemName, Boolean secret, Pageable pageable) {
+        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, itemName, secret, pageable);
     }
 
 }

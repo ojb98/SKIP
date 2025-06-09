@@ -29,8 +29,10 @@ import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
+import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
+
 
 
 
@@ -92,6 +94,7 @@ function App() {
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                         <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>

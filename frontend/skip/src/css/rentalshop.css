@@ -68,6 +68,7 @@
 
 .pagelist button:hover,
 .pagelist button.active {
+  border-radius: 5px;
   background-color: #5399f5;
   color: #fff;
   cursor: pointer;
@@ -76,14 +77,13 @@
 /* Review */
 .review-wrapper,
 .qna-wrapper {
-  margin: 0 30px;
+  margin: 30px;
 }
 
 /* Review-Header */
 .review-header {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
 }
 
 .review-summary {
@@ -133,10 +133,6 @@
 }
 
 /* Q&A */
-.qna-header {
-  margin-top: 30px;
-}
-
 .qna-summary {
   display: flex;
   justify-content: space-between;
@@ -201,6 +197,7 @@
 .qna-question-detail {
   display: none;
   margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 .qna-question-detail.active {
@@ -217,8 +214,11 @@
 }
 
 .qna-answer-content {
+  text-align: left !important;
   flex: 1;
   margin-left: 130px;
+  display: flex;
+  align-items: center;
 }
 
 .answer-icon {
@@ -228,11 +228,7 @@
   border-radius: 3px;
   background-color: #757575;
   color: #fff;
-  margin-right: 5px;
-}
-
-.qna-answer-content {
-  text-align: left !important;
+  margin: 0 5px;
 }
 
 .qna-answer div {

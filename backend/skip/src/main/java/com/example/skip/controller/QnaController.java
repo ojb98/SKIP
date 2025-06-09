@@ -5,6 +5,7 @@ import com.example.skip.dto.QnaRequestDTO;
 import com.example.skip.dto.projection.QnaListDTO;
 import com.example.skip.enumeration.QnaStatus;
 import com.example.skip.service.QnaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,14 +22,16 @@ public class QnaController {
 
     // Q&A 등록
     @PostMapping
-    public QnaDTO createQna(@RequestBody QnaRequestDTO dto,
+    public QnaDTO createQna(@Valid
+                            @RequestBody QnaRequestDTO dto,
                             @RequestParam Long userId) {
         return qnaService.createQna(dto, userId);
     }
 
     // Q&A 수정
     @PutMapping("/{qnaId}")
-    public QnaDTO updateQna(@PathVariable Long qnaId,
+    public QnaDTO updateQna(@Valid
+                            @PathVariable Long qnaId,
                             @RequestBody QnaRequestDTO dto,
                             @RequestParam Long userId) {
         return qnaService.updateQna(qnaId, dto, userId);
@@ -72,8 +75,9 @@ public class QnaController {
     public Page<QnaListDTO> getQnaListByRent(@PathVariable Long rentId,
                                              @RequestParam(required = false) QnaStatus status,
                                              @RequestParam(required = false) String username,
+                                             @RequestParam(required = false) String itemName,
                                              @RequestParam(required = false) Boolean secret,
                                              Pageable pageable){
-        return qnaService.getQnaListByRent(rentId, status, username, secret, pageable);
+        return qnaService.getQnaListByRent(rentId, status, username, itemName, secret, pageable);
     }
 }
