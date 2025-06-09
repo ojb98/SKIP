@@ -13,12 +13,15 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
     SELECT COUNT(DISTINCT p)
     FROM ReservationItem ri
     JOIN ri.reservation r
-    JOIN Payment p ON p.reservation = r
+    JOIN r.payment p
     JOIN ri.itemDetail id
     JOIN id.item i
     WHERE i.category = :category
-    AND p.createdAt >= :start
-    AND p.createdAt <= :end
+    AND p.createdAt BETWEEN :start AND :end
 """)
-    Long countPaymentsByItemCategory(@Param("category") ItemCategory category, @Param("start") LocalDateTime start, @Param("end")LocalDateTime end);
+    Long countPaymentsByItemCategory(
+            @Param("category") ItemCategory category,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 }

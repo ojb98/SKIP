@@ -31,6 +31,7 @@ const AdminSidebar = () => {
                         <ul className="sub-menu">
                             <li><Link to="/admin/userlist"> 고객정보 조회/관리</Link></li>
                             <li><Link to="/admin"> 예비</Link></li>
+                            <li><Link to="/admin/qna"> 문의관리</Link></li>
                         </ul>
                     </CustomAccordion>
                 </li>

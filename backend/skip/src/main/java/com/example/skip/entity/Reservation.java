@@ -39,10 +39,13 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // 아래 두 필드 추가
-    @Column(nullable = true, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id",  nullable = false)
+    private Payment payment;
+
+    @Column(nullable = false)
     private String merchantUid;  // 아임포트 주문번호
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String impUid;       // 아임포트 결제 고유번호
 }

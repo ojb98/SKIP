@@ -28,7 +28,10 @@ import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
+import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
+import WishList from "./components/wishList"
+
 
 
 
@@ -71,7 +74,8 @@ function App() {
                         
                         {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>
-
+                        {/* 사용자 찜 */}
+                        <Route path="/wish/list" element={<WishList/>}></Route>
 
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rent/detail/:rentId" element={<RentalshopPage/>}></Route>
@@ -89,11 +93,13 @@ function App() {
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                         <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
+                    <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>
 
 
                     {/* 로그인 */}

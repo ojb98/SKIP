@@ -1,9 +1,14 @@
+import { useParams } from "react-router-dom";
 import QnaWrite from "../components/qna/QnaWrite";
 
-const QnaPopupPage = () => {
+const QnaPopupPage = ({ mode = "write" }) => {
+  const params = useParams();
   return(
     <main>
-      <QnaWrite />
+      <QnaWrite mode={mode} 
+                itemId={params.itemId}
+                qnaId={params.qnaId}
+      />
     </main>
   )
 }

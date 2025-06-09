@@ -2,12 +2,16 @@ package com.example.skip.controller;
 
 import com.example.skip.dto.cart.CartAddDTO;
 import com.example.skip.dto.cart.CartGroupDTO;
+import com.example.skip.scheduler.CartCleanupScheduler;
 import com.example.skip.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,6 +19,7 @@ import java.util.List;
 public class CartItemController {
 
     private final CartItemService cartItemService;
+    private final CartCleanupScheduler cartCleanupScheduler;
 
     // userId기준으로 장바구니 추가
     @PostMapping("/{userId}")
@@ -31,5 +36,24 @@ public class CartItemController {
         return ResponseEntity.ok(cart);
     }
 
+    // 장바구니 삭제(단건, 다건)
+    @DeleteMapping
+    public ResponseEntity<String> removeCartItem(@RequestBody Map<String, List<Long>> body){
+        List<Long> cartIds = body.get("cartIds");
+        cartItemService.deleteCartItems(cartIds);
+        return ResponseEntity.ok().build();
+    }
+
+    // 장바구니 수정(수량,가격)
+    @PatchMapping("/{cartId}")
+    public ResponseEntity<?> updateQuantity(@PathVariable("cartId") Long cartId,
+                                             @RequestBody Map<String, Integer> body){
+
+        int quantity = body.getOrDefault("quantity", 1);  // 수량 없으면 기본 1
+        cartItemService.updateCartItemQuantity(cartId, quantity);
+
+        return ResponseEntity.ok().build();
+
+    }
 
 }
