@@ -36,7 +36,6 @@ export const loginSlice = createSlice({
                     state.image = profile.image;
                     state.nickname = profile.nickname;
                     state.showname = profile.nickname ? profile.nickname : profile.username.substring(0, 11).slice(0, -3) + '***';
-                    state.myname = profile.nickname ? profile.nickname : profile.username;
                     if (state.social != 'NONE') {
                         state.linkage = profile.linkage;
                     }

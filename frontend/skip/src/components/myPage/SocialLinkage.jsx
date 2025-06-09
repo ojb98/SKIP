@@ -45,7 +45,7 @@ const SocialLinkage = () => {
                                         연결하기
                                     </button>
                                     ||
-                                    profile.social == 'KAKAO'// && profile.linkage.usernameSet && profile.linkage.passwordSet
+                                    profile.social == 'KAKAO' && profile.linkage.usernameSet && profile.linkage.passwordSet
                                     &&
                                     <button
                                         onClick={unlinkHandler}
@@ -59,18 +59,18 @@ const SocialLinkage = () => {
                                     <button className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}>
                                         연결하기
                                     </button>
-                                    // ||
-                                    // profile.social == 'KAKAO'
-                                    // &&
-                                    // <>
-                                    //     <span className="text-xs text-gray-400">*연결을 끊으시려면 아이디, 비밀번호를 설정해주세요.</span>
+                                    ||
+                                    profile.social == 'KAKAO'
+                                    &&
+                                    <>
+                                        <span className="text-xs text-gray-400">*연결을 끊으시려면 아이디, 비밀번호를 설정해주세요.</span>
 
-                                    //     <button
-                                    //         className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}
-                                    //     >
-                                    //         연결 끊기
-                                    //     </button>
-                                    // </>
+                                        <button
+                                            className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}
+                                        >
+                                            연결 끊기
+                                        </button>
+                                    </>
                                 }
                             </li>
 
@@ -99,7 +99,7 @@ const SocialLinkage = () => {
                                         연결하기
                                     </button>
                                     ||
-                                    profile.social == 'NAVER'// && profile.linkage.usernameSet && profile.linkage.passwordSet
+                                    profile.social == 'NAVER' && profile.linkage.usernameSet && profile.linkage.passwordSet
                                     &&
                                     <button
                                         onClick={unlinkHandler}
@@ -107,18 +107,18 @@ const SocialLinkage = () => {
                                     >
                                         연결 끊기
                                     </button>
-                                    // ||
-                                    // profile.social == 'NAVER'
-                                    // &&
-                                    // <>
-                                    //     <span className="text-xs text-gray-400">*연결을 끊으시려면 아이디, 비밀번호를 설정해주세요.</span>
+                                    ||
+                                    profile.social == 'NAVER'
+                                    &&
+                                    <>
+                                        <span className="text-xs text-gray-400">* 연결을 끊으시려면 아이디, 비밀번호를 설정해주세요.</span>
 
-                                    //     <button
-                                    //         className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}
-                                    //     >
-                                    //         연결 끊기
-                                    //     </button>
-                                    // </>
+                                        <button
+                                            className={button({ color: "inactive", className: "w-[110px] h-[45px]" })}
+                                        >
+                                            연결 끊기
+                                        </button>
+                                    </>
                                 }
                             </li>
                         </ul>

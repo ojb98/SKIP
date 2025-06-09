@@ -41,7 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/user/social",
                 "/user/nickname/change",
                 "/user/username/change",
-                "/user/email/change"
+                "/user/email/change",
+                "/user/name/change",
+                "/user/phone/change",
+                "/user/image/change"
         );
 
         return excludePaths.stream().noneMatch(path::startsWith);

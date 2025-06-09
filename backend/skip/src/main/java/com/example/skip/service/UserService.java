@@ -73,6 +73,12 @@ public class UserService {
     }
 
     @CacheEvict(value = "users", key = "#userId")
+    public void changeImage(Long userId, String image) {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setImage(image);
+    }
+
+    @CacheEvict(value = "users", key = "#userId")
     public void changeNickname(Long userId, String nickname) throws DataIntegrityViolationException {
         User user = userRepository.findByUserId(userId).orElseThrow();
         user.setNickname(nickname);
@@ -88,6 +94,18 @@ public class UserService {
     public void changeEmail(Long userId, String email) {
         User user = userRepository.findByUserId(userId).orElseThrow();
         user.setEmail(email);
+    }
+
+    @CacheEvict(value = "users", key = "#userId")
+    public void changeName(Long userId, String name) {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setName(name);
+    }
+
+    @CacheEvict(value = "users", key = "#userId")
+    public void changePhone(Long userId, String phone) {
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        user.setPhone(phone);
     }
 
     @CacheEvict(value = "users", key = "#userDto.userId")

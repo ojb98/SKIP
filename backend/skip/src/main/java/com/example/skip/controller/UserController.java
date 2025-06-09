@@ -7,10 +7,12 @@ import com.example.skip.exception.CustomEmailException;
 import com.example.skip.service.EmailVerifyService;
 import com.example.skip.service.UserService;
 import com.example.skip.service.UserSocialService;
+import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,11 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtil jwtUtil;
+
+    private final FileUploadUtil fileUploadUtil;
+
+    @Value("${file.profile-image}")
+    private String profileImagePath;
 
 
     @PostMapping
@@ -102,6 +110,21 @@ public class UserController {
         UserDto userDto = (UserDto) userDetails;
         Map<String, Object> claims = userDto.getClaims();
         return ResponseEntity.ok(Map.of("success", true, "return", claims));
+    }
+
+    @PutMapping("/image/change")
+    public ApiResponse changeImage(@AuthenticationPrincipal UserDetails userDetails,
+                                   MultipartFile file) {
+        log.info("파일: {}", file);
+
+        UserDto userDto = (UserDto) userDetails;
+
+        String image = fileUploadUtil.uploadFileAndUpdateUrl(file, userDto.getImage(), profileImagePath);
+
+        userService.changeImage(userDto.getUserId(), image);
+
+        return ApiResponse.builder()
+                .success(true).build();
     }
 
     @PutMapping("/nickname/change")
@@ -183,6 +206,54 @@ public class UserController {
                     .success(false)
                     .data("이메일을 인증해주세요.").build();
         }
+    }
+
+    @PutMapping("/name/change")
+    public ApiResponse changeName(@AuthenticationPrincipal UserDetails userDetails,
+                                  @Valid @RequestBody NameChangeRequest nameChangeRequest,
+                                  BindingResult bindingResult) {
+        UserDto userDto = (UserDto) userDetails;
+
+        if (bindingResult.hasErrors()) {
+            List<String> nameErrors = new ArrayList<>();
+
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                nameErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(nameErrors).build();
+        }
+
+        userService.changeName(userDto.getUserId(), nameChangeRequest.getName());
+
+        return ApiResponse.builder()
+                .success(true).build();
+    }
+
+    @PutMapping("/phone/change")
+    public ApiResponse changePhone(@AuthenticationPrincipal UserDetails userDetails,
+                                  @Valid @RequestBody PhoneChangeRequest phoneChangeRequest,
+                                  BindingResult bindingResult) {
+        UserDto userDto = (UserDto) userDetails;
+
+        if (bindingResult.hasErrors()) {
+            List<String> phoneErrors = new ArrayList<>();
+
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                phoneErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(phoneErrors).build();
+        }
+
+        userService.changePhone(userDto.getUserId(), phoneChangeRequest.getPhone());
+
+        return ApiResponse.builder()
+                .success(true).build();
     }
 
     @PutMapping("/password/change")

@@ -34,7 +34,7 @@ const AccountSecurityPage = () => {
                                         &&
                                         !profile.linkage.passwordSet
                                         &&
-                                        <span className="text-xs text-gray-400">*아이디, 비밀번호를 설정하시면 일반회원처럼 로그인할 수 있어요.</span>
+                                        <span className="text-xs text-gray-400">* 아이디, 비밀번호를 설정하시면 일반회원처럼 로그인할 수 있어요.</span>
                                     }
 
                                     <span>

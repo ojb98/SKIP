@@ -15,7 +15,11 @@ const MySideMenu = ({group, active}) => {
             <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white shadow-xl">
                 <div className="px-4 py-6">
                     <div className="flex flex-col items-center gap-2 mt-6 mb-12">
-                        <img src={profile.image ? `http://localhost:8080/${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
+                        {
+                            !profile.isLoading
+                            &&
+                            <img src={profile.image ? `http://localhost:8080${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
+                        }
 
                         <div className="flex items-center gap-2">
                             {
@@ -27,7 +31,7 @@ const MySideMenu = ({group, active}) => {
                                 &&
                                 <img src="/images/naver_link.png" width={20}></img>
                             }
-                            <span className="text-sm font-semibold">{profile.myname}</span><span className="text-sm text-gray-500">님</span>
+                            <span className="text-sm font-semibold">{profile.showname}</span><span className="text-sm text-gray-500">님</span>
                         </div>
                     </div>
 

@@ -66,6 +66,21 @@ export const getProfile = async () => {
     return data;
 }
 
+export const changeImage = async req => {
+    const formData = new FormData();
+    formData.append('file', req);
+
+    const data = await caxios.put(`/user/image/change`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    }).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
 // 닉네임 변경
 export const changeNickname = async req => {
     const data = await caxios.put(`/user/nickname/change`, req).then(res => {
@@ -87,6 +102,22 @@ export const changeUsername = async req => {
 // 이메일 변경
 export const changeEmail = async req => {
     const data = await caxios.put(`/user/email/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const changeName = async req => {
+    const data = await caxios.put(`/user/name/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const changePhone = async req => {
+    const data = await caxios.put(`/user/phone/change`, req).then(res => {
         return res.data;
     });
 

@@ -13,12 +13,14 @@ import com.example.skip.enumeration.UserStatus;
 import com.example.skip.repository.KakaoLinkageRepository;
 import com.example.skip.repository.NaverLinkageRepository;
 import com.example.skip.repository.UserRepository;
+import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -65,32 +68,42 @@ public class UserSocialService {
 
     private final OAuth2Properties oAuth2Properties;
 
+    private final FileUploadUtil fileUploadUtil;
+
     @Value("${spring.security.oauth2.client.custom-kakao.redirect-uri}")
     private String customKakaoRedirectUri;
 
     @Value("${spring.security.oauth2.client.custom-naver.redirect-uri}")
     private String customNaverRedirectUri;
 
+    @Value("${file.profile-image}")
+    private String profileImagePath;
 
-    public UserDto signupWithKakao(Long userId, KakaoProfileDto kakaoProfileDto) {
+
+    public UserDto signupWithKakao(Long userId, KakaoProfileDto kakaoProfileDto) throws DataIntegrityViolationException {
         User user;
+        MultipartFile file = fileUploadUtil.fetchImageAsMultipart(kakaoProfileDto.getProfileImageUrl());
         boolean isUser = userId != null;
 
         // userId가 null일 경우 신규 가입
         if (isUser) {
             user = userRepository.findByUserId(userId).orElseThrow();
+
+            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
+
             user.setEmail(kakaoProfileDto.getEmail());
-//            user.setImage();
+            user.setImage(image);
             user.setSocial(UserSocial.KAKAO);
 
         } else {
             String password = passwordEncoder.encode(RandomStringGenerator.generate(12, RandomStringGenerator.ALPHANUMERIC));
+            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, null, profileImagePath);
 
             user = User.builder()
                     .username(kakaoProfileDto.getUsername())
                     .password(password)
                     .email(kakaoProfileDto.getEmail())
-//                    .image()
+                    .image(image)
                     .status(UserStatus.APPROVED)
                     .roles(Set.of(UserRole.USER))
                     .social(UserSocial.KAKAO).build();
@@ -113,20 +126,25 @@ public class UserSocialService {
         return new UserDto(user);
     }
 
-    public UserDto signupWithNaver(Long userId, NaverProfileDto naverProfileDto) {
+    public UserDto signupWithNaver(Long userId, NaverProfileDto naverProfileDto) throws DataIntegrityViolationException {
         User user;
+        MultipartFile file = fileUploadUtil.fetchImageAsMultipart(naverProfileDto.getProfileImage());
         boolean isUser = userId != null;
 
         if (isUser) {
             user = userRepository.findByUserId(userId).orElseThrow();
+
+            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
+
             user.setEmail(naverProfileDto.getEmail());
             user.setName(naverProfileDto.getName());
             user.setPhone(naverProfileDto.getMobile());
-//            user.setImage();
+            user.setImage(image);
             user.setSocial(UserSocial.NAVER);
 
         } else {
             String password = passwordEncoder.encode(RandomStringGenerator.generate(12, RandomStringGenerator.ALPHANUMERIC));
+            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, null, profileImagePath);
 
             user = User.builder()
                     .username(naverProfileDto.getUsername())
@@ -134,7 +152,7 @@ public class UserSocialService {
                     .email(naverProfileDto.getEmail())
                     .name(naverProfileDto.getName())
                     .phone(naverProfileDto.getMobile())
-//                    .image()
+                    .image(image)
                     .status(UserStatus.APPROVED)
                     .roles(Set.of(UserRole.USER))
                     .social(UserSocial.NAVER).build();
@@ -156,7 +174,7 @@ public class UserSocialService {
     }
 
     @CacheEvict(value = "users", key = "#userDto.userId")
-    public void link(UserSocial client, String authorizationCode, UserDto userDto) throws OAuth2AuthenticationException {
+    public void link(UserSocial client, String authorizationCode, UserDto userDto) throws OAuth2AuthenticationException, DataIntegrityViolationException {
         Map<String, Object> body = requestAccessToken(client, authorizationCode);
         log.info("Access token response: {}", body);
 
@@ -346,6 +364,11 @@ public class UserSocialService {
             throw new RuntimeException("연결된 계정이 없습니다.");
         }
         user.setSocial(UserSocial.NONE);
+
+        oAuth2AuthorizedClientService.removeAuthorizedClient(
+                userDto.getSocial().name().toLowerCase(),
+                userDto.getUsername()
+        );
     }
 
     public ResponseEntity<String> requestUnlink(UserSocial userSocial, String accessToken) {

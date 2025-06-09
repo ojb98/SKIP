@@ -1,5 +1,6 @@
 package com.example.skip.dto.request;
 
+import com.example.skip.annotation.NameValid;
 import com.example.skip.annotation.PasswordMatch;
 import com.example.skip.dto.UserDto;
 import com.example.skip.enumeration.UserRole;
@@ -12,7 +13,7 @@ import java.util.Set;
 
 @Data
 @PasswordMatch
-public class SignupRequest {
+public class SignupRequest implements NameValid {
     @NotBlank(message = "아이디를 입력해주세요.")
     @Pattern(message = "5~15자의 영문 또는 숫자로 입력해주세요.", regexp = "^[a-zA-Z0-9]{5,15}$")
     private String username;
