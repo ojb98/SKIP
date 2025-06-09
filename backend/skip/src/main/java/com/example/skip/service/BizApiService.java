@@ -42,7 +42,7 @@ public class BizApiService {
 
         String jsonBody;
         try {
-            jsonBody = objectMapper.writeValueAsString(body);  //JSON 문자열로 변환
+            jsonBody = objectMapper.writeValueAsString(body);  //JSON 문자열로 변환(직렬화)
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 직렬화 실패", e);
         }
@@ -70,7 +70,7 @@ public class BizApiService {
                 throw new IOException("응답 바디가 null입니다.");
             }
 
-            //응답 JSON 문자열을 자바 객체(BizApiResponse)로 변환
+            //응답 JSON 문자열을 자바 객체(BizApiResponse)로 변환 (역직렬화)
             String responseString = responseBody.string();
             BizApiResponse bizApiResponse = objectMapper.readValue(responseString, BizApiResponse.class);
 
