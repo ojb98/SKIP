@@ -35,6 +35,11 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
         JOIN i.rent r
         WHERE r.rentId =:rentId
         AND(:status IS NULL OR q.status =:status)
+        AND (:hasReply IS NULL OR
+                (:hasReply = true AND EXISTS (SELECT 1 FROM QnaReply r WHERE r.qna.qnaId = q.qnaId))
+                    OR
+                (:hasReply = false AND NOT EXISTS (SELECT 1 FROM QnaReply r WHERE r.qna.qnaId = q.qnaId))
+            )
         AND(:username IS NULL OR u.username LIKE %:username%)
         AND(:itemName IS NULL OR i.name LIKE %:itemName%)
         AND(:secret IS NULL OR q.secret =:secret)
@@ -44,7 +49,19 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
                                                         @Param("username")String username,
                                                         @Param("itemName")String itemName,
                                                         @Param("secret")Boolean secret,
+                                                        @Param("hasReply")Boolean hasReply,
                                                         Pageable pageable);
+
+    // 관리자페이지 미답변 갯수 구하기
+    @Query("""
+        SELECT COUNT(q)
+        FROM Qna q
+        WHERE q.item.rent.rentId =:rentId
+        AND NOT EXISTS (
+            SELECT 1 FROM QnaReply r WHERE r.qna.qnaId = q.qnaId     
+        )
+    """)
+    long countUnansweredByRentId(@Param("rentId") Long rentId);
 
     // 수정
     @Query("""
