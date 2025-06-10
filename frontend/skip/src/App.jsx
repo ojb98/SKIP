@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
-import LoginPage from "./pages/LoginPage"
-import SignupPage from "./pages/SignupPage"
+import LoginPage from "./pages/login/LoginPage"
+import SignupPage from "./pages/login/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -22,7 +22,7 @@ import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
 import UsersList from "./pages/admin/UsersList"
-import LoginLayout from "./pages/LoginLayout"
+import LoginLayout from "./pages/login/LoginLayout"
 import AccountPage from "./pages/myPage/AccountPage"
 import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
@@ -31,6 +31,11 @@ import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
+import PasswordResettingPage from "./pages/login/PasswordResettingPage"
+import PasswordResetSuccessPage from "./pages/login/PasswordResetSuccessPage"
+import UsernameInputPage from "./pages/login/UsernameInputPage"
+import UsernameFindPage from "./pages/login/UsernameFindPage"
+import UsernameFindSuccessPage from "./pages/login/UsernameFindSuccessPage"
 
 
 
@@ -107,6 +112,16 @@ function App() {
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
                         <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
+
+                        <Route path="/id/find" element={<UsernameFindPage></UsernameFindPage>}></Route>
+
+                        <Route path="/id/find/success" element={<UsernameFindSuccessPage></UsernameFindSuccessPage>}></Route>
+
+                        <Route path="/password/reset/id" element={<UsernameInputPage></UsernameInputPage>}></Route>
+
+                        <Route path="/password/reset" element={<PasswordResettingPage></PasswordResettingPage>}></Route>
+
+                        <Route path="/password/reset/success" element={<PasswordResetSuccessPage></PasswordResetSuccessPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

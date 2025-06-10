@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @Transactional
@@ -47,16 +48,6 @@ public class UserService {
 
 
     public UserDto signup(SignupRequest signupRequest, BindingResult bindingResult) {
-//        if (isUser(signupRequestDto.getUsername())) {
-//            bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
-//            return null;
-//        }
-//
-//        if (!signupRequestDto.isVerified()) {
-//            bindingResult.rejectValue("email", null, "이메일을 인증해주세요.");
-//            return null;
-//        }
-
         UserDto userDto = signupRequest.toUserDto();
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -65,6 +56,18 @@ public class UserService {
 
     public boolean isUser(String username) {
         return userRepository.findByUsername(username).isPresent();
+    }
+
+    public List<String> findUsers(String email) {
+        return userRepository.findUsersByEmail(email).stream().map(User::getUsername).toList();
+    }
+
+    public boolean compareEmail(String username, String email) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        if (user.getEmail().equals(email)) {
+            return true;
+        }
+        return false;
     }
 
     @Cacheable(value = "users", key = "#userId", unless = "#result == null")
@@ -153,6 +156,13 @@ public class UserService {
         }
 
         return false;
+    }
+
+    @CacheEvict(value = "users", key = "#result.userId")
+    public UserDto resetPassword(String username, String newPassword) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return new UserDto(user);
     }
 
     @CacheEvict(value = "users", key = "#userDto.userId")

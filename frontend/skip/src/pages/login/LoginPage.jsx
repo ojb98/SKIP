@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login, socialLogin } from "../api/userApi";
+import { login, socialLogin } from "../../api/userApi";
 import { useDispatch } from "react-redux";
-import { setProfile } from "../slices/loginSlice";
+import { setProfile } from "../../slices/loginSlice";
 
 const input_size = ' h-[55px] w-full ';
 const input_text = ' rounded border-[1px] border-gray-200 text-sm indent-2 focus-visible:outline-none focus:border-black ';
@@ -37,7 +37,7 @@ const LoginPage = () => {
                 dispatch(setProfile());
                 navigate({ pathname: '/' }, { replace: true });
             } else {
-                setLoginError('아이디 또는 비밀번호가 틀렸습니다.');
+                setLoginError(res.data);
             }
         });
     }
@@ -75,9 +75,9 @@ const LoginPage = () => {
                     ></input>
 
                     <ul className="flex gap-2 text-sm text-gray-500">
-                        <li className="hover:text-black"><Link>아이디 찾기</Link></li>
+                        <li className="hover:text-black"><Link to="/id/find">아이디 찾기</Link></li>
                         <li className="cursor-default">|</li>
-                        <li className="hover:text-black"><Link>비밀번호 찾기</Link></li>
+                        <li className="hover:text-black"><Link to="/password/reset/id">비밀번호 재설정</Link></li>
                         <li className="cursor-default">|</li>
                         <li className="hover:text-black"><Link to={"/signup"}>회원가입</Link></li>
                     </ul>

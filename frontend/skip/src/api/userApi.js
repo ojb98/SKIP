@@ -19,11 +19,31 @@ export const isUser = async req => {
     return data;
 }
 
+export const findUsername = async req => {
+    const data = await caxios.get(`/user/find/username`, {
+        params: { email: req }
+    }).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
 export const verifyEmail = async req => {
     const params = new URLSearchParams();
     params.append('email', req);
 
     return caxios.post(`/user/email/verify`, params).then(res => res.data);
+}
+
+export const compareAndVerifyEmail = async req => {
+    const params = new URLSearchParams();
+    params.append('username', req.username);
+    params.append('email', req.email);
+
+    const data = await caxios.post(`/user/email/compare-and-verify`, params).then(res => res.data);
+
+    return data;
 }
 
 export const confirmCode = async req => {
@@ -134,6 +154,14 @@ export const changePassword = async req => {
 
 export const setPassword = async req => {
     const data = await caxios.put(`/user/password/set`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const resetPassword = async req => {
+    const data = await caxios.put(`/user/password/reset`, req).then(res => {
         return res.data;
     });
 

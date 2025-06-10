@@ -7,6 +7,7 @@ import { LoaderCircle, MailCheck, Pencil, Save, Send, SendHorizonal, Undo2, X } 
 import { changeEmail, changeImage, changeName, changeNickname, changePhone, changeUsername, confirmCode, verifyEmail } from "../../api/userApi";
 import { setProfile } from "../../slices/loginSlice";
 import EmailTimer from "../EmailTimer";
+import { addHyphen } from "../../utils/validation";
 
 const AccountInfo = () => {
     const profile = useSelector(state => state.loginSlice);
@@ -215,20 +216,6 @@ const AccountInfo = () => {
         });
     };
 
-    const addHyphen = e => {
-        const value = e.target.value.replace(/\D/g, '');
-
-        if (value.length < 4) {
-            e.target.value = value;
-        } else if (value.length < 7) {
-            e.target.value = value.replace(/(\d{3})(\d{1,3})/, '$1-$2');
-        } else if (value.length < 11) {
-            e.target.value = value.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
-        } else {
-            e.target.value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
-        }
-    };
-
     const phoneSaveHandler = () => {
         changePhone({
             phone: phone.current.value
@@ -250,30 +237,30 @@ const AccountInfo = () => {
                     <>
                         <div className="flex flex-col items-center gap-10 my-10">
                             <div className="flex flex-col items-center gap-3 mb-7">
-                                <img ref={image} className="w-[160px] h-[160px] rounded-full"></img>
+                                <div className="relative">
+                                    <img ref={image} className="w-[160px] h-[160px] rounded-full"></img>
 
-                                <div className="w-40 h-9 flex justify-evenly items-center border rounded-2xl border-gray-300">
                                     {
                                         fileHasChanagedKey != 0
                                         &&
                                         <button
                                             onClick={() => setFileHasChanagedKey(0)}
-                                            className="cursor-pointer"
+                                            className="w-8 h-8 flex justify-center items-center bg-black rounded-full absolute -left-4 bottom-16 cursor-pointer"
                                         >
-                                            <Undo2></Undo2>
+                                            <Undo2 stroke="white"></Undo2>
                                         </button>
                                     }
 
                                     <button
                                         onClick={() => file.current?.click()}
-                                        className="cursor-pointer"
+                                        className="w-8 h-8 flex justify-center items-center bg-black rounded-full absolute left-16 -bottom-4 cursor-pointer"
                                     >
                                         <input
                                             type="file"
                                             ref={file}
                                             onChange={fileChangeHandler}
                                             className="hidden"></input>
-                                        <Pencil width={20}></Pencil>
+                                        <Pencil width={20} fill="white"></Pencil>
                                     </button>
 
                                     {
@@ -281,9 +268,9 @@ const AccountInfo = () => {
                                         &&
                                         <button
                                             onClick={imageSaveHandler}
-                                            className="cursor-pointer"
+                                            className="w-8 h-8 flex justify-center items-center bg-black rounded-full absolute left-36 bottom-16 cursor-pointer"
                                         >
-                                            <Save></Save>
+                                            <Save fill="white"></Save>
                                         </button>
                                     }
                                 </div>

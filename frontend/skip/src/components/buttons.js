@@ -9,6 +9,7 @@ export const button = tv({
     variants: {
         color: {
             primary: 'bg-blue-400 text-white transition-colors hover:bg-blue-500',
+            "primary-not-interactive": 'bg-blue-400 text-white',
             secondary: 'bg-gray-100 text-gray-700 transition-colors hover:bg-gray-200',
             inactive: 'bg-gray-300 text-white cursor-default',
             "success-outline": 'border border-[#03c75a] text-[#03c75a] transition-colors hover:bg-green-50',

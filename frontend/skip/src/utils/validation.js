@@ -99,3 +99,17 @@ export const validateVerificationCode = verificationCode => {
         message: ''
     };
 }
+
+export const addHyphen = e => {
+    const value = e.target.value.replace(/\D/g, '');
+
+    if (value.length < 4) {
+        e.target.value = value;
+    } else if (value.length < 7) {
+        e.target.value = value.replace(/(\d{3})(\d{1,3})/, '$1-$2');
+    } else if (value.length < 11) {
+        e.target.value = value.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
+    } else {
+        e.target.value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+    }
+};

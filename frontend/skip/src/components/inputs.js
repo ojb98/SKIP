@@ -9,5 +9,10 @@ export const inputText = tv({
         'indent-2',
         'focus-visible:outline-none',
         'focus:border-black'
-    ]
+    ],
+    variants: {
+        color: {
+            disabled: 'bg-gray-100'
+        }
+    }
 });
