@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,15 +40,31 @@ public class CartItemService {
             ItemDetail itemDetail = itemDetailRepository.findById(dto.getItemDetailId())
                     .orElseThrow(() -> new IllegalArgumentException("상품 상세 정보를 찾을 수 없습니다."));
 
-            CartItem cartItem = new CartItem();
-            cartItem.setUser(user);
-            cartItem.setItemDetail(itemDetail);
-            cartItem.setQuantity(dto.getQuantity());
-            cartItem.setPrice(dto.getQuantity() * itemDetail.getPrice());
-            cartItem.setRentStart(dto.getRentStart());
-            cartItem.setRentEnd(dto.getRentEnd());
+            // 기존에 동일한 상품이 있는지 조회 (user, itemDetail, rentStart, rentEnd 모두 동일한 항목)
+            Optional<CartItem> existingCartItemOpt = cartItemRepository.findByUserAndItemDetailAndRentStartAndRentEnd(
+                    user, itemDetail, dto.getRentStart(), dto.getRentEnd()
+            );
 
-            cartItemRepository.save(cartItem);
+            if (existingCartItemOpt.isPresent()) {
+                // 기존 항목이 있으면 수량 + dto.getQuantity() 하고 가격 갱신
+                CartItem existingCartItem = existingCartItemOpt.get();
+                int newQuantity = existingCartItem.getQuantity() + dto.getQuantity();
+                existingCartItem.setQuantity(newQuantity);
+                existingCartItem.setPrice(newQuantity * itemDetail.getPrice());
+
+                cartItemRepository.save(existingCartItem);
+            } else {
+                // 없으면 새로 생성
+                CartItem cartItem = new CartItem();
+                cartItem.setUser(user);
+                cartItem.setItemDetail(itemDetail);
+                cartItem.setQuantity(dto.getQuantity());
+                cartItem.setPrice(dto.getQuantity() * itemDetail.getPrice());
+                cartItem.setRentStart(dto.getRentStart());
+                cartItem.setRentEnd(dto.getRentEnd());
+
+                cartItemRepository.save(cartItem);
+            }
         }
     }
 
@@ -75,6 +92,7 @@ public class CartItemService {
                     List<CartItemDTO> itemDTO = entry.getValue().stream()
                             .map(ci -> CartItemDTO.builder()
                                     .cartId(ci.getCartId())
+                                    .itemId(ci.getItemDetail().getItem().getItemId())
                                     .itemName(ci.getItemDetail().getItem().getName())
                                     .image(ci.getItemDetail().getItem().getImage())
                                     .size((ci.getItemDetail().getSize()))

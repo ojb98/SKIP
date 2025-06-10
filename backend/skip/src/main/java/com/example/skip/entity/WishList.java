@@ -1,5 +1,6 @@
 package com.example.skip.entity;
 
+import com.example.skip.enumeration.YesNo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,11 @@ public class WishList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemDetailId", nullable = false)
     private ItemDetail itemDetail;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private YesNo useYn = YesNo.Y;
+
 
     @CreatedDate
     private LocalDate createdAt;

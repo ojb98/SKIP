@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BoardTabs from "../components/rentalshop/BoardTabs";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchItemDetailPage } from "../api/itemApi";
 import { addCartItemApi } from "../api/cartApi";
 import { useSelector } from "react-redux";
@@ -12,6 +12,10 @@ const ProductPage=()=>{
   // 유저아이디 꺼내오기
   const profile = useSelector(status=> status.loginSlice);
   const navigate = useNavigate();
+  //현재 페이지(컴포넌트)의 URL 정보와 함께 전달된 상태(state)
+  const location = useLocation();
+  const passedState = location.state;
+  console.log("location에서 넘어온 데이터 ==> ",location.state); 
 
   const parsedRentId = parseInt(rentId, 10);
   const parsedItemId = parseInt(itemId, 10);
@@ -238,8 +242,6 @@ const ProductPage=()=>{
                   </option>
                 ))
               }
-
-
             </select>
           </div>
           <div className="product-added-options">

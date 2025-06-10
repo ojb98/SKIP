@@ -10,14 +10,14 @@ import { useEffect } from "react"
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
 import ReviewPopupPage from "./pages/ReviewPopupPage"
-import RentInsertForm from "./components/rentAdmin/RentInsertForm"
-import RentList from "./components/rentAdmin/RentList"
-import RentDetail from "./components/rentAdmin/RentDetail"
-import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
-import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
-import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
-import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
-import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import RentInsertForm from "./components/rentManager/RentInsertForm"
+import RentList from "./components/rentManager/RentList"
+import RentDetail from "./components/rentManager/RentDetail"
+import RentUpdateForm from "./components/rentManager/RentUpdateForm"
+import ItemInsertForm from "./components/rentManager/ItemInsertForm"
+import ItemListAndDetails from "./components/rentManager/ItemListAndDetails"
+import ItemSelectorByRent from "./components/rentManager/ItemSelectorByRent"
+import ItemUpdateForm from "./components/rentManager/ItemUpdateForm"
 import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
@@ -32,6 +32,7 @@ import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
+import ItemReservation from "./components/rentManager/ItemReservation"
 
 
 
@@ -72,6 +73,7 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        <Route path="/itemAdmin/reserv/:rentItemId"  element={<ItemReservation/>}></Route>
                         
                         {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>

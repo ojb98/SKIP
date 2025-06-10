@@ -38,7 +38,7 @@ const CartList=()=>{
     }
 
 
-    // 대여시간/반납시간 날짜포맷
+    // 대여날짜/반납날짜 날짜포맷
     const formatDate = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
@@ -48,12 +48,21 @@ const CartList=()=>{
         return `${year}-${month}-${day}`;
     };
 
+    // 대여시간/반납시간 날짜포맷
     const formatTime = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
         const hours = `${date.getHours()}`.padStart(2, "0");
         const minutes = `${date.getMinutes()}`.padStart(2, "0");
         return `${hours}:${minutes}`;
+    };
+
+    // 반납시간 - 대여시간 = 시간구하기 
+    const getDurationHour = (start, end) => {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const diffMs = endDate - startDate;
+        return diffMs / (1000 * 60 * 60);  // ms → 시간
     };
 
 
@@ -260,7 +269,9 @@ const CartList=()=>{
                     </div>
                 </div>
 
-                <span>* 자동으로 일주일단위로 비워집니다</span>
+                <span className="block mt-4 text-sm text-gray-500 italic">
+                    * 자동으로 일주일단위로 비워집니다
+                </span>
                 <div className="cart-items-container">
                 {
                     cartGroups.map(group => (
@@ -288,7 +299,16 @@ const CartList=()=>{
 
                                         <div className="itemdatail-group">
                                             <div className="item-content-group">
-                                                <h4><strong>{group.name}</strong></h4>
+                                                <h4 onClick={() => navigate(`/rent/product/${group.rentId}/${item.itemId}`,{
+                                                    state : {
+                                                        date: formatDate(item.rentStart),
+                                                        startTime: formatTime(item.rentStart),
+                                                        duration: getDurationHour(item.rentStart, item.rentEnd),
+                                                        size: item.size,
+                                                    }
+                                                })} className="link-area">
+                                                    <strong>{group.name}</strong>
+                                                </h4> 
                                                 <span>{item.itemName}</span><br />
                                                 <p>대여날짜: {
                                                 formatDate(item.rentStart) === formatDate(item.rentEnd)

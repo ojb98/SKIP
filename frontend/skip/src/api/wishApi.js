@@ -18,8 +18,8 @@ export const wishListApi = async(userId) => {
     return data;
 }
 
-export const removeWishApi = async (wishlistId) => {
-    const data = await axios.delete(`${host}/${wishlistId}`).then(res=>{
+export const removeWishApi = async (wishlistId,useYn) => {
+    const data = await axios.patch(`${host}/${wishlistId}?useYn=${useYn}`).then(res=>{
         console.log("찜 삭제 ==>", res);
         return res.data;
     });
