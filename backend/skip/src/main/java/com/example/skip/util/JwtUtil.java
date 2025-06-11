@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -78,13 +79,14 @@ public class JwtUtil {
     }
 
     public void attachToken(String tokenName, String token, HttpServletResponse response, long validity) {
-        Cookie cookie = new Cookie(tokenName, token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) TimeUnit.MILLISECONDS.toSeconds(validity));
+        ResponseCookie responseCookie = ResponseCookie.from(tokenName, token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge((int) TimeUnit.MILLISECONDS.toSeconds(validity)).build();
 
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", responseCookie.toString());
     }
 
     public String extractToken(String tokenName, HttpServletRequest request) {

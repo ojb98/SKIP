@@ -148,7 +148,7 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
           <div className="user-detail-card">
             <div className="user-section">
               <h4>👤 사용자 상세 정보</h4>
-              <img src={selectedUser.image || "/default-profile.png"} alt="사용자 프로필" />
+              <img src={selectedUser.image || "/images/default-profile.png"} alt="사용자 프로필" />
               <p style={{ textAlign: 'center' }}>
                 <strong>이름:</strong> {selectedUser.name}  <br />
                 <strong>닉네임:</strong> {selectedUser.nickname}

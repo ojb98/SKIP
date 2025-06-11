@@ -46,3 +46,13 @@ export const fetchSalesList = async (startDate, endDate) => {
     });
     return response.data;
 };
+
+// export const downloadExcel = async (startDate, endDate) => {
+//     const response = await axios.get(`/api/admin/excel/summary/export`, {
+//         params: {
+//             atStart: startDate,
+//             atEnd: endDate,
+//         },
+//     });
+//     return response.data;
+// }

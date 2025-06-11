@@ -1,5 +1,7 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.KakaoProfileDto;
+import com.example.skip.dto.NaverProfileDto;
 import com.example.skip.dto.UserDto;
 import com.example.skip.entity.KakaoLinkage;
 import com.example.skip.entity.NaverLinkage;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -28,6 +31,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+
+    private final UserSocialService userSocialService;
 
     private final NaverLinkageRepository naverLinkageRepository;
 
@@ -45,73 +50,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (clientName.equals("Naver")) {
             // 네이버 로그인
-            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-            String naverId = (String) response.get("id");
-            String username = clientName + "_" + naverId;
 
-            User user = userRepository.getUserWithRolesByUsername(username);
-            if (user == null) {
-                String email = (String) response.get("email");
-                String name = (String) response.get("name");
-                String mobile = (String) response.get("mobile");
-                String profile_image = (String) response.get("profile_image");
+            NaverProfileDto naverProfileDto = new NaverProfileDto(attributes);
 
-                user = User.builder()
-                        .username(username)
-                        .password(password)
-                        .email(email)
-                        .name(name)
-                        .phone(mobile)
-//                        .image()
-                        .status(UserStatus.APPROVED)
-                        .roles(Set.of(UserRole.USER))
-                        .social(UserSocial.NAVER).build();
-                userRepository.saveAndFlush(user);
+            Optional<User> optionalUser = userRepository.findUserByNaverLinkageNaverId(naverProfileDto.getNaverId());
 
-                NaverLinkage naverLinkage = NaverLinkage.builder()
-                        .user(user)
-                        .naverId(naverId)
-                        .usernameSet(false)
-                        .passwordSet(false).build();
-                naverLinkageRepository.saveAndFlush(naverLinkage);
-
-                user.setNaverLinkage(naverLinkage);
-            }
-            UserDto userDto = new UserDto(user);
+            UserDto userDto = optionalUser.isEmpty() ? userSocialService.signupWithNaver(null, naverProfileDto) : new UserDto(optionalUser.get());
             userDto.setAttributes(attributes);
             return userDto;
+
         } else if (clientName.equals("Kakao")) {
             // 카카오 로그인
-            Long kakaoId = (Long) attributes.get("id");
-            String username = clientName + "_" + kakaoId;
 
-            User user = userRepository.getUserWithRolesByUsername(username);
-            if (user == null) {
-                Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-                String email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
-                System.out.println(properties);
-                user = User.builder()
-                        .username(username)
-                        .password(password)
-                        .email(email)
-//                        .image()
-                        .status(UserStatus.APPROVED)
-                        .roles(Set.of(UserRole.USER))
-                        .social(UserSocial.KAKAO).build();
-                userRepository.saveAndFlush(user);
+            KakaoProfileDto kakaoProfileDto = new KakaoProfileDto(attributes);
 
-                KakaoLinkage kakaoLinkage = KakaoLinkage.builder()
-                        .user(user)
-                        .kakaoId(kakaoId)
-                        .usernameSet(false)
-                        .passwordSet(false)
-                        .nameSet(false)
-                        .phoneSet(false).build();
-                kakaoLinkageRepository.saveAndFlush(kakaoLinkage);
+            Optional<User> optionalUser = userRepository.findUserByKakaoLinkageKakaoId(kakaoProfileDto.getKakaoId());
 
-                user.setKakaoLinkage(kakaoLinkage);
-            }
-            UserDto userDto = new UserDto(user);
+            UserDto userDto = optionalUser.isEmpty() ? userSocialService.signupWithKakao(null, kakaoProfileDto) : new UserDto(optionalUser.get());
+
             userDto.setAttributes(attributes);
             return userDto;
         }

@@ -42,12 +42,12 @@ const JoinPage = () => {
 
 
     const verifyHandler = () => {
+        setTimer(false);
         setEmailStatus(validateEmail(email.current.value));
         if (emailStatus.success) {
             setVisible(setVerify2);
-            const params = new URLSearchParams();
-            params.append('email', email.current.value);
-            verifyEmail(params).then(res => {
+            
+            verifyEmail(email.current.value).then(res => {
                 if (res.success) {
                     setVisible(setVerify3);
                     setConfirm('');
@@ -76,10 +76,10 @@ const JoinPage = () => {
     const confirmHandler = () => {
         setVerificationCodeStatus(validateVerificationCode(verificationCode.current.value));
         if (verificationCodeStatus.success) {
-            const params = new URLSearchParams();
-            params.append('email', lastEmail);
-            params.append('verificationCode', verificationCode.current.value);
-            confirmCode(params).then(res => {
+            confirmCode({
+                email: lastEmail,
+                verificationCode: verificationCode.current.value
+            }).then(res => {
                 if (res.success) {
                     // 이메일 인증 성공
                     setConfirm('hidden');
@@ -153,10 +153,8 @@ const JoinPage = () => {
         <>
             <div className="w-[400px]">
                 <form className="flex flex-col items-center gap-5" onSubmit={signupHandler}>
-                    <div className="w-full flex justify-between mb-5 border-b">
+                    <div className="w-full mb-5 p-1 border-b">
                         <h1 className="text-2xl">회원가입</h1>
-
-                        <SignupStep step={2}></SignupStep>
                     </div>
                     
                     <div className="w-full">
@@ -174,7 +172,7 @@ const JoinPage = () => {
                                 (
                                     typeof usernameStatus.success == 'undefined' ?
                                     <></> :
-                                    <span className="text-xs text-red-400">{'※ ' + usernameStatus.message}</span>
+                                    <span className="text-xs text-red-400">{usernameStatus.message}</span>
                                 )
                             }
                         </div>
@@ -203,7 +201,7 @@ const JoinPage = () => {
                         ></input>
 
                         <div className="w-full flex justify-start">
-                            <span className="text-xs text-red-400">{confirmPasswordStatus.success === false ? '※ ' + confirmPasswordStatus.message : null}</span>
+                            <span className="text-xs text-red-400">{confirmPasswordStatus.success === false ? confirmPasswordStatus.message : null}</span>
                         </div>
                     </div>
 
@@ -267,7 +265,7 @@ const JoinPage = () => {
                                     (
                                         typeof emailStatus.success == 'undefined' ?
                                         <></> :
-                                        <span className="text-xs text-red-400">{'※ ' + emailStatus.message}</span>
+                                        <span className="text-xs text-red-400">{emailStatus.message}</span>
                                     )
                             }
                         </div>
@@ -285,7 +283,8 @@ const JoinPage = () => {
                                 ></input>
 
                                 {
-                                    timer &&
+                                    timer
+                                    &&
                                     <span className="absolute inset-y-0 right-3 grid w-8 place-content-center text-red-400 text-xs">
                                         <EmailTimer></EmailTimer>
                                     </span>
@@ -315,14 +314,14 @@ const JoinPage = () => {
                         type="text"
                         placeholder="이름"
                         ref={name}
-                        className={inputTextClass + ' bg-gray-100'}
+                        className={inputTextClass}
                     ></input>
 
                     <input
                         type="text"
                         placeholder="전화번호"
                         ref={phone}
-                        className={inputTextClass + ' bg-gray-100'}
+                        className={inputTextClass}
                     ></input>
 
                     <div className="w-full mb-3">

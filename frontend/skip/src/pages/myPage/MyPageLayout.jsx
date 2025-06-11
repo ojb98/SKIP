@@ -13,10 +13,10 @@ const MyPageLayout = () => {
 
     return (
         <>
-            <div className="w-[1100px] flex justify-between items-start my-12">
+            <div className="w-[1150px] flex justify-between items-start my-12">
                 <MySideMenu group={group} active={active}></MySideMenu>
 
-                <div className="w-[800px] pl-3 font-[NanumSquare]">
+                <div className="w-[830px] pl-3 font-[NanumSquare]">
                     {
                         !profile.isLoading
                         &&

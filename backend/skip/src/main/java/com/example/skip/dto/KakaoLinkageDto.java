@@ -20,7 +20,7 @@ public class KakaoLinkageDto implements Serializable {
 
     private Long userId;
 
-    private Long kakaoId;
+    private String kakaoId;
 
     private Boolean usernameSet;
 

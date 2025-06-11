@@ -2,8 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
-import JoinPage from "./pages/SignupPage"
-import SignupVerifyPage from "./pages/SignupVerifyPage"
+import SignupPage from "./pages/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -32,7 +31,9 @@ import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
-
+import UserApprovalTable from "./components/adminpage/UserApprovalTable"
+import UserPendingTable from "./components/adminpage/UserPendingTable"
+import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 
 
 
@@ -87,9 +88,9 @@ function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         {/* 추가 라우트 */}
-                        <Route path="/admin/pendinglist" element={<UserApprovalList/>} />
-                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/pendinglist" element={<UserPendingTable/>} />
+                        <Route path="/admin/withdrawnlist" element={<UserWithdrawTable/>} />
+                        <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
@@ -107,9 +108,7 @@ function App() {
                     <Route element={<LoginLayout></LoginLayout>}>
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
