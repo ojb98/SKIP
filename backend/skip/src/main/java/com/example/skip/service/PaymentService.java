@@ -113,9 +113,11 @@ public class PaymentService {
 
         // 6. Reservation 여러 건 생성 및 Payment에 연결
         for (PaymentCompleteDTO.ReservationItemDTO itemDto : dto.getReservationItems()) {
-            CartItem cartItem = cartItemRepository.findById(itemDto.getCartItemId())
-                    .orElseThrow(() -> new IllegalArgumentException("카트 아이템 없음: " + itemDto.getCartItemId()));
-
+            CartItem cartItem = cartItemRepository.findById(itemDto.getCartId())
+                    .orElseThrow(() -> {
+                        log.error("❌ 카트 아이템 없음! cartId={}", itemDto.getCartId());
+                        return new IllegalArgumentException("카트 아이템 없음: " + itemDto.getCartId());
+                    });
             Rent rent = rentRepository.findById(itemDto.getRentId())
                     .orElseThrow(() -> new IllegalArgumentException("렌트 정보 없음"));
 

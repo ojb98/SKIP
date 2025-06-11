@@ -57,13 +57,13 @@ const CartList=()=>{
         return `${hours}:${minutes}`;
     };
 
-    // 반납시간 - 대여시간 = 시간구하기 
-    const getDurationHour = (start, end) => {
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const diffMs = endDate - startDate;
-        return diffMs / (1000 * 60 * 60);  // ms → 시간
-    };
+    // // 반납시간 - 대여시간 = 시간구하기 
+    // const getDurationHour = (start, end) => {
+    //     const startDate = new Date(start);
+    //     const endDate = new Date(end);
+    //     const diffMs = endDate - startDate;
+    //     return diffMs / (1000 * 60 * 60);  // ms → 시간
+    // };
 
 
     // 개별선택 체크박스
@@ -199,7 +199,7 @@ const CartList=()=>{
             group.items.filter(item => checkedItems.has(item.cartId))
                 // 새로운 객체 형태로 변환
                 .map(item => ({
-                    cartItemId: item.cartId,
+                    cartId: item.cartId,
                     rentId: group.rentId,
                     rentStart: new Date(item.rentStart).toISOString(),
                     rentEnd: new Date(item.rentEnd).toISOString(),
@@ -224,7 +224,7 @@ const CartList=()=>{
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
-        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (rsp는 아임포트 응답 객체)
+        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
             console.log("결제 응답 ===>",resp);
             if (resp.success) {  
                 try {

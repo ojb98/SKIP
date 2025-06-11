@@ -16,7 +16,7 @@ public class PaymentCompleteDTO {
 
     @Data
     public static class ReservationItemDTO {
-        private Long cartItemId;
+        private Long cartId;
         private Long rentId;
         private String rentStart;
         private String rentEnd;
