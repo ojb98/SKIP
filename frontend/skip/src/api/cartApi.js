@@ -44,5 +44,3 @@ export const updateCartItemApi = async(cartId, quantity) => {
     });
     return data;
 }
-
-

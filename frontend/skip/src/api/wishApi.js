@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const host = 'http://localhost:8080/api/wishes';
@@ -25,4 +26,3 @@ export const removeWishApi = async (wishlistId,useYn) => {
     });
     return data;
 }
-

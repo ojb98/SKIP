@@ -1,3 +1,4 @@
+
 package com.example.skip.controller;
 
 import com.example.skip.dto.WishAddDTO;
