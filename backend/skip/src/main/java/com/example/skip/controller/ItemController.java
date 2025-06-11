@@ -88,7 +88,7 @@ public class ItemController {
     @GetMapping("/paging/{rentId}")
     public ResponseEntity<Page<ItemResponseDTO>> getPagingItems(@PathVariable("rentId") Long rentId,
                                                                 @RequestParam String category,
-                                                                @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+                                                                @PageableDefault(size = 10, sort = "itemId", direction = Sort.Direction.DESC)Pageable pageable) {
         Page<ItemResponseDTO> result = itemService.getRentItemPaging(rentId, category, pageable);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

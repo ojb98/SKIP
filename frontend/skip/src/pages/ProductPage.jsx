@@ -168,6 +168,7 @@ const ProductPage=()=>{
     return;
     }
 
+    // 사이즈를 선택하지 않아도 사용자 선택과 관계없이 첫 번째 장비가 찜되는 구조
     const defaultDetail = itemData.detailList[0];
 
     try {

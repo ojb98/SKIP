@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.OAuth2AuthorizationSuccessHandler;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +29,26 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final RefreshTokenService refreshTokenService;
 
+    private final OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
+
+    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
+
+        OAuth2AuthorizeRequest oAuth2AuthorizeRequest = OAuth2AuthorizeRequest
+                .withClientRegistrationId(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())
+                .principal(oAuth2AuthenticationToken)
+                .build();
+
+        System.out.println(oAuth2AuthenticationToken.getName() + oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
+
+        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
+
+        oAuth2AuthorizedClientService.saveAuthorizedClient(oAuth2AuthorizedClient, oAuth2AuthenticationToken);
+
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Map<String, Object> claims = userDto.getClaims();
 

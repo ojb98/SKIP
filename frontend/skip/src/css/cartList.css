@@ -1,0 +1,218 @@
+/* 전체 컨테이너 */
+.cart-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px; /* 기존보다 기본 폰트 크기 ↑ */
+}
+
+/* 상단 제목 */
+.top-subject {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* 장바구니 항목이 없을때 메시지 */
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+    margin: 2rem 0;
+}
+
+/* 전체선택/선택삭제 버튼 */
+.select-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 선택 버튼 공통 */
+.select-btn,
+.select-del-btn {
+  padding: 10px 16px;
+  font-size: 15px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.select-btn:hover,
+.select-del-btn:hover {
+  background-color: #ddd;
+}
+
+/* 장바구니 그룹 */
+.cart-group {
+  margin-bottom: 30px;
+}
+
+/* 항목을 감싸는 라벨 */
+.item-wrapper {
+  display: flex;
+  align-items: flex-start;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  position: relative;
+  margin-bottom: 14px;
+  gap: 18px;
+}
+
+/* 체크된 상태 */
+.item-wrapper.checked {
+  background-color: #eef6ff;
+  border-left: 4px solid #007bff;
+}
+
+/* 체크박스 표시 */
+.checkbox-btn {
+  width: 20px;
+  height: 20px;
+  margin-top: 6px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+/* 콘텐츠 영역 */
+.item-content {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+}
+
+/* 삭제 버튼 */
+.cart-remove-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff5c5c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cart-remove-btn:hover {
+  background: #e04b4b;
+}
+
+/* 상품 이미지 */
+.item-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain; 
+  border-radius: 6px;
+  flex-shrink: 0;
+  background-color: #f8f8f8; 
+}
+
+/* 상세 영역 */
+.itemdatail-group {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* 텍스트 정보 */
+.item-content-group {
+  font-size: 15px;
+  line-height: 1.6;
+  flex: 1 1 50%;
+}
+
+/* 수량 및 가격 */
+.update-div {
+  text-align: right;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.count-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.quantity-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-btn button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.quantity-btn button:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity-btn span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.update-div p {
+  font-size: 15px;
+  margin: 0;
+}
+
+/* 결제 영역 */
+.payment-group {
+  margin-top: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 총 금액 */
+.totalPrice-div p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* 결제 버튼 */
+.payment-btn {
+  background-color: #007bff;
+  color: white;
+  font-size: 17px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.payment-btn:hover {
+  background-color: #0056b3;
+}
+
+.payment-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

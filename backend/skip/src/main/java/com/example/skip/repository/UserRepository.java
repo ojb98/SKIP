@@ -19,6 +19,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"roles", "naverLinkage", "kakaoLinkage"})
     Optional<User> findByUserId(Long userId);
 
+    @EntityGraph(attributePaths = {"roles", "kakaoLinkage"})
+    Optional<User> findUserByKakaoLinkageKakaoId(String kakaoId);
+
+    @EntityGraph(attributePaths = {"roles", "naverLinkage"})
+    Optional<User> findUserByNaverLinkageNaverId(String naverId);
+
     Optional<User> findByUsername(String username);
 
     List<User> findByUsernameContaining(String keyword);

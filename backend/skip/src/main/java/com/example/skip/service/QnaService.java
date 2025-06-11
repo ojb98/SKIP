@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.QnaDTO;
 import com.example.skip.dto.QnaRequestDTO;
 import com.example.skip.dto.projection.QnaListDTO;
+import com.example.skip.dto.projection.QnaWithReplyDTO;
 import com.example.skip.entity.Item;
 import com.example.skip.entity.Qna;
 import com.example.skip.entity.User;
@@ -15,7 +16,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -76,19 +80,36 @@ public class QnaService {
         qnaRepository.deleteById(qnaId);
     }
 
-    // 아이템 페이지 Q&A 조회
-    public Page<QnaListDTO> getQnaListByItem(Long itemId, QnaStatus status ,Boolean secret, Pageable pageable) {
-        return qnaRepository.findQnaListByItemWithFilters(itemId, status, secret, pageable);
-    }
-
-    // 사용자 페이지 Q&A 조회
-    public Page<QnaListDTO> getQnaListByUser(Long userId, QnaStatus status, Boolean secret, Pageable pageable) {
-        return qnaRepository.findQnaListByUserWithFilters(userId, status, secret, pageable);
-    }
-
     // 관리자 페이지 Q&A 조회
-    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, Boolean secret, Pageable pageable) {
-        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, secret, pageable);
+    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, String itemName, Boolean secret, Pageable pageable) {
+        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, itemName, secret, pageable);
+    }
+
+    // 마이 페이지 Q&A 조회 (projection)
+    public Page<QnaWithReplyDTO> getQnaWithReplyByUserId(Long userId, Boolean hasReply, LocalDateTime startDate, Pageable pageable) {
+        return qnaRepository.findQnaWithReplyByUserIdAndFilter(userId, hasReply, startDate, pageable);
+    }
+
+    // 아이템 페이지 Q&A 조회 (projection)
+    public Page<QnaWithReplyDTO> getQnaWithReplyByItemId(Long itemId,
+                                                         Boolean hasReply,
+                                                         QnaStatus status,
+                                                         Boolean secret,
+                                                         Long currentUserId,
+                                                         Pageable pageable) {
+        return qnaRepository.findQnaWithReplyByItemAndFilter(itemId, hasReply, status, secret, currentUserId, pageable);
+    }
+
+    // Q&A 단건 상세 조회
+    public QnaWithReplyDTO getQnaDetail(Long qnaId) {
+        return qnaRepository.findDetailByQnaId(qnaId);
+    }
+
+    // Q&A 3개월 마다 자동 삭제
+    @Scheduled(cron = "0 0 0 * * ?") // 매 자정마다 실행
+    public void deleteOldQna() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(3); // 3개월 단위 Q&A 삭제
+        qnaRepository.deleteByCreatedAtBefore(cutoffDate);
     }
 
 }

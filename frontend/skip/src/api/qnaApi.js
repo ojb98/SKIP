@@ -10,7 +10,7 @@ export const createQnaApi = async (userId, qnaData) => {
 
 // Q&A 수정
 export const updateQnaApi = async (qnaId, userId, qnaData) => {
-  const response = await axios.put(`${host}?userId=${userId}`, qnaData)
+  const response = await axios.put(`${host}/${qnaId}?userId=${userId}`, qnaData)
   return response.data;
 }
 
@@ -27,26 +27,32 @@ export const deleteQnaByAdminApi = async (qnaId, rentId) => {
 }
 
 // 아이템 페이지 Q&A 리스트
-export const getQnaListByItemApi = async (itemId, status, secret, page = 0, size = 10) => {
+export const getQnaListByItemApi = async (itemId, hasReply, status, secret, currentUserId, page, size = 10) => {
   const response = await axios.get(`${host}/item/${itemId}`, {
-    params: {status, secret, page, size, sort: "createdAt,DESC"},
+    params: {hasReply, status, secret, currentUserId, page, size}
+  })
+  return response.data
+}
+
+// 관리자 페이지 Q&A 리스트
+export const getQnaListByAdminApi = async (rentId, status, username, itemName, secret, page = 0, size = 10) => {
+  const response = await axios.get(`${host}/admin/rent/${rentId}`, {
+    params: {status, username, itemName, secret, page, size, sort: "qnaId,DESC"},
   });
   return response.data;
 }
 
 // 마이페이지 Q&A 리스트
-export const getQnaListByUserApi = async (userId, status, secret, page = 0, size = 10) => {
-  const response = await axios.get(`${host}/user/${userId}`, {
-    params: {status, secret, page, size, sort: "createdAt,DESC"},
+export const getQnaListByUserApi = async (userId, hasReply, startDate, page = 0, size = 5) => {
+  const response = await axios.get(`${host}/user`, {
+    params: { userId, hasReply, startDate, page, size, sort: "createdAt,DESC" },
   });
   return response.data;
 }
 
-// 관리자 페이지 Q&A 리스트
-export const getQnaListByAdminApi = async (rentId, status, username, secret, page = 0, size = 10) => {
-  const response = await axios.get(`${host}/admin/rent/${rentId}`, {
-    params: {status, username, secret, page, size, sort: "createdAt,DESC"},
-  });
+// Q&A 단건 조회
+export const getQnaDetailApi = async (qnaId) => {
+  const response = await axios.get(`${host}/${qnaId}`);
   return response.data;
 }
 

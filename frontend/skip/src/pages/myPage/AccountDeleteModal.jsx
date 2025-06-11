@@ -4,11 +4,12 @@ import ModalHeader from "../../components/modal/ModalHeader";
 import ModalFooter from "../../components/modal/ModalFooter";
 import { inputText } from "../../components/inputs";
 import { useRef, useState } from "react";
-import { deleteAccount } from "../../api/userApi";
+import { confirmCode, deleteAccount, verifyEmail } from "../../api/userApi";
 import { button, radio } from "../../components/buttons";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, setProfile } from "../../slices/loginSlice";
 import { useNavigate } from "react-router-dom";
+import EmailTimer from "../../components/EmailTimer";
 
 const AccountDeleteModal = ({ onClose }) => {
     const profile = useSelector(state => state.loginSlice);
@@ -17,10 +18,15 @@ const AccountDeleteModal = ({ onClose }) => {
 
     const password = useRef();
     const email = useRef();
-    const confirm = useRef();    
+    const verificationCode = useRef();
+    const confirm = useRef();
     
     const [passwordStatus, setPasswordStatus] = useState({});
-    const [emailStatus, setEmailStatus] = useState({ phase: 1 });
+    const [emailPhase, setEmailPhase] = useState(1);
+    const [emailStatus, setEmailStatus] = useState({});
+    const [verificationCodeVisible, setVerificationCodeVisible] = useState(false);
+    const [verificationCodeStatus, setVerificationCodeStatus] = useState({});
+    const [timerVisible, setTimerVisible] = useState(false);
     const [confirmStatus, setConfirmStatus] = useState({});
 
     const navigate = useNavigate();
@@ -32,16 +38,61 @@ const AccountDeleteModal = ({ onClose }) => {
     }
 
     const verifyHandler = () => {
-        setEmailStatus({
-            phase: 2
+        setTimerVisible(false);
+        setEmailPhase(2);
+
+        verifyEmail(email.current.value).then(res => {
+            setEmailPhase(3);
+
+            if (res.success) {
+                setVerificationCodeVisible(true);
+                setTimerVisible(true);
+            } else {
+                setEmailStatus({
+                    success: false,
+                    message: res.data
+                })
+            }
+        });
+    }
+
+    const confirmHandler = () => {
+        confirmCode({
+            email: email.current.value,
+            verificationCode: verificationCode.current.value
+        }).then(res => {
+            if (res.success) {
+                setVerificationCodeVisible(false);
+                setEmailPhase(4);
+                setEmailStatus({
+                    success: true,
+                    message: "인증되었습니다."
+                })
+            } else {
+                setVerificationCodeStatus({
+                    success: false,
+                    message: res.data
+                })
+            }
         });
     }
 
     const accountDeleteHandler = () => {
-        deleteAccount({
-            password: password.current.value,
+        const req = {
             confirm: confirm.current.value
-        }).then(res => {
+        };
+
+        if (visibleAuth == 'passwordAuth') {
+            req.isPassword = true;
+            req.password = password.current.value;
+        } else {
+            req.isPassword = false;
+            req.email = email.current.value;
+            req.isVerified = emailPhase == 4 ? true : false;
+        }
+        
+
+        deleteAccount(req).then(res => {
             if (res.success) {
                 dispatch(logout())
                     .unwrap()
@@ -52,6 +103,8 @@ const AccountDeleteModal = ({ onClose }) => {
                 alert("탈퇴되었습니다.");
             } else {
                 res.data.password ? setPasswordStatus({ success: false, message: res.data.password }) : setPasswordStatus({ success: true });
+
+                res.data.email ? setEmailStatus({ success: false, message: res.data.email }) : 0;
 
                 res.data.confirm ? setConfirmStatus({ success: false, message: res.data.confirm }) : setConfirmStatus({ success: true });
             }
@@ -70,7 +123,11 @@ const AccountDeleteModal = ({ onClose }) => {
                             <p>(한 번 탈퇴하신 계정은 복구할 수 없습니다.)</p>
                         </div>
 
-                        <fieldset className="flex justify-evenly items-center gap-5 mt-5 p-5 border-t border-gray-300">
+                        <span className="flex items-center">
+                            <span className="h-px flex-1 bg-gray-300"></span>
+                        </span>
+
+                        <fieldset className="flex justify-evenly items-center gap-5 p-5">
                             <div>
                                 <label id="passwordAuth" className={radio({ })}>
                                     <p>비밀번호 인증</p>
@@ -81,6 +138,7 @@ const AccountDeleteModal = ({ onClose }) => {
                                         name="auth"
                                         value="passwordAuth"
                                         defaultChecked={profile.social == 'NONE' ? true : false}
+                                        disabled={profile.social != 'NONE' && !profile.linkage.passwordSet ? true : false}
                                         onClick={changeVisible}
                                         className="sr-only"
                                     ></input>
@@ -136,19 +194,19 @@ const AccountDeleteModal = ({ onClose }) => {
                                 <label htmlFor="email" className="flex justify-between items-center">
                                     <span>이메일</span>
 
-                                    <div>
+                                    <div className="flex justify-center items-center gap-1">
                                         <input
                                             type="text"
                                             ref={email}
                                             id="email"
                                             value={profile.email}
                                             disabled
-                                            className={inputText({ className: 'w-[200px] h-[40px] mr-1' })}
+                                            className={inputText({ className: 'w-[200px] h-[40px]' })}
                                         ></input>
 
                                         {
                                             (
-                                                emailStatus.phase == 1
+                                                emailPhase == 1
                                                 &&
                                                 <button
                                                     className={button({ color: "primary", className: 'w-[60px] h-[40px]' })}
@@ -159,18 +217,108 @@ const AccountDeleteModal = ({ onClose }) => {
                                             )
                                             ||
                                             (
-                                                emailStatus.phase == 2
+                                                emailPhase == 2
+                                                &&
+                                                <button
+                                                    className={button({ color: "primary", className: 'flex justify-center items-center w-[60px] h-[40px] cursor-default' })}
+                                                >
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" fill="#FFFFFF" opacity=".30"/>
+                                                        <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" fill="#FFFFFF" className="spinner_ajPY"/>
+                                                    </svg>
+                                                </button>
+                                            )
+                                            ||
+                                            (
+                                                emailPhase == 3
                                                 &&
                                                 <button
                                                     className={button({ color: "primary", className: 'w-[60px] h-[40px]' })}
                                                     onClick={verifyHandler}
                                                 >
-                                                    전송중
+                                                    재전송
+                                                </button>
+                                            )
+                                            ||
+                                            (
+                                                emailPhase == 4
+                                                &&
+                                                <button
+                                                    className={button({ color: "inactive", className: 'w-[60px] h-[40px]' })}
+                                                >
+                                                    인증
                                                 </button>
                                             )
                                         }
                                     </div>
                                 </label>
+
+                                <div className="w-full text-right">
+                                    {
+                                        emailStatus.success
+                                        ?
+                                        <span className="text-xs text-green-400">{emailStatus.message}</span>
+                                        :
+                                        (
+                                            typeof emailStatus.success == 'undefined' ?
+                                            <></> :
+                                                <span className="text-xs text-red-400">{emailStatus.message}</span>
+                                            )
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        {
+                            verificationCodeVisible
+                            &&
+                            <div>
+                                <label htmlFor="verificationCode" className="flex justify-between items-center">
+                                    <span>인증번호</span>
+
+                                    <div className="flex justify-center items-center gap-1 relative">
+                                        <input
+                                            type="text"
+                                            ref={verificationCode}
+                                            id="verificationCode"
+                                            className={inputText({ className: 'w-[200px] h-[40px]' })}
+                                        ></input>
+
+                                        {
+                                            timerVisible
+                                            &&
+                                            <span className="absolute inset-y-0 right-19 grid w-8 place-content-center text-red-400 text-xs">
+                                                <EmailTimer></EmailTimer>
+                                            </span>
+                                        }
+
+                                        <button
+                                            className={button({ color: "primary", className: 'w-[60px] h-[40px]' })}
+                                            onClick={confirmHandler}
+                                        >
+                                            확인
+                                        </button>
+                                    </div>
+                                </label>
+
+                                <div className="w-full text-right">
+                                    {
+                                        verificationCodeStatus.success
+                                        ?
+                                        <span className="text-xs text-green-400">{verificationCodeStatus.message}</span>
+                                        :
+                                        (
+                                            typeof verificationCodeStatus.success == 'undefined' ?
+                                            <></> :
+                                                <span className="text-xs text-red-400">{verificationCodeStatus.message}</span>
+                                            )
+                                    }
+                                </div>
                             </div>
                         }
 

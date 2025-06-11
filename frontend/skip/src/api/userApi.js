@@ -20,11 +20,18 @@ export const isUser = async req => {
 }
 
 export const verifyEmail = async req => {
-    return caxios.post(`/user/email/verify`, req).then(res => res.data);
+    const params = new URLSearchParams();
+    params.append('email', req);
+
+    return caxios.post(`/user/email/verify`, params).then(res => res.data);
 }
 
 export const confirmCode = async req => {
-    const data = await caxios.post(`/user/email/confirm`, req).then(req => req.data);
+    const params = new URLSearchParams();
+    params.append('email', req.email);
+    params.append('verificationCode', req.verificationCode);
+
+    const data = await caxios.post(`/user/email/confirm`, params).then(req => req.data);
 
     return data;
 }
@@ -59,6 +66,64 @@ export const getProfile = async () => {
     return data;
 }
 
+export const changeImage = async req => {
+    const formData = new FormData();
+    formData.append('file', req);
+
+    const data = await caxios.put(`/user/image/change`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    }).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+// 닉네임 변경
+export const changeNickname = async req => {
+    const data = await caxios.put(`/user/nickname/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+// 아이디 변경
+export const changeUsername = async req => {
+    const data = await caxios.put(`/user/username/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+// 이메일 변경
+export const changeEmail = async req => {
+    const data = await caxios.put(`/user/email/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const changeName = async req => {
+    const data = await caxios.put(`/user/name/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
+export const changePhone = async req => {
+    const data = await caxios.put(`/user/phone/change`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+}
+
 export const changePassword = async req => {
     const data = await caxios.put(`/user/password/change`, req).then(res => {
         return res.data;
@@ -83,4 +148,12 @@ export const deleteAccount = async req => {
     });
 
     return data;
-}
+};
+
+export const unlink = async () => {
+    const data = await caxios.delete(`/user/social/unlink`).then(res => {
+        return res.data;
+    });
+
+    return data;
+};

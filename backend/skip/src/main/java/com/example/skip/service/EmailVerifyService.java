@@ -36,7 +36,7 @@ public class EmailVerifyService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             mimeMessageHelper.setFrom("skip@noreply.com");
-            mimeMessageHelper.setSubject("Skip 회원가입 인증 메일입니다.");
+            mimeMessageHelper.setSubject("Skip 인증 메일입니다.");
             mimeMessageHelper.setText(html, true);
             mimeMessageHelper.setTo(email);
 

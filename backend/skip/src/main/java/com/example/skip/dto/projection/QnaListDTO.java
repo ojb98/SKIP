@@ -4,7 +4,8 @@ import com.example.skip.enumeration.QnaStatus;
 
 import java.time.LocalDateTime;
 
-public interface QnaListDTO {
+public interface
+QnaListDTO {
     Long getQnaId();
     String getTitle();
     String getContent();
@@ -13,4 +14,9 @@ public interface QnaListDTO {
     Boolean getSecret();
     LocalDateTime getCreatedAt();
     LocalDateTime getUpdatedAt();
+
+    Long getReplyId();
+    String getReplyContent();
+    String getReplyUsername();
+    LocalDateTime getReplyCreatedAt();
 }

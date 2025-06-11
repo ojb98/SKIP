@@ -1,6 +1,6 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.PaymentDTO;
+import com.example.skip.dto.payment.PaymentDTO;
 import com.example.skip.dto.ReviewDTO;
 import com.example.skip.entity.Payment;
 import com.example.skip.entity.Review;

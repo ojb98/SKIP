@@ -172,6 +172,12 @@
   cursor: pointer;
 }
 
+/* no-hover 클래스를 가진 tr은 hover 스타일 제거 */
+.user-table tbody tr.no-hover:hover {
+  background-color: transparent;
+  cursor: default;
+}
+
 .user-table tr:hover {
   background-color: #f0f8ff;
 }

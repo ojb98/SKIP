@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponseDto {
-    private boolean success;
-
-    private Object data;
+@Data
+@Builder
+public class QnaReplyRequestDTO {
+    private Long qnaId;
+    private Long userId;
+    private String content;
 }

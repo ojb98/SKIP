@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class PasswordChangeRequestDto {
+public class PasswordChangeRequest {
     @NotBlank(message = "현재 비밀번호를 입력해주세요.")
     private String currentPassword;
 

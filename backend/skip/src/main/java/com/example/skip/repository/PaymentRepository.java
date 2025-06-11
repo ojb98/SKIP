@@ -95,8 +95,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     """)
     Long getBannerWaitingCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    //List<Payment> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
-
     @Query("SELECT p FROM Payment p JOIN p.reservations r WHERE r.user.userId = :userId ORDER BY p.createdAt DESC")
     List<Payment> findTop5ByUserIdInReservations(@Param("userId") Long userId);
 }

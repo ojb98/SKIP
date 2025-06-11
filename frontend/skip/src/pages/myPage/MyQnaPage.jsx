@@ -1,7 +1,9 @@
+import UserQnaList from "../../components/qna/UserQnaList";
+
 const MyQnaPage = () => {
     return (
         <>
-            qna
+            <UserQnaList></UserQnaList>
         </>
     )
 }

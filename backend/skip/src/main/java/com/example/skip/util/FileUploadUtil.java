@@ -1,8 +1,13 @@
 package com.example.skip.util;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 @Component
 @RequiredArgsConstructor
@@ -30,4 +35,27 @@ public class FileUploadUtil {
         return currentFile;
     }
 
+    public MultipartFile fetchImageAsMultipart(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            InputStream inputStream = url.openStream();
+
+            // Content-Type 유추 (필요 시)
+            String contentType = URLConnection.guessContentTypeFromStream(inputStream);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            // 래핑: URL에서 받은 파일을 MultipartFile처럼 사용
+            return new MockMultipartFile(
+                    "file",
+                    fileName,
+                    contentType,
+                    inputStream
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 다운로드 실패", e);
+        }
+    }
 }

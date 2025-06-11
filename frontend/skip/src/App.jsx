@@ -2,8 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
-import JoinPage from "./pages/SignupPage"
-import SignupVerifyPage from "./pages/SignupVerifyPage"
+import SignupPage from "./pages/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -29,11 +28,13 @@ import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
+import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+
 
 
 function App() {
@@ -94,20 +95,20 @@ function App() {
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                         <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
+                    <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>
 
 
                     {/* 로그인 */}
                     <Route element={<LoginLayout></LoginLayout>}>
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

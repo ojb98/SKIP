@@ -74,7 +74,6 @@ const AdminDashboard = () => {
     const [isClicked, setIsClicked] = useState(false);
     const [beforeStartDate, setBeforeStartDate] = useState();
     const [beforeEndDate, setBeforeEndDate] = useState();
-    const [extension, setExtension] = useState();    
     const [summaryData, setSummaryData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
@@ -228,8 +227,8 @@ const loadDashboardData = async () => {
     const handleClick = (type) => {
         console.log(startDate);
         setIsClicked(type);
-        setTimeout(() => setIsClicked(null), 150); 
-        setExtension(type);
+        setTimeout(() => setIsClicked(null), 150);         
+        const extension = type === ".xlsx" || type === ".cell" ? type : "";
         window.location.href = `/api/admin/summary/export?atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
     };
 

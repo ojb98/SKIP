@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.reservation;
 
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Reservation;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
-public class ReservationItemsDTO {
+public class ReservationItemDTO {
     private Long rentItemId;
     private Long itemDetailId;
     private Long reserveId;
@@ -23,7 +23,7 @@ public class ReservationItemsDTO {
     private Long subtotalPrice;
 
     // Entity → DTO 변환 생성자
-    public ReservationItemsDTO(ReservationItem reservationItem) {
+    public ReservationItemDTO(ReservationItem reservationItem) {
         this.rentItemId = reservationItem.getRentItemId();
         this.itemDetailId = reservationItem.getItemDetail().getItemDetailId();
         this.reserveId = reservationItem.getReservation().getReserveId();

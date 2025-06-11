@@ -1,16 +1,19 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.WishAddDTO;
+import com.example.skip.dto.WishListDTO;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.User;
 import com.example.skip.entity.WishList;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.repository.WishListRepository;
-import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -33,10 +36,38 @@ public class WishListService {
             throw new IllegalStateException("이미 찜한 상품입니다.");
         }
 
+        // 찜 개수 제한
+        long wishCount = wishListRepository.countByUser(user);
+        if (wishCount >= 30) {
+            throw new IllegalStateException("찜은 최대 30개까지만 가능합니다.");
+        }
+
         WishList wish = new WishList();
         wish.setUser(user);
         wish.setItemDetail(itemDetail);
         wishListRepository.save(wish);
     }
+
+    //찜 목록 보여주기
+    public List<WishListDTO> getWishList(Long userId){
+        // 사용자 확인
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        // 찜 목록 조회 (최신순)
+        List<WishList> wishList = wishListRepository.findByUserOrderByCreatedAtDesc(user);
+
+        // DTO 변환
+        return wishList.stream().map(wish -> WishListDTO.from(wish)).toList();
+
+    }
+
+    //찜 삭제
+    public void removeWishList(Long wishlistId){
+        WishList wish = wishListRepository.findById(wishlistId)
+                .orElseThrow(() -> new IllegalArgumentException("찜 항목이 존재하지 않습니다."));
+        wishListRepository.delete(wish);
+    }
+
 
 }

@@ -48,6 +48,6 @@ public class CartItem {
     private LocalDateTime rentEnd;
 
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
 }
