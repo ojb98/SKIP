@@ -463,46 +463,6 @@
     line-height: 1.0em;
 }
 
-.user-approval-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.user-approval-table th, .user-approval-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-.user-approval-table th {
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-.user-approval-btn-approve {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.user-approval-btn-deny {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.user-approval-btn-approve:hover,
-.user-approval-btn-deny:hover {
-  opacity: 0.8;
-}
 
 .user-approval-pagination {
   margin-top: 15px;

@@ -3,7 +3,7 @@ import UserApprovalTable from "../../components/adminpage/UserApprovalTable";
 const UsersList = () => {
     return(
         <div>
-            <UserApprovalTable></UserApprovalTable>
+            <UserApprovalTable/>
         </div>
     )
 }

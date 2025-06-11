@@ -35,7 +35,7 @@ public class PaymentDTO {
         this.reservationIds = payment.getReservations() != null
                 ? payment.getReservations().stream()
                 .map(reservation -> reservation.getReserveId())
-                .collect(Collectors.toList())
+                .toList()
                 : List.of();
         this.merchantUid = payment.getMerchantUid();
         this.impUid = payment.getImpUid();

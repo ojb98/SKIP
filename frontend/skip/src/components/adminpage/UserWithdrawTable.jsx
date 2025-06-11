@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
-import AdminPagenation from './AdminPagenation';
-import { formatDate, formatDate1 } from '../../utils/formatdate';
-import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
+import AdminPagenation from './AdminPagenation.jsx';
+import { formatDate, formatDate1 } from '../../utils/formatdate.js';
+import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
 
 
-  function ApprovalTable() {
+  function WithdrawTable() {
     const [rents, setRents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRent, setSelectedRent] = useState(null);
@@ -70,7 +70,7 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
 
     const loadRents = async () => {
       try {
-      const data = await fetchApprovalRents();
+      const data = await fetchWithdrawRents();
         setRents(data);
       } catch (e) {
         console.error('렌탈샵 조회 실패', e);
@@ -78,13 +78,12 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
         setLoading(false);
       }
     };
-
-    const handleWithdraw = async () => {
+    const handleApprove = async () => {
       if (!selectedRent) return;
       const confirmed = window.confirm('정말 거절하시겠습니까?');
       if (!confirmed) return;
       try {
-        await requestUpdate(selectedRent.rentId, 'WITHDRAWN');
+        await requestUpdate(selectedRent.rentId, 'APPROVED');
         await loadRents();
         setSelectedRent(null);
         setCurrentPage(1);
@@ -93,7 +92,7 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
         alert('상태 변경 중 오류가 발생했습니다.');
       }
     };
-
+    
     useEffect(() => {
       loadRents();
     }, []);
@@ -103,8 +102,8 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
     return (
       <div className="table-container">
         <div style={{ display: 'flex' }}>
-          <button onClick={fetchApprovalRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
-            <h3>✅ 가맹점 목록 조회</h3>
+          <button onClick={fetchWithdrawRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
+            <h3>❌ 승인 거부 목록 조회</h3>
           </button>
           <div className="search-filter">
             <select className="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -209,14 +208,14 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
             </div>   
             <div style={{borderLeft:"1px solid #dddddd", paddingLeft:"20px"}}>
               <div style={{display:"flex"}}>
-              <h4 style={{marginTop:"10px"}}>🖼️ 렌탈샵 이미지 & 소개</h4>
+              <h4 style={{marginTop:"10px"}}>🖼️ 렌탈샵 이미지 & 소개</h4>       
               <button
-                style={{marginLeft:"350px",marginTop:"10px"}}
-                className="btn-withdraw"
-                onClick={handleWithdraw}
+                style={{marginLeft:"390px", marginTop:"10px"}}
+                className="btn-approve"
+                onClick={handleApprove}
               >
-                승인 거부 상태로 변경
-              </button>
+                승인 상태로 변경
+              </button>     
               </div>
               <div style={{display:"flex" }}>
                 <img src={selectedRent.image1 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
@@ -235,4 +234,4 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
     );
   }
 
-  export default ApprovalTable;
+  export default WithdrawTable;

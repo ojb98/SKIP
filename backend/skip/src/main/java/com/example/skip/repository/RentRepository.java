@@ -1,5 +1,6 @@
 package com.example.skip.repository;
 
+import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
@@ -21,5 +22,12 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     //사업자등록번호 존재 여부
     boolean existsByBizRegNumber(String bizRegNumber);
+
+    List<Rent> findByUser_UsernameContaining(String userUsername);
+
+    List<Rent> findByNameContaining(String name);
+
+    List<Rent> findByUser_NameContaining(String userName);
+
 
 }

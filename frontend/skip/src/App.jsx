@@ -31,7 +31,9 @@ import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
-
+import UserApprovalTable from "./components/adminpage/UserApprovalTable"
+import UserPendingTable from "./components/adminpage/UserPendingTable"
+import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 
 
 function App() {
@@ -85,9 +87,9 @@ function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         {/* 추가 라우트 */}
-                        <Route path="/admin/pendinglist" element={<UserApprovalList/>} />
-                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/pendinglist" element={<UserPendingTable/>} />
+                        <Route path="/admin/withdrawnlist" element={<UserWithdrawTable/>} />
+                        <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
                         <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />

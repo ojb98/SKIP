@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
-import AdminPagenation from './AdminPagenation';
-import { formatDate, formatDate1 } from '../../utils/formatdate';
-import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
+import AdminPagenation from './AdminPagenation.jsx';
+import { formatDate, formatDate1 } from '../../utils/formatdate.js';
+import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
 
 
-  function ApprovalTable() {
+  function PendingTable() {
     const [rents, setRents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRent, setSelectedRent] = useState(null);
@@ -67,15 +67,18 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
       }
       setSelectedRent(null)
     };
-
-    const loadRents = async () => {
+    const handleApprove = async () => {
+      if (!selectedRent) return;
+      const confirmed = window.confirm('정말 거절하시겠습니까?');
+      if (!confirmed) return;
       try {
-      const data = await fetchApprovalRents();
-        setRents(data);
+        await requestUpdate(selectedRent.rentId, 'APPROVED');
+        await loadRents();
+        setSelectedRent(null);
+        setCurrentPage(1);
       } catch (e) {
-        console.error('렌탈샵 조회 실패', e);
-      } finally {
-        setLoading(false);
+        console.error('상태 변경 실패', e);
+        alert('상태 변경 중 오류가 발생했습니다.');
       }
     };
 
@@ -93,6 +96,16 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
         alert('상태 변경 중 오류가 발생했습니다.');
       }
     };
+    const loadRents = async () => {
+      try {
+      const data = await fetchPendingRents();
+        setRents(data);
+      } catch (e) {
+        console.error('렌탈샵 조회 실패', e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     useEffect(() => {
       loadRents();
@@ -103,8 +116,8 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
     return (
       <div className="table-container">
         <div style={{ display: 'flex' }}>
-          <button onClick={fetchApprovalRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
-            <h3>✅ 가맹점 목록 조회</h3>
+          <button onClick={fetchPendingRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
+            <h3>❓ 승인 대기 목록 조회</h3>
           </button>
           <div className="search-filter">
             <select className="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -211,11 +224,18 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
               <div style={{display:"flex"}}>
               <h4 style={{marginTop:"10px"}}>🖼️ 렌탈샵 이미지 & 소개</h4>
               <button
-                style={{marginLeft:"350px",marginTop:"10px"}}
+                style={{marginLeft:"400px", marginTop:"10px"}}
+                className="btn-approve"
+                onClick={handleApprove}
+              >
+                승인
+              </button>
+              <button
+              style={{marginLeft:"10px",marginTop:"10px"}}
                 className="btn-withdraw"
                 onClick={handleWithdraw}
               >
-                승인 거부 상태로 변경
+                거부
               </button>
               </div>
               <div style={{display:"flex" }}>
@@ -235,4 +255,4 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
     );
   }
 
-  export default ApprovalTable;
+  export default PendingTable;
