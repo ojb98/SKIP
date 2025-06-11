@@ -1,9 +1,9 @@
-import axios from "axios";
+import caxios from "./caxios";
 
 const host = 'http://localhost:8080/api/reviews';
 
 // 리뷰 등록
-export const createReviewApi = async (reserveId, reviewData, imageFile, userId) => {
+export const createReviewApi = async (reserveId, reviewData, imageFile) => {
   const formData = new FormData();
 
   // review JSON 데이터 추가
@@ -19,7 +19,8 @@ export const createReviewApi = async (reserveId, reviewData, imageFile, userId) 
   }
 
   // Axios 요청
-  const response = await axios.post(`${host}/${reserveId}?userId=${userId}`, formData, {
+  //const response = await axios.post(`${host}/${reserveId}?userId=${userId}`, formData, {
+  const response = await caxios.post(`${host}/${reserveId}`,formData,{
     headers: {
       'Content-Type': 'multipart/form-data',
     }

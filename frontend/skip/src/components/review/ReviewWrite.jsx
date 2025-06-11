@@ -1,16 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { createReviewApi } from "../../api/reviewApi";
 
 //임의의 예약 ID
 const reserveId = 15;
 
 const ReviewWrite = () => {
-  const profile = useSelector(state => state.loginSlice);
-  const userId = profile.userId;
-  
 
   const [imageFile, setImageFile] = useState(null); //실제 이미지 파일
   const [previewUrl, setPreviewUrl] = useState(null); //이미지 미리보기 URL
@@ -77,7 +73,7 @@ const ReviewWrite = () => {
     };
 
     try {
-      const response = await createReviewApi(reserveId, reviewData, imageFile, userId);
+      const response = await createReviewApi(reserveId, reviewData, imageFile);
       console.log("리뷰 등록 성공:", response);
       alert("리뷰가 성공적으로 등록되었습니다.");
       window.close();

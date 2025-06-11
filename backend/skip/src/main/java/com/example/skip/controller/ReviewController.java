@@ -32,14 +32,18 @@ public class ReviewController {
     public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long reserveId,
                                                           @RequestPart("review")ReviewRequestDTO reviewRequestDTO,
                                                           @RequestPart(value = "image", required = false)MultipartFile imageFile,
-                                                          @RequestParam Long userId){
+                                                          //@RequestParam Long userId,
+                                                          @AuthenticationPrincipal UserDto userDto){
+        System.out.println("UserDto:" + userDto);
+
         // 이미지 업로드
         String imagePath = fileUploadUtil.uploadFileAndUpdateUrl(imageFile, null, "review");
 
         // 리뷰 저장
         ReviewResponseDTO responseDTO = reviewService.createReview(
                 reserveId,
-                userId,
+                //userId,
+                userDto.getUserId(),
                 reviewRequestDTO,
                 imagePath
         );
