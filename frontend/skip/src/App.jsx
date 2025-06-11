@@ -10,14 +10,14 @@ import { useEffect } from "react"
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
 import ReviewPopupPage from "./pages/ReviewPopupPage"
-import RentInsertForm from "./components/rentAdmin/RentInsertForm"
-import RentList from "./components/rentAdmin/RentList"
-import RentDetail from "./components/rentAdmin/RentDetail"
-import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
-import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
-import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
-import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
-import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import RentInsertForm from "./components/rentManager/RentInsertForm"
+import RentList from "./components/rentManager/RentList"
+import RentDetail from "./components/rentManager/RentDetail"
+import RentUpdateForm from "./components/rentManager/RentUpdateForm"
+import ItemInsertForm from "./components/rentManager/ItemInsertForm"
+import ItemListAndDetails from "./components/rentManager/ItemListAndDetails"
+import ItemSelectorByRent from "./components/rentManager/ItemSelectorByRent"
+import ItemUpdateForm from "./components/rentManager/ItemUpdateForm"
 import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
@@ -31,6 +31,7 @@ import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/wishList"
+import Reservation from "./components/rentManager/Reservation"
 
 
 
@@ -62,14 +63,15 @@ function App() {
 
 
                         {/* 중간관리자 */}
-                        <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
-                        <Route path="/rentAdmin/list" element={<RentList/>}></Route>
-                        <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
-                        <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
-                        <Route path="/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                        <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
-                        <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
-                        <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        <Route path="/rentManager/insert" element={<RentInsertForm/>}></Route>
+                        <Route path="/rentManager/list" element={<RentList/>}></Route>
+                        <Route path="/rentManager/detail/:rentId" element={<RentDetail/>}></Route>
+                        <Route path="/rentManager/update/:rentId" element={<RentUpdateForm/>}></Route>
+                        <Route path="/itemManager/insert/:rentId" element={<ItemInsertForm/>}></Route>
+                        <Route path="/rentManager/select" element={<ItemSelectorByRent/>}></Route>
+                        <Route path="/itemManager/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                        <Route path="/itemManager/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                        <Route path="/reservManager/list" element={<Reservation/>}></Route>
                         
                         {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>

@@ -261,7 +261,7 @@ const RentInsertForm=()=>{
             });
             
             //여기 useNavigetor 사용해서 이동(원하는 페이지로 이동)
-            navigate("/rentAdmin/list")            
+            navigate("/rentManager/list")            
 
         })
         .catch((err)=>{

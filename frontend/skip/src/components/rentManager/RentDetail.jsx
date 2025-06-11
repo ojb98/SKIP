@@ -5,7 +5,7 @@ import '../../css/rentDetail.css';
 
 const RentDetail=()=>{
 
-    //<Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
+    //<Route path="/rentManager/detail/:rentId" element={<RentDetail/>}></Route>
     const {rentId} = useParams(); 
     const [rentDetail, setRentDetail] = useState(null);
     const navigate = useNavigate();

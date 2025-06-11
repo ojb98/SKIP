@@ -374,7 +374,7 @@ const ItemListAndDetails=()=>{
                 ))
             )}
             <div className="move-item">
-                <Link to={`/itemAdmin/insert/${rentId}`} className="register-link">
+                <Link to={`/itemManager/insert/${rentId}`} className="register-link">
                     장비 추가하러 가기
                 </Link>
             </div>

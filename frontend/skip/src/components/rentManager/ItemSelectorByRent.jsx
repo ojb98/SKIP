@@ -26,7 +26,7 @@ const ItemSelectorByRent = () => {
             {rents.length === 0 ? (
                 <div>
                     <h2 className="text-center text-[20px] text-gray-600 mt-2">등록된 가맹점이 없습니다.</h2>
-                    <Link to="/rentAdmin/insert"
+                    <Link to="/rentManager/insert"
                         className="inline-block mt-4 px-5 py-2 border border-blue-500 text-blue-500 font-semibold rounded hover:bg-blue-500 hover:text-white transition">
                             가맹점 등록하러 가기</Link>
                 </div>
@@ -44,7 +44,7 @@ const ItemSelectorByRent = () => {
                     <tr key={rent.rentId} className="hover:bg-gray-50 cursor-pointer">
                         <td className="border border-gray-300 px-4 py-2">{rent.name}</td>
                         <td className="border border-gray-300 px-4 py-2">
-                            <Link to={`/itemAdmin/list/${rent.rentId}`} className="text-blue-600 hover:underline">
+                            <Link to={`/itemManager/list/${rent.rentId}`} className="text-blue-600 hover:underline">
                                 보기
                             </Link>
                         </td>

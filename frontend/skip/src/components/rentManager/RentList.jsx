@@ -69,7 +69,7 @@ const RentList=()=>{
                     {
                         rent.map((r,index)=>{
                             return(
-                                <tr key={r.rentId} onClick={()=>navigate(`/rentAdmin/detail/${r.rentId}`)} className="clickable-row">
+                                <tr key={r.rentId} onClick={()=>navigate(`/rentManager/detail/${r.rentId}`)} className="clickable-row">
                                     <td>{index + 1}</td>
                                     <td><img className="rent-img" src={`http://localhost:8080${r.thumbnail}`} /></td>
                                     <td>{r.name}</td>
@@ -80,7 +80,7 @@ const RentList=()=>{
 
                                     <td onClick={(e) => e.stopPropagation()}>
                                         {r.status === "APPROVED" ? (
-                                            <Link to={`/itemAdmin/insert/${r.rentId}`} className="register-btn">등록</Link>
+                                            <Link to={`/itemManager/insert/${r.rentId}`} className="register-btn">등록</Link>
                                         ) : (
                                             <button className="register-btn-disabled" disabled>등록</button>
                                         )}
