@@ -11,7 +11,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://192.168.80.13:3306/sy # 이상엽 데이터베이스 설정
+    url: jdbc:mariadb://192.168.80.13:3306/testdb # 이상엽 데이터베이스 설정
     username: hello
     password: hello1234
 
