@@ -66,7 +66,7 @@ public class EmailService {
             if (username.startsWith("Naver") || username.startsWith("Kakao")) {
                 return;
             }
-            content.append("<tr><td align=\"center\" valign=\"middle\" style=\"font-size: 1.1em;\">");
+            content.append("<tr><td align=\"center\" valign=\"middle\" style=\"padding: 20px 0; font-size: 1.1em; font-family: Arial, sans-serif;\">");
             content.append(username);
             content.append("</td></tr>");
         });

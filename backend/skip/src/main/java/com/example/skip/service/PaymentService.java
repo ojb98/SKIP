@@ -3,20 +3,25 @@ package com.example.skip.service;
 import com.example.skip.config.IamPortConfig;
 import com.example.skip.dto.payment.ImpAuthRequest;
 import com.example.skip.dto.payment.PaymentCompleteDTO;
+import com.example.skip.dto.request.PaymentFilterRequest;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -36,6 +41,17 @@ public class PaymentService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     // HTTP 클라이언트 객체 생성
     private final OkHttpClient client = new OkHttpClient();
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private final QPayment payment = QPayment.payment;
+
+    private final QReservation reservation = QReservation.reservation;
+
+    private final QReservationItem reservationItem = QReservationItem.reservationItem;
+
+    private final QUser user = QUser.user;
+
 
     public boolean completePaymentWithReservation(PaymentCompleteDTO dto) throws IOException {
 
@@ -164,4 +180,9 @@ public class PaymentService {
         return true;
     }
 
+//    public Page<Payment> searchPaymentsByUser(PaymentFilterRequest paymentFilterRequest, Pageable pageable) {
+//        List<Payment> payments = jpaQueryFactory
+//                .select()
+//                .from()
+//    }
 }

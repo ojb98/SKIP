@@ -7,8 +7,8 @@ const inactiveClass = 'inline-flex items-center gap-3 p-4 border-b-2 border-tran
 const IdPasswordFindTab = ({ active }) => {
     return (
         <>
-            <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-                <ul className="flex flex-wrap items-end gap-7 -mb-px">
+            <div className="w-90 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
+                <ul className="flex flex-wrap justify-between items-end gap-7 -mb-px">
                     <li>
                         <Link to="/id/find" className={active == 'id' ? activeClass : inactiveClass} aria-current={active == 'id' ? 'page' : 'false'}>
                             <IdCard></IdCard>

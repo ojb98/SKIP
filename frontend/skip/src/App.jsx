@@ -36,6 +36,7 @@ import PasswordResetSuccessPage from "./pages/login/PasswordResetSuccessPage"
 import UsernameInputPage from "./pages/login/UsernameInputPage"
 import UsernameFindPage from "./pages/login/UsernameFindPage"
 import UsernameFindSuccessPage from "./pages/login/UsernameFindSuccessPage"
+import MyReservePage from "./pages/myPage/MyReservePage"
 
 
 
@@ -60,6 +61,8 @@ function App() {
                             <Route path="account" element={<AccountPage></AccountPage>}></Route>
 
                             <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
+
+                            <Route path="reserve" element={<MyReservePage></MyReservePage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 

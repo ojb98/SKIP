@@ -1,8 +1,6 @@
 import axios from "axios";
 import caxios from "./caxios";
 
-const host = "http://localhost:8080";
-
 export const signup = async req => {
     const data = await caxios.post(`/user`, req).then(res => {
         return res.data;

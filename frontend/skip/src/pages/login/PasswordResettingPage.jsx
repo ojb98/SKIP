@@ -86,7 +86,7 @@ const PasswordResettingPage = () => {
 
     return (
         <>
-            <div className="min-h-100 space-y-10">
+            <div className="w-90 space-y-10">
                 <IdPasswordFindTab active={'pwd'}></IdPasswordFindTab>
 
                 <div className="flex flex-col gap-5">
@@ -101,13 +101,13 @@ const PasswordResettingPage = () => {
                             placeholder="이메일"
                             ref={email}
                             disabled={emailStatus == 'verified' ? true : false}
-                            className={inputText({ className: 'w-full h-[50px]' })}
+                            className={inputText({ color: (emailStatus == 'verified' ? "disabled" : ""), className: 'w-full h-[50px]' })}
                         ></input>
 
                         {
                             emailErrors.map((err, index) => {
                                 return (
-                                    <p key={index} className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{err}</p>
+                                    <p key={index} className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{err}</span></p>
                                 )
                             })
                         }
@@ -126,7 +126,7 @@ const PasswordResettingPage = () => {
                             {
                                 codeError
                                 &&
-                                <p className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{codeError}</p>
+                                <p className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{codeError}</span></p>
                             }
                         </div>
                     }
@@ -146,7 +146,7 @@ const PasswordResettingPage = () => {
                                 {
                                     newPasswordErrors.map((err, index) => {
                                         return (
-                                            <p key={index} className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{err}</p>
+                                            <p key={index} className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{err}</span></p>
                                         )
                                     })
                                 }
@@ -163,7 +163,7 @@ const PasswordResettingPage = () => {
                                 {
                                     confirmNewPasswordErrors.map((err, index) => {
                                         return (
-                                            <p key={index} className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{err}</p>
+                                            <p key={index} className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{err}</span></p>
                                         )
                                     })
                                 }

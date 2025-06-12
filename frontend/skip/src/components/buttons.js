@@ -33,6 +33,20 @@ export const radio = tv({
     ],
     variants: {
         color: {
+            primary: 'has-checked:border-blue-200 has-checked:ring has-checked:ring-blue-400 has-checked:text-black'
+        }
+    }
+});
+
+export const page = tv({
+    base: [
+        'block size-8 rounded border text-center text-sm/8 font-medium '
+    ],
+    variants: {
+        color: {
+            active: 'border-black bg-black text-white',
+            inactive: 'border-gray-200 hover:bg-gray-100',
+            "arrow-active": 'grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-100'
         }
     }
 });

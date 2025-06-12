@@ -67,7 +67,8 @@ public class SecurityConfig {
                             .requestMatchers(
                                     "/user/logout",
                                     "/user/profile",
-                                    "/user/password/**",
+                                    "/user/password/change",
+                                    "/user/password/set",
                                     "/user/delete",
                                     "/user/social/**",
                                     "/user/nickname/change",

@@ -46,7 +46,7 @@ const UsernameFindPage = () => {
                     {
                         emailErrors.map((err, index) => {
                             return (
-                                <p key={index} className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{err}</p>
+                                <p key={index} className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{err}</span></p>
                             )
                         })
                     }

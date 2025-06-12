@@ -39,7 +39,7 @@ const UsernameInputPage = () => {
                     {
                         usernameError
                         &&
-                        <p className="flex items-center gap-1 my-1 text-xs text-red-400"><Ban width={12} height={12}></Ban>{usernameError}</p>
+                        <p className="my-1 text-xs text-red-400"><Ban width={12} height={12} className="inline"></Ban> <span className="align-middle">{usernameError}</span></p>
                     }
                 </div>
 

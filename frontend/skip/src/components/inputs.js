@@ -16,3 +16,12 @@ export const inputText = tv({
         }
     }
 });
+
+export const select = tv({
+    base: [
+        'appearance-none',
+        'border rounded border-gray-300',
+        'shadow-sm text-sm',
+        'focus-visible:outline-none focus:ring focus:ring-blue-400'
+    ]
+});
