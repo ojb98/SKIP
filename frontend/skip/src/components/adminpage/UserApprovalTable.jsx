@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
 import AdminPagenation from './AdminPagenation';
 import { formatDate, formatDate1 } from '../../utils/formatdate';
-import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
+import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
 
   function ApprovalTable() {
@@ -33,9 +33,6 @@ import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentNam
         return;
       }
       setSelectedRent(rent);
-      findRentDetail(rent.rentId)
-        .then(data=>setRentDetail(data))
-        .catch(err=>console.error("렌탈샵 상세정보 조회 실패",err));
       
     };
 

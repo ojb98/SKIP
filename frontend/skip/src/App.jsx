@@ -34,6 +34,8 @@ import WishList from "./components/wishList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import ActiveBannerList from "./pages/admin/ActiveBannerList"
+import PendingBannerList from "./pages/admin/PendingBannerList"
 
 
 
@@ -92,9 +94,8 @@ function App() {
                         <Route path="/admin/withdrawnlist" element={<UserWithdrawTable/>} />
                         <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
-                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
+                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}

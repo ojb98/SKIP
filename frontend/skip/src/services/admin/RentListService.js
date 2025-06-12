@@ -38,11 +38,11 @@ export const findRentByRentName = async (rentname) => {
   return Array.isArray(response.data) ? response.data : [response.data];
 };
 
-// 특정 렌탈샵 디테일
-export const findRentDetail = async (userId) => {
-  const response = await axios.get(`/api/rent/find/Detail/${userId}`);
-  return response.data;
-};
+// // 특정 렌탈샵 디테일
+// export const findRentDetail = async (userId) => {
+//   const response = await axios.get(`/api/rent/find/Detail/${userId}`);
+//   return response.data;
+// };
 
 // 렌탈샵 승인요청 거부/승인
 export const requestUpdate = async (rentId, status) => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
 import AdminPagenation from './AdminPagenation.jsx';
 import { formatDate, formatDate1 } from '../../utils/formatdate.js';
-import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
+import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
 
   function PendingTable() {
@@ -33,9 +33,6 @@ import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName
         return;
       }
       setSelectedRent(rent);
-      findRentDetail(rent.rentId)
-        .then(data=>setRentDetail(data))
-        .catch(err=>console.error("렌탈샵 상세정보 조회 실패",err));
       
     };
 

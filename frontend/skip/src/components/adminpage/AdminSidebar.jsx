@@ -36,9 +36,8 @@ const AdminSidebar = () => {
                 <li>
                     <CustomAccordion title="광고 관리" isOpen={openIndex === 3} onClick={() => handleAccordionClick(3)}>
                         <ul className="sub-menu">
-                            <li><Link to="/admin/bannerwatinglist"> 배너 승인</Link></li>
-                            <li><Link to="/admin/banneractivelist"> 배너 등록</Link></li>
-                            <li><Link to="/admin"> 예비</Link></li>
+                            <li><Link to="/admin/pendingbannerList"> 요청 배너 승인</Link></li>
+                            <li><Link to="/admin/activebannerList"> 등록 배너 관리</Link></li>                            
                         </ul>
                     </CustomAccordion>
                 </li>
