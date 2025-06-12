@@ -1,9 +1,9 @@
-import BannerWatingTable from "../../components/adminpage/BannerWatingTable";
+import BannerApprovalTable from "../../components/adminpage/BannerApprovalTable";
 
 const PendingBannerList=()=> {
     return (
         <div>
-            <BannerWatingTable></BannerWatingTable>
+            <BannerApprovalTable/>
         </div>
     )
 }
