@@ -1,99 +1,84 @@
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
-import { reservListApi } from "../../api/reservationApi";
+import { reservListApi, reservItemReturnApi } from "../../api/reservationApi";
+import ReservationList from "./ReservationList";
+import ReservFilterBar from "./ReservFilterBar";
+import ReservationDetail from "./ReservationDetail";
 
-const Reservation=()=>{
-    const [reservations, setReservations] = useState([]);
-    const [expandedUid, setExpandedUid] = useState(null);
+const Reservation = () => {
+  const profile = useSelector(state => state.loginSlice);
+  const adminId = profile.userId;
 
-    // 유저 정보에서 userId 가져오기
-    const profile = useSelector(state => state.loginSlice);
-    console.log("profile=====>",profile);
+  // 필터는 예약자 이름(username)과 반납일(returnDate)만 관리
+  const [filters, setFilters] = useState({ username: "", returnDate: null });
+  const [reservations, setReservations] = useState([]);
+  const [selectedMerchantUid, setSelectedMerchantUid] = useState(null);
 
+    // 예약 목록 API 호출
     useEffect(() => {
-        if (!profile.userId) return;
+        if (!adminId) return;
 
-        const fetchReservations = async () => {
+        const fetchData = async () => {
             try {
-                const data = await reservListApi(profile.userId);
+                // adminId와 filters 객체를 넘김
+                const data = await reservListApi(adminId, filters);
+                console.log("reserveDate",data);
                 setReservations(data);
+                setSelectedMerchantUid(null);  // 필터 변경시 선택 초기화
             } catch (err) {
                 console.error("예약 목록 가져오기 실패", err);
             }
         };
 
-        fetchReservations();
+        fetchData();
+    }, [adminId, filters]);
 
-    }, [profile.userId]);
+    // 반납 처리 함수
+    const handleReturn = async (rentItemId) => {
+        if (!window.confirm("정말 반납 처리하시겠습니까?")) return;
 
+        try {
+            await reservItemReturnApi(rentItemId);
+            setReservations(prev =>
+                prev.map(group => ({
+                    ...group,
+                    items: group.items.map(item =>
+                    item.rentItemId === rentItemId
+                        ? { ...item, returned : true, status: "RETURNED" } 
+                        : item
+                    )
+                }))
+            )
+            alert("반납이 완료되었습니다");
 
-    // 행 클릭
-    const handleRowClick = (merchantUid) => {
-        setExpandedUid((prev) => (prev === merchantUid ? null : merchantUid));
+        } catch (err) {
+            console.error("반납 처리 실패", err);
+            alert("반납 처리 중 오류가 발생했습니다.");
+        }
     }
 
-    return (
-        <>
-        <div>
-            <h1>📦 관리자 예약 목록</h1>
-            <table className="reserv-table">
-                <thead>
-                <tr>
-                    <th>주문번호</th><th>상호명</th><th>예약자</th><th>상태</th><th>총 금액</th><th>예약일</th>
-                </tr>
-                </thead>
-                <tbody>
-                {reservations.map((group) => (
-                    <React.Fragment key={group.merchantUid}>
-                    <tr onClick={() => handleRowClick(group.merchantUid)}
-                        style={{ backgroundColor: expandedUid === group.merchantUid ? "#f0f0f0" : "white" }}
-                    >
-                        <td>{group.merchantUid}</td>
-                        <td>{group.rentName}</td>
-                        <td>{group.username}</td>
-                        <td>{group.status}</td>
-                        <td>{group.totalPrice.toLocaleString()}원</td>
-                        <td>{new Date(group.createdAt).toLocaleString()}</td>
-                    </tr>
+    
+    const selectedReservation = useMemo(() => {
+        return reservations.find(r => r.merchantUid === selectedMerchantUid);
+    }, [reservations, selectedMerchantUid]);
 
-                    {expandedUid === group.merchantUid && (
-                        <tr>
-                        <td colSpan={7}>
-                            <div className="reservation-detail">
-                            <h2>📋 예약 상세</h2>
-                            <table className="detail-table">
-                                <thead>
-                                <tr>
-                                    <th>예약ID</th><th>장비명</th><th>사이즈</th><th>수량</th><th>대여시작</th><th>반납예정</th>
-                                    <th>가격</th><th>장비 반납</th><th>예약취소</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {group.items.map((item, idx) => (
-                                    <tr key={idx}>
-                                        <td>{item.reserveId}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.size || "Free"}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{new Date(item.rentStart).toLocaleString()}</td>
-                                        <td>{new Date(item.rentEnd).toLocaleString()}</td>
-                                        <td>{item.price.toLocaleString()}원</td>
-                                        <td><button>반납</button></td>
-                                        <td><button>취소</button></td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                            </div>
-                        </td>
-                        </tr>
-                    )}
-                    </React.Fragment>
-                ))}
-                </tbody>
-            </table>
+    return (
+        <div className="reserv-container">
+        <h1 className="top-subject">📦 관리자 예약 목록</h1>
+
+        <ReservFilterBar filters={filters} setFilters={setFilters} />
+
+        <ReservationList
+            reservations={reservations}
+            selectedMerchantUid={selectedMerchantUid}
+            setSelectedMerchantUid={setSelectedMerchantUid}
+        />
+
+        {selectedReservation && (
+            <ReservationDetail reservation={selectedReservation} onReturn={handleReturn} />
+        )}
         </div>
-        </>
     )
 }
+
 export default Reservation;

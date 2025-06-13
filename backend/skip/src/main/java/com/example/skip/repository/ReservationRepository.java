@@ -17,4 +17,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "JOIN FETCH id.item i " +
             "WHERE rent.user.userId = :userId")
     List<Reservation> findReservationsByUserId(@Param("userId") Long userId);
+
+
 }

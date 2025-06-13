@@ -31,8 +31,10 @@ import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
-import Reservation from "./components/rentManager/Reservation"
+
 import WishList from "./components/WishList"
+import Reservation from "./components/rentManager/Reservation"
+import RefundList from "./components/rentManager/RefundList"
 
 
 
@@ -74,6 +76,7 @@ function App() {
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                         <Route path="/reservManager/list" element={<Reservation/>}></Route>
+                        <Route path="/refundManager/list" element={<RefundList/>}></Route>
 
 
                         {/* 사용자 장바구니 */}

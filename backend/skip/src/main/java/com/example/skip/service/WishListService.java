@@ -9,10 +9,9 @@ import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.repository.WishListRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

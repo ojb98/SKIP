@@ -1,6 +1,7 @@
 package com.example.skip.dto.reservation;
 
 import com.example.skip.enumeration.ReservationStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,8 @@ public class ReservationGroupDTO {
     private Long rentId;
     private String rentName;
     private String username;
-    private String status;
     private int totalPrice;
+    private ReservationStatus status;
     private LocalDateTime createdAt;
     private List<Long> reserveIds;
     private List<ReservationDetailDTO> items;

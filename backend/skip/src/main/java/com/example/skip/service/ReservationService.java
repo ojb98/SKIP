@@ -2,20 +2,18 @@ package com.example.skip.service;
 
 import com.example.skip.dto.reservation.ReservationDetailDTO;
 import com.example.skip.dto.reservation.ReservationGroupDTO;
-import com.example.skip.entity.Rent;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
-import com.example.skip.repository.RentRepository;
+import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ReservationRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -41,7 +39,7 @@ public class ReservationService {
                         .rentId(r.getRent().getRentId())
                         .rentName(r.getRent().getName())
                         .username(r.getUser().getUsername())
-                        .status(r.getStatus().name())
+                        .status(ReservationStatus.valueOf(r.getStatus().name()))
                         .totalPrice(0)
                         .createdAt(r.getCreatedAt())
                         .reserveIds(new ArrayList<>())

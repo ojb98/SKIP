@@ -45,6 +45,8 @@ const MainHeader = () => {
                                 <li><Link to="/rentAdmin/list">가맹점 목록</Link></li>
                                 <li><Link to="/rentAdmin/select">장비 관리</Link></li>
                                 <li><Link to="/reservManager/list">예약 관리</Link></li>
+                                <li><Link to="/refundManager/list">환불 관리</Link></li>
+                                
                             </ul> : <></>
                     }
                 </div>

@@ -96,7 +96,7 @@ const CartList=()=>{
                 //각 그룹 내 items 배열을 순회
                 group.items.forEach(item =>{
                     //모든 item의 cartId를 allKeys Set에 추가
-                    newSet.add(item.cartId);
+                    newSet.add(item.cartId); 
                 })
             })
             //체크 상태를 모든 항목이 선택된 상태로 업데이트
