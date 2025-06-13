@@ -23,6 +23,9 @@ public class BannerWaitingListDTO {
     private String comments;
     private BigDecimal averageRating;
     private BigDecimal recent7dRating;
+    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+
 
     public BannerWaitingListDTO(BannerWaitingList entity) {
         this.waitingId = entity.getWaitingId();
@@ -42,6 +45,11 @@ public class BannerWaitingListDTO {
         }
         if (entity.getAverageRating() != null){
             this.recent7dRating = entity.getRecent7dRating();
+        }
+
+        this.createdAt = entity.getCreatedAt();
+        if (entity.getUpdatedAt() != null) {
+            this.updatedAt = entity.getUpdatedAt();
         }
     }
 }

@@ -6,7 +6,7 @@ const BannerApprovalTable = () => {
   const [banners, setBanners] = useState([]);
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [modalImage, setModalImage] = useState(null); // 🔥 모달 이미지 상태 추가  
+  const [modalImage, setModalImage] = useState(null); // 모달 이미지 상태 추가  
   const loadBanners = async () => {
     try {
       const data = await fetchWaitingBanners();
@@ -30,18 +30,18 @@ const BannerApprovalTable = () => {
     setSelectedBanner(banner);
   };
 
-  // 🧠 컴포넌트 상단에서 "이번 주 월요일 AM 3시" 계산
+  // 컴포넌트 상단에서 "이번 주 월요일 AM 3시" 계산
 const getThisWeekMonday3AM = () => {
   const today = new Date();
   const day = today.getDay(); // 일요일: 0, 월요일: 1, ...
-  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  const diffToMonday = (day === 0 ? -6 : 1) - day + 1;
   const monday = new Date(today);
   monday.setDate(today.getDate() + diffToMonday);
   monday.setHours(3, 0, 0, 0);
   return monday.toISOString().split('T')[0] + ' 오전 3시';
 };
 
-const registDay = getThisWeekMonday3AM(); // ✅ 항상 이번주 월요일 3시
+const registDay = getThisWeekMonday3AM(); // 항상 이번주 월요일 3시
 
   const handleApprove = async () => {
     if (!selectedBanner) return;
@@ -72,24 +72,25 @@ const registDay = getThisWeekMonday3AM(); // ✅ 항상 이번주 월요일 3시
   };
   
 
-  const openModal = (imageUrl) => setModalImage(imageUrl); // 🔥
-  const closeModal = () => setModalImage(null); // 🔥
+  const openModal = (imageUrl) => setModalImage(imageUrl);
+  const closeModal = () => setModalImage(null);
 
   if (loading) return <p>로딩 중...</p>;
 
   return (
     <div className="table-container">
       <button style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: '25px' }}>
-            <h3>📝 요청 배너 승인 <span style={{ fontSize: "14px", marginLeft: "10px", color: "#555" }}>📅 {registDay} 등록 예정</span></h3>
+            <h3>📝 요청 배너 승인 <span style={{ fontSize: "14px", marginLeft: "10px", color: "#555" }}>📅 {registDay}(월) 등록 예정</span></h3>
       </button>
       <table className="user-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>대기 고유ID</th>
             <th>렌탈샵명</th>
             <th>CPC</th>
-            <th>상태</th>            
+            <th>상태</th>                        
             <th>요청일</th>
+            <th>수정일</th>
           </tr>
         </thead>
         <tbody>
@@ -104,7 +105,9 @@ const registDay = getThisWeekMonday3AM(); // ✅ 항상 이번주 월요일 3시
                 <td>{banner.rentName}</td>
                 <td>{banner.cpcBid}</td>
                 <td>{banner.status}</td>                
-                <td>{banner.registDay?.split('T')[0]}</td>
+                <td>{banner.createdAt?.split('T')[0]}</td>
+                <td>{banner.createdAt?.split('T')[0] != banner.updatedAt?.split('T')[0] ? banner.updatedAt?.split('T')[0] : '-'}</td>
+                
               </tr>
             ))
           ) : (
@@ -117,21 +120,21 @@ const registDay = getThisWeekMonday3AM(); // ✅ 항상 이번주 월요일 3시
 
       {selectedBanner && (
         <div className="user-detail-card">
-          <div className="user-section" style={{ width: "800px", height: "200px", cursor: 'zoom-in' }}>
+          <div className="user-section" style={{ width: "1100px", height: "250px", cursor: 'zoom-in' }}>
             <img
               src={selectedBanner.bannerImage || '/images/default-banner.png'}
-              style={{ width: "800px", height: "200px" }}
+              style={{ width: "1100px", height: "250px" }}
               alt="배너 미리보기"
               onClick={() => openModal(selectedBanner.bannerImage)}
             />
           </div>
-          <div className="user-info">
-            <h4>상세 정보</h4>
+          <div className="user-info" style={{width:"250px"}}>
+            <h4><strong>👀미리보기</strong></h4>
             <p><strong>렌탈샵명:</strong> {selectedBanner.rentName}</p>
             <p><strong>통합 별점평균:</strong> {selectedBanner.averageRating}</p>
             <p><strong>최근7일 별점평균:</strong> {selectedBanner.recent7dRating}</p>
             <p><strong>입찰가:</strong> {selectedBanner.cpcBid}</p>
-            <p><strong>이전반려사유:</strong> {selectedBanner.comments}</p>
+            {selectedBanner.status === "WITHDRAWN"? (<p><strong>이전반려사유:</strong> <br /> &nbsp; {selectedBanner.comments}</p>):(<p></p>)}
             <p><strong>요청일:</strong> {selectedBanner.registDay?.split('T')[0]}</p>
           </div>
           <div style={{ marginLeft: 'auto' }}>

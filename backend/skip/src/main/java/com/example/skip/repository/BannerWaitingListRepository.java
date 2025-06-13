@@ -20,4 +20,11 @@ public interface BannerWaitingListRepository extends JpaRepository<BannerWaiting
             LocalDateTime start,
             LocalDateTime end
     );
+
+
+    List<BannerWaitingList> findAllByStatusAndRegistDayBetween(
+            BannerWaitingListStatus status,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }

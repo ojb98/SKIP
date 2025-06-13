@@ -1,6 +1,8 @@
 package com.example.skip.controller.admin;
 
+import com.example.skip.dto.banner.BannerActiveListDTO;
 import com.example.skip.dto.banner.BannerWaitingListDTO;
+import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.service.BannerService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,12 @@ public class BannerController {
     @GetMapping("/waiting")
     public ResponseEntity<List<BannerWaitingListDTO>> getWaitingBanners() {
         List<BannerWaitingListDTO> banners = bannerService.getWaitingBanners();
+        return ResponseEntity.ok(banners);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<BannerActiveListDTO>> getActiveBanners() {
+        List<BannerActiveListDTO> banners = bannerService.getActiveBanners();
         return ResponseEntity.ok(banners);
     }
 
