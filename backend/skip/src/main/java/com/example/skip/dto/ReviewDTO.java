@@ -8,9 +8,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
 public class ReviewDTO {
     private Long reviewId;
@@ -29,15 +27,5 @@ public class ReviewDTO {
         this.image = review.getImage();
         this.createdAt = review.getCreatedAt();
         this.updatedAt = review.getUpdatedAt();
-    }
-    public Review toEntity(Reservation reservation) {
-        Review review = Review.builder()
-                .reviewId(reviewId)
-                .reservation(reservation)
-                .rating(rating)
-                .content(content)
-                .image(image)
-                .build();
-        return review;
     }
 }

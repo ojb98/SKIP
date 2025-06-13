@@ -81,8 +81,13 @@ public class QnaService {
     }
 
     // 관리자 페이지 Q&A 조회
-    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, String itemName, Boolean secret, Pageable pageable) {
-        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, itemName, secret, pageable);
+    public Page<QnaListDTO> getQnaListByRent(Long rentId, QnaStatus status, String username, String itemName, Boolean secret, Boolean hasReply, Pageable pageable) {
+        return qnaRepository.findQnaListByRentalshopWithFilters(rentId, status, username, itemName, secret, hasReply, pageable);
+    }
+
+    // 관리자 페이지 미답변 개수
+    public long getUnansweredCountByRentId(Long rentId) {
+        return qnaRepository.countUnansweredByRentId(rentId);
     }
 
     // 마이 페이지 Q&A 조회 (projection)

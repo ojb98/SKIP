@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -64,8 +65,16 @@ public class QnaController {
                                              @RequestParam(required = false) String username,
                                              @RequestParam(required = false) String itemName,
                                              @RequestParam(required = false) Boolean secret,
+                                             @RequestParam(required = false) Boolean hasReply,
                                              Pageable pageable){
-        return qnaService.getQnaListByRent(rentId, status, username, itemName, secret, pageable);
+        return qnaService.getQnaListByRent(rentId, status, username, itemName, secret, hasReply, pageable);
+    }
+
+    // Q&A 관리자페이지 미답변 수 조회
+    @GetMapping("/admin/rent/{rentId}/unansweredCount")
+    public ResponseEntity<Long> getUnansweredCount(@PathVariable Long rentId) {
+        long count = qnaService.getUnansweredCountByRentId(rentId);
+        return ResponseEntity.ok(count);
     }
 
     // Q&A 조회 (마이페이지) Projection

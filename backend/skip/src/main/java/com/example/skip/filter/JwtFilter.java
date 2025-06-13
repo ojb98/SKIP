@@ -38,6 +38,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/user/profile",
                 "/user/password",
                 "/user/delete",
+                "/api/reviews",
+                "/user/delete",
                 "/user/social",
                 "/user/nickname/change",
                 "/user/username/change",

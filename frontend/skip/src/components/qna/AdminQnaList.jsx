@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteQnaByAdminApi, getQnaListByAdminApi } from "../../api/qnaApi";
+import { deleteQnaByAdminApi, getQnaListByAdminApi, getUnansweredCountApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments, faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
@@ -17,6 +17,7 @@ const AdminQnaList = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [answerErrors, setAnswerErrors] = useState([]);
+  const [unansweredCount, setUnansweredCount] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchType, setSearchType] = useState("username");
   const [searchParams, setSearchParams] = useState({ isSearchMode: false, searchType: "username", searchKeyword: "" });
@@ -31,8 +32,10 @@ const AdminQnaList = () => {
       try {
         const username = searchParams.isSearchMode && searchParams.searchType === "username" ? searchParams.searchKeyword : null;
         const itemName = searchParams.isSearchMode && searchParams.searchType === "name" ? searchParams.searchKeyword : null;
+        const status = searchParams.isSearchMode && searchParams.searchType === "status" ? searchParams.searchKeyword : null;
+        const hasReply = searchParams.isSearchMode && searchParams.searchType === "hasReply" ? searchParams.searchKeyword === "false" ? false : true : null;
 
-        const data = await getQnaListByAdminApi(rentId, null, username, itemName, null, page, size);
+        const data = await getQnaListByAdminApi(rentId, status, username, itemName, null, hasReply, page, size);
         setQnaList(data.content);
         setCheckedItems(Array(data.content.length).fill(false));
 
@@ -232,6 +235,19 @@ const AdminQnaList = () => {
     setAnswers(updated);
   }
 
+  // 미답변 갯수
+  useEffect(() => {
+    const fetchUnansweredCount = async () => {
+      try {
+        const count = await getUnansweredCountApi(rentId);
+        setUnansweredCount(count);
+      } catch (err) {
+        console.error("미답변 수 불러오기 실패:", err);
+      }
+    };
+    fetchUnansweredCount();
+  }, []);
+
   return (
     <div>
       <div className="table-container">
@@ -241,6 +257,20 @@ const AdminQnaList = () => {
             style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
             <h3><FontAwesomeIcon icon={faComments} /> Q&A 리스트</h3>
           </button>
+          <Link
+            onClick={() => {
+              setSearchParams((prev) => ({
+                ...prev,
+                isSearchMode: true,
+                searchType: "hasReply",
+                searchKeyword: "false",
+              }));
+              setPage(0);
+            }}
+            className="text-red-500 text-[12px] underline cursor-pointer inline-block self-start mt-[3px] ml-3.5"
+          >
+            미답변: {unansweredCount} 개
+          </Link>
           <div className="search-filter">
             <select
               className="filter"
