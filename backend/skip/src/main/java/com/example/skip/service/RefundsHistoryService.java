@@ -1,15 +1,17 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.CommissionRateDTO;
+import com.example.skip.dto.refund.RefundDetailDTO;
+import com.example.skip.dto.refund.RefundSummaryDTO;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.RefundStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ItemDetailRepository;
-import com.example.skip.repository.RefundsHistoryRepository;
+import com.example.skip.repository.refund.RefundsHistoryRepository;
 import com.example.skip.repository.ReservationItemRepository;
-import com.example.skip.repository.ReservationRepository;
 import com.example.skip.util.IamportTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -20,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -34,7 +37,68 @@ public class RefundsHistoryService {
     private final ReservationItemRepository reservationItemRepository;
     private final RefundsHistoryRepository refundsHistoryRepository;
 
-    //사용자 요청 처리 메서드
+
+    // 환불 내역 항목
+    public List<RefundSummaryDTO> findRefunds(Long userId, Long rentId, RefundStatus status,
+                                              LocalDateTime startDate,LocalDateTime endDate, String sort) {
+
+        List<RefundsHistory> entities =
+                refundsHistoryRepository.findWithFilters(userId, rentId ,status, startDate, endDate , sort);
+
+        // Entity → DTO 변환
+        return entities.stream()
+                .map(e -> new RefundSummaryDTO(
+                        e.getRefundId(),
+                        e.getReservationItem().getReservation().getReserveId(),
+                        e.getReservationItem().getReservation().getMerchantUid(),
+                        e.getReservationItem().getReservation().getRent().getRentId(),
+                        e.getReservationItem().getReservation().getRent().getName(),
+                        e.getReservationItem().getItemDetail().getItem().getName(),
+                        e.getReservationItem().getQuantity(),
+                        e.getRefundPrice(),
+                        e.getStatus(),
+                        e.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // 환불 상세
+    public RefundDetailDTO findRefundDetail(Long refundId) {
+        RefundsHistory refund = refundsHistoryRepository.findById(refundId)
+                .orElseThrow(() -> new EntityNotFoundException("환불내역 없음"));
+
+        Reservation reservation = refund.getReservationItem().getReservation();
+        User user = reservation.getUser();
+        ItemDetail item = refund.getReservationItem().getItemDetail();
+
+        return new RefundDetailDTO(
+                refund.getRefundId(),
+                refund.getRefundPrice(),
+                refund.getAdminRefundPrice(),
+                refund.getRentRefundPrice(),
+                refund.getReason(),
+                refund.getStatus(),
+                refund.getRefundedAt(),
+                refund.getCreatedAt(),
+
+                refund.getPayment().getPaymentId(),
+                refund.getPayment().getTotalPrice(),
+
+                reservation.getReserveId(),
+                user.getName(),
+                user.getEmail(),
+
+                refund.getReservationItem().getRentItemId(),
+                item.getItem().getName(),
+                refund.getReservationItem().getQuantity(),
+                refund.getReservationItem().getRentStart(),
+                refund.getReservationItem().getRentEnd()
+        );
+    }
+
+
+
+    //사용자 환불요청 메서드
     public RefundsHistory requestRefund(Long rentItemId, String reason) {
         // rentItemId로 ReservationItem 조회
         ReservationItem item = reservationItemRepository.findById(rentItemId)

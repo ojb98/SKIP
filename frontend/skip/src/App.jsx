@@ -39,6 +39,7 @@ import RefundList from "./components/rentManager/RefundList"
 
 
 
+
 function App() {
     const dispatch = useDispatch();
     useEffect(() => {
@@ -77,6 +78,7 @@ function App() {
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                         <Route path="/reservManager/list" element={<Reservation/>}></Route>
                         <Route path="/refundManager/list" element={<RefundList/>}></Route>
+                       
 
 
                         {/* 사용자 장바구니 */}

@@ -1,6 +1,7 @@
 package com.example.skip.controller;
 
 import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.service.RentService;
@@ -70,5 +71,13 @@ public class RentController {
         List<RentDTO> rents = rentService.getRentsByStatusDesc(status);
         return new ResponseEntity<>(rents, HttpStatus.OK);
     }
+
+    // 렌탈샵 Id, name만 조회(필터용)
+    @GetMapping("/owned/{userId}")
+    public ResponseEntity<List<RentInfoDTO>> getRentsByOwner(@PathVariable Long userId) {
+        List<RentInfoDTO> rents = rentService.findRentsByUserId(userId);
+        return new ResponseEntity<>(rents, HttpStatus.OK);
+    }
+
 
 }
