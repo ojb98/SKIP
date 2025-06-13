@@ -120,7 +120,7 @@ const RefundList = () => {
     }
 
     return (
-        <>
+        <div>
         <h2>환불 요청 목록</h2>
 
         {/* 필터 */}
@@ -175,8 +175,7 @@ const RefundList = () => {
                     refunds.map((refund) => (
                     <React.Fragment key={refund.refundId}>
                         <tr onClick={() => toggleAccordion(refund.refundId)}
-                            style={{cursor: "pointer", backgroundColor: selectedRefundId === refund.refundId
-                                ? "#f0f8ff" : "white",}}>
+                            style={{cursor: "pointer", backgroundColor: selectedRefundId === refund.refundId? "#f0f8ff" : "white",}}>
                             <td>{refund.refundId}</td>
                             <td>{refund.merchantUid}</td>
                             <td>{refund.rentName}</td>
@@ -214,7 +213,7 @@ const RefundList = () => {
                 )}
             </tbody>
         </table>
-        </>
+        </div>
     )
 }
 export default RefundList;
