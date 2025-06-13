@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { logout as logoutApi, getProfile } from "../api/userApi";
 
+const host = __APP_BASE__;
 
 export const logout = createAsyncThunk('logout', () => {
     return logoutApi();
@@ -33,7 +34,7 @@ export const loginSlice = createSlice({
                     state.social = profile.social;
                     state.roles = profile.roles;
                     state.registeredAt = profile.registeredAt.split('T')[0];
-                    state.image = profile.image;
+                    state.image = profile.image ? host + profile.image : '/images/profile_default.png';
                     state.nickname = profile.nickname;
                     state.showname = profile.nickname ? profile.nickname : profile.username.substring(0, 11).slice(0, -3) + '***';
                     if (state.social != 'NONE') {

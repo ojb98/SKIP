@@ -1,6 +1,6 @@
 import { radio } from "./buttons";
 
-const MainInfoCategory = () => {
+const MainInfoCategory = ({ onClick }) => {
     return (
         <>
             <div className="w-full flex justify-center gap-20">
@@ -11,7 +11,9 @@ const MainInfoCategory = () => {
                         type="radio"
                         id="ranking"
                         name="info"
+                        value="ranking"
                         defaultChecked
+                        onClick={onClick}
                         className="sr-only"
                     ></input>
                 </label>
@@ -23,6 +25,8 @@ const MainInfoCategory = () => {
                         type="radio"
                         id="forecast"
                         name="info"
+                        value="forecast"
+                        onClick={onClick}
                         defaultChecked
                         className="sr-only"
                     ></input>

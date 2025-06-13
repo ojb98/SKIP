@@ -44,7 +44,7 @@ const AccountInfo = () => {
 
     useEffect(() => {
         if (fileHasChanagedKey == 0) {
-            image.current.src = profile.image ? `http://localhost:8080${profile.image}` : "/images/profile_default.png";
+            image.current.src = profile.image;
         } else {
             image.current.src = previewUrl;
         }

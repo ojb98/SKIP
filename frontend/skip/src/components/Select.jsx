@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { select } from "./inputs";
 
-const Select = ({ selectRef, options, onChange, className }) => {
+const Select = ({ value, selectRef, options, onChange, className }) => {
     const [open, setOpen] = useState(false);
 
 

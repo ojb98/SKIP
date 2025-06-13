@@ -50,3 +50,9 @@ export const page = tv({
         }
     }
 });
+
+export const link = tv({
+    base: [
+        'text-blue-500 hover:underline hover:underline-offset-4'
+    ]
+});

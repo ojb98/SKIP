@@ -1,7 +1,7 @@
 import axios from "axios";
 import caxios from "./caxios";
 
-const host = import.meta.env.VITE_BACKEND_HOST_URL;
+const host = __APP_BASE__;
 
 export const skiListWithCoordinates = async () => {
     const data = await axios.get(`${host}/ski/location`).then(res => {

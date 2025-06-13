@@ -7,6 +7,7 @@ const active_style = 'bg-blue-50 text-blue-400 font-semibold hover:underline hov
 const inactive_style = 'text-gray-700 hover:bg-gray-100 hover:text-black';
 
 const MySideMenu = ({group, active}) => {
+    const host = import.meta.env.VITE_BACKEND_HOST_URL;
     const profile = useSelector(state => state.loginSlice);
 
 
@@ -18,7 +19,7 @@ const MySideMenu = ({group, active}) => {
                         {
                             !profile.isLoading
                             &&
-                            <img src={profile.image ? `http://192.168.80.55:8080${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
+                            <img src={profile.image} className="w-[100px] h-[100px] rounded-full"></img>
                         }
 
                         <div className="flex items-center gap-2">

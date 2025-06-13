@@ -5,9 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchForecast } from "../slices/forecastsSlice";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Link } from "react-router-dom";
+import { link } from "./buttons";
 
 const Forecast = () => {
-    const skiSelect = useRef();
+    const skiSelectRef = useRef();
+
+    const [selected, setSelected] = useState("");
 
     const [skiList, setSkiList] = useState([]);
     const [skiOptions, setSkiOptions] = useState([]);
@@ -21,12 +25,14 @@ const Forecast = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        setIsLoading(true);
         skiListWithCoordinates().then(res => {
             if (res.success) {
                 setSkiList(res.data);
             } else {
                 setSelectError(res.data);
             }
+            setIsLoading(false);
         });
     }, []);
 
@@ -48,19 +54,19 @@ const Forecast = () => {
     }, [skiOptions]);
 
     useEffect(() => {
-        if (forecasts[skiSelect.current.value]) {
+        if (forecasts[skiSelectRef.current.value]) {
             showForecast();
         }
     }, [forecasts]);
 
 
     const skiChangeHandler = () => {
+        setSelected(skiSelectRef.current.value);
         setIsLoading(true);
-        const ski = skiList.find(ski => ski.rentId == skiSelect.current.value);
+        const ski = skiList.find(ski => ski.rentId == skiSelectRef.current.value);
         if (forecasts[ski.rentId]) {
             showForecast();
         } else {
-
             dispatch(fetchForecast({
                 rentId: ski.rentId,
                 lat: ski.latitude,
@@ -70,7 +76,7 @@ const Forecast = () => {
     };
 
     const showForecast = () => {
-        setForecast(forecasts[skiSelect.current.value]);
+        setForecast(forecasts[skiSelectRef.current.value]);
 
         setDetaildIndex(0);
 
@@ -82,11 +88,26 @@ const Forecast = () => {
             <div className="flex gap-5 items-center mb-10">
                 <span className="font-semibold">지금 스키장 날씨는?</span>
 
-                <Select selectRef={skiSelect} options={skiOptions} onChange={skiChangeHandler} className="w-50 h-10 rounded-xl"></Select>
+                <Select selectRef={skiSelectRef} options={skiOptions} onChange={skiChangeHandler} className="w-50 h-10 rounded-xl"></Select>
 
-                <p className="text-xl text-gray-700">
+                {
+                    (isLoading || selectError)
+                    &&
+                    <p className="text-xl text-gray-700">
                     {selectError}
+                    
                 </p>
+                ||
+                <>
+                    <Link to={`/rent/detail/${selected}`} className={link({})}>바로가기</Link>
+
+                    <span className="h-6 flex">
+                        <span className="w-px bg-gray-300"></span>
+                    </span>
+
+                    <span>{(skiList?.find(ski => ski.rentId == selected))?.streetAddress}</span>
+                </>
+                }
             </div>
 
             {
