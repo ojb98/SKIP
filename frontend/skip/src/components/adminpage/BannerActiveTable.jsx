@@ -1,18 +1,23 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import '../../css/userlist.css';
 import { fetchActiveBanners } from '../../services/admin/BannerService';
+// 이름과 경로를 정확히 맞춰주세요. 파일명: AdminPagination.jsx
+import AdminPagenation from './AdminPagenation';
+
 const BannerActiveTable = () => {
   const [banners, setBanners] = useState([]);
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalImage, setModalImage] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
 
+  // 배너 호출
   const loadBanners = async () => {
     try {
       const data = await fetchActiveBanners();
-      const sorted = sortBanners(data, sortOrder);
-      setBanners(Array.isArray(sorted) ? sorted : []);
+      setBanners(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error('배너 목록 로딩 실패', e);
     } finally {
@@ -20,106 +25,154 @@ const BannerActiveTable = () => {
     }
   };
 
-  const sortBanners = (data, order) => {
-    return [...data].sort((a, b) =>
-      order === 'desc'
-        ? b.finalScore - a.finalScore
-        : a.finalScore - b.finalScore
-    );
-  };
-
-  const toggleSort = () => {
-    const newOrder = sortOrder === 'desc' ? 'asc' : 'desc';
-    setSortOrder(newOrder);
-    const sorted = sortBanners(banners, newOrder);
-    setBanners(sorted);
-  };
-
   useEffect(() => {
     loadBanners();
   }, []);
 
-  const handleRowClick = (banner) => {
-    if (!banner || selectedBanner?.bannerId === banner.bannerId) {
-      setSelectedBanner(null);
-      return;
-    }
-    setSelectedBanner(banner);
+  // 1) 정렬된 전체 리스트
+  const sortedBanners = useMemo(() => {
+    return [...banners].sort((a, b) => {
+      const diff = Number(a.finalScore) - Number(b.finalScore);
+      return sortOrder === 'desc' ? -diff : diff;
+    });
+  }, [banners, sortOrder]);
+
+  // 2) 현재 페이지에 보일 데이터만 슬라이스
+  const paginatedBanners = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return sortedBanners.slice(start, start + pageSize);
+  }, [sortedBanners, currentPage, pageSize]);
+
+  // 정렬 토글 (다시 1페이지로 이동)
+  const toggleSort = () => {
+    setSortOrder(o => (o === 'desc' ? 'asc' : 'desc'));
+    setCurrentPage(1);
+  };
+
+  const handleRowClick = banner => {
+    setSelectedBanner(sb =>
+      sb?.bannerId === banner.bannerId ? null : banner
+    );
   };
 
   const getNextWeekMonday3AM = () => {
     const today = new Date();
     const day = today.getDay();
-    const diffToMonday = (day === 0 ? 1 : 8) - day + 1;
+    const diffToMonday = (9 - day) % 7 || 7;
     const monday = new Date(today);
     monday.setDate(today.getDate() + diffToMonday);
     monday.setHours(3, 0, 0, 0);
     return monday.toISOString().split('T')[0] + ' 오전 3시';
   };
-
   const registDay = getNextWeekMonday3AM();
 
-  const openModal = (imageUrl) => setModalImage(imageUrl);
+  const openModal = imageUrl => setModalImage(imageUrl);
   const closeModal = () => setModalImage(null);
 
   if (loading) return <p>로딩 중...</p>;
 
   return (
     <div className="table-container">
-      <h3>
-        🖼️ 등록 배너 관리<span style={{ fontSize: "14px", marginLeft: "10px", color: "#555" }}>📅 {registDay}(월) 삭제 예정</span>
+      <h3 style={{ marginBottom: '15px' }}>
+        🖼️ 등록 배너 관리
+        <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
+          📅 {registDay}(월) 삭제 예정
+        </span>
+        <span
+          style={{
+            float: 'right',
+            fontSize: '14px',
+            marginLeft: '10px',
+            color: '#555',
+          }}
+        >
+          *배너는 노출도 순위가 높은 순으로 배치됩니다.
+        </span>
       </h3>
 
       <table className="user-table">
         <thead>
           <tr>
-            <th style={{ cursor: 'pointer' }} onClick={toggleSort}>
-              노출 순위 {sortOrder === 'desc' ? '▲':'▼'}
-            </th>
+            <th>번호</th>
             <th>등록 고유ID</th>
             <th>렌탈샵명</th>
             <th>CPC</th>
-            <th>노출점수</th>
+            <th
+              style={{ cursor: 'pointer' }}
+              onClick={toggleSort}
+              title="총점 기준 정렬"
+            >
+              노출 순위(총점*) {sortOrder === 'desc' ? '▲' : '▼'}
+            </th>
             <th>클릭 수</th>
             <th>등록일</th>
             <th>삭제예정일</th>
           </tr>
         </thead>
         <tbody>
-          {banners.length > 0 ? (
-            banners.map((banner, index) => (
-              <tr
-                key={banner.bannerId}
-                onClick={() => handleRowClick(banner)}
-                className={selectedBanner?.bannerId === banner.bannerId ? 'selected-row' : ''}
-              >
-                <td>{index + 1}위</td>
-                <td>{banner.bannerId}</td>
-                <td>{banner.rentName}</td>
-                <td>{banner.cpcBid}</td>
-                <td>{banner.finalScore}</td>
-                <td>{banner.clickCnt}</td>
-                <td>{banner.uploadDate?.split('T')[0]}</td>
-                <td>{banner.endDate?.split('T')[0]}</td>
-              </tr>
-            ))
+          {paginatedBanners.length > 0 ? (
+            paginatedBanners.map((banner, idx) => {
+              const globalIndex = (currentPage - 1) * pageSize + idx + 1;
+              return (
+                <tr
+                  key={banner.bannerId}
+                  onClick={() => handleRowClick(banner)}
+                  className={
+                    selectedBanner?.bannerId === banner.bannerId
+                      ? 'selected-row'
+                      : ''
+                  }
+                >
+                  <td>{globalIndex}</td>
+                  <td>{banner.bannerId}</td>
+                  <td>{banner.rentName}</td>
+                  <td>{banner.cpcBid}</td>
+                  <td>{banner.finalScore}</td>
+                  <td>{banner.clickCnt}</td>
+                  <td>{banner.uploadDate?.split('T')[0]}</td>
+                  <td>{banner.endDate?.split('T')[0]}</td>
+                </tr>
+              );
+            })
           ) : (
-            <tr><td colSpan="8">등록된 배너가 없습니다.</td></tr>
+            <tr>
+              <td colSpan="8">등록된 배너가 없습니다.</td>
+            </tr>
           )}
         </tbody>
       </table>
 
+      
+      <AdminPagenation
+        currentPage={currentPage}
+        totalItems={banners.length}
+        pageSize={pageSize}
+        groupSize={5}
+        onPageChange={page => {
+          setCurrentPage(page);
+          setSelectedBanner(null);
+        }}
+      />
+
+      {/* 선택 배너 상세 & 모달 */}
       {selectedBanner && (
         <div className="user-detail-card">
-          <div className="user-section" style={{ width: "1100px", height: "250px", cursor: 'zoom-in' }}>
+          <div
+            className="user-section"
+            style={{
+              width: '1100px',
+              height: '250px',
+              cursor: 'zoom-in',
+            }}
+          >
             <img
               src={selectedBanner.bannerImage || '/images/default-banner.png'}
-              style={{ width: "1100px", height: "250px" }}
+              style={{ width: '1100px', height: '250px' }}
               alt="배너 미리보기"
               onClick={() => openModal(selectedBanner.bannerImage)}
             />
           </div>
-          <div className="user-info" style={{ width: "250px" }}>
+          <div className="user-info" style={{ width: '250px' }}>
             <h4><strong>👀미리보기</strong></h4>
             <p><strong>렌탈샵명:</strong> {selectedBanner.rentName}</p>
             <p><strong>입찰가:</strong> {selectedBanner.cpcBid}</p>
@@ -134,18 +187,26 @@ const BannerActiveTable = () => {
           className="image-modal"
           style={{
             position: 'fixed',
-            top: 0, left: 0,
-            width: '100%', height: '100%',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            display: 'flex', justifyContent: 'center', alignItems: 'center',
-            zIndex: 1000
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
           }}
           onClick={closeModal}
         >
           <img
             src={modalImage}
             alt="확대 이미지"
-            style={{ maxWidth: '90%', maxHeight: '90%', border: '3px solid white' }}
+            style={{
+              maxWidth: '90%',
+              maxHeight: '90%',
+              border: '3px solid white',
+            }}
           />
         </div>
       )}

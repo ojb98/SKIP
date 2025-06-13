@@ -9,7 +9,10 @@ export const fetchWaitingBanners = async () => {
 //등록된 배너 불러오기
 export const fetchActiveBanners = async () => {
   const response = await axios.get('/api/banners/active');
-  return response.data;
+   return response.data.map(banner => ({
+    ...banner,
+    finalScore: Number(banner.finalScore)
+  }));
 };
 
 //배너 요청 -승인
