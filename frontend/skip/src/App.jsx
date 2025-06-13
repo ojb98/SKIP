@@ -9,14 +9,14 @@ import { useEffect } from "react"
 import RentalshopPage from "./pages/RentalshopPage"
 import ProductPage from "./pages/ProductPage"
 import ReviewPopupPage from "./pages/ReviewPopupPage"
-import RentInsertForm from "./components/rentAdmin/RentInsertForm"
-import RentList from "./components/rentAdmin/RentList"
-import RentDetail from "./components/rentAdmin/RentDetail"
-import RentUpdateForm from "./components/rentAdmin/RentUpdateForm"
-import ItemInsertForm from "./components/rentAdmin/ItemInsertForm"
-import ItemListAndDetails from "./components/rentAdmin/ItemListAndDetails"
-import ItemSelectorByRent from "./components/rentAdmin/ItemSelectorByRent"
-import ItemUpdateForm from "./components/rentAdmin/ItemUpdateForm"
+import RentInsertForm from "./components/rentManager/RentInsertForm"
+import RentList from "./components/rentManager/RentList"
+import RentDetail from "./components/rentManager/RentDetail"
+import RentUpdateForm from "./components/rentManager/RentUpdateForm"
+import ItemInsertForm from "./components/rentManager/ItemInsertForm"
+import ItemListAndDetails from "./components/rentManager/ItemListAndDetails"
+import ItemSelectorByRent from "./components/rentManager/ItemSelectorByRent"
+import ItemUpdateForm from "./components/rentManager/ItemUpdateForm"
 import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
@@ -30,15 +30,20 @@ import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import UserApprovalList from "./pages/admin/UserApprovalList"
-import WishList from "./components/wishList"
+import WishList from "./components/WishList"
 import PasswordResettingPage from "./pages/login/PasswordResettingPage"
 import PasswordResetSuccessPage from "./pages/login/PasswordResetSuccessPage"
 import UsernameInputPage from "./pages/login/UsernameInputPage"
 import UsernameFindPage from "./pages/login/UsernameFindPage"
 import UsernameFindSuccessPage from "./pages/login/UsernameFindSuccessPage"
 import MyReservePage from "./pages/myPage/MyReservePage"
-
-
+import Reservation from "./components/rentManager/Reservation"
+import RefundList from "./components/rentManager/RefundList"
+import UserApprovalTable from "./components/adminpage/UserApprovalTable"
+import UserPendingTable from "./components/adminpage/UserPendingTable"
+import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import ActiveBannerList from "./pages/admin/ActiveBannerList"
+import PendingBannerList from "./pages/admin/PendingBannerList"
 
 
 function App() {
@@ -79,7 +84,11 @@ function App() {
                         <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                         <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                         <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
-                        
+                        <Route path="/reservManager/list" element={<Reservation/>}></Route>
+                        <Route path="/refundManager/list" element={<RefundList/>}></Route>
+                       
+
+
                         {/* 사용자 장바구니 */}
                         <Route path="/cart/list" element={<CartList/>}></Route>
                         {/* 사용자 찜 */}
@@ -94,13 +103,12 @@ function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         {/* 추가 라우트 */}
-                        <Route path="/admin/pendinglist" element={<UserApprovalList/>} />
-                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/pendinglist" element={<UserPendingTable/>} />
+                        <Route path="/admin/withdrawnlist" element={<UserWithdrawTable/>} />
+                        <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
-                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
+                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}

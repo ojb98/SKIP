@@ -11,10 +11,9 @@ import java.util.Optional;
 
 public interface ItemDetailRepository extends JpaRepository<ItemDetail, Long> {
 
-    // 비관적 락 : 다른 트랜잭션의 읽기/쓰기 모두 차단
-    // (주로 재고 감소, 좌석 예약, 중복 결제 방지 등 동시성 문제가 발생할 수 있는 상황에서 사용)
+    // 비관적 락 : 다른 트랜잭션의 읽기/쓰기 모두 차단(재고 수량 변경)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select i from ItemDetail i where i.itemDetailId = :id")
-    Optional<ItemDetail> findByIdWithLock(@Param("id") Long id);
+    @Query("SELECT i FROM ItemDetail i WHERE i.itemDetailId = :itemDetailId")
+    Optional<ItemDetail> findByIdWithLock(@Param("itemDetailId") Long itemDetailId);
 
 }

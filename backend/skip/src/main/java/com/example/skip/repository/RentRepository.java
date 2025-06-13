@@ -1,7 +1,9 @@
 package com.example.skip.repository;
 
+import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.enumeration.RentCategory;
+import com.example.skip.entity.User;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
 import org.springframework.data.domain.Sort;
@@ -24,4 +26,14 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
     boolean existsByBizRegNumber(String bizRegNumber);
 
     List<Rent> findByCategory(RentCategory category);
+
+    List<Rent> findByUser_UsernameContaining(String userUsername);
+
+    List<Rent> findByNameContaining(String name);
+
+    List<Rent> findByUser_NameContaining(String userName);
+
+
+    // user기준 렌탈샵 조회
+    List<Rent> findByUserAndUseYnAndStatus(User user,YesNo yesNo,UserStatus status);
 }

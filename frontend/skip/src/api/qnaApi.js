@@ -35,10 +35,16 @@ export const getQnaListByItemApi = async (itemId, hasReply, status, secret, curr
 }
 
 // 관리자 페이지 Q&A 리스트
-export const getQnaListByAdminApi = async (rentId, status, username, itemName, secret, page = 0, size = 10) => {
+export const getQnaListByAdminApi = async (rentId, status, username, itemName, secret, hasReply, page = 0, size = 10) => {
   const response = await axios.get(`${host}/admin/rent/${rentId}`, {
-    params: {status, username, itemName, secret, page, size, sort: "qnaId,DESC"},
+    params: {status, username, itemName, secret, hasReply, page, size, sort: "qnaId,DESC"},
   });
+  return response.data;
+}
+
+// 관리자 페이지 Q&A 미답변 개수
+export const getUnansweredCountApi = async (rentId) => {
+  const response = await axios.get(`${host}/admin/rent/${rentId}/unansweredCount`);
   return response.data;
 }
 

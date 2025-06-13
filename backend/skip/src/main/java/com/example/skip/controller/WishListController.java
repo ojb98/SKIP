@@ -1,3 +1,4 @@
+
 package com.example.skip.controller;
 
 import com.example.skip.dto.WishAddDTO;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +31,11 @@ public class WishListController {
 
     }
 
-    @DeleteMapping("/{wishlistId}")
-    public ResponseEntity<String> removeWishList(@PathVariable("wishlistId") Long wishlistId){
-        wishListService.removeWishList(wishlistId);
+    @PatchMapping("/{wishlistId}")
+    public ResponseEntity<String> removeWishList(@PathVariable("wishlistId") Long wishlistId,
+                                                 @RequestParam String useYn){
+
+        wishListService.removeWishList(wishlistId,useYn);
         return ResponseEntity.ok("DeleteWishSuccess");
     }
 

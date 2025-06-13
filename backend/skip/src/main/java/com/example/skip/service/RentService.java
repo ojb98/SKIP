@@ -1,6 +1,7 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
@@ -10,13 +11,15 @@ import com.example.skip.repository.RentRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -160,5 +163,56 @@ public class RentService {
         }
     }
 
+    // 관리자(userId) 소유의 렌탈샵 목록 반환
+    public List<RentInfoDTO> findRentsByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        List<Rent> rents = rentRepository.findByUserAndUseYnAndStatus(user,YesNo.Y,UserStatus.APPROVED);
+        return rents.stream()
+                .map(r -> new RentInfoDTO(r.getRentId(), r.getName()))
+                .toList();
+    }
+
+    public List<RentDTO> findAllDto() {
+        return rentRepository.findAll().stream()
+                .map(rent -> new RentDTO(rent))
+                .toList();
+    }
+    public List<RentDTO> findApproveDto(){
+        return rentRepository.findByStatus(UserStatus.APPROVED,Sort.by(Sort.Order.desc("createdAt")))
+                .stream().map(rent -> new RentDTO(rent))
+                .toList();
+    }
+    public List<RentDTO> findPendingDto(){
+        return rentRepository.findByStatus(UserStatus.PENDING,Sort.by(Sort.Order.desc("createdAt")))
+                .stream().map(rent -> new RentDTO(rent))
+                .toList();
+    }
+    public List<RentDTO> findWithdrawDto(){
+        return rentRepository.findByStatus(UserStatus.WITHDRAWN,Sort.by(Sort.Order.desc("createdAt")))
+                .stream().map(rent -> new RentDTO(rent))
+                .toList();
+    }
+
+    public List<RentDTO> findByUserUsername(String username){
+        List<Rent> rents = rentRepository.findByUser_UsernameContaining(username);
+        return rents.stream().map(RentDTO::new).toList();
+    }
+    public List<RentDTO> findByUserName(String name){
+        List<Rent> rents = rentRepository.findByUser_NameContaining(name);
+        return rents.stream().map(RentDTO::new).toList();
+    }
+    public List<RentDTO> findByName(String name){
+        List<Rent> rents = rentRepository.findByNameContaining(name);
+        return rents.stream().map(RentDTO::new).toList();
+    }
+
+    @Transactional
+    public void changeStatus(Long rentId, UserStatus status){
+        Rent rent = rentRepository.findById(rentId).orElseThrow(() -> new EntityNotFoundException("해당 렌탈샵을 찾을 수 없습니다:" + rentId));
+        rent.setStatus(status);
+    }
 
 }

@@ -1,8 +1,6 @@
 package com.example.skip.service;
 
-import com.example.skip.entity.*;
 import com.example.skip.enumeration.ItemCategory;
-import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ public class AdminDashboardService {
     @Autowired
     private AdPaymentRepository adPaymentRepository;
     @Autowired
-    private ActiveBannerListRepository activeBannerListRepository;
+    private BannerActiveListRepository activeBannerListRepository;
     @Autowired
     private BannerWaitingListRepository bannerWaitingListRepository;
     @Autowired
@@ -31,8 +29,10 @@ public class AdminDashboardService {
         LocalDateTime to = end.plusDays(1).atStartOfDay();
 
         // 총 결제액, 총 결제건 수
-        double totalSales = Optional.ofNullable(paymentRepository.getTotalPaidPriceBetween(from, to)).orElse(0.0);
-        long totalSalesCount =  Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L);
+        double totalSales = Optional.ofNullable(paymentRepository.getTotalPaidPriceBetween(from, to)).orElse(0.0)
+                            +Optional.ofNullable(paymentRepository.getCancelledSales(from, to)).orElse(0.0);
+        long totalSalesCount =  Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L)
+                                +Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);
         // 렌탈샵 총 결제액 , 광고비 총 결제액
         double rentTotalSales = Optional.ofNullable(paymentRepository.getRentTotalSales(from, to)).orElse(0.0);
         double adTotalSales = Optional.ofNullable(paymentRepository.getAdTotalSales(from, to)).orElse(0.0);
@@ -47,8 +47,8 @@ public class AdminDashboardService {
         // 관리자 순수익액
         double profit = Optional.ofNullable(paymentRepository.getAdminProfit(from, to)).orElse(0.0);
         // 결제승인건
-        long successCount = Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L)
-                            - Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);
+        long successCount = Optional.ofNullable(paymentRepository.getPaidCountBetween(from, to)).orElse(0L);
+                            //- Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);
         // 결제취소금액, 결제취소건
         double cancelPrice = Optional.ofNullable(paymentRepository.getCancelledSales(from, to)).orElse(0.0);
         long cancelCount = Optional.ofNullable(paymentRepository.getCancelledCount(from, to)).orElse(0L);

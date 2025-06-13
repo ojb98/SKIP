@@ -73,7 +73,7 @@ const AdminDashboard = () => {
     const [mounted, setMounted] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
     const [beforeStartDate, setBeforeStartDate] = useState();
-    const [beforeEndDate, setBeforeEndDate] = useState();    
+    const [beforeEndDate, setBeforeEndDate] = useState();
     const [summaryData, setSummaryData] = useState({        
         totalSales: 0,
         totalSalesCount: 0,
@@ -227,8 +227,9 @@ const loadDashboardData = async () => {
     const handleClick = (type) => {
         console.log(startDate);
         setIsClicked(type);
-        setTimeout(() => setIsClicked(null), 150); 
-        // 다운로드 기능 등도 여기에 추가
+        setTimeout(() => setIsClicked(null), 150);         
+        const extension = type === ".xlsx" || type === ".cell" ? type : "";
+        window.location.href = `/api/admin/summary/export?atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
     };
 
 
@@ -275,18 +276,18 @@ const loadDashboardData = async () => {
                     </div>
                 </div>
                 <div className="card-excel">                
-                    <div style={{display:"flex",marginBottom:"10px", cursor: "pointer", backgroundColor: isClicked==="xlsx" ? "#ccc" : "transparent",transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick("xlsx")}}>
-                        <img src="/public/icons8-msExcel-48.png" style={{width:"10%",height:"10%"}}/>
+                    <div style={{display:"flex",marginBottom:"10px", cursor: "pointer", backgroundColor: isClicked==="xlsx" ? "#ccc" : "transparent",transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick(".xlsx")}}>
+                        <img src="/public/images/icons8-msExcel-48.png" style={{width:"10%",height:"10%"}}/>
                         <h6>&nbsp;&nbsp;엑셀 파일로 내려받기 (.xlsx)</h6>
                     </div>
-                    <div style={{display:"flex", cursor: "pointer", backgroundColor: isClicked==="cell" ? "#ccc" : "transparent", transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick("cell")}}>
-                        <img src="/public/icon-hancell.png" style={{width:"10%",height:"9%"}}/>
+                    <div style={{display:"flex", cursor: "pointer", backgroundColor: isClicked==="cell" ? "#ccc" : "transparent", transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick(".cell")}}>
+                        <img src="/public/images/icon-hancell.png" style={{width:"10%",height:"9%"}}/>
                         <h6>&nbsp;&nbsp;한셀 파일로 내려받기 (.cell)</h6>
                     </div>
                 </div>
 
                 <div className="card-refresh" onClick={()=>{handleClick("refresh"); refreshData()}} style={{cursor:"pointer", backgroundColor: isClicked==="refresh" ? "#ccc" : "transparent"}}>
-                    <img src="/public/icons8-refresh-60.png" style={{width:"60px"}}/>
+                    <img src="/public/images/icons8-refresh-60.png" style={{width:"60px"}}/>
                 </div>
             </div>
             <div style={{ display: "flex", alignItems: "flex-start", gap: "20px" }}>

@@ -14,6 +14,7 @@ spring:
 #    url: jdbc:mariadb://192.168.80.13:3306/testdb # 권새미 데이터베이스 설정
 #    username: hello
 #    password: hello1234
+
 #    url: jdbc:mariadb://192.168.80.13:3306/sy  # 이상엽 데이터베이스 설정
 #    username: hello
 #    password: hello1234
@@ -22,9 +23,9 @@ spring:
     username: ${MARIADB_USERNAME}
     password: ${MARIADB_PASSWORD}
 
-#    url: jdbc:mariadb://localhost:3306/projectdb # 지봉필 데이터베이스 설정
-#    username: root
-#    password: 1234
+    #url: jdbc:mariadb://localhost:3306/projectdb # 지봉필 데이터베이스 설정
+    #username: root
+    #password: 1234
 
   jpa:
     hibernate:
@@ -37,7 +38,7 @@ spring:
 
   data:
     redis:
-#      host: ${database.host}
+      host: ${database.host}
       port: 6379
 
   config:
@@ -63,7 +64,6 @@ spring:
           redirect-uri: http://${api.host}:${api.port}/user/social/link/kakao
 
         registration:
-
           naver:
             client-name: Naver
             client-id: ${NAVER_CLIENT_ID}
@@ -124,7 +124,7 @@ file:
 biz:
   api:
     url: https://api.odcloud.kr/api/nts-businessman/v1/status
-    serviceKey: dWa084asCEVdCW6xMVRx2B8hj2AHumB1QPv47m53+C2qlypMiXrz9pyr8e3XnnpiBWp5ZKGi8rlu0Ve3Kqbnfg==
+    serviceKey: ${BIZ_API_KEY}
 
 vworld:
   api:
@@ -133,3 +133,7 @@ vworld:
 openweather:
   api:
     key: ${OPENWEATHER_API_KEY}
+
+iamport:
+  apiKey: ${IAMPORT_API_KEY}
+  secretKey: ${IAMPORT_SECRET_KEY}

@@ -38,7 +38,7 @@ const CartList=()=>{
     }
 
 
-    // 대여시간/반납시간 날짜포맷
+    // 대여날짜/반납날짜 날짜포맷
     const formatDate = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
@@ -48,6 +48,7 @@ const CartList=()=>{
         return `${year}-${month}-${day}`;
     };
 
+    // 대여시간/반납시간 날짜포맷
     const formatTime = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
@@ -55,6 +56,14 @@ const CartList=()=>{
         const minutes = `${date.getMinutes()}`.padStart(2, "0");
         return `${hours}:${minutes}`;
     };
+
+    // // 반납시간 - 대여시간 = 시간구하기 
+    // const getDurationHour = (start, end) => {
+    //     const startDate = new Date(start);
+    //     const endDate = new Date(end);
+    //     const diffMs = endDate - startDate;
+    //     return diffMs / (1000 * 60 * 60);  // ms → 시간
+    // };
 
 
     // 개별선택 체크박스
@@ -87,7 +96,7 @@ const CartList=()=>{
                 //각 그룹 내 items 배열을 순회
                 group.items.forEach(item =>{
                     //모든 item의 cartId를 allKeys Set에 추가
-                    newSet.add(item.cartId);
+                    newSet.add(item.cartId); 
                 })
             })
             //체크 상태를 모든 항목이 선택된 상태로 업데이트
@@ -190,7 +199,7 @@ const CartList=()=>{
             group.items.filter(item => checkedItems.has(item.cartId))
                 // 새로운 객체 형태로 변환
                 .map(item => ({
-                    cartItemId: item.cartId,
+                    cartId: item.cartId,
                     rentId: group.rentId,
                     rentStart: new Date(item.rentStart).toISOString(),
                     rentEnd: new Date(item.rentEnd).toISOString(),
@@ -215,7 +224,7 @@ const CartList=()=>{
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
-        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (rsp는 아임포트 응답 객체)
+        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
             console.log("결제 응답 ===>",resp);
             if (resp.success) {  
                 try {
@@ -260,7 +269,9 @@ const CartList=()=>{
                     </div>
                 </div>
 
-                <span>* 자동으로 일주일단위로 비워집니다</span>
+                <span className="block mt-4 text-sm text-gray-500 italic">
+                    * 자동으로 일주일단위로 비워집니다
+                </span>
                 <div className="cart-items-container">
                 {
                     cartGroups.map(group => (
@@ -288,7 +299,16 @@ const CartList=()=>{
 
                                         <div className="itemdatail-group">
                                             <div className="item-content-group">
-                                                <h4><strong>{group.name}</strong></h4>
+                                                <h4 onClick={() => navigate(`/rent/product/${group.rentId}/${item.itemId}`,{
+                                                    state : {
+                                                        date: formatDate(item.rentStart),
+                                                        startTime: formatTime(item.rentStart),
+                                                        duration: getDurationHour(item.rentStart, item.rentEnd),
+                                                        size: item.size,
+                                                    }
+                                                })} className="link-area">
+                                                    <strong>{group.name}</strong>
+                                                </h4> 
                                                 <span>{item.itemName}</span><br />
                                                 <p>대여날짜: {
                                                 formatDate(item.rentStart) === formatDate(item.rentEnd)

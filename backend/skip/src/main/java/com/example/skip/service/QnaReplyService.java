@@ -59,7 +59,7 @@ public class QnaReplyService {
 
     // 답변 정보 조회(QnaReplySummaeyDTO)
     public QnaReplySummaryDTO getReplySummary(Long qnaId) {
-        return qnaReplyRepository.findByQnaId(qnaId).orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
+        return qnaReplyRepository.findByQnaId(qnaId).orElse(null); //답변이 없는 상태도 정상처리 null값 전달
     }
 
     // 답변 수정

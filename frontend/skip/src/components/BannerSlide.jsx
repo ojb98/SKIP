@@ -86,23 +86,23 @@ const BannerSlide = () => {
                     <div className="custom-progressbar w-full !h-0.5 !bg-gray-200"></div>
 
                     <div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2">
                             <div className="flex">
                                 <button
-                                    className="custom-prev w-12 h-10 flex justify-center items-center border border-gray-200 rounded-tl-2xl rounded-bl-2xl shadow-sm cursor-pointer hover:bg-gray-50"
+                                    className="custom-prev w-12 h-10 flex justify-center items-center  border-gray-200 rounded-tl-2xl rounded-bl-2xl shadow-md cursor-pointer hover:bg-gray-50"
                                 >
                                     <ChevronLeft></ChevronLeft>
                                 </button>
 
                                 <button
-                                    className="custom-next w-12 h-10 flex justify-center items-center border border-gray-200 rounded-tr-2xl rounded-br-2xl shadow-sm cursor-pointer hover:bg-gray-50"
+                                    className="custom-next w-12 h-10 flex justify-center items-center  border-gray-200 rounded-tr-2xl rounded-br-2xl shadow-md cursor-pointer hover:bg-gray-50"
                                 >
                                     <ChevronRight></ChevronRight>
                                 </button>
                             </div>
 
                             <button
-                                className="w-10 h-10 flex justify-center items-center border border-gray-200 rounded-full shadow-sm cursor-pointer hover:bg-gray-50"
+                                className="w-10 h-10 flex justify-center items-center  border-gray-200 rounded-full shadow-md cursor-pointer hover:bg-gray-50"
                                 onClick={toggleAutoplay}
                             >
                                 {

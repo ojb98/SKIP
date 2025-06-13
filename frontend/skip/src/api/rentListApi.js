@@ -26,3 +26,11 @@ export const rentDetailApi = async(rentId)=>{
     return data;
 }
 
+
+export const rentIdAndNameApi = async(userId)=>{
+    const data = await axios.get(`${host}/owned/${userId}`).then((res)=>{
+        console.log("렌탈목록 조회==>",res);
+        return res.data;
+    });
+    return data;
+} 

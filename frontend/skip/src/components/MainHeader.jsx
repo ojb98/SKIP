@@ -82,8 +82,6 @@ const MainHeader = () => {
                                     </Link>
                                 </li>
                             }
-
-                            
                         </ul>
                     }
                 </div>

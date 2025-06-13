@@ -73,6 +73,17 @@ const MainHeaderProfileDropdown = () => {
                         to="/rentAdmin/select"
                         className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                     >장비 관리</Link>
+
+                    
+                    <Link
+                        to="/reservManager/list"
+                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
+                    >예약 관리</Link>
+
+                    <Link
+                        to="/refundManager/list"
+                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
+                    >환불 관리</Link>
                     {/* 새미 끝 */}
 
 

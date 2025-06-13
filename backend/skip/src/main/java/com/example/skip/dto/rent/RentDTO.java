@@ -3,11 +3,13 @@ package com.example.skip.dto.rent;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.enumeration.RentCategory;
+import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +20,12 @@ import java.time.LocalDate;
 public class RentDTO {
     private Long rentId;
     private Long userId;
+    private String userUserName;
+    private String userName;
+    private String userEmail;
+    private String userPhone;
+    private UserSocial userSocial;
+    private LocalDateTime userRegisteredAt;
     private RentCategory category;
     private String name;
     private String phone;
@@ -41,8 +49,15 @@ public class RentDTO {
 
 
     public RentDTO(Rent rent){
+
         this.rentId=rent.getRentId();
         this.userId=rent.getUser().getUserId();
+        this.userName=rent.getUser().getName();
+        this.userUserName=rent.getUser().getUsername();
+        this.userEmail=rent.getUser().getEmail();
+        this.userPhone=rent.getUser().getPhone();
+        this.userSocial=rent.getUser().getSocial();
+        this.userRegisteredAt=rent.getUser().getRegisteredAt();
         this.category=rent.getCategory();
         this.name=rent.getName();
         this.phone=rent.getPhone();
