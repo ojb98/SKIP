@@ -1,7 +1,5 @@
 package com.example.skip.repository;
 
-import com.example.skip.dto.ReviewListDTO;
-import com.example.skip.entity.Payment;
 import com.example.skip.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
