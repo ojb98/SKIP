@@ -13,9 +13,6 @@ import java.util.Map;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-
-    List<Payment> findAllByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
-
     @Query("""
     SELECT SUM(p.totalPrice) 
     FROM Payment p 
@@ -85,12 +82,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     """)
     Long getCancelledCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query("SELECT COUNT(b) FROM ActiveBannerList b WHERE b.uploadDate BETWEEN :start AND :end")
+    @Query("SELECT COUNT(b) FROM BannerActiveList b WHERE b.uploadDate BETWEEN :start AND :end")
     Long countBanner(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(bs) FROM Boost bs WHERE bs.endDate BETWEEN :start AND :end")
     Long countBoost(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
 
     @Query("""
     SELECT COUNT(bw)

@@ -59,21 +59,32 @@ public class QnaReplyService {
 
     // 답변 정보 조회(QnaReplySummaeyDTO)
     public QnaReplySummaryDTO getReplySummary(Long qnaId) {
-        return qnaReplyRepository.findByQnaId(qnaId).orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
+        return qnaReplyRepository.findByQnaId(qnaId).orElse(null); //답변이 없는 상태도 정상처리 null값 전달
     }
 
     // 답변 수정
-    public void updateReply(Long qnaId, String updatedContent) {
+    public void updateReply(Long qnaId, String updatedContent, Long currentUserId) {
         QnaReply qnaReply = qnaReplyRepository.findByQna_QnaId(qnaId)
                 .orElseThrow(() -> new EntityNotFoundException("수정할 답변이 존재하지 않습니다."));
+
+        // 작성자와 수정 요청자가 동일한지 검증
+        if(!qnaReply.getUser().getUserId().equals(currentUserId)) {
+            throw new SecurityException("작성자만 수정할 수 있습니다.");
+        }
+
         qnaReply.setContent(updatedContent);
         qnaReplyRepository.save(qnaReply);
     }
 
     // 답변 삭제
-    public void deleteReply(Long qnaId) {
+    public void deleteReply(Long qnaId, Long currentUserId) {
         QnaReply qnaReply = qnaReplyRepository.findByQna_QnaId(qnaId)
                 .orElseThrow(() -> new EntityNotFoundException("삭제할 답변이 존재하지 않습니다."));
+
+        if(!qnaReply.getUser().getUserId().equals(currentUserId)) {
+            throw new SecurityException("작성자만 삭제 가능합니다.");
+        }
+
         qnaReplyRepository.delete(qnaReply);
     }
 

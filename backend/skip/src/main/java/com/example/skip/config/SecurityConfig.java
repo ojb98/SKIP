@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,15 +58,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return httpSecurity
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> {
-                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
+                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .csrf(httpSecurityCsrfConfigurer -> {
-                    httpSecurityCsrfConfigurer.disable();
-                })
+                .csrf(AbstractHttpConfigurer::disable)
                 // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
-                            .requestMatchers("/user/logout", "/user/profile", "/user/password/**").authenticated()
+                            .requestMatchers(
+                                    "/user/logout",
+                                    "/user/profile",
+                                    "/user/password/**",
+                                    "/user/delete",
+                                    "/user/social/**",
+                                    "/user/nickname/change",
+                                    "/user/username/change",
+                                    "/user/email/change",
+                                    "/user/name/change",
+                                    "/user/phone/change",
+                                    "/user/image/change"
+                                    ).authenticated()
                             .anyRequest()
                             .permitAll();
                 })

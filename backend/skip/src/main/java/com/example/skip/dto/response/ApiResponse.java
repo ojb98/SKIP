@@ -1,4 +1,4 @@
-package com.example.skip.dto;
+package com.example.skip.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponseDto {
+public class ApiResponse {
     private boolean success;
 
     private Object data;

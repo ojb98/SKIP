@@ -2,6 +2,7 @@ package com.example.skip.controller.admin;
 
 import com.example.skip.dto.payment.PaymentDTO;
 import com.example.skip.dto.ReviewDTO;
+import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.UserRepository;
@@ -19,12 +20,9 @@ import java.util.Map;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserListController {
-
     private final UserRepository userRepository;
-    private final PaymentRepository paymentRepository;
     private final UserListService userListService;
 
-    // ✅ 전체 유저 목록 반환
     @GetMapping
     public List<User> findAllUsers() {
         return userRepository.findAll();
@@ -55,6 +53,7 @@ public class UserListController {
     public void deleteUser(@PathVariable("id") Long id){
         userRepository.deleteById(id);
     }
+
 
 
 }

@@ -9,6 +9,7 @@ import Pagination from "../pagination";
 const QnaList = () => {
   const { rentId, itemId } = useParams();
   const [qnaList, setQnaList] = useState([]);
+  const [secretFilter, setSecretFilter] = useState("");
   const [openIndex, setOpenIndex] = useState(null);
   const [totalElements, setTotalElements] = useState(0);
   const [page, setPage] = useState(0);
@@ -19,7 +20,13 @@ const QnaList = () => {
 
   const fetchQnaList = async (pageNum) => {
     try {
-      const res = await getQnaListByItemApi(itemId, null, null, pageNum);
+      const currentUserId = profile?.userId || null;
+
+      let secret = null;
+      if (secretFilter === "public") secret = false;
+      else if (secretFilter === "private") secret = true;
+
+      const res = await getQnaListByItemApi(itemId, null, null, secret, currentUserId, pageNum);
       setQnaList(res.content);
       setTotalElements(res.totalElements);
       setTotalPages(res.totalPages);
@@ -30,7 +37,7 @@ const QnaList = () => {
 
   useEffect(() => {
     fetchQnaList(page);
-  }, [page]);
+  }, [page, secretFilter]);
 
   const handleWriteClick = () => {
     if (!isLogin) {
@@ -67,10 +74,17 @@ const QnaList = () => {
             <span>{totalElements}건</span>
           </div>
           <div className="qna-control">
-            <select className="qna-select">
+            <select
+             className="qna-select"
+             value={secretFilter}
+             onChange={(e) => {
+              setSecretFilter(e.target.value);
+              setPage(0);
+             }}
+            >
               <option value="">전체</option>
-              <option value="">답변</option>
-              <option value="">미답변</option>
+              <option value="public">공개</option>
+              <option value="private">비공개</option>
             </select>
             <button
               className="qna-write-btn"

@@ -35,6 +35,7 @@ public class BannerWaitingList {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Enumerated(EnumType.STRING)
     private BannerWaitingListStatus status;
     private String comments;
 }

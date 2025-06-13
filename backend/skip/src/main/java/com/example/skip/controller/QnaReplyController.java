@@ -42,15 +42,16 @@ public class QnaReplyController {
     // 수정
     @PutMapping("/{qnaId}")
     public ResponseEntity<Void> updateReply(@PathVariable Long qnaId,
-                                            @RequestBody String updatedContent) {
-        qnaReplyService.updateReply(qnaId, updatedContent);
+                                            @RequestBody QnaReplyRequestDTO dto) {
+        qnaReplyService.updateReply(qnaId, dto.getContent(), dto.getUserId());
         return ResponseEntity.ok().build();
     }
 
     // 삭제
     @DeleteMapping("{qnaId}")
-    public ResponseEntity<Void> deleteReply(@PathVariable Long qnaId) {
-        qnaReplyService.deleteReply(qnaId);
+    public ResponseEntity<Void> deleteReply(@PathVariable Long qnaId,
+                                            @RequestBody QnaReplyRequestDTO dto) {
+        qnaReplyService.deleteReply(qnaId, dto.getUserId());
         return ResponseEntity.noContent().build();
     }
 }

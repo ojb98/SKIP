@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public interface QnaReplySummaryDTO {
     Long getReplyId();
     Long getQnaId();
+    Long getUserId();
     String getUsername();
     String getContent();
     LocalDateTime getCreatedAt();

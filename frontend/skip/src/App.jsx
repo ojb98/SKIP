@@ -2,8 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
 import LoginPage from "./pages/LoginPage"
-import JoinPage from "./pages/SignupPage"
-import SignupVerifyPage from "./pages/SignupVerifyPage"
+import SignupPage from "./pages/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -30,14 +29,14 @@ import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
-import UserApprovalList from "./pages/admin/UserApprovalList"
-
 import WishList from "./components/WishList"
 import Reservation from "./components/rentManager/Reservation"
 import RefundList from "./components/rentManager/RefundList"
-
-
-
+import UserApprovalTable from "./components/adminpage/UserApprovalTable"
+import UserPendingTable from "./components/adminpage/UserPendingTable"
+import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import ActiveBannerList from "./pages/admin/ActiveBannerList"
+import PendingBannerList from "./pages/admin/PendingBannerList"
 
 
 function App() {
@@ -95,28 +94,26 @@ function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboard />} />
                         {/* 추가 라우트 */}
-                        <Route path="/admin/pendinglist" element={<UserApprovalList/>} />
-                        <Route path="/admin/withdrawnlist" element={<div>WITHDRAWN List</div>} />
-                        <Route path="/admin/rentallist" element={<div>rentalshop List</div>} />
+                        <Route path="/admin/pendinglist" element={<UserPendingTable/>} />
+                        <Route path="/admin/withdrawnlist" element={<UserWithdrawTable/>} />
+                        <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
-                        <Route path="/admin/bannerwatinglist" element={<div>banner wating list</div>} />
-                        <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
-                        <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
+                        <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
+                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
+                    <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>
 
 
                     {/* 로그인 */}
                     <Route element={<LoginLayout></LoginLayout>}>
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
-                        <Route path="/signup/verify" element={<SignupVerifyPage></SignupVerifyPage>}></Route>
-
-                        <Route path="/signup" element={<JoinPage></JoinPage>}></Route>
+                        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

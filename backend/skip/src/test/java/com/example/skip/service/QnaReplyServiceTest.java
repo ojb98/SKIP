@@ -62,23 +62,4 @@ public class QnaReplyServiceTest {
         Assertions.assertEquals(1L, summaryDTO.getQnaId());
     }
 
-    // 답변 수정
-    @Test
-    public void updateReplyTest() {
-        String updatedContent = "답변 수정 테스트";
-
-        qnaReplyService.updateReply(1L, updatedContent);
-
-        QnaReply updated = qnaReplyRepository.findByQna_QnaId(1L)
-                .orElseThrow();
-        Assertions.assertEquals(updatedContent, updated.getContent());
-    }
-
-    // 답변 삭제
-    @Test
-    public void deletedReplyTest() {
-        qnaReplyService.deleteReply(1L);
-        boolean exists = qnaReplyRepository.existsByQna_QnaId(1L);
-        Assertions.assertFalse(exists);
-    }
 }

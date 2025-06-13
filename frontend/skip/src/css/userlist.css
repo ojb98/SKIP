@@ -76,6 +76,15 @@
   padding: 0 10px;
 }
 
+.btn-approve , .btn-withdraw {
+  height: 25px;
+  font-size: 12px;
+  border: 1px solid #b0b0b0;
+  border-radius: 4px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
 .search-filter input {
   flex: 1;
   min-width: 160px;
@@ -175,4 +184,15 @@
 
 .selected-row {
   background-color: #dadada !important; /* 하이라이트 색상 */
+}
+
+
+/* userlist.css */
+.image-modal img {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }

@@ -49,7 +49,7 @@ const StatOverviewCard = ({ stats }) => {
 
   const data = {
     labels: mode1 === "count1"? [["총 결제 (건)","(렌트+광고)"] , "결제완료", "결제취소",  "광고결제","광고신청", "렌탈샵결제"] 
-                            : [["총 결제 (원)","(렌트+광고)"] , "총 환불", "광고 수익", "렌탈샵 매출", "순이익"],
+                            : [["총 결제 (원)","(렌트+광고)"] , "총 환불", "광고 수익", "렌탈샵 매출", ["SKI:P","순이익"]],
     datasets: [
       {
         label: "이전 기간",
@@ -106,7 +106,7 @@ const StatOverviewCard = ({ stats }) => {
      maintainAspectRatio: false, 
     plugins: {
       legend: { display: true },
-    },
+    },  
     scales: {
       x: {
         beginAtZero: true,
