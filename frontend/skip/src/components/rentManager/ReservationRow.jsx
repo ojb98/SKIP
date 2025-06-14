@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReservationItemRow from "./ReservationItemRow";
 
-const ReservationRow = ({ reservation, expanded, onToggle}) => {
+const ReservationRow = ({ reservation, expanded, onToggle, onReturnSuccess}) => {
 
 
     const getStatusLabel = (status) => {
@@ -52,7 +52,11 @@ const ReservationRow = ({ reservation, expanded, onToggle}) => {
                 </thead>
                 <tbody>
                   {reservation.items.map(item => (
-                    <ReservationItemRow key={item.rentItemId} item={item} />
+                    <ReservationItemRow
+                      key={item.rentItemId}
+                      item={item}
+                      onReturnSuccess={onReturnSuccess}
+                    />
                   ))}
                 </tbody>
               </table>

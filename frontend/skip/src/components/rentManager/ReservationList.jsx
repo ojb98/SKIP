@@ -34,6 +34,10 @@ const ReservationList = () => {
     }
   };
 
+  const handleReturnSuccess = () => {
+    fetchReservations(); 
+  }
+
   useEffect(() => {
     if (userId) fetchReservations();
   }, [userId]);
@@ -84,15 +88,8 @@ const ReservationList = () => {
         <button onClick={fetchReservations}>검색</button>
       </div>
 
-        <button onClick={() => {
-            if (expandedRowIds.length === reservations.length) {
-            setExpandedRowIds([]); // 모두 닫기
-            } else {
-            setExpandedRowIds(reservations.map(r => r.reserveId)); // 모두 열기
-            }
-        }}
-        >
-        {expandedRowIds.length === reservations.length ? "전체 닫기" : "전체 열기"}
+        <button onClick={() => setExpandedRowIds([])} style={{ marginLeft: "8px" }}>
+          전체 닫기
         </button>
 
       {/* 테이블 출력 */}
@@ -113,14 +110,15 @@ const ReservationList = () => {
                 key={resv.reserveId}
                 reservation={resv}
                 expanded={expandedRowIds.includes(resv.reserveId)}
-                onToggle={() =>
-                    setExpandedRowIds(prev =>
+                onToggle={() => {
+                  setExpandedRowIds(prev =>
                     prev.includes(resv.reserveId)
-                        ? prev.filter(id => id !== resv.reserveId)
-                        : [...prev, resv.reserveId]
-                    )
-                }
-                />
+                      ? prev.filter(id => id !== resv.reserveId)
+                      : [...prev, resv.reserveId]
+                  );
+                }}
+                onReturnSuccess={handleReturnSuccess}
+              />
             ))
           )}
         </tbody>
