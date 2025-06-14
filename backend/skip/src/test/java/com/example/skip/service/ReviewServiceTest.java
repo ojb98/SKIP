@@ -1,22 +1,15 @@
 package com.example.skip.service;
 
-import com.example.skip.dto.ReviewDTO;
 import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.dto.ReviewResponseDTO;
-import com.example.skip.entity.Reservation;
-import com.example.skip.repository.ReservationRepository;
+import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Commit;
-
-import java.nio.file.AccessDeniedException;
 
 @SpringBootTest
 @Transactional

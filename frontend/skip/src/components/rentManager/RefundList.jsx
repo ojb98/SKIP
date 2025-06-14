@@ -121,7 +121,7 @@ const RefundList = () => {
 
     return (
         <div>
-        <h2>환불 요청 목록</h2>
+        <h2 className="top-subject">환불 요청 목록</h2>
 
         {/* 필터 */}
         <div className="filter-form">

@@ -5,6 +5,8 @@ import com.example.skip.entity.*;
 import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.*;
+import com.example.skip.repository.reservation.ReservationItemRepository;
+import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.util.IamportTokenUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

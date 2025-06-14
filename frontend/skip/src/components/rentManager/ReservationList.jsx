@@ -1,48 +1,131 @@
-const ReservationList = ({ reservations, selectedMerchantUid, setSelectedMerchantUid }) => {
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import ReservationRow from "./ReservationRow";
+import { reservListApi } from "../../api/reservationApi";
 
-    const handleRowClick = (merchantUid) => {
-        setSelectedMerchantUid(prev => (prev === merchantUid ? null : merchantUid));
-    };
+const ReservationList = () => {
+  const { userId } = useSelector(state => state.loginSlice);
+  const [reservations, setReservations] = useState([]);
+  const [expandedRowIds, setExpandedRowIds] = useState([]);
 
-    function getStatusKor(status) {
-        const map = {
-            RESERVED: "예약 완료",
-            RETURNED: "반납 완료",
-            CANCELLED: "예약 취소"
-        };
-        return map[status] || "알 수 없음";
+  // 필터 상태
+  const [filters, setFilters] = useState({
+    rentId: '',
+    status: '',
+    username: '',
+    name:'',
+    startDate: '',
+    endDate: '',
+    sort: 'DESC',
+  });
+
+  // 필터 input change 핸들러
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  // 필터 적용 후 데이터 불러오기
+  const fetchReservations = async () => {
+    try {
+      const data = await reservListApi(userId, filters);
+      setReservations(data);
+    } catch (e) {
+      alert("예약 목록 불러오기 실패");
     }
+  };
+
+  useEffect(() => {
+    if (userId) fetchReservations();
+  }, [userId]);
+
 
   return (
-    <table className="reserv-table">
-      <thead className="reserv-thead">
-        <tr className="reserv-tr">
-          <th>주문번호</th>
-          <th>상호명</th>
-          <th>예약자</th>
-          <th>총 금액</th>
-          <th>예약일</th>
-          <th>예약상태</th>
-        </tr>
-      </thead>
-      <tbody className="reserv-tbody">
-        {reservations.map(group => (
-          <tr
-            key={group.merchantUid}
-            onClick={() => handleRowClick(group.merchantUid)}
-            style={{ backgroundColor: selectedMerchantUid === group.merchantUid ? "#d0ebff" : "white" }}
-            className="reserv-tbody-tr"
-          >
-            <td>{group.merchantUid}</td>
-            <td>{group.rentName}</td>
-            <td>{group.username}</td>
-            <td>{group.totalPrice.toLocaleString()}원</td>
-            <td>{new Date(group.createdAt).toLocaleString()}</td>
-            <td>{getStatusKor(group.status)}</td>
+    <div>
+      <h2>예약 목록</h2>
+
+      {/* 필터 영역 */}
+      <div style={{ marginBottom: "1rem" }}>
+
+        <input
+            type="text"
+            placeholder="고객이름 또는 아이디 또는 이메일"
+            value={filters.keyword || ""}
+            onChange={(e) => handleFilterChange("keyword", e.target.value)}
+            />
+
+        <select
+          value={filters.status}
+          onChange={(e) => handleFilterChange("status", e.target.value)}>
+            <option value="">전체</option>
+            <option value="RESERVED">예약 완료</option>
+            <option value="RETURNED">반납 완료</option>
+            <option value="CANCELLED">전체 취소</option>
+            <option value="PARTIALLY_CANCELLED">부분 취소</option>
+
+          {/* 필요한 예약 상태 추가 */}
+        </select>
+        <input
+          type="date"
+          value={filters.startDate}
+          onChange={(e) => handleFilterChange("startDate", e.target.value)}
+        />
+        <input
+          type="date"
+          value={filters.endDate}
+          onChange={(e) => handleFilterChange("endDate", e.target.value)}
+        />
+        <select
+          value={filters.sort}
+          onChange={(e) => handleFilterChange("sort", e.target.value)}
+        >
+          <option value="DESC">최신순</option>
+          <option value="ASC">오래된순</option>
+        </select>
+        <button onClick={fetchReservations}>검색</button>
+      </div>
+
+        <button onClick={() => {
+            if (expandedRowIds.length === reservations.length) {
+            setExpandedRowIds([]); // 모두 닫기
+            } else {
+            setExpandedRowIds(reservations.map(r => r.reserveId)); // 모두 열기
+            }
+        }}
+        >
+        {expandedRowIds.length === reservations.length ? "전체 닫기" : "전체 열기"}
+        </button>
+
+      {/* 테이블 출력 */}
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>예약 ID</th><th>아이디</th><th>주문번호</th><th>렌탈샵</th><th>총액</th><th>생성일</th><th>상태</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {reservations.length === 0 ? (
+            <tr>
+              <td colSpan="7">데이터 없음</td>
+            </tr>
+          ) : (
+            reservations.map(resv => (
+              <ReservationRow
+                key={resv.reserveId}
+                reservation={resv}
+                expanded={expandedRowIds.includes(resv.reserveId)}
+                onToggle={() =>
+                    setExpandedRowIds(prev =>
+                    prev.includes(resv.reserveId)
+                        ? prev.filter(id => id !== resv.reserveId)
+                        : [...prev, resv.reserveId]
+                    )
+                }
+                />
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

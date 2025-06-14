@@ -3,9 +3,30 @@ import axios from "axios";
 const host='http://localhost:8080/api/reservations';
 
 
-export const reservListApi = async (adminId, filters = {}) => {
-  const params = new URLSearchParams({ adminId, ...filters }).toString();
-  const { data } = await axios.get(`${host}?${params}`);
+// 1. 예약 목록 조회
+export const reservListApi = async (userId, filters = {}) => {
+  const params = {
+    ...filters,
+    sort: filters.sort || "DESC",
+  };
+
+  // keyword 분리 처리
+  if (filters.keyword) {
+    params.username = filters.keyword;
+    params.name = filters.keyword;
+    delete params.keyword;
+  }
+
+  const { data } = await axios.get(`${host}/manager/${userId}`, {
+    params,
+  });
+
+  return data;
+};
+
+// 2. 예약 상세 조회
+export const reservDetailApi = async (rentItemId) => {
+  const { data } = await axios.get(`${host}/detail/${rentItemId}`);
   return data;
 };
 

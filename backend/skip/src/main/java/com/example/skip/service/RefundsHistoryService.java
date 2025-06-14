@@ -8,7 +8,7 @@ import com.example.skip.enumeration.RefundStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.refund.RefundsHistoryRepository;
-import com.example.skip.repository.ReservationItemRepository;
+import com.example.skip.repository.reservation.ReservationItemRepository;
 import com.example.skip.util.IamportTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;

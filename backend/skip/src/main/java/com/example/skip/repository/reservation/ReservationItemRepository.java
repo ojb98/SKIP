@@ -1,4 +1,4 @@
-package com.example.skip.repository;
+package com.example.skip.repository.reservation;
 
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
