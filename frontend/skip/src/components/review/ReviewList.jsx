@@ -1,51 +1,73 @@
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-// import { getAverageRatingApi, getItemReviewsApi } from "../../api/reviewApi";
+import { useParams } from "react-router-dom";
+import { getReviewListByItem, getReviewStatsByItem } from "../../api/reviewApi";
+import Pagination from "../pagination";
 
-const ReviewList=({ rentId, itemId })=>{
+
+const ReviewList = () => {
+
+  const { itemId } = useParams();
   const [reviews, setReviews] = useState([]);
-  const [totalElements, setTotalElements] = useState(0);
-  const [averageRating, setAverageRating] = useState(0);
+  const [sort, setSort] = useState("recent");
   const [page, setPage] = useState(0);
-  const [sort, setSort] = useState("latest");
-  const size = 10;
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchData = async () => {
       try {
-        const res = await getItemReviewsApi(rentId, itemId, page, 10, sort);
+        const res = await getReviewListByItem(itemId, sort, page);
         setReviews(res.content);
+        setTotalPages(res.totalPages);
         setTotalElements(res.totalElements);
-      } catch (err) {
-        // console.error("리뷰 조회 실패:", err);
+      } catch(err) {
+        console.error("리뷰 로딩 실패:", err);
       }
-    };
-    fetchReviews();
-  },[rentId, itemId, page, sort]);
+    }
 
-  useEffect(() => {
-    const fetchAverage = async () => {
+    const fetchStats = async () => {
       try {
-        const avg = await getAverageRatingApi(rentId, itemId);
-        setAverageRating(avg.toFixed(1));
+        const stats = await getReviewStatsByItem(itemId);
+        setReviewCount(stats.count);
+        setAverageRating(stats.average?.toFixed(1) || "0.0");
       } catch (err) {
-        // console.error("평균 평점 조회 실패:", err);
+        console.error("리뷰 통계 로딩 실패:", err);
       }
-    };
-    fetchAverage();
-  }, [rentId, itemId]);
+    }
 
-  const totalPages = Math.ceil(totalElements / size);
-  const currentBlock = Math.floor(page / 10);
-  const startPage = currentBlock * 10;
-  const endPage = Math.min(startPage + 10, totalPages);
+    fetchData();
+    fetchStats();
+  }, [itemId, sort, page]);
 
-  return(
+const renderStars = (count) => {
+  return Array.from({ length: 5 }, (_, i) => (
+    <FontAwesomeIcon
+      key={i}
+      icon={faStar}
+      style={{ color: i < count ? "#e9d634" : "#bfbfbf" }}
+    />
+  ));
+}
+
+  const maskUsername = (username) => {
+    if (!username) return "";
+    const visible = username.slice(0, 3);
+    const masked = "*".repeat(username.length - 3 > 0 ? username.length - 3 : 0);
+    return visible + masked;
+  }
+
+  return (
     <div className="review-wrapper">
       <div className="review-header">
         <div className="review-summary">
           <div>
             <span className="mx-1.5">전체리뷰수</span>
-            <span>{totalElements}건</span>
+            <span>{reviewCount}건</span>
           </div>
           <div>
             <span className="mx-1.5">평점</span>
@@ -53,60 +75,73 @@ const ReviewList=({ rentId, itemId })=>{
           </div>
         </div>
         <div className="review-sort">
-          <button onClick={() => setSort("latest")} className={sort === "latest" ? "active" : ""}>최신순</button>
-          <button onClick={() => setSort("high")} className={sort === "high" ? "active" : ""}>평점높은순</button>
-          <button onClick={() => setSort("low")} className={sort === "low" ? "active" : ""}>평점낮은순</button>
+          <button 
+            className={sort === "recent" ? "active" : ""}
+            onClick={() => setSort("recent")}
+          >
+          최신순
+          </button>
+          <button 
+            className={sort === "highRating" ? "active" : ""}
+            onClick={() => setSort("highRating")}
+          >
+          평점높은순
+          </button>
+          <button 
+            className={sort === "lowRating" ? "active" : ""}
+            onClick={() => setSort("lowRating")}
+          >
+          평점낮은순
+          </button>
         </div>
       </div>
       <div className="review-list">
         <ul>
-          {
-            reviews.map((review)=>(
-              <li key={review.reviewId} className="review-item">
-                <div className="review-left">
+          {reviews.map((review) => (
+            <li key={review.reviewId}  className="review-item">
+              <div className="review-left">
+                <div className="review-user-img">
+                  {review.userImage ? (
+                    <img src={`http://localhost:8080${review.userImage}`} alt="user"/>
+                  ) : (
+                    <div className="review-user-default-img">
+                      <FontAwesomeIcon icon={faUser} className="fa-user" />
+                    </div>
+                  )}
+                </div>
+                <div>
                   <div className="review-rating">
-                    <span>{review.rating}점</span>
+                    {renderStars(review.rating)}
                   </div>
                   <div className="review-info">
-                    <span className="review-user">{review.userId}</span>
-                    <span className="review-date">{review.createdAt?.substring(0,10)}</span>
+                    <span className="review-user">{maskUsername(review.username)}</span>
+                    <span className="review-date">{review.createdAt.slice(0, 10)}</span>
                   </div>
                   <div className="review-product">
-                    <span>{review.reservationItemName}</span>
+                    <span>{review.name}</span>
+                    <span className="review-product-option">옵션: {review.size}</span>
                   </div>
                   <div className="review-content">
                     <span>{review.content}</span>
                   </div>
                 </div>
-                <div className="review-right">
-                  {review.image && <img src={`http://localhost:8080${review.image}`} alt="리뷰 이미지" />}
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-        <div>
-        <div className="pagelist">
-          {startPage > 0 && (
-            <button onClick={() => setPage(startPage -1)}>이전</button>
-          )}
-
-          {Array.from({length: endPage - startPage}, (_, i) => (
-            <button
-              key={startPage + i}
-              className={page === startPage + i ? "active" : ""}
-              onClick={() => setPage(startPage + i)}
-            >
-              {startPage + i + 1}
-            </button>
+              </div>
+              <div className="review-right">
+                {review.image && (
+                  <img src={`http://localhost:8080${review.image}`} alt="리뷰 이미지" />
+                )}
+              </div>
+            </li>
           ))}
-
-          {endPage < totalPages && (
-            <button onClick={() => setPage(endPage)}>다음</button>
-          )}
-        </div>
+        </ul>
       </div>
-      </div>
+      {totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
+      )}
     </div>
   )
 }

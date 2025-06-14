@@ -1,3 +1,4 @@
+import axios from "axios";
 import caxios from "./caxios";
 
 const host = 'http://localhost:8080/api/reviews';
@@ -19,7 +20,6 @@ export const createReviewApi = async (reserveId, reviewData, imageFile) => {
   }
 
   // Axios 요청
-  //const response = await axios.post(`${host}/${reserveId}?userId=${userId}`, formData, {
   const response = await caxios.post(`${host}/${reserveId}`,formData,{
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -38,17 +38,31 @@ export const createReviewApi = async (reserveId, reviewData, imageFile) => {
 
 
 // 관리자페이지 리뷰 목록 조회
+export const getReviewListForAdmin = async (username, itemName, hasReply, page = 0, size = 10) => {
+  const params = {
+    ...(username && { username }),
+    ...(itemName && { itemName }),
+    ...(hasReply !== null && hasReply !== undefined && { hasReply }),
+    page,
+    size,
+  };
+  const response = await caxios.get(`${host}/admin`,{ params });
+  return response.data;
+}
 
 
 // 아이템페이지 리뷰 목록 조회
+export const getReviewListByItem = async (itemId, sort = "recent", page = 0, size = 10) => {
+  const response = await axios.get(`http://localhost:8080/api/review/item/${itemId}`, {
+    params: {sort, page, size}
+  })
+  return response.data;
+}
 
-
-// 리뷰 평점 평균
-// export const getAverageRatingApi = async (rentId, itemId) => {
-//   const response = await axios.get(`${host}/rent/item/average`, {
-//     params: { rentId, itemId },
-//   });
-//   return response.data;
-// };
+// 총 리뷰 수, 평균
+export const getReviewStatsByItem = async(itemId) => {
+  const response = await axios.get(`http://localhost:8080/api/review/stats/${itemId}`);
+  return response.data;
+}
 
 

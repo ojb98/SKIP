@@ -3,6 +3,9 @@ package com.example.skip.service;
 
 import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.dto.ReviewResponseDTO;
+import com.example.skip.dto.projection.AdminReviewListDTO;
+import com.example.skip.dto.projection.ReviewListDTO;
+import com.example.skip.dto.projection.ReviewStatsDTO;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import com.example.skip.enumeration.ReservationStatus;
@@ -12,6 +15,10 @@ import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,5 +67,26 @@ public class ReviewService {
 
     // 리뷰 목록
 
+    // 아이템페이지 리뷰 리스트
+    public Page<ReviewListDTO> getReviewListByItem(Long itemId, String sortType, Pageable pageable) {
+        Sort sort = switch (sortType) {
+            case "highRating" -> Sort.by(Sort.Direction.DESC, "rating");
+            case "lowRating" -> Sort.by(Sort.Direction.ASC, "rating");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return reviewRepository.findByItemId(itemId, sortedPageable);
+    }
+
+    // 관리자페이지 리뷰 리스트
+    public Page<AdminReviewListDTO> getReviewWithReplyForAdmin(String username, String itemName, Boolean hasReply, Pageable pageable) {
+        return reviewRepository.findAllReviewWithReplyForAdmin(username, itemName, hasReply, pageable);
+    }
+
+    // 총 리뷰 수, 평균
+    public ReviewStatsDTO getReviewStats(Long itemId){
+        return reviewRepository.getReviewsStatsByItemId(itemId);
+    }
 
 }

@@ -34,6 +34,7 @@ import WishList from "./components/wishList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import AdminReviewList from "./components/review/AdminReviewList"
 
 
 
@@ -96,6 +97,7 @@ function App() {
                         <Route path="/admin/banneractivelist" element={<div>banner active list</div>} />
                         <Route path="/admin/pendinglist" element={<div>Pending List</div>} />
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
+                        <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
