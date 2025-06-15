@@ -19,7 +19,6 @@ const BannerSlide = () => {
     useEffect(() => {
         listOrderedBanner().then(res => {
             if (res.success) {
-                console.log(res.data);
                 setBanners(res.data);
             }
         });

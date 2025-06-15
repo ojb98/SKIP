@@ -162,10 +162,4 @@ public class PaymentService {
 
         return true;
     }
-
-//    public Page<Payment> searchPaymentsByUser(PaymentFilterRequest paymentFilterRequest, Pageable pageable) {
-//        List<Payment> payments = jpaQueryFactory
-//                .select()
-//                .from()
-//    }
 }

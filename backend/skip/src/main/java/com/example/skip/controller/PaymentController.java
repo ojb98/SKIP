@@ -28,10 +28,4 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-
-    // 마이페이지 예약 목록
-    @GetMapping("/list/me")
-    public ApiResponse searchPayments(@AuthenticationPrincipal UserDto userDto) {
-        return null;
-    }
 }

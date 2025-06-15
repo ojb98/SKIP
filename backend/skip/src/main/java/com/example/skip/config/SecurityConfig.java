@@ -76,7 +76,8 @@ public class SecurityConfig {
                                     "/user/email/change",
                                     "/user/name/change",
                                     "/user/phone/change",
-                                    "/user/image/change"
+                                    "/user/image/change",
+                                    "/api/reservations/search"
                                     ).authenticated()
                             .anyRequest()
                             .permitAll();

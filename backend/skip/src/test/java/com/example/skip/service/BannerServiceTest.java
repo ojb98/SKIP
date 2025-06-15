@@ -31,7 +31,7 @@ public class BannerServiceTest {
 
         for (int i = 0; i < 10; i++) {
             bannerService.saveBannerActiveList(BannerActiveList.builder()
-                    .bannerImage("/img.jpeg")
+                    .bannerImage("/ECA09CEC9E91ED8C8CEC9DBC-EB82B4EBB680EC8898ECA095EBB2.jpg")
                     .rent(dto.toEntity(userService.getUser(dto.getUserId()).toEntity()))
                     .clickCnt(0)
                     .finalScore(BigDecimal.valueOf(i))

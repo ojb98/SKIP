@@ -7,7 +7,6 @@ const active_style = 'bg-blue-50 text-blue-400 font-semibold hover:underline hov
 const inactive_style = 'text-gray-700 hover:bg-gray-100 hover:text-black';
 
 const MySideMenu = ({group, active}) => {
-    const host = import.meta.env.VITE_BACKEND_HOST_URL;
     const profile = useSelector(state => state.loginSlice);
 
 

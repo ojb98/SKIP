@@ -9,11 +9,11 @@ const MainHeaderProfileDropdown = () => {
     return (
         <>
             <div
-                role="menu  "
+                role="menu"
                 className="absolute end-0 top-12 z-50 w-56 divide-y divide-gray-200 overflow-hidden rounded border border-gray-200 bg-white shadow-sm"
             >
                 <div className="py-4 flex flex-col items-center gap-4">
-                    <img src={image} className="w-40 rounded-full"></img>
+                    <img src={image} className="w-40 h-40 rounded-full"></img>
 
                     <span className="text-xl font-semibold">{showname}</span>
 

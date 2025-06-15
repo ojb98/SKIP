@@ -91,27 +91,26 @@ const Forecast = () => {
                 <Select selectRef={skiSelectRef} options={skiOptions} onChange={skiChangeHandler} className="w-50 h-10 rounded-xl"></Select>
 
                 {
-                    (isLoading || selectError)
+                    (isLoading || selectError || forecast.length == 0)
                     &&
                     <p className="text-xl text-gray-700">
-                    {selectError}
-                    
-                </p>
-                ||
-                <>
-                    <Link to={`/rent/detail/${selected}`} className={link({})}>바로가기</Link>
+                        {selectError}
+                    </p>
+                    ||
+                    <>
+                        <Link to={`/rent/detail/${selected}`} className={link({})}>바로가기</Link>
 
-                    <span className="h-6 flex">
-                        <span className="w-px bg-gray-300"></span>
-                    </span>
+                        <span className="h-6 flex">
+                            <span className="w-px bg-gray-300"></span>
+                        </span>
 
-                    <span>{(skiList?.find(ski => ski.rentId == selected))?.streetAddress}</span>
-                </>
+                        <span>{(skiList?.find(ski => ski.rentId == selected))?.streetAddress}</span>
+                    </>
                 }
             </div>
 
             {
-                isLoading
+                (isLoading || forecast.length == 0)
                 &&
                 <div className="w-full h-120 grid grid-cols-3 justify-between gap-5">
                     <Skeleton className="!align-top h-full" borderRadius={24}></Skeleton>

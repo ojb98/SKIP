@@ -3,7 +3,6 @@ import MyContainer from "../../components/myPage/MyContainer";
 import { useRef, useState } from "react";
 import { button } from "../../components/buttons";
 import PasswordChangingModal from "./PasswordChangingModal";
-import NotSetBadge from "../../components/MyPage/NotSetBadge";
 import PasswordSettingModal from "./PasswordSettingModal";
 import AccountDeleteModal from "./AccountDeleteModal";
 
@@ -22,7 +21,7 @@ const AccountSecurityPage = () => {
                 <li>
                     <MyContainer
                         title="비밀번호 변경"
-                        content={
+                        >
                             <>
                                 <div className="w-full flex justify-between items-center">
                                     <span className="text-gray-500 font-semibold">
@@ -68,32 +67,30 @@ const AccountSecurityPage = () => {
                                     </span>
                                 </div>
                             </>
-                        }
-                        ></MyContainer>
+                        </MyContainer>
                 </li>
 
                 <li>
                     <MyContainer
                         title="회원 탈퇴"
-                        content={
-                            <>
-                                <div className="w-full flex justify-between items-center">
-                                    <span className="text-gray-500 font-semibold">
-                                        계정 탈퇴 시 프로필 및 예약 정보가 삭제됩니다.
-                                    </span>
+                    >
+                        <>
+                            <div className="w-full flex justify-between items-center">
+                                <span className="text-gray-500 font-semibold">
+                                    계정 탈퇴 시 프로필 및 예약 정보가 삭제됩니다.
+                                </span>
 
-                                    <span>
-                                        <button
-                                            onClick={() => setAccountDeleteModalVisible(true)}
-                                            className={`w-[140px] h-[50px] rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
-                                        >
-                                            탈퇴
-                                        </button>
-                                    </span>
-                                </div>
-                            </>
-                        }
-                    ></MyContainer>
+                                <span>
+                                    <button
+                                        onClick={() => setAccountDeleteModalVisible(true)}
+                                        className={`w-[140px] h-[50px] rounded bg-blue-400 font-[NanumSquareNeo] font-medium text-white hover:bg-blue-500 cursor-pointer`}
+                                    >
+                                        탈퇴
+                                    </button>
+                                </span>
+                            </div>
+                        </>
+                    </MyContainer>
                 </li>
             </ul>
 

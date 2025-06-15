@@ -70,7 +70,8 @@ public class SkiService {
                     .streetAddress(rentDTO.getStreetAddress())
                     .detailedAddress(rentDTO.getDetailedAddress())
                     .latitude(Double.parseDouble(vworldSearchResponse.getResponse().getResult().getItems().get(0).getPoint().getY()))
-                    .longitude(Double.parseDouble(vworldSearchResponse.getResponse().getResult().getItems().get(0).getPoint().getX())).build());
+                    .longitude(Double.parseDouble(vworldSearchResponse.getResponse().getResult().getItems().get(0).getPoint().getX()))
+                    .build());
         }
 
         return list;

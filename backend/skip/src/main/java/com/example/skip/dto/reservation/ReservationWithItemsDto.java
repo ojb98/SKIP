@@ -1,5 +1,6 @@
 package com.example.skip.dto.reservation;
 
+import com.example.skip.enumeration.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,8 @@ public class ReservationWithItemsDto {
     private String merchantUid;   // 아임포트 주문번호
 
     private String impUid;        // 아임포트 결제 고유번호
+
+    private ReservationStatus status;
 
     private List<ReservationItemDTO> reservationItems;
 }
