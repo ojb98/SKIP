@@ -7,7 +7,8 @@ import '../css/custom-swiper.css';
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { listOrderedBanner } from "../api/bannerApi";
+import { click, listOrderedBanner } from "../api/bannerApi";
+import { useNavigate } from "react-router-dom";
 
 const host = __APP_BASE__;
 
@@ -16,10 +17,13 @@ const BannerSlide = () => {
     const [playing, setPlaying] = useState(true);
     const [banners, setBanners] = useState([]);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         listOrderedBanner().then(res => {
             if (res.success) {
                 setBanners(res.data);
+                console.log(res.data);
             }
         });
     }, []);
@@ -35,6 +39,11 @@ const BannerSlide = () => {
         }
 
         setPlaying(!playing);
+    };
+
+    const clickHandler = (bannerId, rentId) => {
+        click(bannerId);
+        navigate(`/rent/detail/${rentId}`);
     };
 
     return (
@@ -73,7 +82,11 @@ const BannerSlide = () => {
                                         key={index}
                                         className="!w-[50%] bg-blue-400 rounded-2xl"
                                     >
-                                        <img src={host + '/images' +  banner.bannerImage} className="rounded-2xl w-full h-full object-cover"></img>
+                                        <img
+                                            src={host + '/images' +  banner.bannerImage}
+                                            onClick={() => clickHandler(banner.bannerId, banner.rentId)}
+                                            className="rounded-2xl w-full h-full object-cover cursor-pointer"
+                                        ></img>
                                     </SwiperSlide>
                                 ))
                             }

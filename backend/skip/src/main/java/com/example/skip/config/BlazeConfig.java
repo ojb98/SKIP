@@ -2,12 +2,12 @@ package com.example.skip.config;
 
 import com.blazebit.persistence.Criteria;
 import com.blazebit.persistence.CriteriaBuilderFactory;
-import com.blazebit.persistence.integration.view.spring.EnableEntityViews;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViews;
 import com.blazebit.persistence.view.spi.EntityViewConfiguration;
-import com.example.skip.views.ReservationDetailsWithItemsView;
-import com.example.skip.views.ReservationItemDetailsView;
+import com.example.skip.view.RefundsHistoryDetailsView;
+import com.example.skip.view.ReservationDetailsWithItemsView;
+import com.example.skip.view.ReservationItemDetailsView;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +28,7 @@ public class BlazeConfig {
         EntityViewConfiguration cfg = EntityViews.createDefaultConfiguration();
         cfg.addEntityView(ReservationDetailsWithItemsView.class);
         cfg.addEntityView(ReservationItemDetailsView.class);
+        cfg.addEntityView(RefundsHistoryDetailsView.class);
         return cfg.createEntityViewManager(cbf);
     }
 }

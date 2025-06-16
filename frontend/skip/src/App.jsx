@@ -44,6 +44,7 @@ import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
+import MyRefundPage from "./pages/myPage/MyRefundPage"
 
 
 function App() {
@@ -68,6 +69,8 @@ function App() {
                             <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
 
                             <Route path="reserve" element={<MyReservePage></MyReservePage>}></Route>
+
+                            <Route path="refund" element={<MyRefundPage></MyRefundPage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 

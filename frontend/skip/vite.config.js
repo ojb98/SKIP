@@ -10,12 +10,11 @@ export default defineConfig({
     plugins: [react(), tailwindcss()],
         server: {
             proxy: {
-                    '/api': {
-                    target: 'http://localhost:8080', // 백엔드 주소
-                    changeOrigin: true,
-                    secure: false,
-                },
+                '/api': {
+                target: 'http://localhost:8080', // 백엔드 주소
+                changeOrigin: true,
+                secure: false,
+            },
         },
     },
-
 })

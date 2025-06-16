@@ -1,21 +1,15 @@
 package com.example.skip.service;
 
-import com.blazebit.persistence.CriteriaBuilder;
-import com.blazebit.persistence.CriteriaBuilderFactory;
-import com.blazebit.persistence.PagedList;
+import com.blazebit.persistence.*;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
 import com.example.skip.dto.request.ReservationSearchRequest;
 import com.example.skip.dto.reservation.ReservationDetailDTO;
 import com.example.skip.dto.reservation.ReservationGroupDTO;
-import com.example.skip.dto.reservation.ReservationItemDTO;
-import com.example.skip.dto.reservation.ReservationWithItemsDto;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ReservationRepository;
-import com.example.skip.views.ReservationDetailsWithItemsView;
-import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
+import com.example.skip.view.ReservationDetailsWithItemsView;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -101,64 +93,6 @@ public class ReservationService {
     }
 
     // 마이페이지 예약 목록 불러오기
-//    public Page<ReservationWithItemsDto> listReservationsWithItems(ReservationSearchRequest reservationSearchRequest, Long userId, Pageable pageable) {
-//        List<Long> pagedIds = jpaQueryFactory
-//                .select(reservation.reserveId)
-//                .distinct()
-//                .from(reservation)
-//                .leftJoin(reservation.reservationItems, reservationItem)
-//                .where(reservation.user.userId.eq(userId).and(reservationSearchRequest.toPredicate(reservation, reservationItem)))
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .orderBy(reservation.createdAt.desc())
-//                .fetch();
-//
-//        log.info("pagedIds: {}", pagedIds);
-//
-//        if (pagedIds.isEmpty()) {
-//            return new PageImpl<>(List.of(), pageable, 0L);
-//        }
-//
-//        List<Reservation> list = jpaQueryFactory
-//                .selectFrom(reservation)
-//                .leftJoin(reservation.user, user).fetchJoin()
-//                .leftJoin(reservation.payment, payment).fetchJoin()
-//                .leftJoin(reservation.reservationItems, reservationItem).fetchJoin()
-//                .where(reservation.reserveId.in(pagedIds))
-//                .orderBy(reservation.createdAt.desc())
-//                .fetch();
-//
-//        log.info("list: {}", list);
-//
-//
-//
-//        List<ReservationWithItemsDto> result = list.stream().map(r -> ReservationWithItemsDto.builder()
-//                    .reserveId(r.getReserveId())
-//                    .userId(r.getUser().getUserId())
-//                    .rentId(r.getRent().getRentId())
-//                    .paymentId(r.getPayment().getPaymentId())
-//                    .totalPrice(r.getTotalPrice())
-//                    .createdAt(r.getCreatedAt())
-//                    .merchantUid(r.getMerchantUid())
-//                    .impUid(r.getImpUid())
-//                    .status(r.getStatus())
-//                    .reservationItems(r.getReservationItems().stream().map(ReservationItemDTO::new).toList())
-//                    .build())
-//                .toList();
-//
-//        Long count = Optional.ofNullable(
-//                jpaQueryFactory
-//                        .select(reservation.countDistinct())
-//                        .from(reservation)
-//                        .leftJoin(reservation.reservationItems, reservationItem)
-//                        .where(reservation.user.userId.eq(userId).and(reservationSearchRequest.toPredicate(reservation, reservationItem)))
-//                        .fetchOne()
-//        ).orElse(0L);
-//
-//        log.info("count: {}", count);
-//
-//        return new PageImpl<>(result, pageable, count);
-//    }
     public Page<ReservationDetailsWithItemsView> listReservationsWithItems(ReservationSearchRequest reservationSearchRequest,
                                                                            Long userId,
                                                                            Pageable pageable) {

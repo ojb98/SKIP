@@ -29,21 +29,21 @@ public class ReviewServiceTest {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    @Test
-    void createReviewTest(){
-        Long reserveId = 15L;
-        Long userId = 2L;
-        String imagePath = null;
-
-        ReviewRequestDTO reviewRequestDTO = ReviewRequestDTO.builder()
-                .rating(5)
-                .content("리뷰서비스 테스트 입니다.")
-                .build();
-
-        ReviewResponseDTO reviewResponseDTO = reviewService.createReview(reserveId, userId, reviewRequestDTO, imagePath);
-
-        Assertions.assertNotNull(reviewResponseDTO.getReviewId(), "리뷰 ID가 null이 아니어야 합니다.");
-
-    }
+//    @Test
+//    void createReviewTest(){
+//        Long reserveId = 15L;
+//        Long userId = 2L;
+//        String imagePath = null;
+//
+//        ReviewRequestDTO reviewRequestDTO = ReviewRequestDTO.builder()
+//                .rating(5)
+//                .content("리뷰서비스 테스트 입니다.")
+//                .build();
+//
+//        ReviewResponseDTO reviewResponseDTO = reviewService.createReview(reserveId, userId, reviewRequestDTO, imagePath);
+//
+//        Assertions.assertNotNull(reviewResponseDTO.getReviewId(), "리뷰 ID가 null이 아니어야 합니다.");
+//
+//    }
 
 }

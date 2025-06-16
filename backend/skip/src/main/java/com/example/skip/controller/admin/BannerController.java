@@ -7,12 +7,14 @@ import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.service.BannerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/banners")
 @RequiredArgsConstructor
@@ -47,6 +49,23 @@ public class BannerController {
             return ApiResponse.builder()
                     .success(false)
                     .data(e.getMessage()).build();
+        }
+    }
+
+    // 배너 클릭
+    @PatchMapping("/{bannerId}/click")
+    public ApiResponse click(@PathVariable("bannerId") Long bannerId) {
+        log.info("Click!");
+        try {
+            bannerService.clickBanner(bannerId);
+            return ApiResponse.builder()
+                    .success(true)
+                    .build();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return ApiResponse.builder()
+                    .success(false)
+                    .build();
         }
     }
 

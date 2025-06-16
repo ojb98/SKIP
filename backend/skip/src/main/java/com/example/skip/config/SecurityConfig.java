@@ -1,5 +1,6 @@
 package com.example.skip.config;
 
+import com.example.skip.enumeration.UserRole;
 import com.example.skip.filter.JwtFilter;
 import com.example.skip.handler.*;
 import com.example.skip.service.CustomOAuth2UserService;
@@ -12,8 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -63,24 +62,35 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 마이페이지, 예약 처리, 결제 처리, 어드민 페이지 같은 로그인이 필요한 경우 추가
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+//                    authorizationManagerRequestMatcherRegistry
+//                            .requestMatchers(
+//                                    "/user/logout",
+//                                    "/user/profile",
+//                                    "/user/password/change",
+//                                    "/user/password/set",
+//                                    "/user/delete",
+//                                    "/user/social/**",
+//                                    "/user/nickname/change",
+//                                    "/user/username/change",
+//                                    "/user/email/change",
+//                                    "/user/name/change",
+//                                    "/user/phone/change",
+//                                    "/user/image/change",
+//                                    "/api/reservations/search"
+//                                    ).authenticated()
+//                            .anyRequest()
+//                            .permitAll();
                     authorizationManagerRequestMatcherRegistry
-                            .requestMatchers(
-                                    "/user/logout",
-                                    "/user/profile",
-                                    "/user/password/change",
-                                    "/user/password/set",
-                                    "/user/delete",
-                                    "/user/social/**",
-                                    "/user/nickname/change",
-                                    "/user/username/change",
-                                    "/user/email/change",
-                                    "/user/name/change",
-                                    "/user/phone/change",
-                                    "/user/image/change",
-                                    "/api/reservations/search"
-                                    ).authenticated()
+                            .requestMatchers(AuthorizationPaths.PERMIT_ALL.toArray(new String[0]))
+                            .permitAll()
+                            .requestMatchers(AuthorizationPaths.ROLE_USER.toArray(new String[0]))
+                            .hasAuthority(UserRole.USER.name())
+                            .requestMatchers(AuthorizationPaths.ROLE_MANAGER.toArray(new String[0]))
+                            .hasAuthority(UserRole.MANAGER.name())
+                            .requestMatchers(AuthorizationPaths.ROLE_ADMIN.toArray(new String[0]))
+                            .hasAuthority(UserRole.ADMIN.name())
                             .anyRequest()
-                            .permitAll();
+                            .authenticated();
                 })
                 .userDetailsService(customUserDetailsService)
                 .formLogin(httpSecurityFormLoginConfigurer -> {

@@ -17,6 +17,8 @@ import com.example.skip.repository.BannerActiveListRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
 import com.example.skip.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +40,7 @@ public class BannerService {
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerActiveListRepository bannerActiveListRepository;
     private final ReviewRepository reviewRepository;
+    private final RedisTemplate<String, Objects> redisTemplate;
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
@@ -43,6 +48,8 @@ public class BannerService {
     private static final QBannerActiveList bannerActiveList = QBannerActiveList.bannerActiveList;
 
     private static final QRent rent = QRent.rent;
+
+    private static final String REDIS_KEY = "banner:clicks";
 
 
     LocalDate today = LocalDate.now();
@@ -142,6 +149,27 @@ public class BannerService {
         log.info("list: {}", list);
 
         return list;
+    }
+
+    // 배너 클릭 버퍼링
+    public void clickBanner(Long bannerId) {
+        redisTemplate.opsForHash().increment(REDIS_KEY, bannerId.toString(), 1);
+    }
+
+    // 배너 클릭 플러시
+    @Scheduled(fixedRate = 5 * 60 * 1000) // 5분마다 flush
+    public void flushClicks() {
+        Map<Object, Object> allClicks = redisTemplate.opsForHash().entries(REDIS_KEY);
+        for (Map.Entry<Object, Object> entry : allClicks.entrySet()) {
+            Long bannerId = Long.valueOf(entry.getKey().toString());
+            int count = Integer.parseInt(entry.getValue().toString());
+
+            BannerActiveList bannerActiveList = bannerActiveListRepository.findById(bannerId).orElseThrow();
+
+            bannerActiveList.setClickCnt(bannerActiveList.getClickCnt() + count);
+            log.info("{}: flushed", bannerId);
+        }
+        redisTemplate.delete(REDIS_KEY);
     }
 
     // 단일 배너 조회
