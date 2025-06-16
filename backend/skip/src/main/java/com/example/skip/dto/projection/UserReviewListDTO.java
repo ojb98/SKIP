@@ -2,32 +2,22 @@ package com.example.skip.dto.projection;
 
 import java.time.LocalDateTime;
 
-public interface ReviewListDTO {
-    // Review
+public interface UserReviewListDTO {
+    //리뷰 정보
     Long getReviewId();
     Long getReserveId();
     int getRating();
     String getContent();
     String getImage();
     LocalDateTime getCreatedAt();
-    LocalDateTime getUpdatedAt();
 
-    // User
-    String getUsername();
-    String getUserImage();
-
-    // Item
+    Long getRentId();
+    Long getItemId();
     String getItemName();
-
-    // ItemDetail
     String getSize();
 
     // 답변 정보
     Long getReplyId();
-    Long getReplyUserId();
-    String getReplyAdminUserImage();
     String getReplyContent();
     LocalDateTime getReplyCreatedAt();
-    LocalDateTime getReplyUpdatedAt();
-    String getAdminUsername();
 }

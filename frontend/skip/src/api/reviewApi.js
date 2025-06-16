@@ -31,10 +31,22 @@ export const createReviewApi = async (reserveId, reviewData, imageFile) => {
 // 리뷰 수정
 
 
-// 리뷰 삭제
+// 리뷰 삭제(관리자)
+export const deleteReviewByAdmin = (reviewId) => {
+  return caxios.delete(`${host}/admin/delete/${reviewId}`)
+}
 
+// 리뷰 삭제(유저)
+export const deleteUserReviewApi = async (reviewId) => {
+  return await caxios.delete(`${host}/mypage/delete/${reviewId}`);
+}
 
 // 마이페이지 리뷰 목록 조회
+export const getUserReviewListApi = ({ startDate, page, size }) => {
+  const params = { page, size };
+  if(startDate) params.startDate = startDate;
+  return caxios.get(`${host}/user`,{ params });
+}
 
 
 // 관리자페이지 리뷰 목록 조회

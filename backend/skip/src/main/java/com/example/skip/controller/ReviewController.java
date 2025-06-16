@@ -6,6 +6,7 @@ import com.example.skip.dto.UserDto;
 import com.example.skip.dto.projection.AdminReviewListDTO;
 import com.example.skip.dto.projection.ReviewListDTO;
 import com.example.skip.dto.projection.ReviewStatsDTO;
+import com.example.skip.dto.projection.UserReviewListDTO;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.service.ReviewService;
 import com.example.skip.util.FileUploadUtil;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +49,6 @@ public class ReviewController {
         // 리뷰 저장
         ReviewResponseDTO responseDTO = reviewService.createReview(
                 reserveId,
-                //userId,
                 userDto.getUserId(),
                 reviewRequestDTO,
                 imagePath
@@ -55,7 +58,29 @@ public class ReviewController {
 
     // 리뷰 수정
 
-    // 리뷰 삭제
+    // 마이페이지 리뷰 삭제
+    @DeleteMapping("/api/reviews/mypage/delete/{reviewId}")
+    public ResponseEntity<String> deleteReviewFromMyPage(@PathVariable Long reviewId,
+                                                         @AuthenticationPrincipal UserDto userDto) {
+        try {
+            reviewService.deleteReviewByUser(reviewId, userDto.getUserId());
+            return ResponseEntity.ok("리뷰가 삭제되었습니다.");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("본인의 리뷰만 삭제 가능합니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 리뷰가 존재하지 않습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 삭제 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 관리자 페이지 리뷰 삭제
+    @DeleteMapping("/api/reviews/admin/delete/{reviewId}")
+    public ResponseEntity<Void> deleteReviewByAdmin(@PathVariable Long reviewId,
+                                                    @AuthenticationPrincipal UserDto userDto) {
+        reviewService.deleteReviewByAdmin(reviewId);
+        return ResponseEntity.noContent().build();
+    }
 
 
     // 리뷰 리스트
@@ -75,6 +100,14 @@ public class ReviewController {
                                                            @RequestParam(required = false) Boolean hasReply,
                                                            @PageableDefault(size = 10) Pageable pageable) {
         return reviewService.getReviewWithReplyForAdmin(username, itemName, hasReply, pageable);
+    }
+
+    // 마이페이지 리뷰 목록
+    @GetMapping("/api/reviews/user")
+    public Page<UserReviewListDTO> getUserReviewList(@AuthenticationPrincipal UserDto userDto,
+                                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,
+                                                     @PageableDefault(size = 5) Pageable pageable) {
+        return reviewService.getUserReviewList(userDto.getUserId(), startDate, pageable);
     }
 
 

@@ -3,6 +3,7 @@ package com.example.skip.repository;
 import com.example.skip.dto.projection.AdminReviewListDTO;
 import com.example.skip.dto.projection.ReviewListDTO;
 import com.example.skip.dto.projection.ReviewStatsDTO;
+import com.example.skip.dto.projection.UserReviewListDTO;
 import com.example.skip.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -18,6 +20,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("""
         SELECT
             r.reviewId AS reviewId,
+            res.reserveId AS reserveId,
             r.rating AS rating,
             r.content AS content,
             r.image AS image,
@@ -26,16 +29,25 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             u.username AS username,
             u.image AS userImage,
             i.name AS itemName,
-            idt.size AS size
+            idt.size AS size,
+            rr.replyId AS replyId,
+            rr.user.userId AS replyUserId,
+            ru.image AS replyAdminUserImage,
+            rr.content AS replyContent,
+            rr.createdAt AS replyCreatedAt,
+            rr.updatedAt AS replyUpdatedAt,
+            ru.username AS adminUsername
         FROM Review r
         JOIN r.reservation res
         JOIN res.user u
         JOIN ReservationItem ri ON ri.reservation = res
         JOIN ItemDetail idt ON ri.itemDetail = idt
         JOIN idt.item i
+        LEFT JOIN ReviewReply rr ON rr.review = r
+        LEFT JOIN rr.user ru
         WHERE i.itemId =:itemId
     """)
-    Page<ReviewListDTO> findByItemId(@Param("itemId") Long ItemId, Pageable pageable);
+    Page<ReviewListDTO> findReviewListByItemWithReply(@Param("itemId") Long ItemId, Pageable pageable);
 
     // 관리자페이지 리뷰 리스트
     @Query("""
@@ -76,6 +88,37 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                                                             @Param("itemName") String itemName,
                                                             @Param("hasReply") Boolean hasReply,
                                                             Pageable pageable);
+
+    // 마이페이지 리뷰 리스트
+    @Query("""
+        SELECT
+            r.reviewId AS reviewId,
+            res.reserveId AS reserveId,
+            r.rating AS rating,
+            r.content AS content,
+            r.image AS image,
+            r.createdAt AS createdAt,
+            res.rent.rentId AS rentId,
+            idt.item.itemId AS itemId,
+            i.name AS itemName,
+            idt.size AS size,
+            rr.replyId AS replyId,
+            rr.content AS replyContent,
+            rr.createdAt AS replyCreatedAt
+        FROM Review r
+        JOIN r.reservation res
+        JOIN ReservationItem ri ON ri.reservation = res
+        JOIN ItemDetail idt ON ri.itemDetail = idt
+        JOIN idt.item i
+        LEFT JOIN ReviewReply rr ON rr.review = r
+        WHERE res.user.userId =:userId
+        AND (:startDate IS NULL OR r.createdAt >=:startDate)
+        ORDER BY r.createdAt DESC
+    """)
+    Page<UserReviewListDTO> findUserReviewListByUserIdAndDate(@Param("userId") Long userId,
+                                                              @Param("startDate")LocalDateTime startDate,
+                                                              Pageable pageable);
+
 
 
 

@@ -2,7 +2,7 @@ import React from "react";
 import { faCommentDots } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { getReviewListForAdmin } from "../../api/reviewApi";
+import { deleteReviewByAdmin, getReviewListForAdmin } from "../../api/reviewApi";
 import { createReviewReply, deleteReviewReply, getReplySummary, getReviewReplyByReviewId, updateReviewReply } from "../../api/reviewReplyApi";
 import AdminPagination from "../adminpage/AdminPagenation";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
@@ -143,6 +143,7 @@ const AdminReviewList = () => {
       updated[index] = {
         answer: newReply.content,
         originalAnswer: newReply.content,
+        userId : newReply.userId,
         username: newReply.username,
         createdAt: newReply.createdAt,
         updatedAt: newReply.updatedAt,
@@ -168,14 +169,14 @@ const AdminReviewList = () => {
 
     try {
       for (let review of selectedReviews) {
-        await deleteReviewReply(review.reviewId);
+        await deleteReviewByAdmin(review.reviewId);
       }
-      alert("삭제되었습니다.");
+      alert("선택한 리뷰가 삭제되었습니다.");
       setPage(0);
       setSearchParams({ ...searchparams });
     } catch (err) {
       console.error("삭제 실패:", err);
-      alert("삭제 실패");
+      alert("선택한 리뷰 삭제 실패하였습니다.");
     }
   };
 
@@ -304,7 +305,7 @@ const AdminReviewList = () => {
                   <td>{answers[index]?.saved ? "답변 완료" : "미답변"}</td>
                   <td>{renderStars(review.rating)}</td>
                   <td>{review.itemName}</td>
-                  <td>{review.content}</td>
+                  <td className="overflow-hidden overflow-ellipsis whitespace-nowrap">{review.content}</td>
                   <td>{review.username}</td>
                   <td>{review.createdAt?.substring(0, 10)}</td>
                 </tr>
@@ -314,6 +315,14 @@ const AdminReviewList = () => {
                       <div className="p-4 bg-gray-50">
                         <p className="mb-2 text-left">
                           <strong>리뷰 내용:</strong> {review.content}
+                          <div>
+                             {review.image &&
+                              <img
+                                  className="w-[140px] h-[120px] mt-1.5"
+                                  src = {`http://localhost:8080${review.image}`}
+                                  alt="${review.image}" 
+                              />}
+                          </div>
                           {review.updatedAt && review.updatedAt !== review.createdAt && (
                             <span className="text-[12px] text-gray-500 ml-6 self-center">
                               (수정일: {review.updatedAt.replace('T', '').substring(0, 19)})
@@ -372,7 +381,6 @@ const AdminReviewList = () => {
                             </div>
                             <div className="flex gap-4 text-sm text-gray-600 items-center">
                               <span className="text-[13px]">답변자: {answers[index].username}</span>
-                              {console.log("답변자:",answers[index])}
                               <span className="text-[13px]">작성일: {answers[index].updatedAt?.replace('T', ' ').substring(0, 19)}</span>
                             </div>
                           </div>
