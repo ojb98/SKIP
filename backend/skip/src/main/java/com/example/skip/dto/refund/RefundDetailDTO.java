@@ -27,6 +27,8 @@ public class RefundDetailDTO {
     // 결제 정보
     private Long paymentId;
     private Double totalPaymentPrice;
+    private String pgProvider;
+    private String method;
 
     // 예약 정보
     private Long reserveId;

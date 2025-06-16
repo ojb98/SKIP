@@ -83,6 +83,8 @@ public class RefundsHistoryService {
 
                 refund.getPayment().getPaymentId(),
                 refund.getPayment().getTotalPrice(),
+                refund.getPayment().getPgProvider(),
+                refund.getPayment().getMethod(),
 
                 reservation.getReserveId(),
                 user.getName(),
@@ -188,7 +190,19 @@ public class RefundsHistoryService {
         return refund;
     }
 
+    // 관리자 거절 처리 메서드
+    public RefundsHistory rejectRefund(Long refundId){
+        RefundsHistory refund = refundsHistoryRepository.findById(refundId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 환불 내역이 없습니다."));
 
+        if (refund.getStatus() != RefundStatus.REQUESTED) {
+            throw new IllegalStateException("환불 요청 상태만 거절할 수 있습니다.");
+        }
 
+        refund.setStatus(RefundStatus.REJECTED);  // 거절로 상태 변경
+        refund.setRefundedAt(LocalDateTime.now());
+
+        return refund; // 반환
+    }
 
 }

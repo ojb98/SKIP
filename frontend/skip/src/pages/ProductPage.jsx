@@ -5,6 +5,8 @@ import { fetchItemDetailPage } from "../api/itemApi";
 import { addCartItemApi } from "../api/cartApi";
 import { useSelector } from "react-redux";
 import { addWishApi } from "../api/wishApi";
+import '../css/paymentModel.css';
+import axios from "axios";
 
 
 const ProductPage=()=>{
@@ -13,9 +15,9 @@ const ProductPage=()=>{
   const profile = useSelector(status=> status.loginSlice);
   const navigate = useNavigate();
   //현재 페이지(컴포넌트)의 URL 정보와 함께 전달된 상태(state)
-  const location = useLocation();
-  const passedState = location.state;
-  console.log("location에서 넘어온 데이터 ==> ",location.state); 
+  //const location = useLocation();
+  // const passedState = location.state;
+  // console.log("location에서 넘어온 데이터 ==> ",location.state); 
 
   const parsedRentId = parseInt(rentId, 10);
   const parsedItemId = parseInt(itemId, 10);
@@ -28,6 +30,10 @@ const ProductPage=()=>{
   const [duration, setDuration] = useState("");
   // 유저가 선택한 옵션들을 배열로 저장
   const [selectedOptions, setSelectedOptions] = useState([]);
+ 
+  // 결제 선택모달
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   
   // 선택 항목들을 초기화하는 함수
   const resetOptions=()=>{
@@ -187,6 +193,61 @@ const ProductPage=()=>{
     }
   }
 
+  //결재하기
+  const handlePayment = async (pg) => {
+    setShowPaymentModal(false); // 모달 닫기
+
+    const merchantUid = `order_${new Date().getTime()}`;
+    const IMP = window.IMP;
+    IMP.init("imp57043461");
+
+    const totalAmount = selectedOptions.reduce((sum, item) => sum + item.price * item.count, 0);
+
+    IMP.request_pay({
+      pg,
+      pay_method: "card",
+      merchant_uid: merchantUid,
+      name: "대여 결제",
+      amount: totalAmount,
+      buyer_email: profile.email,
+      buyer_name: profile.name,
+    }, async (rsp) => {
+      console.log("결제 결과", rsp);
+
+      if (rsp.success) {
+        try {
+          const reservationItems = selectedOptions.map(opt => ({
+            rentId: parsedRentId,
+            itemDetailId: opt.itemDetailId,
+            rentStart: `${opt.date}T${opt.startTime}:00`,
+            rentEnd: opt.endTime,   
+            quantity: opt.count,
+            subtotalPrice: opt.price * opt.count,
+          }));
+
+          await axios.post("/api/payments/direct", {
+            impUid: rsp.imp_uid,
+            merchantUid: rsp.merchant_uid,
+            amount: rsp.paid_amount,
+            userId: profile.userId,
+            totalPrice: totalAmount,
+            pgProvider: pg,
+            reservationItems,
+          });
+
+          alert("결제가 완료되었습니다!");
+          // navigate("/mypage/reservations"); // 예시 이동
+
+        } catch (err) {
+          console.error("결제 후 처리 실패:", err);
+          alert("결제 후 예약 처리 중 오류가 발생했습니다.");
+        }
+      } else {
+        alert("결제 실패: " + rsp.error_msg);
+      }
+    });
+  }
+
   return(
     <main className="w-[900px]">
       {itemData ? (
@@ -265,7 +326,12 @@ const ProductPage=()=>{
           <div className="product-actions">
             <button onClick={handleAddToCart} className="cart-btn">장바구니에 담기</button>
             <button onClick={handleAddToWish} className="wish-btn">찜하기</button>
-            <button href="#none" className="buy-btn">구매하기</button>
+            <button onClick={() => {
+              if (selectedOptions.length === 0) {
+                alert("장비를 선택해주세요"); return;
+              }
+              setShowPaymentModal(true);
+              }} className="buy-btn">바로결제</button>
           </div>
         </div>
       </div>
@@ -273,7 +339,22 @@ const ProductPage=()=>{
         <p>상품 정보를 불러오는 중입니다.....</p>
       )}
       <BoardTabs rentId={parsedRentId} itemId={parsedItemId}/>
-    </main>
+
+      {/* 결제 모달 영역 추가 */}
+      {showPaymentModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>결제 수단을 선택하세요</h3>
+            <div className="modal-buttons">
+              <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
+              <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
+              <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
+              <button className="modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
+      </main>
   )
 }
 export default ProductPage;

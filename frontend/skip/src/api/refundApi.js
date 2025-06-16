@@ -14,26 +14,26 @@ const host = 'http://localhost:8080/api/refunds';
 
 //환불항목
 export const refundsListApi = async ({ userId, rentId, status, startDate, endDate, sort }) => {
-  const params = new URLSearchParams();
+    const params = new URLSearchParams();
 
-  if (!userId) {
-    throw new Error('userId (관리자 ID)는 필수입니다.');
-  }
+    if (!userId) {
+        throw new Error('userId (관리자 ID)는 필수입니다.');
+    }
 
-  params.append('userId', userId);
-  if (rentId) params.append('rentId', rentId);
-  if (status) params.append('status', status);
-  if (startDate) params.append('startDate', new Date(startDate).toISOString());
-  if (endDate) params.append('endDate', new Date(endDate).toISOString());
-  if (sort) params.append('sort', sort);
+    params.append('userId', userId);
+    if (rentId) params.append('rentId', rentId);
+    if (status) params.append('status', status);
+    if (startDate) params.append('startDate', new Date(startDate).toISOString());
+    if (endDate) params.append('endDate', new Date(endDate).toISOString());
+    if (sort) params.append('sort', sort);
 
-  try {
-    const response = await axios.get(`${host}/manager`, { params });
-    return response.data;
-  } catch (error) {
-    console.error('환불 요청 목록 조회 실패:', error);
-    throw error; // 호출한 쪽에서 try/catch 처리
-  }
+    try {
+        const response = await axios.get(`${host}/manager`, { params });
+        return response.data;
+    } catch (error) {
+        console.error('환불 요청 목록 조회 실패:', error);
+        throw error; // 호출한 쪽에서 try/catch 처리
+    }
 }
 
 //환불상세
@@ -47,8 +47,17 @@ export const refundsDetailApi= async(refundId)=>{
 
 //환불승인
 export const refundsApproveApi = async(refundId)=>{
-    const data = await axios.patch(`${host}/manager/${refundId}`).then(res=>{
+    const data = await axios.patch(`${host}/manager/${refundId}/approve`).then(res=>{
         console.log("환불 승인 ==>", res);
+        return res.data;
+    });
+    return data;
+}
+
+//환불거절
+export const refundsRejectApi = async(refundId)=>{
+    const data = await axios.patch(`${host}/manager/${refundId}/reject`).then(res=>{
+        console.log("환불 거절 ==>", res);
         return res.data;
     });
     return data;

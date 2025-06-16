@@ -37,12 +37,11 @@ public class ReservationController {
             @PathVariable Long userId,
             @RequestParam(required = false) Long rentId,
             @RequestParam(required = false) ReservationStatus status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "DESC") String sort
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime rentStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime rentEnd,
+            @RequestParam(required = false) String keyword
     ) {
-        return reservationService.getReservationSummaries(userId, rentId, status, startDate, endDate, keyword, sort);
+        return reservationService.getReservationSummaries(userId, rentId, status, rentStart, rentEnd, keyword);
     }
 
     @GetMapping("/detail/{rentItemId}")

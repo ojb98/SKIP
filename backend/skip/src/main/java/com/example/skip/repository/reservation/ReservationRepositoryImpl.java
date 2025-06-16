@@ -18,10 +18,10 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
     public List<Reservation> findWithFilters(Long userId,
                                              Long rentId,
                                              ReservationStatus status,
-                                             LocalDateTime startDate,
-                                             LocalDateTime endDate,
-                                             String keyword,
-                                             String sort) {
+                                             LocalDateTime start,
+                                             LocalDateTime end,
+                                             String keyword
+                                             ) {
 
         QReservation reservation = QReservation.reservation;
         QReservationItem item = QReservationItem.reservationItem;
@@ -41,12 +41,12 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
             builder.and(reservation.status.eq(status));
         }
 
-        if (startDate != null) {
-            builder.and(reservation.createdAt.goe(startDate));
+        if (start != null) {
+            builder.and(item.rentStart.goe(start));
         }
 
-        if (endDate != null) {
-            builder.and(reservation.createdAt.lt(endDate.plusDays(1)));
+        if (end != null) {
+            builder.and(item.rentEnd.loe(end));
         }
 
         // 🔍 keyword로 이름 또는 아이디 검색
@@ -65,13 +65,8 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 .leftJoin(reservation.reservationItems, item).fetchJoin()
                 .leftJoin(item.itemDetail).fetchJoin()
                 .leftJoin(item.itemDetail.item).fetchJoin()
-                .where(builder);
-
-        if ("ASC".equalsIgnoreCase(sort)) {
-            query.orderBy(reservation.createdAt.asc());
-        } else {
-            query.orderBy(reservation.createdAt.desc());
-        }
+                .where(builder)
+                .orderBy(reservation.createdAt.desc());
 
         return query.fetch();
     }

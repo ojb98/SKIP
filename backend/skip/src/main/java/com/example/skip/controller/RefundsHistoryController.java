@@ -22,9 +22,9 @@ public class RefundsHistoryController {
     private final RefundsHistoryService refundsHistoryService;
 
     // 환불 목록 조회 (필터링 포함)
-    @GetMapping("/manager")
+    @GetMapping("/manager/{userId}")
     public List<RefundSummaryDTO> getRefundList(
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestParam(required = false) Long rentId,
             @RequestParam(required = false) RefundStatus status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -49,15 +49,24 @@ public class RefundsHistoryController {
     }
 
     // 관리자 환불 승인
-    @PatchMapping("/manager/{refundId}")
+    @PatchMapping("/manager/{refundId}/approve")
     public ResponseEntity<String> approveRefund(@PathVariable Long refundId) {
         try {
             refundsHistoryService.approveRefund(refundId);
         } catch (IOException e) {
-            System.out.println("controller환불실패");
+            System.out.println("controller환불승인실패");
             throw new RuntimeException(e);
 
         }
         return ResponseEntity.ok("환불 승인 완료");
     }
+
+    // 관리자 환불 거절
+    @PatchMapping("/manager/{refundId}/reject")
+    public ResponseEntity<String> rejectRefund(@PathVariable Long refundId) {
+        refundsHistoryService.rejectRefund(refundId);
+        return ResponseEntity.ok("환불 승인 완료");
+    }
+
+
 }

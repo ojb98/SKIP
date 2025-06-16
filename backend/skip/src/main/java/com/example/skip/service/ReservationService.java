@@ -30,11 +30,10 @@ public class ReservationService {
     public List<Reservation> getReservationsWithFilters(Long userId,
                                                         Long rentId,
                                                         ReservationStatus status,
-                                                        LocalDateTime startDate,
-                                                        LocalDateTime endDate,
-                                                        String keyword,
-                                                        String sort) {
-        return reservationRepository.findWithFilters(userId, rentId, status, startDate, endDate, keyword, sort);
+                                                        LocalDateTime rentStart,
+                                                        LocalDateTime rentEnd,
+                                                        String keyword) {
+        return reservationRepository.findWithFilters(userId, rentId, status, rentStart, rentEnd, keyword);
     }
 
     /**
@@ -43,11 +42,10 @@ public class ReservationService {
     public List<ReservationSummaryDTO> getReservationSummaries(Long userId,
                                                                Long rentId,
                                                                ReservationStatus status,
-                                                               LocalDateTime startDate,
-                                                               LocalDateTime endDate,
-                                                               String keyword,
-                                                               String sort) {
-        List<Reservation> reservations = getReservationsWithFilters(userId, rentId, status, startDate, endDate, keyword, sort);
+                                                               LocalDateTime rentStart,
+                                                               LocalDateTime rentEnd,
+                                                               String keyword) {
+        List<Reservation> reservations = getReservationsWithFilters(userId, rentId, status, rentStart, rentEnd, keyword);
 
         return reservations.stream().map(reservation ->
                 ReservationSummaryDTO.builder()

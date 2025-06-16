@@ -72,15 +72,19 @@ public class ReservationItemService {
         // 3. 해당 아이템 반납 표시
         item.setReturned(true); // isReturned = true 로 변경
 
-        // 4. 모든 예약 상세가 반납되었는지 확인
+        // 4. 예약 상태 업데이트
         Reservation reservation = item.getReservation();
-        boolean allReturned = reservation.getReservationItems()
-                .stream()
-                .allMatch(ReservationItem::isReturned); // 모두 true인지 체크
 
-        // 5. 전부 반납되었으면 예약 상태 변경
+        boolean allReturned = reservation.getReservationItems().stream()
+                .allMatch(ReservationItem::isReturned);
+
+        boolean anyReturned = reservation.getReservationItems().stream()
+                .anyMatch(ReservationItem::isReturned);
+
         if (allReturned) {
             reservation.setStatus(ReservationStatus.RETURNED);
+        } else if (anyReturned) {
+            reservation.setStatus(ReservationStatus.PARTIALLY_RETURNED);
         }
 
     }

@@ -10,9 +10,8 @@ public interface ReservationRepositoryCustom {
     List<Reservation> findWithFilters(Long userId,
                                       Long rentId,
                                       ReservationStatus status,
-                                      LocalDateTime startDate,
-                                      LocalDateTime endDate,
-                                      String keyword,
-                                      String sort);
+                                      LocalDateTime rentStart,
+                                      LocalDateTime rentEnd,
+                                      String keyword);
 
 }
