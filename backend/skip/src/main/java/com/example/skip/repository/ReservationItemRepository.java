@@ -35,4 +35,24 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
     Optional<ReservationItem> findByIdWithLock(@Param("rentItemId") Long rentItemId);
 
     Optional<ReservationItem> findByReservation(Reservation reservation);
+
+
+    @Query("""
+    SELECT COUNT(DISTINCT p)
+    FROM ReservationItem ri
+    JOIN ri.reservation r
+    JOIN r.payment p
+    JOIN ri.itemDetail id
+    JOIN id.item i
+    WHERE i.category = :category
+      AND r.rent.user.userId = :userId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'PAID'
+    """)
+    Long countPaymentsByUserAndItemCategory(
+            @Param("userId") Long userId,
+            @Param("category") ItemCategory category,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 }

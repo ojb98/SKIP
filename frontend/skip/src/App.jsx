@@ -21,6 +21,7 @@ import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
+import RentDashboard from "./pages/rentalAdmin/RentDashboard"
 import UsersList from "./pages/admin/UsersList"
 import LoginLayout from "./pages/login/LoginLayout"
 import AccountPage from "./pages/myPage/AccountPage"
@@ -78,7 +79,7 @@ function App() {
 
                         {/* 중간관리자 */}
                         <Route path="/rentAdmin" element={<RentLayout />}>
-                            <Route index element={<AdminDashboard />} />
+                            <Route index element={<RentDashboard />} />
                             <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
                             <Route path="/rentAdmin/list" element={<RentList/>}></Route>
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>

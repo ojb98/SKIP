@@ -12,7 +12,7 @@ const RentSidebar = () => {
 
     function Sideprofile() {    
     const { userId, username, isLoggedIn, isLoading } = useSelector(
-        state => state.login
+        state => state.loginSlice
     );
 
     if (isLoading) return <div>로딩 중…</div>;
@@ -21,7 +21,7 @@ const RentSidebar = () => {
     return (        
         <div className="admin-sidebar__profile">
             <img src={state.login.image} alt="프로필" width={40} className="admin-sidebar__profile-icon"/>
-            <span className="admin-sidebar__name">{username}님, 환영합니다!</span>
+            <span className="admin-sidebar__name">{userId}님, 환영합니다!</span>
         </div>
     );
     }
@@ -32,26 +32,25 @@ const RentSidebar = () => {
             <ul className="admin-sidebar__menu">
                 <li><Link to="/rentAdmin" onClick={() => handleAccordionClick(0)}>대시보드</Link></li>
                 <li>
-                    <CustomAccordion title="테스트1" isOpen={openIndex === 1} onClick={() => handleAccordionClick(1)}>
+                    <CustomAccordion title="대여업체 관리" isOpen={openIndex === 1} onClick={() => handleAccordionClick(1)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin">1</Link></li>
-                            <li><Link to="/rentAdmin">2</Link></li>                            
-                            <li><Link to="/rentAdmin">3</Link></li>
-                        </ul>                        
+                            <li><Link to="/rentAdmin/insert">업체 등록</Link></li>
+                            <li><Link to="/rentAdmin/list">업체 목록</Link></li>
+                        </ul>                       
                     </CustomAccordion>
                 </li>
                 <li>
-                    <CustomAccordion title="테스트2" isOpen={openIndex === 2} onClick={() => handleAccordionClick(2)}>
+                    <CustomAccordion title="상품 관리" isOpen={openIndex === 2} onClick={() => handleAccordionClick(2)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin/userlist"> 1</Link></li>
+                            <li><Link to="/rentAdmin/select">상품 관리</Link></li>
                         </ul>
                     </CustomAccordion>
                 </li>
                 <li>
-                    <CustomAccordion title="테스트3" isOpen={openIndex === 3} onClick={() => handleAccordionClick(3)}>
+                    <CustomAccordion title="예약 관리" isOpen={openIndex === 3} onClick={() => handleAccordionClick(3)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentadmin"> 1</Link></li>
-                            <li><Link to="/rentadmin"> 2</Link></li>                            
+                            <li><Link to="/rentAdmin/reservManager/list">예약 조회</Link></li>
+                            <li><Link to="/rentAdmin/refundManager/list">환불 처리</Link></li>                       
                         </ul>
                     </CustomAccordion>
                 </li>
