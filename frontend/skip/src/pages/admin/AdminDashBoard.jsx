@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { fetchDaySalesSummary,fetchSalesSummary, fetchSalesChartData, fetchSalesList } from "../../services/admin/salesService";
 import SalesSummaryChart from "../../components/adminpage/SalesSummaryChart";
 import SalesCategoryChart from "../../components/adminpage/SalesCategoryChart";
-import SalesTable from "../../components/adminpage/SalesTable";
 import StatOverviewCard from "../../components/adminpage/StatOverviewCard";
 import Odometer from 'react-odometerjs';
 import DateInput from "../../components/adminpage/DateInput";
@@ -304,7 +303,6 @@ const loadDashboardData = async () => {
                     }} 
                 />
             </div>
-            {/* <SalesTable salesList={salesList} /> */}
         </div>
     );
 };
