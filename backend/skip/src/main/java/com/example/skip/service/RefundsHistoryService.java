@@ -1,20 +1,31 @@
 package com.example.skip.service;
 
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.view.EntityViewManager;
+import com.blazebit.persistence.view.EntityViewSetting;
 import com.example.skip.dto.CommissionRateDTO;
 import com.example.skip.dto.refund.RefundDetailDTO;
 import com.example.skip.dto.refund.RefundSummaryDTO;
+import com.example.skip.dto.request.RefundSearchRequest;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.RefundStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.refund.RefundsHistoryRepository;
-import com.example.skip.repository.ReservationItemRepository;
+import com.example.skip.repository.reservation.ReservationItemRepository;
 import com.example.skip.util.IamportTokenUtil;
+import com.example.skip.view.RefundsHistoryDetailsView;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +35,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +48,22 @@ public class RefundsHistoryService {
     private final ItemDetailRepository itemDetailRepository;
     private final ReservationItemRepository reservationItemRepository;
     private final RefundsHistoryRepository refundsHistoryRepository;
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private final CriteriaBuilderFactory criteriaBuilderFactory;
+
+    private final EntityManager entityManager;
+
+    private final EntityViewManager entityViewManager;
+
+    private static final QRefundsHistory refundsHistory = QRefundsHistory.refundsHistory;
+
+    private static final QReservationItem reservationItem = QReservationItem.reservationItem;
+
+    private static final QReservation reservation = QReservation.reservation;
+
+    private static final QUser user = QUser.user;
 
 
     // 환불 내역 항목
@@ -83,6 +111,8 @@ public class RefundsHistoryService {
 
                 refund.getPayment().getPaymentId(),
                 refund.getPayment().getTotalPrice(),
+                refund.getPayment().getPgProvider(),
+                refund.getPayment().getMethod(),
 
                 reservation.getReserveId(),
                 user.getName(),
@@ -95,8 +125,6 @@ public class RefundsHistoryService {
                 refund.getReservationItem().getRentEnd()
         );
     }
-
-
 
     //사용자 환불요청 메서드
     public RefundsHistory requestRefund(Long rentItemId, String reason) {
@@ -188,6 +216,66 @@ public class RefundsHistoryService {
         return refund;
     }
 
+    // 관리자 거절 처리 메서드
+    public RefundsHistory rejectRefund(Long refundId) {
+        RefundsHistory refund = refundsHistoryRepository.findById(refundId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 환불 내역이 없습니다."));
+
+        if (refund.getStatus() != RefundStatus.REQUESTED) {
+            throw new IllegalStateException("환불 요청 상태만 거절할 수 있습니다.");
+        }
+
+        refund.setStatus(RefundStatus.REJECTED);  // 거절로 상태 변경
+        refund.setRefundedAt(LocalDateTime.now());
+
+        return refund; // 반환
+
+    }
+    // 마이페이지 환불 내역
+    public Page<RefundsHistoryDetailsView> listRefunds(RefundSearchRequest refundSearchRequest,
+                                                       Long userId,
+                                                       Pageable pageable) {
+
+        List<Long> pagedIds = jpaQueryFactory
+                .selectDistinct(refundsHistory.refundId)
+                .from(refundsHistory)
+                .leftJoin(refundsHistory.reservationItem, reservationItem)
+                .leftJoin(reservationItem.reservation, reservation)
+                .leftJoin(reservation.user, user)
+                .where(user.userId.eq(userId))
+                .where(refundSearchRequest.toPredicate(refundsHistory))
+                .orderBy(refundSearchRequest.getSort().getSpecifier())
+                .fetch();
+
+
+        CriteriaBuilder<RefundsHistory> criteriaBuilder = criteriaBuilderFactory.create(entityManager, RefundsHistory.class);
+        criteriaBuilder
+                .where("refundId").in(pagedIds);
+        refundSearchRequest.getSort().applyTo(criteriaBuilder);
+        criteriaBuilder
+                .orderByDesc("refundId");
+
+        List<RefundsHistoryDetailsView> result = entityViewManager.applySetting(
+                EntityViewSetting.create(RefundsHistoryDetailsView.class),
+                criteriaBuilder
+        ).getResultList();
+
+        Long count = Optional.ofNullable(
+                jpaQueryFactory
+                        .select(refundsHistory.countDistinct())
+                        .from(refundsHistory)
+                        .leftJoin(refundsHistory.reservationItem, reservationItem)
+                        .leftJoin(reservationItem.reservation, reservation)
+                        .leftJoin(reservation.user, user)
+                        .where(user.isNotNull().and(user.userId.eq(userId)))
+                        .where(refundSearchRequest.toPredicate(refundsHistory))
+                        .fetchOne()
+        ).orElse(0L);
+
+        log.info("count: {}", count);
+
+        return new PageImpl<>(result, pageable, count);
+    }
 
 
 

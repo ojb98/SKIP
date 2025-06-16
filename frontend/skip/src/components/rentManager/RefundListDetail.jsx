@@ -41,14 +41,17 @@ const RefundListDetail = ({ refundId }) => {
         <div style={{ padding: 10, backgroundColor: "#f9f9f9" }}>
         <p><strong>유저:</strong> {detail.userName}</p>
         <p><strong>이메일:</strong> {detail.userEmail}</p>
+        <p><strong>총 결제 금액:</strong> {detail.totalPaymentPrice.toLocaleString()}원</p>
+        {/* <p><strong>렌트샵 환불:</strong> {detail.rentRefundPrice.toLocaleString()}원</p> */}
         <p><strong>환불금액:</strong> {detail.refundPrice.toLocaleString()}원</p>
-        <p><strong>관리자 환불:</strong> {detail.adminRefundPrice.toLocaleString()}원</p>
-        <p><strong>렌트 환불:</strong> {detail.rentRefundPrice.toLocaleString()}원</p>
+        {/* <p><strong>관리자 환불:</strong> {detail.adminRefundPrice.toLocaleString()}원</p> */}
+        <p><strong>결제 수단:</strong> {detail.method} ({detail.pgProvider})</p>
         <p><strong>환불 사유:</strong> {detail.reason}</p>
         <p><strong>환불 상태:</strong> {getStatusLabel(detail.status)}</p>
-        <p><strong>환불 완료일:</strong> {detail.refundedAt ? new Date(detail.refundedAt).toLocaleString() : "없음"}</p>
-        <p><strong>총 결제 금액:</strong> {detail.totalPaymentPrice.toLocaleString()}원</p>
+        
+        
         <p><strong>대여 기간:</strong> {new Date(detail.rentStart).toLocaleString()} ~ {new Date(detail.rentEnd).toLocaleString()}</p>
+        <p><strong>환불 완료일:</strong> {detail.refundedAt ? new Date(detail.refundedAt).toLocaleString() : "없음"}</p>
         </div>
     )
 }

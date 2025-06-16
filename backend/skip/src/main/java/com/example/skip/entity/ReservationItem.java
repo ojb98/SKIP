@@ -40,6 +40,10 @@ public class ReservationItem {
     private Long subtotalPrice;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isReturned = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean stockDeducted = false;
 }

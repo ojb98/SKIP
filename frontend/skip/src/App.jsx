@@ -30,7 +30,6 @@ import MyReviewPage from "./pages/myPage/MyReviewPage"
 import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
-import UserApprovalList from "./pages/admin/UserApprovalList"
 import WishList from "./components/WishList"
 import PasswordResettingPage from "./pages/login/PasswordResettingPage"
 import PasswordResetSuccessPage from "./pages/login/PasswordResetSuccessPage"
@@ -38,7 +37,6 @@ import UsernameInputPage from "./pages/login/UsernameInputPage"
 import UsernameFindPage from "./pages/login/UsernameFindPage"
 import UsernameFindSuccessPage from "./pages/login/UsernameFindSuccessPage"
 import MyReservePage from "./pages/myPage/MyReservePage"
-import Reservation from "./components/rentManager/Reservation"
 import RefundList from "./components/rentManager/RefundList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
@@ -46,6 +44,8 @@ import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
+import ReservationList from "./components/rentManager/ReservationList"
+import MyRefundPage from "./pages/myPage/MyRefundPage"
 
 
 function App() {
@@ -70,6 +70,8 @@ function App() {
                             <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
 
                             <Route path="reserve" element={<MyReservePage></MyReservePage>}></Route>
+
+                            <Route path="refund" element={<MyRefundPage></MyRefundPage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 

@@ -4,7 +4,7 @@ import caxios from "./caxios";
 const host = __APP_BASE__;
 
 export const skiListWithCoordinates = async () => {
-    const data = await axios.get(`${host}/ski/location`).then(res => {
+    const data = await caxios.get(`${host}/ski/location`).then(res => {
         return res.data;
     });
 
@@ -12,7 +12,7 @@ export const skiListWithCoordinates = async () => {
 };
 
 export const getForecast = async ({ lat, lon }) => {
-    const data = await axios.get(`${host}/ski/forecast`, {
+    const data = await caxios.get(`${host}/ski/forecast`, {
         params: {
             lat: lat,
             lon: lon

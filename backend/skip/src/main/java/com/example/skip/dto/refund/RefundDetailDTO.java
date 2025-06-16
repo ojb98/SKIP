@@ -2,6 +2,7 @@ package com.example.skip.dto.refund;
 
 import com.example.skip.enumeration.RefundStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RefundDetailDTO {
     private Long refundId;
 
@@ -25,6 +27,8 @@ public class RefundDetailDTO {
     // 결제 정보
     private Long paymentId;
     private Double totalPaymentPrice;
+    private String pgProvider;
+    private String method;
 
     // 예약 정보
     private Long reserveId;

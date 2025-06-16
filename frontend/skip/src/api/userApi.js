@@ -2,7 +2,7 @@ import axios from "axios";
 import caxios from "./caxios";
 
 export const signup = async req => {
-    const data = await caxios.post(`/user`, req).then(res => {
+    const data = await caxios.post(`/user/signup`, req).then(res => {
         return res.data;
     });
 

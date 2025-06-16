@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import '../../css/rentInsertForm.css';
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import caxios from "../../api/caxios";
 
 const RentInsertForm=()=>{
 
@@ -44,7 +45,7 @@ const RentInsertForm=()=>{
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('/api/enums/rentCategory');
+                const response = await caxios.get('/api/enums/rentCategory');
                 console.log("카테고리 데이터: ", response.data);
                 setCategories(response.data);
             } catch (error) {
@@ -96,7 +97,7 @@ const RentInsertForm=()=>{
         }
 
         try {
-            const response = await axios.post("http://localhost:8080/api/business/verify", {
+            const response = await caxios.post("http://localhost:8080/api/business/verify", {
                 bizRegNumber: formData.bizRegNumber  // 백엔드에서 기대하는 이름과 맞추기
             });
 
@@ -186,7 +187,7 @@ const RentInsertForm=()=>{
 
         try {
             // DB에서 사업자등록번호 중복 체크
-            const resp = await axios.get("http://localhost:8080/api/business/duplicate", {
+            const resp = await caxios.get("http://localhost:8080/api/business/duplicate", {
                 params: { bizRegNumber: formData.bizRegNumber }
             });
 
@@ -227,7 +228,7 @@ const RentInsertForm=()=>{
             }
         });
 
-        axios.post("http://localhost:8080/api/rents",submitData, {
+        caxios.post("http://localhost:8080/api/rents",submitData, {
             headers:{
                 "Content-Type" : "multipart/form-data"
             }

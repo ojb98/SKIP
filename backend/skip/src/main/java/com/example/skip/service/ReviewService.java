@@ -6,7 +6,7 @@ import com.example.skip.dto.ReviewResponseDTO;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import com.example.skip.enumeration.ReservationStatus;
-import com.example.skip.repository.ReservationRepository;
+import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUtil;

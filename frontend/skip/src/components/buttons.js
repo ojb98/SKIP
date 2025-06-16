@@ -35,7 +35,8 @@ export const radio = tv({
     ],
     variants: {
         color: {
-            primary: 'has-checked:border-blue-200 has-checked:ring has-checked:ring-blue-400 has-checked:text-black'
+            primary: 'has-checked:border-blue-200 has-checked:ring has-checked:ring-blue-400 has-checked:text-black',
+            "secondary-text": 'border-none shadow-none hover:bg-white hover:text-gray-500 has-checked:font-semibold'
         }
     }
 });

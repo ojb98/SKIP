@@ -49,7 +49,7 @@ public class UserController {
     private String profileImagePath;
 
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest,
                                     BindingResult bindingResult) {
         log.info("role: {}", signupRequest.getRole());

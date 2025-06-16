@@ -25,19 +25,19 @@ public class BannerServiceTest {
     private UserService userService;
 
 
-    @Test
-    public void insert() {
-        RentDTO dto = rentService.getRent(1L);
-
-        for (int i = 0; i < 10; i++) {
-            bannerService.saveBannerActiveList(BannerActiveList.builder()
-                    .bannerImage("/ECA09CEC9E91ED8C8CEC9DBC-EB82B4EBB680EC8898ECA095EBB2.jpg")
-                    .rent(dto.toEntity(userService.getUser(dto.getUserId()).toEntity()))
-                    .clickCnt(0)
-                    .finalScore(BigDecimal.valueOf(i))
-                    .status(BannerActiveListStatus.ACTIVE)
-                    .cpcBid(1000)
-                    .build());
-        }
-    }
+//    @Test
+//    public void insert() {
+//        RentDTO dto = rentService.getRent(1L);
+//
+//        for (int i = 0; i < 10; i++) {
+//            bannerService.saveBannerActiveList(BannerActiveList.builder()
+//                    .bannerImage("/ECA09CEC9E91ED8C8CEC9DBC-EB82B4EBB680EC8898ECA095EBB2.jpg")
+//                    .rent(dto.toEntity(userService.getUser(dto.getUserId()).toEntity()))
+//                    .clickCnt(0)
+//                    .finalScore(BigDecimal.valueOf(i))
+//                    .status(BannerActiveListStatus.ACTIVE)
+//                    .cpcBid(1000)
+//                    .build());
+//        }
+//    }
 }

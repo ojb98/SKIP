@@ -20,10 +20,10 @@ const RefundList = () => {
     // 필터 상태 관리 
     const [filters, setFilters] = useState({
         rentId: '',
-        status: '',        // ex: 'REQUESTED'
-        startDate: '',     // ex: '2025-06-01'
-        endDate: '',       // ex: '2025-06-30'
-        sort: 'DESC',      // ASC or DESC
+        status: '',       
+        startDate: '',     
+        endDate: '',      
+        sort: 'DESC',      
     });
 
     const toggleAccordion = (refundId) => {
@@ -33,12 +33,12 @@ const RefundList = () => {
     //관리자 - 렌탈샵 목록 
     useEffect(() => {
         const fetchRents = async () => {
-        try {
-            const data = await rentIdAndNameApi(userId);
-            setRents(data);
-        } catch (err) {
-            console.error("렌탈샵 목록 불러오기 실패", err);
-        }
+            try {
+                const data = await rentIdAndNameApi(userId);
+                setRents(data);
+            } catch (err) {
+                console.error("렌탈샵 목록 불러오기 실패", err);
+            }
         }
 
         if (userId) fetchRents();
@@ -67,7 +67,7 @@ const RefundList = () => {
             sort: filters.sort || undefined,
         }
 
-        console.log("📤 filters payload:", payload);
+        console.log("filters payload:", payload);
 
         try {
             const data = await refundsListApi(payload);
@@ -105,8 +105,17 @@ const RefundList = () => {
 
     }
 
-    const handleReject = (refundId) => {
-        console.log(`❌ 거절 처리: ${refundId}`);
+    const handleReject = async (refundId) => {
+        try {
+            setLoading(true);
+            await refundsRejectApi(refundId);
+            alert("환불 거절 완료");
+            fetchRefunds(); // 거절 후 최신 목록 불러오기
+        } catch (err) {
+            alert("환불 거절 중 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     // 상태 한글 변환
@@ -121,7 +130,7 @@ const RefundList = () => {
 
     return (
         <div>
-        <h2>환불 요청 목록</h2>
+        <h2 className="top-subject">환불 요청 목록</h2>
 
         {/* 필터 */}
         <div className="filter-form">
@@ -137,7 +146,7 @@ const RefundList = () => {
                     <option value="">전체 상호명</option>
                         {rents.map((rent) => (
                             <option key={rent.rentId} value={rent.rentId}>
-                            {rent.name}
+                                {rent.name}
                             </option>
                         ))}
             </select>
