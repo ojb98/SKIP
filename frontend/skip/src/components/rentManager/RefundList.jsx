@@ -146,7 +146,7 @@ const RefundList = () => {
                     <option value="">전체 상호명</option>
                         {rents.map((rent) => (
                             <option key={rent.rentId} value={rent.rentId}>
-                            {rent.name}
+                                {rent.name}
                             </option>
                         ))}
             </select>

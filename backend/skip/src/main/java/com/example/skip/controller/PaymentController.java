@@ -1,14 +1,14 @@
 package com.example.skip.controller;
 
+import com.example.skip.dto.UserDto;
 import com.example.skip.dto.payment.PaymentCompleteDTO;
 import com.example.skip.dto.payment.PaymentDirectDTO;
+import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 

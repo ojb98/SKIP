@@ -1,10 +1,11 @@
 
 import axios from "axios";
+import caxios from "./caxios";
 
 const host = 'http://localhost:8080/api/wishes';
 
 export const addWishApi = async (userId, itemDetailId) => {
-    const res = await axios.post(`${host}`, {
+    const res = await caxios.post(`${host}`, {
         userId,
         itemDetailId,
     });
@@ -12,7 +13,7 @@ export const addWishApi = async (userId, itemDetailId) => {
 };
 
 export const wishListApi = async(userId) => {
-    const data = await axios.get(`${host}/${userId}`).then(res=>{
+    const data = await caxios.get(`${host}/${userId}`).then(res=>{
         console.log("찜 목록 ==>", res);
         return res.data;
     });
@@ -20,7 +21,7 @@ export const wishListApi = async(userId) => {
 }
 
 export const removeWishApi = async (wishlistId,useYn) => {
-    const data = await axios.patch(`${host}/${wishlistId}?useYn=${useYn}`).then(res=>{
+    const data = await caxios.patch(`${host}/${wishlistId}?useYn=${useYn}`).then(res=>{
         console.log("찜 삭제 ==>", res);
         return res.data;
     });

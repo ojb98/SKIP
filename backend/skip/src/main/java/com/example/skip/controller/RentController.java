@@ -78,6 +78,4 @@ public class RentController {
         List<RentInfoDTO> rents = rentService.findRentsByUserId(userId);
         return new ResponseEntity<>(rents, HttpStatus.OK);
     }
-
-
 }

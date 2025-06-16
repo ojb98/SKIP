@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUsernameContaining(String keyword);
 
     List<User> findByNameContaining(String keyword);
+
+    List<User> findUsersByEmail(String email);
 }

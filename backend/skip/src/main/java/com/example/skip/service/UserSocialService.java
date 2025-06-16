@@ -49,7 +49,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class UserSocialService {
     private final UserRepository userRepository;
@@ -80,6 +80,7 @@ public class UserSocialService {
     private String profileImagePath;
 
 
+    @CacheEvict(value = "users", key = "#userId")
     public UserDto signupWithKakao(Long userId, KakaoProfileDto kakaoProfileDto) throws DataIntegrityViolationException {
         User user;
         MultipartFile file = fileUploadUtil.fetchImageAsMultipart(kakaoProfileDto.getProfileImageUrl());
@@ -89,21 +90,16 @@ public class UserSocialService {
         if (isUser) {
             user = userRepository.findByUserId(userId).orElseThrow();
 
-            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
-
             user.setEmail(kakaoProfileDto.getEmail());
-            user.setImage(image);
             user.setSocial(UserSocial.KAKAO);
 
         } else {
             String password = passwordEncoder.encode(RandomStringGenerator.generate(12, RandomStringGenerator.ALPHANUMERIC));
-            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, null, profileImagePath);
 
             user = User.builder()
                     .username(kakaoProfileDto.getUsername())
                     .password(password)
                     .email(kakaoProfileDto.getEmail())
-                    .image(image)
                     .status(UserStatus.APPROVED)
                     .roles(Set.of(UserRole.USER))
                     .social(UserSocial.KAKAO).build();
@@ -122,10 +118,13 @@ public class UserSocialService {
         kakaoLinkageRepository.saveAndFlush(kakaoLinkage);
 
         user.setKakaoLinkage(kakaoLinkage);
+        String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
+        user.setImage(image);
 
         return new UserDto(user);
     }
 
+    @CacheEvict(value = "users", key = "#userId")
     public UserDto signupWithNaver(Long userId, NaverProfileDto naverProfileDto) throws DataIntegrityViolationException {
         User user;
         MultipartFile file = fileUploadUtil.fetchImageAsMultipart(naverProfileDto.getProfileImage());
@@ -134,17 +133,13 @@ public class UserSocialService {
         if (isUser) {
             user = userRepository.findByUserId(userId).orElseThrow();
 
-            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
-
             user.setEmail(naverProfileDto.getEmail());
             user.setName(naverProfileDto.getName());
             user.setPhone(naverProfileDto.getMobile());
-            user.setImage(image);
             user.setSocial(UserSocial.NAVER);
 
         } else {
             String password = passwordEncoder.encode(RandomStringGenerator.generate(12, RandomStringGenerator.ALPHANUMERIC));
-            String image = fileUploadUtil.uploadFileAndUpdateUrl(file, null, profileImagePath);
 
             user = User.builder()
                     .username(naverProfileDto.getUsername())
@@ -152,7 +147,6 @@ public class UserSocialService {
                     .email(naverProfileDto.getEmail())
                     .name(naverProfileDto.getName())
                     .phone(naverProfileDto.getMobile())
-                    .image(image)
                     .status(UserStatus.APPROVED)
                     .roles(Set.of(UserRole.USER))
                     .social(UserSocial.NAVER).build();
@@ -169,6 +163,8 @@ public class UserSocialService {
         naverLinkageRepository.saveAndFlush(naverLinkage);
 
         user.setNaverLinkage(naverLinkage);
+        String image = fileUploadUtil.uploadFileAndUpdateUrl(file, user.getImage(), profileImagePath);
+        user.setImage(image);
 
         return new UserDto(user);
     }

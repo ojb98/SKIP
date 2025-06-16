@@ -8,7 +8,7 @@ const LoginLayout = () => {
 
                 <Outlet></Outlet>
 
-                <div className="my-10 text-xs text-gray-700">
+                <div className="mt-30 mb-20 text-xs text-gray-700">
                     ©Skip Corp. All rights reserved.
                 </div>
             </div>

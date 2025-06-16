@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useCategoryOptions from "../../hooks/useCategoryOptions";
 import '../../css/itemInsertForm.css';
+import caxios from "../../api/caxios";
 
 const ItemInsertForm=()=>{
 
@@ -37,7 +38,7 @@ const ItemInsertForm=()=>{
     useEffect(()=>{
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('/api/enums/itemCategory');
+                const response = await caxios.get('/api/enums/itemCategory');
                 console.log("카테고리 데이터: ", response.data);
                 setCategories(response.data);
             } catch (error) {
@@ -171,7 +172,7 @@ const ItemInsertForm=()=>{
             submitData.append("image", fileRef.current.files[0]);
         }
 
-        axios.post("http://localhost:8080/api/items", submitData, {
+        caxios.post("http://localhost:8080/api/items", submitData, {
             headers: { "Content-Type": "multipart/form-data" }
         })
         .then(resp => {

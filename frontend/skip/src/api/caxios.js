@@ -1,7 +1,9 @@
 import axios from "axios";
 
-const host = "http://localhost:8080";
+const host = __APP_BASE__;
 
+// 인증이 필요한 경우 일반 axios 객체 말고 caxios(Custom Axios) 객체 사용해 주세요. (사용법 동일)
+// 인증이 필요하지 않다면 일반 axios 사용하시면 됩니다.
 const caxios = axios.create({
     baseURL: host,
     withCredentials: true

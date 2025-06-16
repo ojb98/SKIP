@@ -7,8 +7,11 @@ import { changePassword } from "../../api/userApi";
 import { inputText } from "../../components/inputs";
 import { button } from "../../components/buttons";
 import ModalFooter from "../../components/modal/ModalFooter";
+import { useSelector } from "react-redux";
 
 const PasswordChangingModal = ({ onClose }) => {
+    const profile = useSelector(state => state.loginSlice);
+
     const currentPassword = useRef();
     const newPassword = useRef();
     const confirmNewPassword = useRef();
@@ -140,7 +143,7 @@ const PasswordChangingModal = ({ onClose }) => {
 
                     <div className="flex justify-center gap-3 text-sm">
                         <span className="text-gray-500">혹시 비밀번호를 잊으셨나요?</span>
-                        <Link className="text-blue-500 hover:underline hover:underline-offset-4">비밀번호 재설정</Link>
+                        <Link to={'/password/reset'} state={{ username: profile.username }} className="text-blue-500 hover:underline hover:underline-offset-4">비밀번호 재설정</Link>
                     </div>
                     
                     <ModalFooter cancel="취소" confirm="저장" onCancel={onClose} onConfirm={changePasswordHandler}></ModalFooter>

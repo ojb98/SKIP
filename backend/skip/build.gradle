@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-test'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.3.1'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -57,6 +58,16 @@ dependencies {
 
 	// dot env
 	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+	// Blaze Persistence
+	implementation "org.hibernate.orm:hibernate-core:6.2.31.Final"
+	implementation "com.blazebit:blaze-persistence-core:1.6.9"
+	implementation "com.blazebit:blaze-persistence-entity-view-api-jakarta:1.6.9"
+	implementation "com.blazebit:blaze-persistence-entity-view-impl-jakarta:1.6.9"
+	implementation "com.blazebit:blaze-persistence-integration-hibernate-6.2:1.6.9"
+	implementation "com.blazebit:blaze-persistence-integration-spring-data-3.1:1.6.9"
+	implementation "com.blazebit:blaze-persistence-integration-entity-view-spring-6.0:1.6.9"
+	annotationProcessor "com.blazebit:blaze-persistence-entity-view-processor:1.6.9"
 }
 
 // 쿼리 dsl 설정

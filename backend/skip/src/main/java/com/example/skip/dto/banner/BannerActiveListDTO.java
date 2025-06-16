@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BannerActiveListDTO {
+public class BannerActiveListDTO implements Serializable {
     private Long bannerId;
     private Long rentId;
     private String rentName;

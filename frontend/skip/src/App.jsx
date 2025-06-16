@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import MainLayout from "./pages/MainLayout"
-import LoginPage from "./pages/LoginPage"
-import SignupPage from "./pages/SignupPage"
+import LoginPage from "./pages/login/LoginPage"
+import SignupPage from "./pages/login/SignupPage"
 import { useDispatch, useSelector } from "react-redux"
 import { setProfile } from "./slices/loginSlice"
 import { useEffect } from "react"
@@ -22,7 +22,7 @@ import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
 import UsersList from "./pages/admin/UsersList"
-import LoginLayout from "./pages/LoginLayout"
+import LoginLayout from "./pages/login/LoginLayout"
 import AccountPage from "./pages/myPage/AccountPage"
 import AccountSecurityPage from "./pages/myPage/AccountSecurityPage"
 import MyReviewPage from "./pages/myPage/MyReviewPage"
@@ -30,6 +30,12 @@ import MyQnaPage from "./pages/myPage/MyQnaPage"
 import MyPageLayout from "./pages/myPage/MyPageLayout"
 import AdminQnaList from "./components/qna/AdminQnaList"
 import WishList from "./components/WishList"
+import PasswordResettingPage from "./pages/login/PasswordResettingPage"
+import PasswordResetSuccessPage from "./pages/login/PasswordResetSuccessPage"
+import UsernameInputPage from "./pages/login/UsernameInputPage"
+import UsernameFindPage from "./pages/login/UsernameFindPage"
+import UsernameFindSuccessPage from "./pages/login/UsernameFindSuccessPage"
+import MyReservePage from "./pages/myPage/MyReservePage"
 import RefundList from "./components/rentManager/RefundList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
@@ -37,6 +43,8 @@ import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
 import ReservationList from "./components/rentManager/ReservationList"
+import MyRefundPage from "./pages/myPage/MyRefundPage"
+
 
 
 function App() {
@@ -59,6 +67,10 @@ function App() {
                             <Route path="account" element={<AccountPage></AccountPage>}></Route>
 
                             <Route path="account/security" element={<AccountSecurityPage></AccountSecurityPage>}></Route>
+
+                            <Route path="reserve" element={<MyReservePage></MyReservePage>}></Route>
+
+                            <Route path="refund" element={<MyRefundPage></MyRefundPage>}></Route>
 
                             <Route path="review" element={<MyReviewPage></MyReviewPage>}></Route>
 
@@ -114,6 +126,16 @@ function App() {
                         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
 
                         <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
+
+                        <Route path="/id/find" element={<UsernameFindPage></UsernameFindPage>}></Route>
+
+                        <Route path="/id/find/success" element={<UsernameFindSuccessPage></UsernameFindSuccessPage>}></Route>
+
+                        <Route path="/password/reset/id" element={<UsernameInputPage></UsernameInputPage>}></Route>
+
+                        <Route path="/password/reset" element={<PasswordResettingPage></PasswordResettingPage>}></Route>
+
+                        <Route path="/password/reset/success" element={<PasswordResetSuccessPage></PasswordResetSuccessPage>}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

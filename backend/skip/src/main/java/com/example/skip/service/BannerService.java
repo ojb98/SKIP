@@ -1,30 +1,55 @@
 package com.example.skip.service;
 
+import com.example.skip.entity.*;
+import com.example.skip.enumeration.BannerActiveListStatus;
+import com.example.skip.repository.BannerWaitingListRepository;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import com.example.skip.dto.banner.BannerActiveListDTO;
 import com.example.skip.dto.banner.BannerWaitingListDTO;
-import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.enumeration.BannerWaitingListStatus;
 import com.example.skip.repository.BannerActiveListRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
 import com.example.skip.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BannerService {
 
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerActiveListRepository bannerActiveListRepository;
     private final ReviewRepository reviewRepository;
+    private final RedisTemplate<String, Objects> redisTemplate;
+
+    @Autowired
+    private JPAQueryFactory jpaQueryFactory;
+
+    private static final QBannerActiveList bannerActiveList = QBannerActiveList.bannerActiveList;
+
+    private static final QRent rent = QRent.rent;
+
+    private static final String REDIS_KEY = "banner:clicks";
 
 
     LocalDate today = LocalDate.now();
@@ -93,9 +118,6 @@ public class BannerService {
     }
 
 
-
-
-
     // 대기 배너 리스트 조회
     public List<BannerWaitingList> getAllBannerWaitingLists() {
         return bannerWaitingListRepository.findAll();
@@ -104,24 +126,78 @@ public class BannerService {
     public List<BannerActiveList> getAllActiveBannerLists() {
         return bannerActiveListRepository.findAll();
     }
+
+    // 활성 배너 파이널 스코어 기준 내림차순 정렬 후 조회
+    @Cacheable(value = "activeBannerLists", key = "'all'", unless = "#result == null") // 캐시 선언
+    public List<BannerActiveListDTO> getActiveBannerListOrderedByFinalScore() {
+        List<BannerActiveListDTO> list = jpaQueryFactory.select(Projections.constructor(BannerActiveListDTO.class,
+                        bannerActiveList.bannerId,
+                        rent.rentId,
+                        rent.name,
+                        bannerActiveList.bannerImage,
+                        bannerActiveList.clickCnt,
+                        bannerActiveList.cpcBid,
+                        bannerActiveList.finalScore,
+                        bannerActiveList.endDate,
+                        bannerActiveList.uploadDate,
+                        bannerActiveList.status))
+                .from(bannerActiveList)
+                .where(bannerActiveList.status.eq(BannerActiveListStatus.ACTIVE))
+                .orderBy(bannerActiveList.finalScore.desc())
+                .fetch();
+
+        log.info("list: {}", list);
+
+        return list;
+    }
+
+    // 배너 클릭 버퍼링
+    public void clickBanner(Long bannerId) {
+        redisTemplate.opsForHash().increment(REDIS_KEY, bannerId.toString(), 1);
+    }
+
+    // 배너 클릭 플러시
+    @Scheduled(fixedRate = 5 * 60 * 1000) // 5분마다 flush
+    public void flushClicks() {
+        Map<Object, Object> allClicks = redisTemplate.opsForHash().entries(REDIS_KEY);
+        for (Map.Entry<Object, Object> entry : allClicks.entrySet()) {
+            Long bannerId = Long.valueOf(entry.getKey().toString());
+            int count = Integer.parseInt(entry.getValue().toString());
+
+            BannerActiveList bannerActiveList = bannerActiveListRepository.findById(bannerId).orElseThrow();
+
+            bannerActiveList.setClickCnt(bannerActiveList.getClickCnt() + count);
+            log.info("{}: flushed", bannerId);
+        }
+        redisTemplate.delete(REDIS_KEY);
+    }
+
     // 단일 배너 조회
     public Optional<BannerWaitingList> getBannerWaitingById(Long id) {
         return bannerWaitingListRepository.findById(id);
     }
+
     public Optional<BannerActiveList> getActiveBannerById(Long id) {
         return bannerActiveListRepository.findById(id);
     }
+
     // 배너 저장
     public BannerWaitingList saveBannerWaitingList(BannerWaitingList banner) {
         return bannerWaitingListRepository.save(banner);
     }
-    public BannerActiveList saveActiveBannerList(BannerActiveList banner) {
+
+    @CacheEvict(value = "activeBannerLists", key = "'all'") // 캐시 초기화
+    public BannerActiveList saveBannerActiveList(BannerActiveList banner) {
         return bannerActiveListRepository.save(banner);
     }
+
+
     // 배너 삭제
     public void deleteBannerWaitingList(Long id) {
         bannerWaitingListRepository.deleteById(id);
     }
+
+    @CacheEvict(value = "activeBannerLists", key = "'all'") // 캐시 초기화
     public void deleteActiveBannerList(Long id) {
         bannerActiveListRepository.deleteById(id);
     }

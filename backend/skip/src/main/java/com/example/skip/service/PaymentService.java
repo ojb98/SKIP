@@ -2,6 +2,7 @@ package com.example.skip.service;
 
 import com.example.skip.dto.payment.PaymentCompleteDTO;
 import com.example.skip.dto.payment.PaymentDirectDTO;
+import com.example.skip.dto.request.PaymentFilterRequest;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.enumeration.ReservationStatus;
@@ -11,15 +12,19 @@ import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.util.IamportTokenUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,24 +65,28 @@ public class PaymentService {
         String merchantUid;
 
         try (Response paymentResponse = client.newCall(paymentRequest).execute()) {
-            if (!paymentResponse.isSuccessful()) throw new IOException("결제 정보 조회 실패");
+            if (!paymentResponse.isSuccessful()) throw new IOException("결제 정보 조회 실패: " + paymentResponse);
 
             JsonNode paymentInfo = objectMapper.readTree(paymentResponse.body().string()).get("response");
             paidAmount = paymentInfo.get("amount").asLong();
             merchantUid = paymentInfo.get("merchant_uid").asText();
         }
 
+        // 3. 금액 검증 (프론트에서 보낸 금액과 아임포트에서 조회한 금액이 일치하는지 검증)
         if (!dto.getAmount().equals(paidAmount)) {
             throw new IllegalStateException("결제 금액이 일치하지 않습니다.");
         }
 
+        // 4. 예약 생성
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
+        // 모든 예약 항목의 소계 금액을 합산하여 totalPrice 계산
         Long totalPrice = dto.getReservationItems().stream()
                 .mapToLong(PaymentCompleteDTO.ReservationItemDTO::getSubtotalPrice)
                 .sum();
 
+        // 5. Payment 생성
         Payment payment = Payment.builder()
                 .merchantUid(merchantUid)
                 .impUid(dto.getImpUid())
