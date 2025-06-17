@@ -59,7 +59,8 @@ public class ReviewController {
     // 리뷰 수정
 
     // 마이페이지 리뷰 삭제
-    @DeleteMapping("/api/reviews/mypage/delete/{reviewId}")
+    @DeleteMapping("/api/reviews/mypage" +
+            "/delete/{reviewId}")
     public ResponseEntity<String> deleteReviewFromMyPage(@PathVariable Long reviewId,
                                                          @AuthenticationPrincipal UserDto userDto) {
         try {
