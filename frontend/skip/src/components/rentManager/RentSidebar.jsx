@@ -11,19 +11,19 @@ const RentSidebar = () => {
     };
 
     function Sideprofile() {    
-    const { userId, username, isLoggedIn, isLoading } = useSelector(
-        state => state.loginSlice
-    );
+        const { userId, username, isLoggedIn, isLoading, image } = useSelector(
+            state => state.loginSlice
+        );
 
-    if (isLoading) return <div>로딩 중…</div>;
-    if (!isLoggedIn) return <div>로그인해주세요</div>;
+        if (isLoading) return <div>로딩 중…</div>;
+        if (!isLoggedIn) return <div>로그인해주세요</div>;
 
-    return (        
-        <div className="admin-sidebar__profile">
-            <img src={state.login.image} alt="프로필" width={40} className="admin-sidebar__profile-icon"/>
+        return (        
+            <div className="admin-sidebar__profile">
+            <img src={image || "/images/default-user.png"} alt="프로필" width={40} className="admin-sidebar__profile-icon"/>
             <span className="admin-sidebar__name">{userId}님, 환영합니다!</span>
-        </div>
-    );
+            </div>
+        );
     }
 
     return (

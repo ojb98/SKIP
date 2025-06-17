@@ -46,6 +46,8 @@ import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
 import ReservationList from "./components/rentManager/ReservationList"
 import MyRefundPage from "./pages/myPage/MyRefundPage"
+import BoostPurchasePage from "./pages/rentalAdmin/BoostPurchasePage"
+import BannerApplyPage from "./pages/rentalAdmin/BannerApplyPage"
 
 
 function App() {
@@ -90,10 +92,10 @@ function App() {
                             <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
                             <Route path="/rentAdmin/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
                             <Route path="/rentAdmin/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
-                            <Route path="/rentAdmin/reservManager/list" element={<Reservation/>}></Route>
+                            <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
-                            <Route path="/rentAdmin/boost"></Route>
-                            <Route path="/rentAdmin/banner"></Route>
+                            <Route path="/rentAdmin/boost" element={<BoostPurchasePage/>}></Route>
+                            <Route path="/rentAdmin/banner" element={<BannerApplyPage/>}></Route>
                         </Route>
 
 

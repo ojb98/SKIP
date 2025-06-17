@@ -177,7 +177,7 @@ const BannerActiveTable = () => {
             <p><strong>렌탈샵명:</strong> {selectedBanner.rentName}</p>
             <p><strong>입찰가:</strong> {selectedBanner.cpcBid}</p>
             <p><strong>노출도점수:</strong> {selectedBanner.finalScore}</p>
-            <p><strong>요청일:</strong> {selectedBanner.uploadDate?.split('T')[0]}</p>
+            <p><strong>등록예정일:</strong> {selectedBanner.uploadDate?.split('T')[0]}</p>
           </div>
         </div>
       )}

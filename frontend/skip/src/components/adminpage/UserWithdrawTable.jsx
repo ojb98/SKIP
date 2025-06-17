@@ -67,10 +67,15 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
 
     const loadRents = async () => {
       try {
-      const data = await fetchWithdrawRents();
-        setRents(data);
+        const data = await fetchWithdrawRents();
+        if (!Array.isArray(data)) {
+          setRents([]);
+        } else {
+          setRents(data);
+        }
       } catch (e) {
         console.error('렌탈샵 조회 실패', e);
+        setRents([]); // 에러 발생 시 기본값으로 빈 배열 설정
       } finally {
         setLoading(false);
       }
