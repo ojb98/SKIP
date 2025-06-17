@@ -27,14 +27,12 @@ public interface ReviewReplyRepository extends JpaRepository<ReviewReply, Long> 
 
 
     // ReviewReply의 존재 여부 확인
-    Optional<ReviewReply> findByReview_ReviewId(Long reviewId);
+    Optional<ReviewReply> findByReview_ReviewId(@Param("reviewId") Long reviewId);
 
     // reviewId만으로 해당 답변을 삭제
     void deleteByReview_ReviewId(Long reviewId);
 
     // reviewReply 중복방지
     boolean existsByReview_ReviewId(Long reviewId);
-
-    Long review(Review review);
 
 }

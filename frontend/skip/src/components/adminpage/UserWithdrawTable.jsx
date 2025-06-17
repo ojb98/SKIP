@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
-import AdminPagenation from './AdminPagenation.jsx';
+import AdminPagination from './AdminPagination.jsx';
 import { formatDate, formatDate1 } from '../../utils/formatdate.js';
-import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, findRentDetail, requestUpdate} from '../../services/admin/RentListService.js';
+import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
 
   function WithdrawTable() {
@@ -33,9 +33,6 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
         return;
       }
       setSelectedRent(rent);
-      findRentDetail(rent.rentId)
-        .then(data=>setRentDetail(data))
-        .catch(err=>console.error("렌탈샵 상세정보 조회 실패",err));
       
     };
 
@@ -80,7 +77,7 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
     };
     const handleApprove = async () => {
       if (!selectedRent) return;
-      const confirmed = window.confirm('정말 거절하시겠습니까?');
+      const confirmed = window.confirm('승인 상태로 변경하시겠습니까?');
       if (!confirmed) return;
       try {
         await requestUpdate(selectedRent.rentId, 'APPROVED');
@@ -161,7 +158,7 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
             )}            
           </tbody>          
         </table>
-        <AdminPagenation
+        <AdminPagination
           currentPage={currentPage}
           totalItems={rents.length}
           pageSize={pageSize}

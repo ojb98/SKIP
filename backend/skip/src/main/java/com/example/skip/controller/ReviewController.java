@@ -12,7 +12,9 @@ import com.example.skip.service.ReviewService;
 import com.example.skip.util.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -87,9 +89,11 @@ public class ReviewController {
     // 리뷰 리스트
     // 아이템페이지 리뷰 목록
     @GetMapping("/api/review/item/{itemId}")
-    public ResponseEntity<Page<ReviewListDTO>> getReviewListByitem(@PathVariable Long itemId,
-                                                                   @RequestParam(defaultValue = "recent") String sort,
-                                                                   @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<ReviewListDTO>> getReviewListByitem(
+            @PathVariable Long itemId,
+            @RequestParam(defaultValue = "recent") String sort,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
         Page<ReviewListDTO> result = reviewService.getReviewListByItem(itemId, sort, pageable);
         return ResponseEntity.ok(result);
     }
@@ -99,7 +103,7 @@ public class ReviewController {
     public Page<AdminReviewListDTO> getReviewWithReplyList(@RequestParam(required = false) String username,
                                                            @RequestParam(required = false) String itemName,
                                                            @RequestParam(required = false) Boolean hasReply,
-                                                           @PageableDefault(size = 10) Pageable pageable) {
+                                                           Pageable pageable) {
         return reviewService.getReviewWithReplyForAdmin(username, itemName, hasReply, pageable);
     }
 

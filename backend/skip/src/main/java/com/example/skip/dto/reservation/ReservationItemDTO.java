@@ -21,6 +21,7 @@ public class ReservationItemDTO {
     private LocalDateTime rentEnd;
     private int quantity;
     private Long subtotalPrice;
+    private boolean isReturned;
 
     // Entity → DTO 변환 생성자
     public ReservationItemDTO(ReservationItem reservationItem) {
@@ -31,6 +32,7 @@ public class ReservationItemDTO {
         this.rentEnd = reservationItem.getRentEnd();
         this.quantity = reservationItem.getQuantity();
         this.subtotalPrice = reservationItem.getSubtotalPrice();
+        this.isReturned = reservationItem.isReturned();
     }
 
     // DTO → Entity 변환 메서드
@@ -43,6 +45,7 @@ public class ReservationItemDTO {
                 .rentEnd(rentEnd)
                 .quantity(quantity)
                 .subtotalPrice(subtotalPrice)
+                .isReturned(isReturned)
                 .build();
     }
 }

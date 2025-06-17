@@ -1,7 +1,12 @@
 package com.example.skip.entity;
 
+import com.example.skip.enumeration.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class RefundsHistory {
 
     @Id
@@ -18,6 +24,10 @@ public class RefundsHistory {
     @ManyToOne
     @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rentItemId", nullable = false)
+    private ReservationItem reservationItem;
 
     @Column(nullable = false)
     private Double refundPrice;
@@ -31,11 +41,14 @@ public class RefundsHistory {
     @Column(length = 200)
     private String reason;
 
-    @Column(length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private RefundStatus status= RefundStatus.REQUESTED;
 
     private LocalDateTime refundedAt;
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 }

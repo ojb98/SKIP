@@ -1,6 +1,7 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
@@ -11,10 +12,10 @@ import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -160,6 +161,18 @@ public class RentService {
             // 파일 삭제 실패 시 로그에 남기고 예외 처리
             e.printStackTrace();
         }
+    }
+
+    // 관리자(userId) 소유의 렌탈샵 목록 반환
+    public List<RentInfoDTO> findRentsByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        List<Rent> rents = rentRepository.findByUserAndUseYnAndStatus(user,YesNo.Y,UserStatus.APPROVED);
+        return rents.stream()
+                .map(r -> new RentInfoDTO(r.getRentId(), r.getName()))
+                .toList();
     }
 
     public List<RentDTO> findAllDto() {

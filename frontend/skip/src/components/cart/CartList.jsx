@@ -11,6 +11,8 @@ const CartList=()=>{
     const navigate = useNavigate();
 
     const [cartGroups, setCartGroups] = useState([]);
+    // 결제 선택모달
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
     // 체크된 상세 항목 키를 저장 (cartId)
     const [checkedItems, setCheckedItems] = useState(new Set());  
@@ -38,7 +40,7 @@ const CartList=()=>{
     }
 
 
-    // 대여시간/반납시간 날짜포맷
+    // 대여날짜/반납날짜 날짜포맷
     const formatDate = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
@@ -48,6 +50,7 @@ const CartList=()=>{
         return `${year}-${month}-${day}`;
     };
 
+    // 대여시간/반납시간 날짜포맷
     const formatTime = (rentDate) => {
         if (!rentDate) return "-";
         const date = new Date(rentDate);
@@ -55,6 +58,14 @@ const CartList=()=>{
         const minutes = `${date.getMinutes()}`.padStart(2, "0");
         return `${hours}:${minutes}`;
     };
+
+    // // 반납시간 - 대여시간 = 시간구하기 
+    // const getDurationHour = (start, end) => {
+    //     const startDate = new Date(start);
+    //     const endDate = new Date(end);
+    //     const diffMs = endDate - startDate;
+    //     return diffMs / (1000 * 60 * 60);  // ms → 시간
+    // };
 
 
     // 개별선택 체크박스
@@ -87,7 +98,7 @@ const CartList=()=>{
                 //각 그룹 내 items 배열을 순회
                 group.items.forEach(item =>{
                     //모든 item의 cartId를 allKeys Set에 추가
-                    newSet.add(item.cartId);
+                    newSet.add(item.cartId); 
                 })
             })
             //체크 상태를 모든 항목이 선택된 상태로 업데이트
@@ -173,7 +184,7 @@ const CartList=()=>{
     const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
     // 결제   
-    const handlePayment = async () => {
+    const handlePayment = async (pg) => {
 
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
@@ -190,7 +201,7 @@ const CartList=()=>{
             group.items.filter(item => checkedItems.has(item.cartId))
                 // 새로운 객체 형태로 변환
                 .map(item => ({
-                    cartItemId: item.cartId,
+                    cartId: item.cartId,
                     rentId: group.rentId,
                     rentStart: new Date(item.rentStart).toISOString(),
                     rentEnd: new Date(item.rentEnd).toISOString(),
@@ -208,14 +219,14 @@ const CartList=()=>{
 
         //결제 요청(아임포트에 보낼 결제 정보)
         IMP.request_pay({
-            pg: "kakaopay.TC0ONETIME",
+            pg,
             pay_method: "card",
             merchant_uid: merchantUid,
             name: "대여 결제",
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
-        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (rsp는 아임포트 응답 객체)
+        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
             console.log("결제 응답 ===>",resp);
             if (resp.success) {  
                 try {
@@ -229,6 +240,7 @@ const CartList=()=>{
                         reservationItems, // 리스트 전송
                     });
 
+                    setShowPaymentModal(false);
                     console.log("결제 완료:", res.data);
                     alert("결제가 완료되었습니다!");
                     // navigate("/payment", { state: { payment: resp.data } });
@@ -247,6 +259,22 @@ const CartList=()=>{
     return(
         <div className="cart-container">
             <h1 className="top-subject">장바구니</h1>
+
+            {/* 결제 수단 선택 모달 삽입 위치 */}
+            {showPaymentModal && (
+                <div className="modal-backdrop">
+                    <div className="modal">
+                    <h3>결제 수단을 선택하세요</h3>
+                    <div className="modal-buttons">
+                        <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
+                        <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
+                        <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
+                        <button className="modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
+                    </div>
+                    </div>
+                </div>
+            )}
+
             {cartGroups.length === 0 || cartGroups.every(group => group.items.length === 0) ? (
                 <div className="empty-cart-message">장바구니가 비어 있습니다.</div>
             ) : (
@@ -260,7 +288,9 @@ const CartList=()=>{
                     </div>
                 </div>
 
-                <span>* 자동으로 일주일단위로 비워집니다</span>
+                <span className="block mt-4 text-sm text-gray-500 italic">
+                    * 자동으로 일주일단위로 비워집니다
+                </span>
                 <div className="cart-items-container">
                 {
                     cartGroups.map(group => (
@@ -288,7 +318,16 @@ const CartList=()=>{
 
                                         <div className="itemdatail-group">
                                             <div className="item-content-group">
-                                                <h4><strong>{group.name}</strong></h4>
+                                                <h4 onClick={() => navigate(`/rent/product/${group.rentId}/${item.itemId}`,{
+                                                    state : {
+                                                        date: formatDate(item.rentStart),
+                                                        startTime: formatTime(item.rentStart),
+                                                        duration: getDurationHour(item.rentStart, item.rentEnd),
+                                                        size: item.size,
+                                                    }
+                                                })} className="link-area">
+                                                    <strong>{group.name}</strong>
+                                                </h4> 
                                                 <span>{item.itemName}</span><br />
                                                 <p>대여날짜: {
                                                 formatDate(item.rentStart) === formatDate(item.rentEnd)
@@ -324,7 +363,15 @@ const CartList=()=>{
                     <div className="totalPrice-div">
                         <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
                     </div>
-                        <button onClick={handlePayment} className="payment-btn" disabled={checkedItems.size === 0}>결제하기</button>
+                        <button onClick={() => {
+                            if (checkedItems.size === 0) {
+                                alert("결제할 상품을 선택해주세요."); return;
+                            }
+                            setShowPaymentModal(true); // 모달 열기
+                        }}
+                        className="payment-btn" disabled={checkedItems.size === 0}>
+                            결제하기
+                        </button>
                 </div>
                 </>
             )}

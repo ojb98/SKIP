@@ -4,7 +4,7 @@ import com.example.skip.dto.*;
 import com.example.skip.dto.request.*;
 import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.exception.CustomEmailException;
-import com.example.skip.service.EmailVerifyService;
+import com.example.skip.service.EmailService;
 import com.example.skip.service.UserService;
 import com.example.skip.service.UserSocialService;
 import com.example.skip.util.FileUploadUtil;
@@ -35,7 +35,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    private final EmailVerifyService emailVerifyService;
+    private final EmailService emailService;
 
     private final UserSocialService userSocialService;
 
@@ -49,9 +49,11 @@ public class UserController {
     private String profileImagePath;
 
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest,
                                     BindingResult bindingResult) {
+        log.info("role: {}", signupRequest.getRole());
+        log.info("isVerified: {}", signupRequest.isVerified());
         if (userService.isUser(signupRequest.getUsername())) {
             bindingResult.rejectValue("username", null, "이미 가입된 아이디입니다.");
         }
@@ -77,9 +79,38 @@ public class UserController {
 
     @PostMapping("/email/verify")
     public ApiResponse verifyEmail(@RequestParam("email") String email) {
-        emailVerifyService.sendVerificationCode(email);
+        emailService.sendVerificationCode(email);
 
         return new ApiResponse(true, email);
+    }
+
+    @PostMapping("/email/compare-and-verify")
+    public ApiResponse compareAndVerifyEmail(@Valid EmailCompareRequest emailCompareRequest,
+                                             BindingResult bindingResult) {
+
+        String username = emailCompareRequest.getUsername();
+        String email = emailCompareRequest.getEmail();
+
+        if (bindingResult.hasErrors()) {
+            List<String> emailErrors = new ArrayList<>();
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                emailErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(emailErrors).build();
+        }
+
+        if (userService.compareEmail(username, email)) {
+            emailService.sendVerificationCode(email);
+
+            return new ApiResponse(true, email);
+        }
+
+        return ApiResponse.builder()
+                .success(false)
+                .data(List.of("이메일이 일치하지 않습니다.")).build();
     }
 
     @ExceptionHandler(CustomEmailException.class)
@@ -94,7 +125,7 @@ public class UserController {
     public ApiResponse confirmCode(@RequestParam("email") String email,
                                    @RequestParam("verificationCode") String verificationCode) {
 
-        if (emailVerifyService.confirmVerificationCode(email, verificationCode)) {
+        if (emailService.confirmVerificationCode(email, verificationCode)) {
             return new ApiResponse(true, email);
         }
         return new ApiResponse(false, "잘못된 인증번호입니다.");
@@ -103,6 +134,45 @@ public class UserController {
     @GetMapping("/find/{username}")
     public boolean isUser(@PathVariable("username") String username) {
         return userService.isUser(username);
+    }
+
+    @GetMapping("/find/username")
+    public ApiResponse findUsername(@Valid @ModelAttribute UsernameFindRequest usernameFindRequest,
+                                BindingResult bindingResult) {
+
+        log.info("email: {}", usernameFindRequest.getEmail());
+        if (bindingResult.hasErrors()) {
+            List<String> emailErrors = new ArrayList<>();
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                emailErrors.add(fieldError.getDefaultMessage());
+            }
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(emailErrors).build();
+        }
+
+        List<String> usernames = userService.findUsers(usernameFindRequest.getEmail());
+
+        if (usernames.size() == 0) {
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(List.of("가입된 아이디가 없습니다.")).build();
+        }
+
+        try {
+            emailService.sendUsernames(usernameFindRequest.getEmail(), usernames);
+
+            return ApiResponse.builder()
+                    .success(true)
+                    .data(usernameFindRequest.getEmail()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(List.of("이메일 전송에 실패했습니다.")).build();
+        }
     }
 
     @GetMapping("/profile")
@@ -303,6 +373,44 @@ public class UserController {
                     .success(false)
                     .data(fieldErrors).build();
         }
+    }
+
+    @PutMapping("/password/reset")
+    public ApiResponse resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest,
+                                     BindingResult bindingResult) {
+
+        String newPassword = passwordResetRequest.getNewPassword();
+        String confirmNewPassword = passwordResetRequest.getConfirmNewPassword();
+
+        if (!confirmNewPassword.isEmpty() && !confirmNewPassword.equals(newPassword)) {
+            bindingResult.rejectValue("confirmNewPassword", null, "비밀번호 확인이 일치하지 않습니다.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            Map<String, Object> data = new HashMap<>();
+            List<String> newPasswordErrors = new ArrayList<>();
+            List<String> confirmNewPasswordErrors = new ArrayList<>();
+
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                if (fieldError.getField().equals("newPassword")) {
+                    newPasswordErrors.add(fieldError.getDefaultMessage());
+                } else if (fieldError.getField().equals("confirmNewPassword")) {
+                    confirmNewPasswordErrors.add(fieldError.getDefaultMessage());
+                }
+            }
+
+            data.put("newPasswordErrors", newPasswordErrors);
+            data.put("confirmNewPasswordErrors", confirmNewPasswordErrors);
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(data).build();
+        }
+
+        userService.resetPassword(passwordResetRequest.getUsername(), newPassword);
+
+        return ApiResponse.builder()
+                .success(true).build();
     }
 
     @DeleteMapping("/delete")

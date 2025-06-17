@@ -25,7 +25,11 @@ const UserReviewList = () => {
     };
     try {
       const response = await getUserReviewListApi({ startDate, page, size});
-      console.log("리뷰데이터:", response.data.content);
+
+      console.log("API 전체 응답:", response);
+      console.log("response.data:", response.data);
+      console.log("response.data.content", response.data.content);
+
       setReviews(response.data.content);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -54,6 +58,8 @@ const UserReviewList = () => {
       alert("리뷰 삭제 중 오류가 발생했습니다.");
     }
   }
+
+  console.log("리뷰 목록:", reviews);
 
   return (
     <div className="m-[15px]">
@@ -104,7 +110,7 @@ const UserReviewList = () => {
                         <FontAwesomeIcon
                           key={i}
                           icon={faStar}
-                          style={{ color: i < review.rating ? "#e9d634" : "#bfbfbf" }}
+                          style={{ color: i < Number(review.rating || 0) ? "#e9d634" : "#bfbfbf" }}
                         />
                       ))}
                     </div>

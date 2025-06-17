@@ -1,9 +1,10 @@
 import axios from "axios";
+import caxios from "./caxios";
 
 const host='http://localhost:8080/api/carts';
 
 export const addCartItemApi = async (userId, cartItemData) => {
-	return axios.post(`${host}/${userId}`, cartItemData)
+	return caxios.post(`${host}/${userId}`, cartItemData)
 		.then((res) => {
 		console.log("장바구니 추가 ==>", res);
 		return res.data;
@@ -14,7 +15,7 @@ export const addCartItemApi = async (userId, cartItemData) => {
 }
 
 export const cartListApi = async(userId)=>{
-    const data = await axios.get(`${host}/${userId}`).then((res)=>{
+    const data = await caxios.get(`${host}/${userId}`).then((res)=>{
         console.log("장바구니 조회 ==>",res);
         return res.data;
     });
@@ -23,7 +24,7 @@ export const cartListApi = async(userId)=>{
 
 export const removeCartItemApi = async (cartIds) => {
     try {
-        const res = await axios.delete(`${host}`, {
+        const res = await caxios.delete(`${host}`, {
             data: { cartIds: cartIds } // DELETE 요청은 data에 body를 담아야 함
         });
         console.log("장바구니 삭제 ==>", res);
@@ -35,7 +36,7 @@ export const removeCartItemApi = async (cartIds) => {
 };
 
 export const updateCartItemApi = async(cartId, quantity) => {
-    const data = await axios.patch(`${host}/${cartId}`,{ 
+    const data = await caxios.patch(`${host}/${cartId}`,{ 
         quantity : quantity
         })
         .then((res)=>{
@@ -44,5 +45,3 @@ export const updateCartItemApi = async(cartId, quantity) => {
     });
     return data;
 }
-
-

@@ -1,0 +1,8 @@
+.custom-progressbar.swiper-pagination-progressbar {
+  position: relative !important;
+}
+
+.custom-progressbar .swiper-pagination-progressbar-fill {
+  height: 100% !important;
+  background-color: #000 !important;
+}

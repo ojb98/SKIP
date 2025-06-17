@@ -216,3 +216,13 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+/* 링크 */
+.link-area {
+  cursor: pointer;
+}
+
+.link-area:hover{
+  text-decoration: underline;
+  color: #007bff;   /* 블루 계열로 링크 느낌 */
+}
