@@ -77,3 +77,16 @@ export const searchRefunds = async req => {
     return data;
 };
 
+// 사용자 환불요청 
+export const requestRefundApi = async (rentItemId, reason) => {
+    try {
+        const resp = await caxios.post(`${host}/request/${rentItemId}`, {
+            reason,
+        });
+        return resp.data; 
+
+    } catch (error) {
+        console.error("환불 요청 실패:", error);
+        throw error;
+    }
+}

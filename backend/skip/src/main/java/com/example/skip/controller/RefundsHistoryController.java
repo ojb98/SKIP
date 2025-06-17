@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,8 +49,9 @@ public class RefundsHistoryController {
     }
 
     // 사용자 환불 요청
-    @PostMapping("/request")
-    public ResponseEntity<String> requestRefund(@RequestParam Long rentItemId, @RequestParam String reason) {
+    @PostMapping("/request/{rentItemId}")
+    public ResponseEntity<String> requestRefund(@PathVariable Long rentItemId, @RequestBody Map<String, String> body) {
+        String reason = body.get("reason");
         refundsHistoryService.requestRefund(rentItemId,reason);
         return ResponseEntity.ok("환불 요청 접수");
     }

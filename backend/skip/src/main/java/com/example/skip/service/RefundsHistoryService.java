@@ -132,6 +132,12 @@ public class RefundsHistoryService {
         ReservationItem item = reservationItemRepository.findById(rentItemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
+        // 이미 환불 요청이 있는지 체크
+        boolean alreadyRequested = refundsHistoryRepository.existsByReservationItemAndStatus(item, RefundStatus.REQUESTED);
+        if (alreadyRequested) {
+            throw new IllegalStateException("이미 환불 요청이 접수된 아이템입니다.");
+        }
+
         // Reservation 꺼내오기
         Reservation reservation = item.getReservation();
 
