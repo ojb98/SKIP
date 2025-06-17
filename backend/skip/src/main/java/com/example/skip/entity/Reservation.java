@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -48,4 +50,7 @@ public class Reservation {
 
     @Column(nullable = false)
     private String impUid;       // 아임포트 결제 고유번호
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReservationItem> reservationItems = new ArrayList<>();
 }

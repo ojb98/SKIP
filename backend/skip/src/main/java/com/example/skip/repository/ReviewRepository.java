@@ -11,43 +11,63 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 아이템페이지 리뷰 리스트
-    @Query("""
-        SELECT
-            r.reviewId AS reviewId,
-            res.reserveId AS reserveId,
-            r.rating AS rating,
-            r.content AS content,
-            r.image AS image,
-            r.createdAt AS createdAt,
-            r.updatedAt AS updatedAt,
-            u.username AS username,
-            u.image AS userImage,
-            i.name AS itemName,
-            idt.size AS size,
-            rr.replyId AS replyId,
-            rr.user.userId AS replyUserId,
-            ru.image AS replyAdminUserImage,
-            rr.content AS replyContent,
-            rr.createdAt AS replyCreatedAt,
-            rr.updatedAt AS replyUpdatedAt,
-            ru.username AS adminUsername
+    @Query(value = """
+    SELECT
+        r.reviewId AS reviewId,
+        res.reserveId AS reserveId,
+        r.rating AS rating,
+        r.content AS content,
+        r.image AS image,
+        r.createdAt AS createdAt,
+        r.updatedAt AS updatedAt,
+        u.username AS username,
+        u.image AS userImage,
+        i.name AS itemName,
+        idt.size AS size,
+        rr.replyId AS replyId,
+        rr.user.userId AS replyUserId,
+        ru.image AS replyAdminUserImage,
+        rr.content AS replyContent,
+        rr.createdAt AS replyCreatedAt,
+        rr.updatedAt AS replyUpdatedAt,
+        ru.username AS adminUsername
+    FROM Review r
+    JOIN r.reservation res
+    JOIN res.user u
+    JOIN ReservationItem ri ON ri.reservation = res
+    JOIN ItemDetail idt ON ri.itemDetail = idt
+    JOIN idt.item i
+    LEFT JOIN ReviewReply rr ON rr.review = r
+    LEFT JOIN rr.user ru
+    WHERE i.itemId = :itemId
+    ORDER BY
+        CASE WHEN :sort = 'highRating' THEN r.rating END DESC,
+        CASE WHEN :sort = 'lowRating' THEN r.rating END ASC,
+        CASE WHEN :sort = 'recent' THEN r.createdAt END DESC,
+        r.createdAt DESC
+    """,
+            countQuery = """
+        SELECT COUNT(r)
         FROM Review r
         JOIN r.reservation res
-        JOIN res.user u
         JOIN ReservationItem ri ON ri.reservation = res
         JOIN ItemDetail idt ON ri.itemDetail = idt
         JOIN idt.item i
-        LEFT JOIN ReviewReply rr ON rr.review = r
-        LEFT JOIN rr.user ru
-        WHERE i.itemId =:itemId
-    """)
-    Page<ReviewListDTO> findReviewListByItemWithReply(@Param("itemId") Long ItemId, Pageable pageable);
+        WHERE i.itemId = :itemId
+    """
+    )
+    Page<ReviewListDTO> findReviewListByItemWithReply(
+            @Param("itemId") Long itemId,
+            @Param("sort") String sort,
+            Pageable pageable
+    );
 
     // 관리자페이지 리뷰 리스트
     @Query("""
@@ -136,8 +156,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     ReviewStatsDTO getReviewsStatsByItemId(@Param("itemId") Long itemId);
 
-
-    // 최고관리자용 리뷰Top5
     List<Review> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId")
+    BigDecimal findAverageRatingByRentId(@Param("rentId") Long rentId);
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId AND r.createdAt >= :recent")
+    BigDecimal findRecent7dRatingByRentId(@Param("rentId") Long rentId, @Param("recent") LocalDateTime recent);
 
 }

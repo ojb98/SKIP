@@ -18,7 +18,7 @@ const MySideMenu = ({group, active}) => {
                         {
                             !profile.isLoading
                             &&
-                            <img src={profile.image ? `http://localhost:8080${profile.image}` : '/images/profile_default.png'} className="w-[100px] h-[100px] rounded-full"></img>
+                            <img src={profile.image} className="w-[100px] h-[100px] rounded-full"></img>
                         }
 
                         <div className="flex items-center gap-2">
@@ -106,17 +106,17 @@ const MySideMenu = ({group, active}) => {
 
                                 <ul className="mt-2 space-y-1 px-4">
                                     <li>
-                                        <a
-                                            href="#"
+                                        <Link
+                                            to="/mypage/reserve"
                                             className={`${tab} ${active == 'reserve' ? active_style : inactive_style}`}
                                         >
                                             예약 목록
-                                        </a>
+                                        </Link>
                                     </li>
 
                                     <li>
                                         <a
-                                            href="#"
+                                            href="/mypage/refund"
                                             className={`${tab} ${active == 'refund' ? active_style : inactive_style}`}
                                         >
                                             환불 내역

@@ -8,44 +8,37 @@ import { useNavigate } from "react-router-dom";
 const WishList = () => {
     const profile = useSelector(state => state.loginSlice);
     const [wishlist, setWishlist] = useState([]);
-    const [removedId, setRemovedId] = useState([]);
     const navigate = useNavigate();
 
+    
     useEffect(() => {
         if (profile.userId) {
             wishListApi(profile.userId).then(data => setWishlist([...data]));
         }
     }, [profile.userId]);
 
-    const refreshWishList = async () => {
-        const data = await wishListApi(profile.userId);
-        setWishlist([...data]);
-    };
 
     const handleToggleWish = async (item) => {
-        const itemId = item.itemDetailId;
+        const newStatus = item.useYn === 'Y' ? 'N' : 'Y';  // 상태 토글: Y -> N 또는 N -> Y
+        try {
+            // 1. 서버에 상태 변경 요청 (비동기 처리)
+            await removeWishApi(item.wishlistId, newStatus);
 
-        if (removedId.includes(itemId)) {
-            try {
-                await addWishApi(profile.userId, itemId);
-                setRemovedId(prev => prev.filter(id => id !== itemId));
-                await refreshWishList();
-            } catch (e) {
-                alert("찜 추가 실패");
-            }
-            return;
-        }
+            // 2. 로컬 UI 즉시 반영
+            setWishlist(prev =>
+                prev.map(w =>
+                    w.wishlistId === item.wishlistId 
+                    ? { ...w, useYn: newStatus }    // 이 항목만 상태 바꿈
+                    : w                            // 나머지는 그대로 유지
+                    
+                )
+            )
 
-        const exists = wishlist.find(w => w.itemDetailId === itemId);
-        if (exists) {
-            try {
-                await removeWishApi(exists.wishlistId);
-                setRemovedId(prev => [...prev, itemId]);
-            } catch (e) {
-                alert("찜 삭제 실패");
-            }
+        } catch (e) {
+            alert("찜 상태 변경 실패");
         }
-    };
+    }
+
 
     return (
         <div className="cart-container">
@@ -62,7 +55,7 @@ const WishList = () => {
                                     e.stopPropagation();
                                     handleToggleWish(item)
                                 }} className="wish-check">
-                                    {removedId.includes(item.itemDetailId) ? "🤍" : "❤️"}
+                                    {item.useYn === 'Y' ?  "❤️" : "🤍" }
                                 </button>
                                 <img src={`http://localhost:8080${item.image}`} />
                                 <span className="wish-rentNeme"><strong>{item.rentName}</strong></span>

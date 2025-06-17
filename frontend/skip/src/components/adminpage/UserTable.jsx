@@ -1,6 +1,6 @@
   import { useEffect, useState } from 'react';
   import '../../css/userlist.css'; 
-import AdminPagination from './AdminPagenation';
+import AdminPagination from './AdminPagination';
 import { formatDate, formatDate1 } from '../../utils/formatdate';
 import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, requestDelete } from '../../services/admin/UserListService';
 

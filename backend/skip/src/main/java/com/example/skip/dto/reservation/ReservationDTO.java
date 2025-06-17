@@ -24,7 +24,7 @@ public class ReservationDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReservationItemDTO{
-        private Long cartItemId;
+        private Long cartId;
         private LocalDateTime rentStart;
         private LocalDateTime rentEnd;
         private int quantity;

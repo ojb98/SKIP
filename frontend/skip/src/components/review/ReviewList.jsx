@@ -33,12 +33,15 @@ const ReviewList = () => {
     const fetchStats = async () => {
       try {
         const stats = await getReviewStatsByItem(itemId);
+        console.log("리뷰 통계 응답:", stats);
         setReviewCount(stats.count);
         setAverageRating(stats.average?.toFixed(1) || "0.0");
       } catch (err) {
         console.error("리뷰 통계 로딩 실패:", err);
       }
     }
+
+    console.log("요청 확인:", itemId, sort, page);
 
     fetchData();
     fetchStats();

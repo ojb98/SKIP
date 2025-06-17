@@ -8,6 +8,7 @@ import com.example.skip.enumeration.QnaStatus;
 import com.example.skip.service.QnaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/qna")
 @RequiredArgsConstructor
@@ -82,7 +84,7 @@ public class QnaController {
     public Page<QnaWithReplyDTO> getMyQnaList(@RequestParam Long userId,
                                               @RequestParam(required = false) Boolean hasReply, // true: 답변, false: 미답변, null: 전체
                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                              @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+                                              Pageable pageable) {
         return qnaService.getQnaWithReplyByUserId(userId, hasReply, startDate, pageable);
     }
 
@@ -93,7 +95,7 @@ public class QnaController {
                                                   @RequestParam(required = false) QnaStatus status,
                                                   @RequestParam(required = false) Boolean secret,
                                                   @RequestParam(required = false) Long currentUserId,
-                                                  @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+                                                  Pageable pageable){
         return qnaService.getQnaWithReplyByItemId(itemId, hasReply, status, secret, currentUserId, pageable);
     }
 

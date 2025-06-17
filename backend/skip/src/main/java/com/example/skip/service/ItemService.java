@@ -18,11 +18,11 @@ import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;

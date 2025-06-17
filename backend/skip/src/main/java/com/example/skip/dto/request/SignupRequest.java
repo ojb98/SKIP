@@ -2,10 +2,12 @@ package com.example.skip.dto.request;
 
 import com.example.skip.annotation.NameValid;
 import com.example.skip.annotation.PasswordMatch;
+import com.example.skip.annotation.PhoneValid;
 import com.example.skip.dto.UserDto;
 import com.example.skip.enumeration.UserRole;
 import com.example.skip.enumeration.UserSocial;
 import com.example.skip.enumeration.UserStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -13,7 +15,7 @@ import java.util.Set;
 
 @Data
 @PasswordMatch
-public class SignupRequest implements NameValid {
+public class SignupRequest implements NameValid, PhoneValid {
     @NotBlank(message = "아이디를 입력해주세요.")
     @Pattern(message = "5~15자의 영문 또는 숫자로 입력해주세요.", regexp = "^[a-zA-Z0-9]{5,15}$")
     private String username;
@@ -45,13 +47,19 @@ public class SignupRequest implements NameValid {
     @Email(message = "이메일 형식이 올바르지 않습니다.", regexp = "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,10}$")
     private String email;
 
+    @JsonProperty("isVerified")
     private boolean isVerified;
 
     private String phone;
 
+    private UserRole role;
+
 
     public UserDto toUserDto() {
+        Set<String> roles = role == UserRole.USER ? Set.of(UserRole.USER.name()) : Set.of(UserRole.USER.name(), UserRole.MANAGER.name());
+        UserStatus status = role == UserRole.USER ? UserStatus.APPROVED : UserStatus.PENDING;
+
         return new UserDto(null, username, password, name, email, phone,
-                UserSocial.NONE, Set.of(UserRole.USER.name()), UserStatus.APPROVED, null, null, name);
+                UserSocial.NONE, roles, status, null, null, name);
     }
 }

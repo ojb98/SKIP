@@ -20,6 +20,7 @@ public class WishListDTO {
     private Long wishlistId;
     private Long userId;
     private Long itemDetailId;
+    private YesNo useYn;
     private LocalDate createdAt;
 
     private Long rentId;         // item.rent.rentId
@@ -41,6 +42,7 @@ public class WishListDTO {
                 wishList.getWishlistId(),
                 wishList.getUser().getUserId(),
                 itemDetail.getItemDetailId(),
+                wishList.getUseYn(),
                 wishList.getCreatedAt(),
                 rent.getRentId(),
                 rent.getName(),

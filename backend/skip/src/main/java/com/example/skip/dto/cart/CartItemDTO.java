@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CartItemDTO {
     private Long cartId;
+    private Long itemId;       //item.itemId (itemDetail-> itemId)
     private String itemName;   //item.name (itemDetail-> itemId-> itemName)
     private String image;    //item.image (itemDetail -> itemId -> image)
     private String size;    //itemDetail.size

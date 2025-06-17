@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
-import AdminPagination from "../adminpage/AdminPagenation";
+import AdminPagination from "../adminpage/AdminPagination";
 import { useSelector } from "react-redux";
 
 const AdminQnaList = () => {

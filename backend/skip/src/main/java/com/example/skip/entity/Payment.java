@@ -3,6 +3,8 @@ package com.example.skip.entity;
 import com.example.skip.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +52,7 @@ public class Payment {
     private PaymentStatus status;
 
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)

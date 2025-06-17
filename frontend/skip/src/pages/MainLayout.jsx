@@ -9,7 +9,7 @@ const MainLayout = () => {
                 <MainHeader></MainHeader>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center pb-60">
                 <Outlet></Outlet>
             </div>
 

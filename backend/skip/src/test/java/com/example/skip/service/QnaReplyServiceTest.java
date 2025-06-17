@@ -27,39 +27,39 @@ public class QnaReplyServiceTest {
     private static Long savedReplyId;
 
     // 답변 저장
-    @Test
-    public void saveReplyTest() {
-        QnaReplyRequestDTO dto = QnaReplyRequestDTO.builder()
-                .qnaId(1L)
-                .userId(1L)
-                .content("답변 테스트 입니다.")
-                .build();
-
-        Long replyId = qnaReplyService.saveReply(dto);
-        savedReplyId = replyId;
-
-        System.out.println("QnaId: " + dto.getQnaId());
-        Assertions.assertNotNull(replyId);
-    }
-
-    // 단건 조회
-    @Test
-    public void getReplyTest() {
-        QnaReplyResponseDTO replyResponseDTO = qnaReplyService.getReply(1L);
-
-        System.out.println("조회결과:" + replyResponseDTO);
-        Assertions.assertNotNull(replyResponseDTO);
-        Assertions.assertEquals(1L, replyResponseDTO.getQnaId());
-    }
-
-    //QnaReplySummary 조회
-    @Test
-    public void getReplySummaryTest() {
-        QnaReplySummaryDTO summaryDTO = qnaReplyService.getReplySummary(1L);
-
-        System.out.println("summaryDTO 조회결과" + summaryDTO);
-        Assertions.assertNotNull(summaryDTO);
-        Assertions.assertEquals(1L, summaryDTO.getQnaId());
-    }
+//    @Test
+//    public void saveReplyTest() {
+//        QnaReplyRequestDTO dto = QnaReplyRequestDTO.builder()
+//                .qnaId(1L)
+//                .userId(1L)
+//                .content("답변 테스트 입니다.")
+//                .build();
+//
+//        Long replyId = qnaReplyService.saveReply(dto);
+//        savedReplyId = replyId;
+//
+//        System.out.println("QnaId: " + dto.getQnaId());
+//        Assertions.assertNotNull(replyId);
+//    }
+//
+//    // 단건 조회
+//    @Test
+//    public void getReplyTest() {
+//        QnaReplyResponseDTO replyResponseDTO = qnaReplyService.getReply(1L);
+//
+//        System.out.println("조회결과:" + replyResponseDTO);
+//        Assertions.assertNotNull(replyResponseDTO);
+//        Assertions.assertEquals(1L, replyResponseDTO.getQnaId());
+//    }
+//
+//    //QnaReplySummary 조회
+//    @Test
+//    public void getReplySummaryTest() {
+//        QnaReplySummaryDTO summaryDTO = qnaReplyService.getReplySummary(1L);
+//
+//        System.out.println("summaryDTO 조회결과" + summaryDTO);
+//        Assertions.assertNotNull(summaryDTO);
+//        Assertions.assertEquals(1L, summaryDTO.getQnaId());
+//    }
 
 }

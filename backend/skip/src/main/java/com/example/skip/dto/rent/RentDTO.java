@@ -81,7 +81,7 @@ public class RentDTO {
     }
 
 
-    public Rent toDto(User user){
+    public Rent toEntity(User user){
         return Rent.builder()
                 .rentId(rentId)
                 .user(user)

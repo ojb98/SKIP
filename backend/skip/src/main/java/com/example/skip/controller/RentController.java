@@ -1,6 +1,7 @@
 package com.example.skip.controller;
 
 import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.service.RentService;
@@ -48,6 +49,13 @@ public class RentController {
         return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 
+    //렌탈샵 슬라이드 조회
+    @GetMapping("/slide/{rentId}")
+    public ResponseEntity<RentDTO> getRentSlide(@PathVariable("rentId")Long rentId){
+        RentDTO rent = rentService.getRent(rentId);
+        return new ResponseEntity<>(rent, HttpStatus.OK);
+    }
+
     //렌탈샵 삭제 처리(useYn = N)
     @PatchMapping("/{rentId}")
     public ResponseEntity<String> deleteRent(@PathVariable("rentId")Long rentId){
@@ -71,4 +79,10 @@ public class RentController {
         return new ResponseEntity<>(rents, HttpStatus.OK);
     }
 
+    // 렌탈샵 Id, name만 조회(필터용)
+    @GetMapping("/owned/{userId}")
+    public ResponseEntity<List<RentInfoDTO>> getRentsByOwner(@PathVariable Long userId) {
+        List<RentInfoDTO> rents = rentService.findRentsByUserId(userId);
+        return new ResponseEntity<>(rents, HttpStatus.OK);
+    }
 }

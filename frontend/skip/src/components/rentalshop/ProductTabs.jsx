@@ -2,15 +2,7 @@ import { useEffect, useState } from "react";
 import ProductList from "./ProductList";
 import axios from "axios";
 
-const ProductTabs=({rentId})=>{
-  const [shopName, setShopName] = useState("");
-  const [tab,setTab] = useState("LIFT_TICKET");
-
-  useEffect(() => {
-    axios.get(`/api/rents/${rentId}`).then(res => {
-      setShopName(res.data.name);
-    });
-  }, [rentId]);
+const ProductTabs=({rentId, tab, setTab, shopName})=>{
 
   const tabList = [
     {key: "LIFT_TICKET", label: "리프트권"},

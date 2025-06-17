@@ -6,16 +6,8 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import axios from "axios";
 
-const slide=({ rentId })=>{
-  const [images, setImages] = useState([]);
+const slide=({ images })=>{
 
-  useEffect(() => {
-    axios.get(`/api/rents/${rentId}`).then(res => {
-      const { thumbnail, image1, image2, image3 } = res.data;
-      const imageList = [thumbnail, image1, image2, image3].filter(Boolean);
-      setImages(imageList);
-    });
-  }, [rentId]);
 
   return(
     <Swiper

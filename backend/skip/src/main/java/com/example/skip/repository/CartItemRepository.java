@@ -1,6 +1,7 @@
 package com.example.skip.repository;
 
 import com.example.skip.entity.CartItem;
+import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface CartItemRepository extends JpaRepository<CartItem,Long> {
+
+    //기존에 동일한 상품이 있는지 조회 (user, itemDetail, rentStart, rentEnd 모두 동일한 항목)
+    Optional<CartItem> findByUserAndItemDetailAndRentStartAndRentEnd(
+            User user, ItemDetail itemDetail, LocalDateTime rentStart, LocalDateTime rentEnd);
 
     // user객체로 CartItem 리스트 조회
     List<CartItem> findByUser(User user);

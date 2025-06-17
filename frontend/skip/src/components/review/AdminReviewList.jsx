@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { deleteReviewByAdmin, getReviewListForAdmin } from "../../api/reviewApi";
 import { createReviewReply, deleteReviewReply, getReplySummary, getReviewReplyByReviewId, updateReviewReply } from "../../api/reviewReplyApi";
-import AdminPagination from "../adminpage/AdminPagenation";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import AdminPagination from "../adminpage/AdminPagination";
 
 const AdminReviewList = () => {
   const profile = useSelector((state) => state.loginSlice);
