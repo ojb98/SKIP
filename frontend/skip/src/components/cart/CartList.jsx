@@ -336,8 +336,6 @@ const CartList=()=>{
                                                 }</p>
                                                 <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
                                                 <p>사이즈: {item.size}</p>
-                                            </div>
-                                            <div className="update-div">
                                                 <div className="count-btn">
                                                     <p>수량:</p>
                                                     <div className="quantity-btn">

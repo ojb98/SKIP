@@ -135,7 +135,7 @@ const ItemListAndDetails=()=>{
 
     //수정 폼으로 이동
     const goToUpdate = (itemId) => {
-        navigate(`/itemAdmin/update/${rentId}/${itemId}`);
+        navigate(`/rentAdmin/item/update/${rentId}/${itemId}`);
     };
 
 
@@ -375,7 +375,7 @@ const ItemListAndDetails=()=>{
                 ))
             )}
             <div className="move-item">
-                <Link to={`/itemAdmin/insert/${rentId}`} className="register-link">
+                <Link to={`/rentAdmin/item/insert/${rentId}`} className="register-link">
                     장비 추가하러 가기
                 </Link>
             </div>

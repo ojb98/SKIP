@@ -151,7 +151,7 @@ const ItemUpdateForm = () => {
         })
         .then(response => {
             alert("장비 수정 완료!");
-            navigate(`/itemAdmin/list/${rentId}`);
+            navigate(`/rentAdmin/item/list/${rentId}`);
         })
         .catch(error => {
             console.error("장비 수정 실패:", error);
@@ -161,8 +161,9 @@ const ItemUpdateForm = () => {
     }
 
     return (
-        <div className="form-container">
+        <div className="rent-container">
             <h1 className="top-subject">장비 수정</h1>
+            <div className="form-container">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" name="rentId" value={formData.rentId} />
 
@@ -258,6 +259,7 @@ const ItemUpdateForm = () => {
                 <button type="submit" className="update-btn">장비 수정</button>
             </form>
         </div>
+    </div>
   )
 }
 

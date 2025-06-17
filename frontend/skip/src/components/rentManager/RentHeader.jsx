@@ -5,7 +5,7 @@ const RentHeader = () => {
     return (
         <header className="admin-header">
             <div className="header-left">
-                <Link to="/rentmanager">
+                <Link to="/rentAdmin">
                     <h1>SKI:P</h1>
                 </Link>
             </div>
