@@ -4,7 +4,7 @@ import { deleteQnaByAdminApi, getQnaListByAdminApi, getUnansweredCountApi } from
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments, faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
-import AdminPagination from "../adminpage/AdminPagenation";
+import AdminPagination from "../adminpage/AdminPagination";
 import { useSelector } from "react-redux";
 
 const AdminQnaList = () => {

@@ -1,6 +1,5 @@
 package com.example.skip.scheduler;
 
-
 import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.enumeration.BannerActiveListStatus;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,20 +26,22 @@ public class BannerWaitingToActiveScheduler {
     @Scheduled(cron = "0 0 3 * * MON") // 매주 월요일 새벽 3시 실행
     public void toActive() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime next10Minute = now.plusMinutes(10);
+        LocalDateTime before1Minute = now.minusMinutes(1);
+        LocalDateTime next1Minute = now.plusMinutes(1);
 
-        //등록할 대기리스트
+        //등록할 대기중인 배너 리스트
         List<BannerWaitingList> targetsToActive = bannerWaitingListRepository
                 .findAllByStatusAndRegistDayBetween(
                         BannerWaitingListStatus.APPROVED,
-                        now.minusMinutes(1),
-                        next10Minute
+                        before1Minute,
+                        next1Minute
                 );
 
-        //비활성화할 active리스트
+        //비활성화할 활성화된 배너 리스트
         List<BannerActiveList> targetsToDisable = bannerActiveListRepository
-                .findAllByEndDateBetween(now, next10Minute);
+                .findAllByEndDateBetween(before1Minute, next1Minute);
 
+        //비활성화 상태로 전환
         for (BannerActiveList banner : targetsToDisable) {
             banner.setStatus(BannerActiveListStatus.DISABLE);
         }
@@ -52,19 +52,16 @@ public class BannerWaitingToActiveScheduler {
         }
         if (targetsToActive.isEmpty()) {
             log.info("[배너 스케줄러] 활성화할 배너가 없습니다. ({})", now);
-            return;
         }
 
-
-        //  cpc 정규화 최솟값/최댓값구하기
-        int minCpc = targetsToActive.stream().mapToInt(BannerWaitingList::getCpcBid).min().orElse(1);
+        //  Cost-Per-Click 입찰가 정규화 최솟값/최댓값
         int maxCpc = targetsToActive.stream().mapToInt(BannerWaitingList::getCpcBid).max().orElse(1);
 
+        //최종점수산정
         for (BannerWaitingList waiting : targetsToActive) {
-            double score = getScore(waiting, maxCpc, minCpc);
+            double score = getScore(waiting, maxCpc);
 
             // AcitiveBannerList에 등록
-            // finalscore =
             BannerActiveList active = BannerActiveList.builder()
                     .rent(waiting.getRent())
                     .bannerImage(waiting.getBannerImage())
@@ -76,29 +73,23 @@ public class BannerWaitingToActiveScheduler {
 
             bannerActiveListRepository.save(active);
             bannerWaitingListRepository.delete(waiting);
-
         }
-
-
-
         log.info("[배너 스케줄러] {}건의 배너가 활성화되었습니다.", targetsToActive.size());
         log.info("[배너 스케줄러] {}건의 배너가 비활성화되었습니다.", targetsToDisable.size());
     }
 
-    private static double getScore(BannerWaitingList waiting, int maxCpc, int minCpc) {
-        BigDecimal avgRating = waiting.getAverageRating() != null ? waiting.getAverageRating() : BigDecimal.ZERO;
-        BigDecimal recentRating = waiting.getRecent7dRating() != null ? waiting.getRecent7dRating() : BigDecimal.ZERO;
+    //최종점수(노출도 지수) 산정하는 메서드
+    private static double getScore(BannerWaitingList waiting, int maxCpc) {
+        BigDecimal avgRating = waiting.getAverageRating() != null ? waiting.getAverageRating() : BigDecimal.valueOf(2.5);
+        BigDecimal recentRating = waiting.getRecent7dRating() != null ? waiting.getRecent7dRating() : BigDecimal.valueOf(2.5);
 
         // CPC 정규화 (0 ~ 1)
-        double normalizedCpc = 0.0;
-        if (maxCpc != minCpc) {
-            normalizedCpc = (double) (waiting.getCpcBid() - minCpc) / (maxCpc - minCpc);
-        }
+        double normalizedCpc = maxCpc > 0 ? (double) waiting.getCpcBid() / maxCpc : 0.0;
 
         // finalScore 계산 ---종합점수 비율
-        double score = avgRating.doubleValue() * 0.2
-                    + normalizedCpc * 0.3
-                    + recentRating.doubleValue() * 0.5;
-        return score;
+        return avgRating.doubleValue() * 0.2
+             + normalizedCpc * 0.3
+             + recentRating.doubleValue() * 0.5;
+
     }
 }

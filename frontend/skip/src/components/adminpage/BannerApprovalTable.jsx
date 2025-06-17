@@ -5,7 +5,7 @@ import {
   approveBanner,
   rejectBanner
 } from '../../services/admin/BannerService';
-import AdminPagenation from './AdminPagenation';
+import AdminPagination from './AdminPagination';
 
 const BannerApprovalTable = () => {
   const [banners, setBanners] = useState([]);
@@ -142,7 +142,7 @@ const BannerApprovalTable = () => {
       </table>
 
       {/* AdminPagination 컴포넌트로 대체 */}
-      <AdminPagenation
+      <AdminPagination
         currentPage={currentPage}
         totalItems={banners.length}
         pageSize={pageSize}

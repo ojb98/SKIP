@@ -21,6 +21,7 @@ import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashBoard"
+import RentDashboard from "./pages/rentalAdmin/RentDashboard"
 import UsersList from "./pages/admin/UsersList"
 import LoginLayout from "./pages/login/LoginLayout"
 import AccountPage from "./pages/myPage/AccountPage"
@@ -42,9 +43,9 @@ import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
+import RentLayout from "./pages/rentalAdmin/RentLayout"
 import ReservationList from "./components/rentManager/ReservationList"
 import MyRefundPage from "./pages/myPage/MyRefundPage"
-
 
 
 function App() {
@@ -79,17 +80,21 @@ function App() {
 
 
                         {/* 중간관리자 */}
-                        <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
-                        <Route path="/rentAdmin/list" element={<RentList/>}></Route>
-                        <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
-                        <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
-                        <Route path="/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                        <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
-                        <Route path="/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
-                        <Route path="/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
-                        <Route path="/reservManager/list" element={<ReservationList/>}></Route>
-                        <Route path="/refundManager/list" element={<RefundList/>}></Route>
-                       
+                        <Route path="/rentAdmin" element={<RentLayout />}>
+                            <Route index element={<RentDashboard />} />
+                            <Route path="/rentAdmin/insert" element={<RentInsertForm/>}></Route>
+                            <Route path="/rentAdmin/list" element={<RentList/>}></Route>
+                            <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
+                            <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
+                            <Route path="/rentAdmin/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
+                            <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
+                            <Route path="/rentAdmin/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                            <Route path="/rentAdmin/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                            <Route path="/rentAdmin/reservManager/list" element={<Reservation/>}></Route>
+                            <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
+                            <Route path="/rentAdmin/boost"></Route>
+                            <Route path="/rentAdmin/banner"></Route>
+                        </Route>
 
 
                         {/* 사용자 장바구니 */}

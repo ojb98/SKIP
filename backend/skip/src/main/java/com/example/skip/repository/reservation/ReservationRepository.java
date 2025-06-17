@@ -21,8 +21,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
             "WHERE rent.user.userId = :userId")
     List<Reservation> findReservationsByUserId(@Param("userId") Long userId);
 
+
+    Long countByRent_User_UserId(Long userId);
+
     //해당 렌탈샵 가져오기
     List<Reservation> findByRentIn(List<Rent> rents);
 
     Reservation findDetailByReserveId(Long reserveId);
+
 }

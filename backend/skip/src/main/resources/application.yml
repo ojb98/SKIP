@@ -128,11 +128,11 @@ biz:
 
 vworld:
   api:
-    key: ${VWORLD_API_KEY}
+    key: ${VWORLD_API_KEY:}
 
 openweather:
   api:
-    key: ${OPENWEATHER_API_KEY}
+    key: ${OPENWEATHER_API_KEY:}
 
 iamport:
   apiKey: ${IAMPORT_API_KEY}

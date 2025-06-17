@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import '../../css/userlist.css';
 import { fetchActiveBanners } from '../../services/admin/BannerService';
-// 이름과 경로를 정확히 맞춰주세요. 파일명: AdminPagination.jsx
-import AdminPagenation from './AdminPagenation';
+
+import AdminPagination from './AdminPagination';
 
 const BannerActiveTable = () => {
   const [banners, setBanners] = useState([]);
@@ -143,7 +143,7 @@ const BannerActiveTable = () => {
       </table>
 
       
-      <AdminPagenation
+      <AdminPagination
         currentPage={currentPage}
         totalItems={banners.length}
         pageSize={pageSize}
