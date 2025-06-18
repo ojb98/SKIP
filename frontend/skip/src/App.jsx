@@ -48,7 +48,14 @@ import MyRefundPage from "./pages/myPage/MyRefundPage"
 
 
 function App() {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem('deviceId', deviceId);
+    }
+
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setProfile());
     }, []);

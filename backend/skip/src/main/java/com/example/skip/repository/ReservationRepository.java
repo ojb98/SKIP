@@ -1,10 +1,12 @@
 package com.example.skip.repository;
 
+import com.example.skip.entity.Rent;
 import com.example.skip.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +21,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findReservationsByUserId(@Param("userId") Long userId);
 
 
+    long countByRentAndCreatedAt(Rent rent, LocalDateTime createdAt);
+
+    long countByRentAndCreatedAtBetween(Rent rent, LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    long countByRentAndCreatedAtAfterAndCreatedAtLessThan(Rent rent, LocalDateTime createdAtAfter, LocalDateTime createdAtIsLessThan);
 }

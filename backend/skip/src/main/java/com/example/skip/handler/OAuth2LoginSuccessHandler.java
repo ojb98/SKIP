@@ -54,12 +54,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String refreshToken = jwtUtil.generateRefreshToken(userDto.getUsername());
 
+        String deviceId = request.getHeader("deviceId");
+
         // 쿠키 저장
         jwtUtil.attachToken("accessToken", jwtUtil.generateAccessToken(claims), response, JwtUtil.accessTokenValidity);
         jwtUtil.attachToken("refreshToken", refreshToken, response, JwtUtil.refreshTokenValidity);
 
         // 레디스 저장
-        refreshTokenService.saveRefreshToken(userDto.getUsername(), refreshToken);
+        refreshTokenService.saveRefreshToken(userDto.getUsername(), deviceId, refreshToken);
 
         response.sendRedirect("http://" + host + ":5173");
     }

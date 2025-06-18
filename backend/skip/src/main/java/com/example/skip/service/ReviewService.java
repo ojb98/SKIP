@@ -3,16 +3,22 @@ package com.example.skip.service;
 
 import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.dto.ReviewResponseDTO;
-import com.example.skip.entity.Reservation;
-import com.example.skip.entity.Review;
+import com.example.skip.entity.*;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUtil;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,6 +29,11 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final FileUtil fileUtil;
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private static final QReview review = QReview.review;
+    private static final QReservation reservation = QReservation.reservation;
+    private static final QRent rent = QRent.rent;
 
     private final String subDir = "review";
 
@@ -61,4 +72,22 @@ public class ReviewService {
     // 리뷰 목록
 
 
+    // 렌트 아이디 리스트의 리뷰 평점 받아오기
+    public Map<Long, Double> getAverageRatingsOf(List<Long> rentIds) {
+        List<Tuple> tuples = jpaQueryFactory
+                .select(review.reservation.rent.rentId, review.rating.avg())
+                .from(review)
+                .join(review.reservation, reservation)
+                .join(reservation.rent, rent)
+                .where(review.reservation.rent.rentId.in(rentIds))
+                .groupBy(review.reservation.rent.rentId)
+                .fetch();
+
+        return tuples.stream().collect(
+                Collectors.toMap(
+                        tuple -> tuple.get(review.reservation.rent.rentId),
+                        tuple -> Optional.ofNullable(tuple.get(review.rating.avg())).orElse(0.0)
+                )
+        );
+    }
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { select } from "./inputs";
 
 const Select = ({ value, selectRef, options, onChange, className }) => {

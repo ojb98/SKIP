@@ -1,5 +1,7 @@
 package com.example.skip.entity;
 
+import com.example.skip.converter.RegionConverter;
+import com.example.skip.enumeration.Region;
 import com.example.skip.enumeration.RentCategory;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -99,4 +102,13 @@ public class Rent {
     @Column(name = "bizclosureflag",nullable = false)
     private YesNo bizClosureFlag; //휴업/폐업여부 (Y / N)
 
+    @Convert(converter = RegionConverter.class)
+    private Region region;
+
+
+    @PrePersist
+    @PreUpdate
+    public void updateRegion() {
+        this.region = Region.fromFullAddress(streetAddress);
+    }
 }

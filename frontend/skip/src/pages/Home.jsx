@@ -2,37 +2,28 @@ import { useState } from "react";
 import BannerSlide from "../components/BannerSlide";
 import { radio } from "../components/buttons";
 import Forecast from "../components/Forecast";
-import MainInfoCategory from "../components/MainInfoCategory";
 import Ranking from "../components/Ranking";
+import SearchBar from "../components/SearchBar";
 
 const Home = () => {
-    const [checkedInfo, setCheckedInfo] = useState('forecast');
 
 
     return (
         <>
-            <div className="w-full flex flex-col items-center gap-60 font-[NanumSquare]">
-                <div className="w-full">
+            <div className="w-full flex flex-col items-center gap-30 font-[NanumSquare]">
+                <div className="space-y-10">
                     <BannerSlide></BannerSlide>
+                
+                    <SearchBar></SearchBar>
                 </div>
 
                 {/* <span className="w-full flex items-center">
                     <span className="h-px flex-1 bg-gray-200"></span>
                 </span> */}
                 
-                <div className="w-[1150px] space-y-15">
-                    <MainInfoCategory onClick={e => setCheckedInfo(e.target.value)}></MainInfoCategory>
+                <Forecast></Forecast>
 
-                    {
-                        checkedInfo == 'ranking'
-                        &&
-                        <Ranking></Ranking>
-                        ||
-                        checkedInfo == 'forecast'
-                        &&
-                        <Forecast></Forecast>
-                    }
-                </div>
+                <Ranking></Ranking>
             </div>
         </>
     )
