@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @SpringBootTest
@@ -23,14 +24,14 @@ public class UserRepositoryTest {
 
     @Test
     public void admin() {
-        UserDto userDto = new UserDto(null, "admin", "1234", "admin", "admin", "admin", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+        UserDto userDto = new UserDto(null, "admin1", "1234", "admin", "admin", "admin", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(userDto.toEntity());
     }
 
     @Test
     public void rentadmin() {
-        UserDto userDto = new UserDto(null, "admin", "1234", "admin", "admin", "admin", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+        UserDto userDto = new UserDto(null, "rent", "1234", "rent", "rent", "rent", UserSocial.NONE, Set.of("USER", "MANAGER"), UserStatus.APPROVED, null, null, null);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(userDto.toEntity());
     }

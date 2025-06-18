@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchCash, purchaseBoost } from '../../services/admin/rent/AdService';
+import { fetchCash, chargeCash } from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 
-const BoostPurchaseForm = () => {
+const CashChargeForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
   const [currentCash, setCurrentCash] = useState(0);
-  const [boost, setBoost] = useState('');
-  const [cpb, setCpb] = useState('');
+  const [amount, setAmount] = useState('');
+  const [pg, setPg] = useState('kcp.AO09C');
 
   useEffect(() => {
     const load = async () => {
@@ -19,12 +19,33 @@ const BoostPurchaseForm = () => {
     load();
   }, [userId]);
 
-  const handlePurchase = async e => {
+  const handleCharge = async e => {
     e.preventDefault();
-    const remaining = await purchaseBoost(userId, Number(boost), Number(cpb));
-    if (remaining != null) setCurrentCash(remaining);
-    setBoost('');
-    setCpb('');
+    const merchantUid = `adcash_${new Date().getTime()}`;
+    const IMP = window.IMP;
+    IMP.init('imp57043461');
+    IMP.request_pay({
+      pg,
+      pay_method: 'card',
+      merchant_uid: merchantUid,
+      name: '광고 캐시 충전',
+      amount: Number(amount),
+    }, async rsp => {
+      if (rsp.success) {
+        await chargeCash({
+          impUid: rsp.imp_uid,
+          merchantUid: rsp.merchant_uid,
+          amount: rsp.paid_amount,
+          userId,
+          pgProvider: pg,
+        });
+        const cash = await fetchCash(userId);
+        setCurrentCash(cash);
+      } else {
+        alert('결제 실패: ' + rsp.error_msg);
+      }
+    });
+    setAmount('');
   };
 
   const getNextMonday0AM = () => {
@@ -40,40 +61,31 @@ const BoostPurchaseForm = () => {
   return (
     <div className="table-container">
       <h3 className="form-header">
-        🚀 부스트 구매
+        💰 광고 캐시 충전
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
           📅 {updateDay}(월) 적용 예정
         </span>
       </h3>
       <div className="form-container">
-        <form onSubmit={handlePurchase}>
+        <form onSubmit={handleCharge}>
           <div className="form-group">
             <label>현재 보유 캐시</label>
             <input type="text" value={currentCash} readOnly />
           </div>
           <div className="form-group">
-            <label>부스트 레벨</label>
+            <label>충전 금액</label>
             <input
               type="number"
-              value={boost}
-              onChange={e => setBoost(e.target.value)}
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
               required
             />
           </div>
-          <div className="form-group">
-            <label>CPB (차감 캐시)</label>
-            <input
-              type="number"
-              value={cpb}
-              onChange={e => setCpb(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">구매하기</button>
+          <button type="submit">결제하기</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default BoostPurchaseForm;
+export default CashChargeForm;

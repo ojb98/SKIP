@@ -1,22 +1,32 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.ad.AdCashChargeDTO;
+import com.example.skip.entity.AdPayment;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.entity.Rent;
+import com.example.skip.entity.Boost;
 import com.example.skip.enumeration.BannerWaitingListStatus;
 import com.example.skip.enumeration.YesNo;
+import com.example.skip.repository.AdPaymentRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
+import com.example.skip.repository.BoostRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.util.FileUtil;
+import com.example.skip.util.IamportTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +37,11 @@ public class RentAdService {
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerService bannerService;
     private final FileUtil fileUtil;
+    private final AdPaymentRepository adPaymentRepository;
+    private final BoostRepository boostRepository;
+    private final IamportTokenUtil iamportTokenUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final OkHttpClient client = new OkHttpClient();
 
     private Rent findRent(Long userId) {
         return rentRepository.findByUser_UserIdAndUseYn(userId, YesNo.Y, Sort.unsorted())
@@ -35,13 +50,64 @@ public class RentAdService {
                 .orElseThrow(() -> new IllegalArgumentException("렌탈샵을 찾을 수 없습니다."));
     }
 
-    public int getMileage(Long userId) {
+    public int getCash(Long userId) {
         return findRent(userId).getRemainAdCash();
     }
 
-    public int addMileage(Long userId, int amount) {
+    public int chargeCash(AdCashChargeDTO dto) throws IOException {
+        String token = iamportTokenUtil.getIamportToken();
+        Request req = new Request.Builder()
+                .url("https://api.iamport.kr/payments/" + dto.getImpUid())
+                .get()
+                .addHeader("Authorization", token)
+                .build();
+
+        long paid;
+        String merchantUid;
+        try (Response resp = client.newCall(req).execute()) {
+            if (!resp.isSuccessful()) throw new IOException("결제 조회 실패");
+            JsonNode info = objectMapper.readTree(resp.body().string()).get("response");
+            paid = info.get("amount").asLong();
+            merchantUid = info.get("merchant_uid").asText();
+        }
+
+        if (!dto.getAmount().equals(paid)) {
+            throw new IllegalStateException("결제 금액 불일치");
+        }
+
+        Rent rent = findRent(dto.getUserId());
+        rent.setRemainAdCash(rent.getRemainAdCash() + (int) paid);
+        rentRepository.save(rent);
+
+        AdPayment adPayment = AdPayment.builder()
+                .rentId(rent.getRentId())
+                .merchantUid(merchantUid)
+                .impUid(dto.getImpUid())
+                .totalPrice((double) paid)
+                .method("card")
+                .status("PAID")
+                .createdAt(LocalDateTime.now())
+                .build();
+        adPaymentRepository.save(adPayment);
+
+        return rent.getRemainAdCash();
+    }
+
+    public int purchaseBoost(Long userId, int boost, int cpb) {
         Rent rent = findRent(userId);
-        rent.setRemainAdCash(rent.getRemainAdCash() + amount);
+        if (rent.getRemainAdCash() < cpb) {
+            throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
+        }
+        rent.setRemainAdCash(rent.getRemainAdCash() - cpb);
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime endDate = nextMonday.atStartOfDay();
+        Boost newBoost = Boost.builder()
+                .rentId(rent.getRentId())
+                .boost(boost)
+                .cpb(cpb)
+                .endDate(endDate)
+                .build();
+        boostRepository.save(newBoost);
         rentRepository.save(rent);
         return rent.getRemainAdCash();
     }

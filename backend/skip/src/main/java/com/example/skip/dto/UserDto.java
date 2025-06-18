@@ -114,7 +114,7 @@ public class UserDto extends User implements OAuth2User {
         claims.put("phone", phone);
         claims.put("social", social);
         claims.put("roles", roles);
-        claims.put("registeredAt", registeredAt.toString());
+        claims.put("registeredAt",registeredAt);
         claims.put("image", image);
         claims.put("nickname", nickname);
         if (social == UserSocial.NAVER) {

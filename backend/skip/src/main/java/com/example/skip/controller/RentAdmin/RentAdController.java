@@ -1,5 +1,6 @@
 package com.example.skip.controller.RentAdmin;
 
+import com.example.skip.dto.ad.AdCashChargeDTO;
 import com.example.skip.service.RentAdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +16,25 @@ public class RentAdController {
 
     private final RentAdService rentAdService;
 
-    @GetMapping("/mileage")
-    public ResponseEntity<Map<String, Integer>> getMileage(@RequestParam Long userId) {
-        int remaining = rentAdService.getMileage(userId);
-        return ResponseEntity.ok(Map.of("remainingMileage", remaining));
+    @GetMapping("/cash")
+    public ResponseEntity<Map<String, Integer>> getCash(@RequestParam Long userId) {
+        int remaining = rentAdService.getCash(userId);
+        return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 
-    @PostMapping("/mileage")
-    public ResponseEntity<Map<String, Integer>> addMileage(@RequestBody Map<String, Object> body) {
+    @PostMapping("/cash")
+    public ResponseEntity<Map<String, Integer>> chargeCash(@RequestBody AdCashChargeDTO dto) throws Exception {
+        int remaining = rentAdService.chargeCash(dto);
+        return ResponseEntity.ok(Map.of("remainingCash", remaining));
+    }
+
+    @PostMapping("/boost")
+    public ResponseEntity<Map<String, Integer>> purchaseBoost(@RequestBody Map<String, Object> body) {
         Long userId = ((Number) body.get("userId")).longValue();
-        int amount = ((Number) body.get("amount")).intValue();
-        int remaining = rentAdService.addMileage(userId, amount);
-        return ResponseEntity.ok(Map.of("remainingMileage", remaining));
+        int boost = ((Number) body.get("boost")).intValue();
+        int cpb = ((Number) body.get("cpb")).intValue();
+        int remaining = rentAdService.purchaseBoost(userId, boost, cpb);
+        return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 
     @PostMapping(value = "/banner", consumes = "multipart/form-data")
@@ -36,6 +44,6 @@ public class RentAdController {
             @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage
     ) {
         int remaining = rentAdService.submitBanner(userId, cpcBid, bannerImage);
-        return ResponseEntity.ok(Map.of("remainingMileage", remaining));
+        return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 }
