@@ -2,6 +2,7 @@ package com.example.skip.service;
 
 import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.repository.*;
+import com.example.skip.repository.reservation.ReservationItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

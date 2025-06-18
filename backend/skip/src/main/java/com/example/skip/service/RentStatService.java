@@ -8,7 +8,7 @@ import com.example.skip.entity.QRent;
 import com.example.skip.entity.Rent;
 import com.example.skip.repository.DailyRentStatRepository;
 import com.example.skip.repository.RentRepository;
-import com.example.skip.repository.ReservationRepository;
+import com.example.skip.repository.reservation.ReservationRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

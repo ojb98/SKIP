@@ -14,9 +14,4 @@ QnaListDTO {
     Boolean getSecret();
     LocalDateTime getCreatedAt();
     LocalDateTime getUpdatedAt();
-
-    Long getReplyId();
-    String getReplyContent();
-    String getReplyUsername();
-    LocalDateTime getReplyCreatedAt();
 }

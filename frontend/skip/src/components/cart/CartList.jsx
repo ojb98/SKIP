@@ -11,6 +11,8 @@ const CartList=()=>{
     const navigate = useNavigate();
 
     const [cartGroups, setCartGroups] = useState([]);
+    // 결제 선택모달
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
     // 체크된 상세 항목 키를 저장 (cartId)
     const [checkedItems, setCheckedItems] = useState(new Set());  
@@ -182,7 +184,7 @@ const CartList=()=>{
     const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
     // 결제   
-    const handlePayment = async () => {
+    const handlePayment = async (pg) => {
 
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
@@ -217,7 +219,7 @@ const CartList=()=>{
 
         //결제 요청(아임포트에 보낼 결제 정보)
         IMP.request_pay({
-            pg: "kakaopay.TC0ONETIME",
+            pg,
             pay_method: "card",
             merchant_uid: merchantUid,
             name: "대여 결제",
@@ -238,6 +240,7 @@ const CartList=()=>{
                         reservationItems, // 리스트 전송
                     });
 
+                    setShowPaymentModal(false);
                     console.log("결제 완료:", res.data);
                     alert("결제가 완료되었습니다!");
                     // navigate("/payment", { state: { payment: resp.data } });
@@ -256,6 +259,22 @@ const CartList=()=>{
     return(
         <div className="cart-container">
             <h1 className="top-subject">장바구니</h1>
+
+            {/* 결제 수단 선택 모달 삽입 위치 */}
+            {showPaymentModal && (
+                <div className="modal-backdrop">
+                    <div className="modal">
+                    <h3>결제 수단을 선택하세요</h3>
+                    <div className="modal-buttons">
+                        <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
+                        <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
+                        <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
+                        <button className="modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
+                    </div>
+                    </div>
+                </div>
+            )}
+
             {cartGroups.length === 0 || cartGroups.every(group => group.items.length === 0) ? (
                 <div className="empty-cart-message">장바구니가 비어 있습니다.</div>
             ) : (
@@ -344,7 +363,15 @@ const CartList=()=>{
                     <div className="totalPrice-div">
                         <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
                     </div>
-                        <button onClick={handlePayment} className="payment-btn" disabled={checkedItems.size === 0}>결제하기</button>
+                        <button onClick={() => {
+                            if (checkedItems.size === 0) {
+                                alert("결제할 상품을 선택해주세요."); return;
+                            }
+                            setShowPaymentModal(true); // 모달 열기
+                        }}
+                        className="payment-btn" disabled={checkedItems.size === 0}>
+                            결제하기
+                        </button>
                 </div>
                 </>
             )}

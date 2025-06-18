@@ -13,7 +13,7 @@ import com.example.skip.enumeration.RefundStatus;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.refund.RefundsHistoryRepository;
-import com.example.skip.repository.ReservationItemRepository;
+import com.example.skip.repository.reservation.ReservationItemRepository;
 import com.example.skip.util.IamportTokenUtil;
 import com.example.skip.view.RefundsHistoryDetailsView;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,6 +111,8 @@ public class RefundsHistoryService {
 
                 refund.getPayment().getPaymentId(),
                 refund.getPayment().getTotalPrice(),
+                refund.getPayment().getPgProvider(),
+                refund.getPayment().getMethod(),
 
                 reservation.getReserveId(),
                 user.getName(),
@@ -124,13 +126,17 @@ public class RefundsHistoryService {
         );
     }
 
-
-
     //사용자 환불요청 메서드
     public RefundsHistory requestRefund(Long rentItemId, String reason) {
         // rentItemId로 ReservationItem 조회
         ReservationItem item = reservationItemRepository.findById(rentItemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
+
+        // 이미 환불 요청이 있는지 체크
+        boolean alreadyRequested = refundsHistoryRepository.existsByReservationItemAndStatus(item, RefundStatus.REQUESTED);
+        if (alreadyRequested) {
+            throw new IllegalStateException("이미 환불 요청이 접수된 아이템입니다.");
+        }
 
         // Reservation 꺼내오기
         Reservation reservation = item.getReservation();
@@ -216,6 +222,21 @@ public class RefundsHistoryService {
         return refund;
     }
 
+    // 관리자 거절 처리 메서드
+    public RefundsHistory rejectRefund(Long refundId) {
+        RefundsHistory refund = refundsHistoryRepository.findById(refundId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 환불 내역이 없습니다."));
+
+        if (refund.getStatus() != RefundStatus.REQUESTED) {
+            throw new IllegalStateException("환불 요청 상태만 거절할 수 있습니다.");
+        }
+
+        refund.setStatus(RefundStatus.REJECTED);  // 거절로 상태 변경
+        refund.setRefundedAt(LocalDateTime.now());
+
+        return refund; // 반환
+
+    }
     // 마이페이지 환불 내역
     public Page<RefundsHistoryDetailsView> listRefunds(RefundSearchRequest refundSearchRequest,
                                                        Long userId,
@@ -231,6 +252,7 @@ public class RefundsHistoryService {
                 .where(refundSearchRequest.toPredicate(refundsHistory))
                 .orderBy(refundSearchRequest.getSort().getSpecifier())
                 .fetch();
+
 
         CriteriaBuilder<RefundsHistory> criteriaBuilder = criteriaBuilderFactory.create(entityManager, RefundsHistory.class);
         criteriaBuilder
@@ -260,6 +282,7 @@ public class RefundsHistoryService {
 
         return new PageImpl<>(result, pageable, count);
     }
+
 
 
 }

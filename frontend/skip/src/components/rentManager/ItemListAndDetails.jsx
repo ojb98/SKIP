@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import '../../css/itemList.css';
 import useCategoryOptions from "../../hooks/useCategoryOptions";
+import caxios from "../../api/caxios";
 
 const ItemListAndDetails=()=>{
 
@@ -43,7 +44,7 @@ const ItemListAndDetails=()=>{
     //카테고리 한글명 매핑 가져오기
     const fetchCategoryMap = async () => {
         try {
-            const res = await axios.get("http://localhost:8080/api/enums/itemCategory");
+            const res = await caxios.get("http://localhost:8080/api/enums/itemCategory");
             const map = {};  //빈 객체 만들기
             console.log("category불러오기===>",res);
             res.data.forEach(cat => {
@@ -61,7 +62,7 @@ const ItemListAndDetails=()=>{
         if(!rentId) return;  // rentId 없으면 함수 실행 안 함
 
         // rentId에 해당하는 장비 리스트를 요청
-        axios.get(`http://localhost:8080/api/items/list/${rentId}`)
+        caxios.get(`http://localhost:8080/api/items/list/${rentId}`)
             .then(response => {
                 setItems(response.data);   // 받아온 데이터를 상태로 저장
                 setCheckedDetails(new Set());  // 체크박스 선택 상태도 초기화 (비우기)
@@ -161,7 +162,7 @@ const ItemListAndDetails=()=>{
 
         try {
             // payload : 서버에 보낼 삭제 요청 데이터를 배열 보냄
-            await axios.patch("http://localhost:8080/api/items/delete", payload);
+            await caxios.patch("http://localhost:8080/api/items/delete", payload);
             alert("선택한 장비 항목이 삭제되었습니다.");
             fetchItems();   // 리스트 재호출
 
@@ -251,7 +252,7 @@ const ItemListAndDetails=()=>{
 
         try {
             for (const option of newOptions) {
-                await axios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {
+                await caxios.post(`http://localhost:8080/api/items/optionAdd/${modalItemId}`, {
                     rentHour: Number(option.rentHour),
                     price: Number(option.price),
                     sizeStocks,

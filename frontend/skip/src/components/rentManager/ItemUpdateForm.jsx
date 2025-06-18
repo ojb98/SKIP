@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useCategoryOptions from "../../hooks/useCategoryOptions";
 import axios from "axios";
 import '../../css/itemInsertForm.css';
+import caxios from "../../api/caxios";
 
 const ItemUpdateForm = () => {
     const { rentId, itemId } = useParams();
@@ -28,7 +29,7 @@ const ItemUpdateForm = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get("/api/enums/itemCategory");
+                const response = await caxios.get("/api/enums/itemCategory");
                 setCategories(response.data);
             } catch (error) {
                 console.error("카테고리 불러오기 실패:", error);
@@ -43,7 +44,7 @@ const ItemUpdateForm = () => {
     useEffect(() => {
         const fetchItemDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/items/${rentId}/${itemId}`);
+                const response = await caxios.get(`http://localhost:8080/api/items/${rentId}/${itemId}`);
                 console.log("아이템 조회 ===>", response);
 
                 const item = response.data;
@@ -145,7 +146,7 @@ const ItemUpdateForm = () => {
             submitData.append("image", fileRef.current.files[0]);
         }
 
-        axios.put("http://localhost:8080/api/items/update", submitData, {
+        caxios.put("http://localhost:8080/api/items/update", submitData, {
             headers: { "Content-Type": "multipart/form-data" }
         })
         .then(response => {

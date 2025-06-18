@@ -1,11 +1,6 @@
 package com.example.skip.dto.reservation;
 
-import com.example.skip.entity.Item;
-import com.example.skip.entity.ItemDetail;
-import com.example.skip.entity.Reservation;
-import com.example.skip.entity.ReservationItem;
-import com.example.skip.enumeration.ReservationStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.skip.entity.QItemDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,30 +13,28 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ReservationDetailDTO {
-    private Long reserveId;
+
+    //예약상세정보
     private Long rentItemId;
-    private String name;
-    private String size;
+    private Long reserveId;
     private int quantity;
+    private Long subtotalPrice;
     private LocalDateTime rentStart;
     private LocalDateTime rentEnd;
-    private int price;
     private boolean isReturned;
 
-    public static ReservationDetailDTO from(ReservationItem ri) {
-        ItemDetail detail = ri.getItemDetail();
-        Item item = detail.getItem();
+    //회원정보
+    private String name;
+    private String userEmail;
 
-        return ReservationDetailDTO.builder()
-                .reserveId(ri.getReservation().getReserveId())
-                .rentItemId(ri.getRentItemId())
-                .name(item.getName())
-                .size(detail.getSize())
-                .quantity(ri.getQuantity())
-                .rentStart(ri.getRentStart())
-                .rentEnd(ri.getRentEnd())
-                .price(detail.getPrice())
-                .isReturned(ri.isReturned())
-                .build();
-    }
+    //장비 상세정보
+    private Long itemDetailId;
+    private String itemName;
+    private String size;
+    private Integer totalQuantity;
+    private Integer stockQuantity;
+    private Integer rentHour;
+
 }
+
+

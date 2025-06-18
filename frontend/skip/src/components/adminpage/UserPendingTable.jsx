@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
-import AdminPagenation from './AdminPagenation.jsx';
+import AdminPagination from './AdminPagination.jsx';
 import { formatDate, formatDate1 } from '../../utils/formatdate.js';
 import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
@@ -172,7 +172,7 @@ import { fetchPendingRents, findRentByUserId, findRentByName, findRentByRentName
             )}            
           </tbody>          
         </table>
-        <AdminPagenation
+        <AdminPagination
           currentPage={currentPage}
           totalItems={rents.length}
           pageSize={pageSize}

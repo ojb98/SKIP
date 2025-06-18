@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +29,9 @@ public class RefundsHistoryController {
     private final RefundsHistoryService refundsHistoryService;
 
     // 환불 목록 조회 (필터링 포함)
-    @GetMapping("/manager")
+    @GetMapping("/manager/{userId}")
     public List<RefundSummaryDTO> getRefundList(
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestParam(required = false) Long rentId,
             @RequestParam(required = false) RefundStatus status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -48,24 +49,34 @@ public class RefundsHistoryController {
     }
 
     // 사용자 환불 요청
-    @PostMapping("/request")
-    public ResponseEntity<String> requestRefund(@RequestParam Long rentItemId, @RequestParam String reason) {
+    @PostMapping("/request/{rentItemId}")
+    public ResponseEntity<String> requestRefund(@PathVariable Long rentItemId, @RequestBody Map<String, String> body) {
+        String reason = body.get("reason");
         refundsHistoryService.requestRefund(rentItemId,reason);
         return ResponseEntity.ok("환불 요청 접수");
     }
 
     // 관리자 환불 승인
-    @PatchMapping("/manager/{refundId}")
+    @PatchMapping("/manager/{refundId}/approve")
     public ResponseEntity<String> approveRefund(@PathVariable Long refundId) {
         try {
             refundsHistoryService.approveRefund(refundId);
         } catch (IOException e) {
-            System.out.println("controller환불실패");
+            System.out.println("controller환불승인실패");
             throw new RuntimeException(e);
 
         }
         return ResponseEntity.ok("환불 승인 완료");
     }
+
+    // 관리자 환불 거절
+    @PatchMapping("/manager/{refundId}/reject")
+    public ResponseEntity<String> rejectRefund(@PathVariable Long refundId) {
+        refundsHistoryService.rejectRefund(refundId);
+        return ResponseEntity.ok("환불 승인 완료");
+    }
+
+
 
     // 마이페이지 환불 내역
     @GetMapping("/search")

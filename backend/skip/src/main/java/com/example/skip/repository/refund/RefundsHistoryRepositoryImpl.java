@@ -6,22 +6,15 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class RefundsHistoryRepositoryImpl implements RefundsHistoryRespositoryCustom {
 
-    @PersistenceContext
-    private EntityManager em;
-
-    private JPAQueryFactory queryFactory;
-
-    // 생성자 또는 @PostConstruct에서 초기화
-    public RefundsHistoryRepositoryImpl(EntityManager em) {
-        this.em = em;
-        this.queryFactory = new JPAQueryFactory(em);
-    }
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public List<RefundsHistory> findWithFilters(

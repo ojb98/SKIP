@@ -53,7 +53,8 @@ public class Qna {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
+    
+    // Qna 삭제 시, QnaReply도 같이 삭제되도록
     @OneToOne(mappedBy = "qna", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private QnaReply qnaReply;
 }

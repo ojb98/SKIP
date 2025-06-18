@@ -5,6 +5,8 @@ import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
 import com.example.skip.enumeration.PaymentStatus;
 import com.example.skip.enumeration.ReservationStatus;
+import com.example.skip.repository.reservation.ReservationItemRepository;
+import com.example.skip.repository.reservation.ReservationRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

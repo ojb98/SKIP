@@ -38,7 +38,7 @@ export const getQnaListByItemApi = async (itemId, hasReply, status, secret, curr
 // 관리자 페이지 Q&A 리스트
 export const getQnaListByAdminApi = async (rentId, status, username, itemName, secret, hasReply, page = 0, size = 10) => {
   const response = await caxios.get(`${host}/admin/rent/${rentId}`, {
-    params: {status, username, itemName, secret, hasReply, page, size, sort: "qnaId,DESC"},
+    params: {status, username, itemName, secret, hasReply, page, size},
   });
   return response.data;
 }
@@ -52,7 +52,7 @@ export const getUnansweredCountApi = async (rentId) => {
 // 마이페이지 Q&A 리스트
 export const getQnaListByUserApi = async (userId, hasReply, startDate, page = 0, size = 5) => {
   const response = await caxios.get(`${host}/user`, {
-    params: { userId, hasReply, startDate, page, size, sort: "createdAt,DESC" },
+    params: { userId, hasReply, startDate, page, size },
   });
   return response.data;
 }

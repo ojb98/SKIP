@@ -1,12 +1,14 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.reservation.ReservationDetailDTO;
 import com.example.skip.entity.ItemDetail;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
+import com.example.skip.entity.User;
 import com.example.skip.enumeration.ReservationStatus;
 import com.example.skip.repository.ItemDetailRepository;
-import com.example.skip.repository.ReservationItemRepository;
-import com.example.skip.repository.ReservationRepository;
+import com.example.skip.repository.reservation.ReservationItemRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,10 +19,38 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ReservationItemService {
 
-    private final ReservationRepository reservationRepository;
+
     private final ReservationItemRepository reservationItemRepository;
     private final ItemDetailRepository itemDetailRepository;
 
+    public ReservationDetailDTO getReservationDetail(Long rentItemId) {
+        ReservationItem item = reservationItemRepository.findById(rentItemId)
+                .orElseThrow(() -> new EntityNotFoundException("예약 상세 정보가 존재하지 않습니다."));
+
+        Reservation reservation = item.getReservation();
+        ItemDetail detail = item.getItemDetail();
+        User user = reservation.getUser();
+
+        return ReservationDetailDTO.builder()
+                .rentItemId(item.getRentItemId())
+                .reserveId(reservation.getReserveId())
+                .quantity(item.getQuantity())
+                .subtotalPrice(item.getSubtotalPrice())
+                .rentStart(item.getRentStart())
+                .rentEnd(item.getRentEnd())
+                .isReturned(item.isReturned())
+
+                .name(user.getName())
+                .userEmail(user.getEmail())
+
+                .itemDetailId(detail.getItemDetailId())
+                .itemName(detail.getItem().getName())
+                .size(detail.getSize())
+                .totalQuantity(detail.getTotalQuantity())
+                .stockQuantity(detail.getStockQuantity())
+                .rentHour(detail.getRentHour())
+                .build();
+    }
 
     // 예약 반납완료 변경 및 재고수량 변경
     public void returnReservItem(Long rentItemId) {
@@ -42,15 +72,19 @@ public class ReservationItemService {
         // 3. 해당 아이템 반납 표시
         item.setReturned(true); // isReturned = true 로 변경
 
-        // 4. 모든 예약 상세가 반납되었는지 확인
+        // 4. 예약 상태 업데이트
         Reservation reservation = item.getReservation();
-        boolean allReturned = reservation.getReservationItems()
-                .stream()
-                .allMatch(ReservationItem::isReturned); // 모두 true인지 체크
 
-        // 5. 전부 반납되었으면 예약 상태 변경
+        boolean allReturned = reservation.getReservationItems().stream()
+                .allMatch(ReservationItem::isReturned);
+
+        boolean anyReturned = reservation.getReservationItems().stream()
+                .anyMatch(ReservationItem::isReturned);
+
         if (allReturned) {
             reservation.setStatus(ReservationStatus.RETURNED);
+        } else if (anyReturned) {
+            reservation.setStatus(ReservationStatus.PARTIALLY_RETURNED);
         }
 
     }

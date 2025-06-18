@@ -11,6 +11,7 @@ public class PaymentCompleteDTO {
     private Long amount;  //실제 아임포트 결제금액
     private Long userId;
     private Long totalPrice;   // 프론트 계산된 전체 금액
+    private String pgProvider;
 
     private List<ReservationItemDTO> reservationItems;
 

@@ -16,7 +16,12 @@ public class AuthorizationPaths {
             "/api/banners/list/order",
             "/api/banners/*/click",
             "/api/items/**",
-            "/user/refresh"
+            "/user/refresh",
+            "/api/enums/**",
+            "/api/qna/item/*",
+            "/api/review/item/*",
+            "/api/review/stats/*",
+            "/api/rents/slide/*"
     );
 
     public static final List<String> ROLE_USER = List.of(

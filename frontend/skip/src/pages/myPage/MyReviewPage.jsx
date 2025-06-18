@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import UserReviewList from "../../components/review/UserReviewList";
 
 const MyReviewPage = () => {
     const profile = useSelector(state => state.loginSlice);
@@ -6,7 +7,7 @@ const MyReviewPage = () => {
 
     return (
         <>
-            review
+            <UserReviewList></UserReviewList>
         </>
     )
 }

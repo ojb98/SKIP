@@ -21,9 +21,9 @@ public class ReviewResponseDTO {
     private LocalDateTime updatedAt;
 
     // 예약 아이템 정보
-    private List<String> itemNames;
-    private List<String> sizes;
-    private List<LocalDateTime> rentStartDates;
-    private List<LocalDateTime> rentEndDates;
+    private String itemName;
+    private String size;
+    private LocalDateTime rentStartDate;
+    private LocalDateTime rentEndDate;
 
 }

@@ -35,7 +35,6 @@ public class WishList {
     @Column(nullable = false)
     private YesNo useYn = YesNo.Y;
 
-
     @CreatedDate
     private LocalDate createdAt;
 }
