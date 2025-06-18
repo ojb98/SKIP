@@ -48,43 +48,13 @@ const MainHeaderProfileDropdown = () => {
                         roles.includes('MANAGER')
                         &&
                         <Link
-                            to={''}
+                            to={'/rentAdmin'}
                             className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                             role="menuitem"
                         >
                             Manager Page
                         </Link>
                     }
-
-
-                    {/* 새미 시작 */}
-                    <Link
-                        to="/rentAdmin/insert"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                    >가맹점 등록</Link>
-
-                    <Link
-                        to="/rentAdmin/list"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                    >
-                    가맹점 목록</Link>
-
-                    <Link
-                        to="/rentAdmin/select"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                    >장비 관리</Link>
-
-                    
-                    <Link
-                        to="/reservManager/list"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                    >예약 관리</Link>
-
-                    <Link
-                        to="/refundManager/list"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                    >환불 관리</Link>
-                    {/* 새미 끝 */}
 
 
                     {

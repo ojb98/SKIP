@@ -23,7 +23,7 @@ const CashChargeForm = () => {
     e.preventDefault();
     const merchantUid = `adcash_${new Date().getTime()}`;
     const IMP = window.IMP;
-    IMP.init('imp57043461');
+    IMP.init(import.meta.env.VITE_IAMPORT_API_KEY);
     IMP.request_pay({
       pg,
       pay_method: 'card',
@@ -59,7 +59,7 @@ const CashChargeForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container">
+    <div className="table-container" style={{marginTop:"0px"}}>
       <h3 className="form-header">
         💰 광고 캐시 충전
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>

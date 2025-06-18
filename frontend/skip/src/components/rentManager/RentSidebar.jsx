@@ -24,6 +24,7 @@ const RentSidebar = () => {
             <span className="admin-sidebar__name">{userId}님, 환영합니다!</span>
             </div>
         );
+
     }
 
     return (

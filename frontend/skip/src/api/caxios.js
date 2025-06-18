@@ -14,6 +14,12 @@ export const refresh = async () => {
     return res;
 }
 
+caxios.interceptors.request.use(config => {
+    console.log('인터셉터');
+    
+    return config;
+});
+
 caxios.interceptors.response.use(async res => {
     const config = res.config;
     if (!res.data.success && res.data.error === 'ERROR_ACCESS_TOKEN') {

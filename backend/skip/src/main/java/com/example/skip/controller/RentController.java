@@ -49,6 +49,13 @@ public class RentController {
         return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 
+    //렌탈샵 슬라이드 조회
+    @GetMapping("/slide/{rentId}")
+    public ResponseEntity<RentDTO> getRentSlide(@PathVariable("rentId")Long rentId){
+        RentDTO rent = rentService.getRent(rentId);
+        return new ResponseEntity<>(rent, HttpStatus.OK);
+    }
+
     //렌탈샵 삭제 처리(useYn = N)
     @PatchMapping("/{rentId}")
     public ResponseEntity<String> deleteRent(@PathVariable("rentId")Long rentId){

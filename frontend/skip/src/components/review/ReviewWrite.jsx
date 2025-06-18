@@ -4,7 +4,11 @@ import { useState } from "react";
 import { createReviewApi } from "../../api/reviewApi";
 
 //임의의 예약 ID
-const reserveId = 15;
+const reserveId = 17;
+
+// item = 6
+//test -> reservId = 17
+//test2 -> reservId = 24
 
 const ReviewWrite = () => {
 

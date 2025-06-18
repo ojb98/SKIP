@@ -47,6 +47,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
     implementation 'org.modelmapper:modelmapper:3.2.1'
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3'
 	// OkHttp 추가
 	implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 

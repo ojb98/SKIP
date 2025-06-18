@@ -38,7 +38,7 @@ const BoostPurchaseForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container">
+    <div className="table-container" style={{marginTop:"0px"}}>
       <h3 className="form-header">
         🚀 부스트 구매
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>

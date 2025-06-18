@@ -41,14 +41,15 @@ import RefundList from "./components/rentManager/RefundList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import AdminReviewList from "./components/review/AdminReviewList"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
-import ReservationList from "./components/rentManager/ReservationList"
 import MyRefundPage from "./pages/myPage/MyRefundPage"
 import BoostPurchasePage from "./pages/rentalAdmin/BoostPurchasePage"
 import CashChargePage from "./pages/rentalAdmin/CashCahrgePage"
 import BannerApplyPage from "./pages/rentalAdmin/BannerApplyPage"
+import ReservationList from './components/rentManager/ReservationList';
 
 
 function App() {
@@ -122,6 +123,7 @@ function App() {
                         <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
                         <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
+                        <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>

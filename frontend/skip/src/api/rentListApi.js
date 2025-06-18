@@ -27,6 +27,14 @@ export const rentDetailApi = async(rentId)=>{
     return data;
 }
 
+export const rentSlideApi = async(rentId)=>{
+    const data = await axios.get(`${host}/slide/${rentId}`).then(res=>{
+        console.log("단건 렌탈샵 조회==>",res);
+        return res.data;
+    });
+    return data;
+}
+
 
 export const rentIdAndNameApi = async(userId)=>{
     const data = await caxios.get(`${host}/owned/${userId}`).then((res)=>{

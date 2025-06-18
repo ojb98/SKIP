@@ -123,7 +123,6 @@ const UserQnaList = () => {
                     alt={qna.itemName}
                     className="w-[180px] h-[180px] mt-[5px] border-[#cecece]"
                   />
-
                 </Link>
               </div>
               <div className="mx-4.5 py-2.5 flex-1">

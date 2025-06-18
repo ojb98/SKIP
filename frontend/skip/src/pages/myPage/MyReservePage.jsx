@@ -9,6 +9,8 @@ import ReturnedBadge from "../../components/myPage/ReturnedBadge";
 import ReservedBadge from "../../components/myPage/ReservedBadge";
 import PartiallyCancelledBadge from "../../components/myPage/PartiallyCancelledBadge";
 import CancelledBadge from "../../components/myPage/CancelledBadge";
+import RefundRequestModal from "../../components/myPage/RefundRequestModal";
+import { requestRefundApi } from "../../api/refundApi";
 
 const host = __APP_BASE__;
 
@@ -35,6 +37,10 @@ const MyReservePage = () => {
         content: []
     });
 
+    //환불 모달 상태 추가
+    const [showModal, setShowModal] = useState(false);
+    const [selectedRentItemId, setSelectedRentItemId] = useState(null);
+
     useEffect(() => {
         searchHandler(0);
     }, [appliedConditions]);
@@ -58,6 +64,28 @@ const MyReservePage = () => {
             behavior: 'smooth'
         });
     };
+
+    //환불 모달창
+    const openRefundModal = (rentItemId) => {
+        setSelectedRentItemId(rentItemId);
+        setShowModal(true);
+    };
+
+    const closeRefundModal = () => {
+        setShowModal(false);
+        setSelectedRentItemId(null);
+    };
+
+    const submitRefund = async (reason) => {
+        try {
+            const result = await requestRefundApi(selectedRentItemId, reason);
+            alert(result); // 환불 요청 접수
+            closeRefundModal();
+            searchHandler(); // 새로고침
+        } catch (error) {
+            alert("환불 요청 실패");
+        }
+    }
 
     return (
         <>
@@ -151,6 +179,7 @@ const MyReservePage = () => {
 
                                                     <button
                                                         type="button"
+                                                        onClick={() => openRefundModal(i.rentItemId)}
                                                         className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
                                                     >
                                                         환불 신청
@@ -167,6 +196,10 @@ const MyReservePage = () => {
             </ul>
 
             <Pagination pageNumber={reservationsPage.number} totalPages={reservationsPage.totalPages} searchHandler={searchHandler}></Pagination>
+        
+            {showModal && (
+                <RefundRequestModal onClose={closeRefundModal} onSubmit={submitRefund}/>
+            )}
         </>
     )
 };
