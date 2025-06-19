@@ -7,6 +7,7 @@ import com.example.skip.entity.ReservationItem;
 import com.example.skip.enumeration.ItemCategory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @EntityView(ReservationItem.class)
 public interface ReservationItemDetailsView {
@@ -30,6 +31,9 @@ public interface ReservationItemDetailsView {
 
     @Mapping("itemDetail.item.image")
     String getItemImage();
+
+    @Mapping("refundsHistories")
+    List<RefundsHistoryView> getRefundsHistories();
 
     LocalDateTime getRentStart();
 

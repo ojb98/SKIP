@@ -20,8 +20,8 @@ public class Review {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserveId", nullable = false)
-    private Reservation reservation;
+    @JoinColumn(name = "rentItemId", nullable = false)
+    private ReservationItem reservationItem;
 
     @Column(nullable = false)
     private int rating;

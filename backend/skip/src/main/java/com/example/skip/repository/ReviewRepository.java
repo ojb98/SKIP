@@ -13,15 +13,15 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 본인 리뷰 조회
-    Page<Review> findAllByReservation_User_UserId(Long userId, Pageable pageable);
+//    Page<Review> findAllByReservationItem_User_UserId(Long userId, Pageable pageable);
+//
+//    // 본인 렌탈샵 리뷰 조회
+//    Page<Review> findAllByReservation_Rent_RentId(Long rentId, Pageable pageable);
 
-    // 본인 렌탈샵 리뷰 조회
-    Page<Review> findAllByReservation_Rent_RentId(Long rentId, Pageable pageable);
-
-    List<Review> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId")
+    List<Review> findTop5ByReservationItem_Reservation_User_UserIdOrderByCreatedAtDesc(Long userId);
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservationItem.reservation.rent.rentId = :rentId")
     BigDecimal findAverageRatingByRentId(@Param("rentId") Long rentId);
 
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId AND r.createdAt >= :recent")
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservationItem.reservation.rent.rentId = :rentId AND r.createdAt >= :recent")
     BigDecimal findRecent7dRatingByRentId(@Param("rentId") Long rentId, @Param("recent") LocalDateTime recent);
 }

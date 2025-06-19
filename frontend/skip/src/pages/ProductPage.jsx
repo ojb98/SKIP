@@ -211,11 +211,12 @@ const ProductPage=()=>{
       amount: totalAmount,
       buyer_email: profile.email,
       buyer_name: profile.name,
+      buyer_username: profile.username,
     }, async (rsp) => {
       console.log("결제 결과", rsp);
 
       if (rsp.success) {
-        try {
+        try { 
           const reservationItems = selectedOptions.map(opt => ({
             rentId: parsedRentId,
             itemDetailId: opt.itemDetailId,
@@ -237,14 +238,16 @@ const ProductPage=()=>{
 
           alert("결제가 완료되었습니다!");
           // navigate("/mypage/reservations"); // 예시 이동
+          console.log("결제 완료:", res.data);
 
         } catch (err) {
-          console.error("결제 후 처리 실패:", err);
-          alert("결제 후 예약 처리 중 오류가 발생했습니다.");
+          console.log(err.response.data.error);
+          alert("결제 실패:" + err.response.data.error);
         }
       } else {
-        alert("결제 실패: " + rsp.error_msg);
+        alert("결제 실패: " + resp.error_msg);
       }
+            
     });
   }
 

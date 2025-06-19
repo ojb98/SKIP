@@ -6,6 +6,7 @@ import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViews;
 import com.blazebit.persistence.view.spi.EntityViewConfiguration;
 import com.example.skip.view.RefundsHistoryDetailsView;
+import com.example.skip.view.RefundsHistoryView;
 import com.example.skip.view.ReservationDetailsWithItemsView;
 import com.example.skip.view.ReservationItemDetailsView;
 import jakarta.persistence.EntityManagerFactory;
@@ -29,6 +30,7 @@ public class BlazeConfig {
         cfg.addEntityView(ReservationDetailsWithItemsView.class);
         cfg.addEntityView(ReservationItemDetailsView.class);
         cfg.addEntityView(RefundsHistoryDetailsView.class);
+        cfg.addEntityView(RefundsHistoryView.class);
         return cfg.createEntityViewManager(cbf);
     }
 }

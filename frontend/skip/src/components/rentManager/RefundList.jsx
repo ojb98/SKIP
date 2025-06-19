@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { refundsApproveApi, refundsListApi } from "../../api/refundApi";
+import { refundsApproveApi, refundsListApi, refundsRejectApi } from "../../api/refundApi";
 import { useSelector } from "react-redux";
 import RefundListDetail from "./RefundListDetail";
 import { rentIdAndNameApi } from "../../api/rentListApi";

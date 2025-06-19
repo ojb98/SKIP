@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -46,4 +48,8 @@ public class ReservationItem {
     @Column(nullable = false)
     @Builder.Default
     private boolean stockDeducted = false;
+
+    @OneToMany(mappedBy = "reservationItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefundsHistory> refundsHistories = new ArrayList<>();
+
 }

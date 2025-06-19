@@ -29,7 +29,7 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping(value = "/{reserveId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long reserveId,
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long rentItemId,
                                                           @RequestPart("review")ReviewRequestDTO reviewRequestDTO,
                                                           @RequestPart(value = "image", required = false)MultipartFile imageFile,
                                                           //@RequestParam Long userId,
@@ -41,7 +41,7 @@ public class ReviewController {
 
         // 리뷰 저장
         ReviewResponseDTO responseDTO = reviewService.createReview(
-                reserveId,
+                rentItemId,
                 //userId,
                 userDto.getUserId(),
                 reviewRequestDTO,

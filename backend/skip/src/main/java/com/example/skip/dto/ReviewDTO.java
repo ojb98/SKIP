@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewDTO {
     private Long reviewId;
-    private Long reserveId;
+    private Long rentItemId;
     private int rating;
     private String content;
     private String image;
@@ -21,7 +21,7 @@ public class ReviewDTO {
 
     public ReviewDTO(Review review) {
         this.reviewId = review.getReviewId();
-        this.reserveId = review.getReservation().getReserveId();
+        this.rentItemId = review.getReservationItem().getRentItemId();
         this.rating = review.getRating();
         this.content = review.getContent();
         this.image = review.getImage();

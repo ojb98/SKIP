@@ -97,6 +97,7 @@ const MyReservePage = () => {
 
             <ReservationSearchFilter conditions={{ from, to, status, searchOption, searchKeyword }} setAppliedConditions={setAppliedConditions}></ReservationSearchFilter>
 
+
             <ul className="space-y-10 my-20">
                 {
                     reservationsPage.content.length == 0
@@ -131,62 +132,90 @@ const MyReservePage = () => {
                                         ||
                                         r.status == 'PARTIALLY_CANCELLED'
                                         &&
-                                        <PartiallyCancelledBadge>부분 환불</PartiallyCancelledBadge>
-                                        ||
+                                        <PartiallyCancelledBadge>부분 취소</PartiallyCancelledBadge>
+                                        || 
                                         r.status == 'CANCELLED'
                                         &&
-                                        <CancelledBadge>환불</CancelledBadge>
+                                        <CancelledBadge>예약 취소됨</CancelledBadge>
                                     }
                                 </div>
 
                                 <ul className="space-y-5">
                                     {
-                                        r.reservationItems.map(i => (
-                                            <li
-                                                key={i.rentItemId}
-                                                className="w-full h-40 flex border rounded-xl divide-x divide-gray-200 border-gray-200"
-                                            >
-                                                <div className="w-[75%] grid grid-cols-3 justify-center items-center place-items-center">
-                                                    <img src={host + i.itemImage} className="w-30 h-30"></img>
+                                        r.reservationItems.map(i => {
+                                            const isRefundRequested = Array.isArray(i.refundsHistories) &&
+                                                i.refundsHistories.some(h =>
+                                                    ["REQUESTED", "COMPLETED", "REJECTED"].includes(h.status)
+                                                );
+                                            return (
+                                                <li
+                                                    key={i.rentItemId}
+                                                    className="w-full h-40 flex border rounded-xl divide-x divide-gray-200 border-gray-200"
+                                                >
+                                                    <div className="w-[75%] grid grid-cols-3 justify-center items-center place-items-center">
+                                                        <img src={host + i.itemImage} className="w-30 h-30"></img>
 
-                                                    <div className="col-span-2 grid grid-rows-3 gap-5">
-                                                        <span>
-                                                            {
-                                                                i.isReturned
-                                                                &&
-                                                                <ReturnedBadge>반납 완료</ReturnedBadge>
-                                                                ||
-                                                                <ReservedBadge>대여중</ReservedBadge>
-                                                            }
-                                                        </span>
+                                                        <div className="col-span-2 grid grid-rows-3 gap-5">
+                                                            <span>
+                                                                {
+                                                                    i.isReturned
+                                                                    &&
+                                                                    <ReturnedBadge>반납 완료</ReturnedBadge>
+                                                                    ||
+                                                                    <ReservedBadge>대여중</ReservedBadge>
+                                                                }
+                                                            </span>
 
-                                                        <div className="space-x-5 text-lg">
-                                                            <span>{itemCategoryMapper[i.itemCategory]} {i.itemName},</span>
-                                                            <span className="text-gray-600">{i.subtotalPrice.toLocaleString()}원 · {i.quantity}</span>
+                                                            <div className="space-x-5 text-lg">
+                                                                <span>{itemCategoryMapper[i.itemCategory]} {i.itemName},</span>
+                                                                <span className="text-gray-600">{i.subtotalPrice.toLocaleString()}원 · {i.quantity}</span>
+                                                            </div>
+
+                                                            <span className="text-sm font-semibold">{i.rentStart.split('T')[0]} {i.rentStart.split('T')[1].substring(0, 5)} - {i.rentEnd.split('T')[0]} {i.rentEnd.split('T')[1].substring(0, 5)}</span>
                                                         </div>
-
-                                                        <span className="text-sm font-semibold">{i.rentStart.split('T')[0]} {i.rentStart.split('T')[1].substring(0, 5)} - {i.rentEnd.split('T')[0]} {i.rentEnd.split('T')[1].substring(0, 5)}</span>
                                                     </div>
-                                                </div>
 
-                                                <div className="w-[25%] flex flex-col justify-evenly items-center">
-                                                    <button
-                                                        type="button"
-                                                        className={button({ color: "primary-outline", className: 'w-36 h-10' })}
-                                                    >
-                                                        리뷰 쓰기
-                                                    </button>
+                                                    <div className="w-[25%] flex flex-col justify-evenly items-center">
+                                                        <button
+                                                            type="button"
+                                                            className={button({ color: "primary-outline", className: 'w-36 h-10' })}
+                                                        >
+                                                            리뷰 쓰기
+                                                        </button>
 
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => openRefundModal(i.rentItemId)}
-                                                        className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
-                                                    >
-                                                        환불 신청
-                                                    </button>
+                                                        {/* 환불 신청 버튼 상태 분기 */}
+                                                        {
+                                                            // 반납 후 → 환불 불가 (비활성화)
+                                                            i.isReturned ? (
+                                                            <button type="button" disabled
+                                                            className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
+                                                            >
+                                                                환불 불가
+                                                            </button>
+                                                            ) : (
+                                                            // 반납 전
+                                                            isRefundRequested ?  (
+                                                                // 환불 신청 완료 → 비활성화
+                                                                <button type="button" disabled
+                                                                    className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
+                                                                >
+                                                                환불신청됨
+                                                                </button>
+                                                            ) : (
+                                                                // 환불 신청 가능 → 활성화 버튼
+                                                                <button type="button"
+                                                                    onClick={() => openRefundModal(i.rentItemId)}
+                                                                    className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
+                                                                >
+                                                                환불 신청
+                                                                </button>
+                                                            )
+                                                        )
+                                                    }
+
                                                 </div>
                                             </li>
-                                        ))
+                                        )})
                                     }
                                 </ul>
                             </MyContainer>

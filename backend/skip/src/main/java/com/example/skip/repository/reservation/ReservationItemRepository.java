@@ -55,7 +55,8 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
-    // rentStart~rentEnd 기간 동안 이미 예약된 수량을 합산하는 쿼리
+
+    // ** rentStart~rentEnd 기간 동안 이미 예약된 수량을 합산하는 쿼리(대여기간이 겹치는지 확인) **
     // 사용자가 예약하려는 수량이 가능한지 판단(결제 시)
     @Query("SELECT COALESCE(SUM(ri.quantity), 0) FROM ReservationItem ri " +
             "WHERE ri.itemDetail.itemDetailId = :itemDetailId " +
@@ -65,6 +66,7 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
                             @Param("rentStart") LocalDateTime rentStart,
                             @Param("rentEnd") LocalDateTime rentEnd);
 
-    //당일 예약 목록을 가져와 재고 차감(스케줄러)
+    // ** 당일 예약 목록을 가져와 재고 차감(스케줄러) **
     List<ReservationItem> findAllByRentStartBetween(LocalDateTime start, LocalDateTime end);
+
 }
