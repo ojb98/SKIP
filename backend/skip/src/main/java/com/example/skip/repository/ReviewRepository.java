@@ -103,7 +103,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             (:username IS NULL OR u.username LIKE %:username%) AND
             (:itemName IS NULL OR i.name LIKE %:itemName%) AND
             (:hasReply IS NULL OR
-                (:hasReply = true AND rr.replyId IS NOT NULL) OR 
+                (:hasReply = true AND rr.replyId IS NOT NULL) OR
                 (:hasReply = false AND rr.replyId IS NULL)
              )
     """)

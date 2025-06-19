@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import com.example.skip.dto.CommissionRateDTO;
+import com.example.skip.dto.refund.CommissionRateDTO;
 import com.example.skip.dto.refund.RefundDetailDTO;
 import com.example.skip.dto.refund.RefundSummaryDTO;
 import com.example.skip.dto.request.RefundSearchRequest;
@@ -132,7 +132,7 @@ public class RefundsHistoryService {
         ReservationItem item = reservationItemRepository.findById(rentItemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
-        // 이미 환불 요청이 있는지 체크
+        // 이미 환불 요청이 있는지 체크 (중복 요청 방지)
         boolean alreadyRequested = refundsHistoryRepository.existsByReservationItemAndStatus(item, RefundStatus.REQUESTED);
         if (alreadyRequested) {
             throw new IllegalStateException("이미 환불 요청이 접수된 아이템입니다.");
@@ -140,10 +140,11 @@ public class RefundsHistoryService {
 
         // Reservation 꺼내오기
         Reservation reservation = item.getReservation();
-
+        //해당 장비의 가격
         double refundAmount = item.getSubtotalPrice();
 
         CommissionRateDTO commission = new CommissionRateDTO(reservation.getReserveId(), reservation.getPayment().getTotalPrice());
+        // 전체 결제 금액 중 해당 아이템이 차지하는 비율 ( 환불할 아이템 금액 / 전체 예약 금액 )
         double ratio = refundAmount / commission.getTotalPrice();
 
         RefundsHistory refund = RefundsHistory.builder()
@@ -160,7 +161,7 @@ public class RefundsHistoryService {
         return refundsHistoryRepository.save(refund);
     }
 
-    // 관리자 승인 처리 메서드 (락이 걸린 상태에서 재고 처리해주기 - 아직 안함)
+    // 관리자 승인 처리 메서드 (락이 걸린 상태에서 재고 처리)
     public RefundsHistory approveRefund(Long refundId) throws IOException {
         RefundsHistory refund = refundsHistoryRepository.findById(refundId)
                 .orElseThrow(() -> new IllegalArgumentException("환불 요청 없음"));
@@ -207,9 +208,11 @@ public class RefundsHistoryService {
             );
 
         Reservation reservation = item.getReservation();
+
         // 모든 아이템이 환불되었거나 반납되었는지 체크
         boolean allRefundedOrReturned = reservation.getReservationItems()
                 .stream()
+                // .allMatch() : 모든 요소가 주어진 조건을 만족하는지 검사
                 .allMatch(i -> i.isReturned() ||
                         refundsHistoryRepository.existsByReservationItemAndStatus(i, RefundStatus.COMPLETED));
 
@@ -237,6 +240,7 @@ public class RefundsHistoryService {
         return refund; // 반환
 
     }
+
     // 마이페이지 환불 내역
     public Page<RefundsHistoryDetailsView> listRefunds(RefundSearchRequest refundSearchRequest,
                                                        Long userId,

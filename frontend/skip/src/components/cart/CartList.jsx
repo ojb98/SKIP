@@ -185,6 +185,7 @@ const CartList=()=>{
 
     // 결제   
     const handlePayment = async (pg) => {
+        setShowPaymentModal(false);  //모달 닫기
 
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
@@ -213,9 +214,9 @@ const CartList=()=>{
         console.log("reservationItems ==>",reservationItems);
 
 
-        const merchantUid = `order_${new Date().getTime()}`;
+        const merchantUid = `order_${pg}_${new Date().getTime()}`;
         const IMP = window.IMP;
-        IMP.init("imp57043461");
+        IMP.init("imp57043461");  //아임포트 초기화
 
         //결제 요청(아임포트에 보낼 결제 정보)
         IMP.request_pay({
@@ -226,6 +227,7 @@ const CartList=()=>{
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
+            buyer_username: profile.username,
         }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
             console.log("결제 응답 ===>",resp);
             if (resp.success) {  
@@ -240,18 +242,19 @@ const CartList=()=>{
                         reservationItems, // 리스트 전송
                     });
 
-                    setShowPaymentModal(false);
+                    
                     console.log("결제 완료:", res.data);
                     alert("결제가 완료되었습니다!");
                     // navigate("/payment", { state: { payment: resp.data } });
 
                 } catch (err) {
-                    console.error("결제 검증 또는 예약 실패:", err);
-                    alert("결제 완료 처리 중 오류가 발생했습니다.");
+                    console.log(err.response.data.error);
+                    alert("결제 실패:" + err.response.data.error);
                 }
             } else {
                 alert("결제 실패: " + resp.error_msg);
             }
+            
         });
     }
 
@@ -336,8 +339,6 @@ const CartList=()=>{
                                                 }</p>
                                                 <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
                                                 <p>사이즈: {item.size}</p>
-                                            </div>
-                                            <div className="update-div">
                                                 <div className="count-btn">
                                                     <p>수량:</p>
                                                     <div className="quantity-btn">

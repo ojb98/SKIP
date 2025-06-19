@@ -10,24 +10,34 @@ const caxios = axios.create({
 });
 
 export const refresh = async () => {
-    const res = await axios.post(`${host}/user/refresh`, {}, { withCredentials: true }).then(res => res.data);
+    const res = await caxios.post(`${host}/user/refresh`, {}, { withCredentials: true }).then(res => res.data);
     return res;
 }
 
-caxios.interceptors.request.use(config => {
-    console.log('인터셉터');
-    
+caxios.interceptors.request.use(config => {    
+    const deviceId = localStorage.getItem('deviceId');
+    if (deviceId) {
+        config.headers['X-Device-Id'] = deviceId;
+    }
+
     return config;
 });
 
 caxios.interceptors.response.use(async res => {
     const config = res.config;
+
+    if (config.url.includes('/user/refresh')) {
+        return res;
+    }
+
     if (!res.data.success && res.data.error === 'ERROR_ACCESS_TOKEN') {
         const refreshResponse = await refresh();
         if (refreshResponse.success) {
             console.log('연장합니다');
-            const data = await axios(config);
+            const data = await caxios(config);
             return data;
+        } else {
+            console.log(refreshResponse.data);
         }
     }
     return res;

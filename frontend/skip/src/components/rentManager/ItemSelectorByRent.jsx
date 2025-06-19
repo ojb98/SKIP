@@ -44,7 +44,7 @@ const ItemSelectorByRent = () => {
                     <tr key={rent.rentId} className="hover:bg-gray-50 cursor-pointer">
                         <td className="border border-gray-300 px-4 py-2">{rent.name}</td>
                         <td className="border border-gray-300 px-4 py-2">
-                            <Link to={`/itemAdmin/list/${rent.rentId}`} className="text-blue-600 hover:underline">
+                            <Link to={`/rentAdmin/item/list/${rent.rentId}`} className="text-blue-600 hover:underline">
                                 보기
                             </Link>
                         </td>

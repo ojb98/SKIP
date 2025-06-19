@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { refundsApproveApi, refundsListApi } from "../../api/refundApi";
+import { refundsApproveApi, refundsListApi, refundsRejectApi } from "../../api/refundApi";
 import { useSelector } from "react-redux";
 import RefundListDetail from "./RefundListDetail";
 import { rentIdAndNameApi } from "../../api/rentListApi";
@@ -141,14 +141,17 @@ const RefundList = () => {
                 <option value="REJECTED">환불 거절</option>
             </select>
 
-            <select value={filters.rentId} onChange={(e) =>
-                handleFilterChange("rentId", e.target.value === '' ? '' : Number(e.target.value))}>
-                    <option value="">전체 상호명</option>
-                        {rents.map((rent) => (
-                            <option key={rent.rentId} value={rent.rentId}>
-                                {rent.name}
-                            </option>
-                        ))}
+            <select value={filters.rentId} onChange={(e) => handleFilterChange("rentId", e.target.value === '' ? '' : Number(e.target.value))}>
+                <option value="">전체 상호명</option>
+                    {rents.length > 0 ? (
+                        rents.map((rent) => (
+                        <option key={rent.rentId} value={rent.rentId}>
+                            {rent.name}
+                        </option>
+                        ))
+                    ) : (
+                        <option disabled>로딩 중...</option>
+                    )}
             </select>
 
             <input type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)}/>

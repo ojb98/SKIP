@@ -33,7 +33,7 @@ const MainHeaderProfileDropdown = () => {
                         className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                         role="menuitem"
                     >
-                        My Page
+                        마이페이지
                     </Link>
 
 
@@ -45,7 +45,7 @@ const MainHeaderProfileDropdown = () => {
                             className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                             role="menuitem"
                         >
-                            Manager Page
+                            시설 관리
                         </Link>
                     }
 
@@ -58,13 +58,13 @@ const MainHeaderProfileDropdown = () => {
                             className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                             role="menuitem"
                         >
-                            Admin Page
+                            어드민 페이지
                         </Link>
                     }
                 </div>
 
                 <div>
-                    <LogoutButton text="Logout" styleClass="block w-full px-3 py-2 text-left text-sm font-medium text-red-700 transition-colors hover:bg-red-50"></LogoutButton>
+                    <LogoutButton text="로그아웃" styleClass="block w-full px-3 py-2 text-left text-sm font-medium text-red-700 transition-colors hover:bg-red-50"></LogoutButton>
                 </div>
             </div>
         </>

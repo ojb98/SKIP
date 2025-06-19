@@ -54,6 +54,8 @@ public class ReservationService {
 
     private static final QReservationItem reservationItem = QReservationItem.reservationItem;
 
+    private static final QRefundsHistory refundsHistory = QRefundsHistory.refundsHistory;
+
     private static final QItemDetail itemDetail = QItemDetail.itemDetail;
 
     private static final QItem item = QItem.item;
@@ -122,6 +124,7 @@ public class ReservationService {
                 .leftJoin(reservation.reservationItems, reservationItem)
                 .leftJoin(reservationItem.itemDetail, itemDetail)
                 .leftJoin(itemDetail.item, item)
+                .leftJoin(reservationItem.refundsHistories, refundsHistory)
                 .where(reservation.user.userId.eq(userId).and(reservationSearchRequest.toPredicate(reservation, reservationItem)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

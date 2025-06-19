@@ -1,6 +1,5 @@
 package com.example.skip.dto;
 
-import com.example.skip.entity.Reservation;
 import com.example.skip.entity.Review;
 import lombok.*;
 

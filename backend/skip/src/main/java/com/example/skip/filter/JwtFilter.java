@@ -65,6 +65,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        String path = request.getRequestURI();
+//        boolean shouldNotFilter = AuthorizationPaths.PERMIT_ALL.stream().anyMatch(pattern -> PATH_MATCHER.match(pattern, path));
+//        log.info("path: {}, match: {}", path, shouldNotFilter);
+//        if (shouldNotFilter) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+
         try {
             String accessToken = jwtUtil.extractToken("accessToken", request);
             log.info("accessToken: {}, request: {}", accessToken, request.getRequestURI());

@@ -29,7 +29,7 @@ export const deleteQnaByAdminApi = async (qnaId, rentId) => {
 
 // 아이템 페이지 Q&A 리스트
 export const getQnaListByItemApi = async (itemId, hasReply, status, secret, currentUserId, page, size = 10) => {
-  const response = await axios.get(`${host}/item/${itemId}`, {
+  const response = await caxios.get(`${host}/item/${itemId}`, {
     params: {hasReply, status, secret, currentUserId, page, size}
   })
   return response.data

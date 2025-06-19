@@ -28,6 +28,8 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
         QRent rent = QRent.rent;
         QUser user = QUser.user;
 
+        // BooleanBuilder : 여러 조건(불린식)을 모으는 그릇
+        // -> 여러 개의 BooleanExpression (조건)을 AND, OR 등으로 동적으로 조합할 때 사용
         BooleanBuilder builder = new BooleanBuilder();
 
         // 관리자(userId)가 소유한 렌탈샵의 예약만 조회
@@ -52,11 +54,14 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
         // 🔍 keyword로 이름 또는 아이디 검색
         if (keyword != null && !keyword.isBlank()) {
             BooleanBuilder keywordFilter = new BooleanBuilder();
+            // containsIgnoreCase() : 문자열이 특정 값을 포함하는지(부분 일치)를 대소문자 구분 없이 검사할 때 사용
             keywordFilter.or(reservation.user.username.containsIgnoreCase(keyword));
             keywordFilter.or(reservation.user.name.containsIgnoreCase(keyword));
             builder.and(keywordFilter);
         }
 
+        // .fetchJoin() : 즉시 로딩(Eager) 하도록 강제로 조인해서 한 번에 가져오기
+        // 예약(reservation) 을 중심으로 모두 한 번에 조회
         var query = queryFactory
                 .selectFrom(reservation)
                 .distinct()
@@ -68,6 +73,11 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 .where(builder)
                 .orderBy(reservation.createdAt.desc());
 
-        return query.fetch();
+        return query.fetch();  //List<Reservation> 형태로 불러온다(여러 개 결과 조회)
+        /**
+         *  fetchOne() → 결과가 하나일 때 (단건 조회)
+         *  fetchFirst() → 결과 중 첫 번째 한 건만 조회
+         *  fetchCount() → 총 개수만 조회 (select count(*))
+         */
     }
 }

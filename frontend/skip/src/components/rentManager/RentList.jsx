@@ -80,7 +80,7 @@ const RentList=()=>{
 
                                     <td onClick={(e) => e.stopPropagation()}>
                                         {r.status === "APPROVED" ? (
-                                            <Link to={`/itemAdmin/insert/${r.rentId}`} className="register-btn">등록</Link>
+                                            <Link to={`/rentAdmin/item/insert/${r.rentId}`} className="register-btn">등록</Link>
                                         ) : (
                                             <button className="register-btn-disabled" disabled>등록</button>
                                         )}

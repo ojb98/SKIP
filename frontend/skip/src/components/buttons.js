@@ -35,7 +35,7 @@ export const radio = tv({
     ],
     variants: {
         color: {
-            primary: 'has-checked:border-blue-200 has-checked:ring has-checked:ring-blue-400 has-checked:text-black',
+            primary: 'text-black border-gray-200 has-checked:bg-blue-400 has-checked:text-white has-checked:border-blue-400 has-checked:font-semibold',
             "secondary-text": 'border-none shadow-none hover:bg-white hover:text-gray-500 has-checked:font-semibold'
         }
     }
