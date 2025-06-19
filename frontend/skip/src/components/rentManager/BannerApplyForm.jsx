@@ -8,7 +8,7 @@ import { findRentByUserId } from '../../services/admin/RentListService';
 import { rentIdAndNameApi } from '../../api/rentListApi';
 
 const BannerApplyForm = () => {
-  const { userId } = useSelector(state => state.loginSlice);
+  const { username } = useSelector(state => state.loginSlice);
   const [maxBid, setMaxBid] = useState(0);
   const [cpcBid, setCpcBid] = useState('');
   const [avgRating, setAvgRating] = useState(2.5);
@@ -24,12 +24,12 @@ const BannerApplyForm = () => {
 
 
   useEffect(() => {
-    if (!userId) return;
-    rentIdAndNameApi(userId).then(list => {
+    if (!username) return;
+    findRentByUserId(username).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [userId]);
+  }, [username]);
 
   useEffect(() => {
     const load = async () => {
@@ -78,7 +78,7 @@ const BannerApplyForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     const form = new FormData();
-    form.append('userId', userId);
+    form.append('userId', username);
     form.append('rentId', selectedRentId);
     form.append('cpcBid', cpcBid);
     if (imageRef.current?.files[0]) form.append('bannerImage', imageRef.current.files[0]);
@@ -139,8 +139,8 @@ const BannerApplyForm = () => {
             예상 노출도 점수
             <span className="tooltip-icon">?
               <span className="tooltip-text" style={{width:"410px"}}>
-                노출도 점수 산정방식: <br/> 0.2×평균별점 + 0.3×(입찰가/최고입찰가) + 0.5×최근7일평점
-
+                노출도 점수 산정방식: 
+                <br/> 0.2×평균별점 + 0.3×(해당 배너의 입찰가 ÷ 해당 주차의 최대 입찰가) + 0.5×최근7일평점                 
               </span>
             </span>
           </label>
@@ -152,8 +152,8 @@ const BannerApplyForm = () => {
           <div className="form-group">
           <label>배너 이미지</label>
           <div>
-            <button type="button" className="file-button" onClick={openFile}>
-              이미지 선택
+            <button type="button" className="file-button" onClick={openFile} style={{width:"140px", marginLeft:"0px"}}>
+              🏂이미지 선택
             </button>
             <button type="submit" style={{marginLeft:"100px"}}>신청하기</button> <br />
             <span className="file-name">
@@ -177,12 +177,13 @@ const BannerApplyForm = () => {
         ⚠️ 주의사항        <br /><br />
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
           * 권장 이미지 형식은 1111px * 1111px입니다.
+          <br />&nbsp;&nbsp;* 승인된 배너는 매주 월요일 오전 3:00에 갱신됩니다.     
           <br />&nbsp;&nbsp;* 배너 등록 요청 시 등록비용으로 150,000원이 차감됩니다. 
-          <br />&nbsp;&nbsp;* 요청된 배너는 내부심사 이후 '승인 반려' 시 전화 안내와 함께 등록비용이 반환됩니다.
-          <br />&nbsp;&nbsp;* 승인된 배너는 매주 월요일 오전 3:00에 갱신됩니다.          
+          <br />&nbsp;&nbsp;* 최근 리뷰가 없는 신규 입점 업체는 기본값으로 설정된 최소점수가 반영됩니다.
+          <br />&nbsp;&nbsp;* 요청된 배너는 내부심사 이후 '승인 반려' 시 전화 안내와 함께 등록비용이 반환됩니다.               
           <br />&nbsp;&nbsp;* 보유 캐시가 모두 소진될 시, 다시 충전될 때 까지 자동으로 배너는 홈페이지에 노출되지 않습니다.
           <br />&nbsp;&nbsp;* 등록된 배너 및 클릭당 비용은 일주일간 유지되며, 이용자의 클릭 수에 따라 5분에 한번씩 갱신되어 보유캐시에서 차감됩니다.
-          <br />&nbsp;&nbsp;* 악의적인 행위로 인한 부당한 광고비 차감은 모니터링 되고 있으며, 내부 확인 후 반환됩니다.
+          <br />&nbsp;&nbsp;* 악의적인 행위로 인한 부당한 광고비 차감은 실시간 모니터링 되고 있으며, 내부 확인 후 반환됩니다.
           <br /><br />
         </span>
       </h3>

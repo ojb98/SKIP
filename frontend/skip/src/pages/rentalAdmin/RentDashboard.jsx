@@ -10,7 +10,7 @@ import Odometer from "react-odometerjs";
 import "odometer/themes/odometer-theme-default.css";
 
 const RentDashboard = () => {
-  const { userId } = useSelector(state => state.loginSlice);
+  const { username } = useSelector(state => state.loginSlice);
   const getToday = () => new Date().toISOString().split("T")[0];
   const getWeekAgo = () => {
     const d = new Date();
@@ -28,26 +28,26 @@ const RentDashboard = () => {
   const [selectedRentId, setSelectedRentId] = useState(0);
 
   useEffect(() => {
-    if (!userId) return;
-    findRentByUserId(userId).then(list => {
+    if (!username) return;
+    findRentByUserId(username).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [userId]);
+  }, [username]);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!username) return;
     loadData();
-    }, [userId, selectedRentId, startDate, endDate]);
+    }, [username, selectedRentId, startDate, endDate]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const loadData = async () => {
-    const summary = await fetchRentSummary(userId, selectedRentId, startDate, endDate);
+    const summary = await fetchRentSummary(username, selectedRentId, startDate, endDate);
     setSummaryData(summary);
-    const chart = await fetchRentChart(userId, selectedRentId, startDate, endDate);
+    const chart = await fetchRentChart(username, selectedRentId, startDate, endDate);
     setChartData(chart);
   };
 
@@ -55,7 +55,7 @@ const RentDashboard = () => {
     setIsClicked(type);
     setTimeout(() => setIsClicked(null), 150);
     const extension = type === ".xlsx" || type === ".cell" ? type : "";
-    window.location.href = `/api/rentAdmin/summary/export?userId=${userId}&rentId=${selectedRentId}&atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
+    window.location.href = `/api/rentAdmin/summary/export?userId=${username}&rentId=${selectedRentId}&atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
   };
   
 
@@ -63,7 +63,7 @@ const RentDashboard = () => {
     <div className="admin-dashboard" style={{ paddingTop:"0px", backgroundColor: "#f1f3f5" }}>
       <div style={{display:"flex"}}>
       <h2>📊 렌탈샵 매출 관리</h2>
-      <select value={selectedRentId} onChange={e => setSelectedRentId(Number(e.target.value))} style={{marginTop:"10px"}}>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 렌탈샵 선택:<select value={selectedRentId} onChange={e => setSelectedRentId(Number(e.target.value))} style={{border:"1px solid #c4c4c4", borderRadius:"4px", marginLeft:"5px"}}>
         {rentList.map(r => (
           <option key={r.rentId} value={r.rentId}>{r.name}</option>
         ))}
