@@ -85,4 +85,11 @@ public class RentController {
         List<RentInfoDTO> rents = rentService.findRentsByUserId(userId);
         return new ResponseEntity<>(rents, HttpStatus.OK);
     }
+
+    //렌탈샵 name만 조회
+    @GetMapping("/name/{rentId}")
+    public ResponseEntity<String> getRentName(@PathVariable Long rentId) {
+        String name = rentService.getNameById(rentId);
+        return ResponseEntity.ok(name);
+    }
 }

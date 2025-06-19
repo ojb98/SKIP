@@ -94,9 +94,9 @@ function App() {
                             <Route path="/rentAdmin/list" element={<RentList/>}></Route>
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                             <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
-                            <Route path="/rentAdmin/item/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                            <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
-                            <Route path="/rentAdmin/item/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                            <Route path="/rentAdmin/item/insert/:rentId?" element={<ItemInsertForm/>}></Route>
+                            {/* <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route> */}
+                            <Route path="/rentAdmin/item/list/" element={<ItemListAndDetails/>}></Route>
                             <Route path="/rentAdmin/item/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                             <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>

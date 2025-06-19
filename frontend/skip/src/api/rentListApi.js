@@ -38,8 +38,17 @@ export const rentSlideApi = async(rentId)=>{
 
 export const rentIdAndNameApi = async(userId)=>{
     const data = await caxios.get(`${host}/owned/${userId}`).then((res)=>{
-        console.log("렌탈목록 조회==>",res);
+        console.log("렌탈id,name 조회==>",res);
         return res.data;
     });
     return data;
 } 
+
+
+export const rentNameApi = async (rentId) => {
+  const data  = await caxios.get(`${host}/name/${rentId}`).then((res)=>{
+        console.log("렌탈name 조회==>",res);
+        return res.data;
+    });
+    return data;
+};

@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CustomAccordion from "../adminpage/CustomAccordian";
 import { useState } from "react";
 import { useSelector } from 'react-redux';
 
 const RentSidebar = () => {
+
+    const { rentId } = useParams();
     const [openIndex, setOpenIndex] = useState(null);
 
     const handleAccordionClick = (index) => {
@@ -40,7 +42,11 @@ const RentSidebar = () => {
                 <li>
                     <CustomAccordion title="상품 관리" isOpen={openIndex === 2} onClick={() => handleAccordionClick(2)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin/select">상품 관리</Link></li>
+                            <Link to={rentId ? `/rentAdmin/item/insert/${rentId}` : "/rentAdmin/item/insert"}>
+                                상품 등록
+                            </Link>
+                            <li><Link to="/rentAdmin/item/list">상품 관리</Link></li>
+
                         </ul>
                     </CustomAccordion>
                 </li>

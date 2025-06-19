@@ -128,8 +128,7 @@ public class ItemService {
         itemDetailRepository.save(detail);
     }
 
-
-    // 장비 + 디테일 수정하기 위한 조회
+    // 장비 조회 (장비 + 디테일 수정용)
     public ItemConfirmDTO getItemByRent(Long rentId, Long itemId) {
         Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
                 .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
@@ -177,37 +176,76 @@ public class ItemService {
         return dto;
     }
 
-    // 장비 + 디테일 수정 (해당 장비(Item)의 ItemDetail 리스트를 싹 비우고 다시 등록)
+    //장비수정 (장비 + 디테일)
     public void updateItemByDetail(ItemConfirmDTO dto) {
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        item.getItemDetails().clear(); // 기존 데이터 초기화
+        List<ItemDetail> existingDetails = item.getItemDetails();
 
         List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
         List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
 
+        // 1. DTO에 있는 조합(시간 + 사이즈) 세트 생성 (이걸로 활성화 여부 체크)
+        Set<String> activeKeys = new HashSet<>();
         if (detailList != null && sizeList != null) {
-            //모든 조합(곱집합)
             for (ItemConfirmDTO.DetailGroups detail : detailList) {
                 for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                    ItemDetail itemDetail = ItemDetail.builder()
-                            .item(item)
-                            .rentHour(detail.getRentHour())
-                            .price(detail.getPrice() != null ? detail.getPrice() : 0)
-                            .size(sizeStock.getSize())
-                            .totalQuantity(sizeStock.getTotalQuantity() != null ? sizeStock.getTotalQuantity() : 0)
-                            .stockQuantity(sizeStock.getStockQuantity() != null ? sizeStock.getStockQuantity() : 0)
-                            .isActive(YesNo.Y)
-                            .build();
-                    //새로 생성한 itemDetail 객체를 해당 장비(item)의 상세 목록에 추가
-                    item.getItemDetails().add(itemDetail);
+                    String key = detail.getRentHour() + "_" + sizeStock.getSize();
+                    activeKeys.add(key);
+                }
+            }
+        }
+
+        // 2. 기존 아이템 디테일 중 DTO에 없는 건 비활성화 처리
+        for (ItemDetail existing : existingDetails) {
+            String existingKey = existing.getRentHour() + "_" + existing.getSize();
+            if (!activeKeys.contains(existingKey)) {
+                existing.setIsActive(YesNo.N); // 비활성화
+            } else {
+                existing.setIsActive(YesNo.Y); // 혹시 비활성화 되어있으면 다시 활성화
+            }
+        }
+
+        // 3. DTO에 있는 조합들 처리 (업데이트 또는 신규 추가)
+        if (detailList != null && sizeList != null) {
+            for (ItemConfirmDTO.DetailGroups detail : detailList) {
+                for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                    String key = detail.getRentHour() + "_" + sizeStock.getSize();
+
+                    // 기존 데이터 찾기
+                    ItemDetail existing = existingDetails.stream()
+                            .filter(d -> Objects.equals(d.getRentHour(), detail.getRentHour()) &&
+                                    Objects.equals(d.getSize(), sizeStock.getSize()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (existing != null) {
+                        // 업데이트
+                        existing.setPrice(detail.getPrice());
+                        existing.setTotalQuantity(sizeStock.getTotalQuantity());
+                        existing.setStockQuantity(sizeStock.getStockQuantity());
+                        existing.setIsActive(YesNo.Y);
+                    } else {
+                        // 신규 추가
+                        ItemDetail newDetail = ItemDetail.builder()
+                                .item(item)
+                                .rentHour(detail.getRentHour())
+                                .price(detail.getPrice())
+                                .size(sizeStock.getSize())
+                                .totalQuantity(sizeStock.getTotalQuantity())
+                                .stockQuantity(sizeStock.getStockQuantity())
+                                .isActive(YesNo.Y)
+                                .build();
+                        item.getItemDetails().add(newDetail);
+                    }
                 }
             }
         }
 
         itemRepository.save(item);
     }
+
 
 
     //장비 옵션 추가
