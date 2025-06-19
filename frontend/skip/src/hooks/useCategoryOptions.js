@@ -5,9 +5,11 @@ const useCategoryOptions = (category) => {
     //메모리 안에 캐시해두고 재사용할 수 있도록 도와주는 React 훅
     const options = useMemo(() => ({
 
+        // 8760 -> 1년
+        // 2190 -> 1분기 
         LIFT_TICKET: { sizes: [], hours: [4, 8, 24, 8760] },
         
-        PACKAGE: { sizes: ["S", "M", "L", "XL", "2XL", "3XL"], hours: [4, 8, 24] },
+        PACKAGE: { sizes: ["S", "M", "L", "XL", "2XL", "3XL","free"], hours: [4,6,8,24] },
 
         SKI: {
             sizes: ["90cm", "100cm", "110cm", "120cm", "130cm", "140cm", "150cm", "160cm", "165cm"],
@@ -19,16 +21,16 @@ const useCategoryOptions = (category) => {
             hours: [2, 4, 6, 8]
         },
 
-        PROTECTIVE_GEAR: { sizes: ["SS", "S", "M", "L"],
+        PROTECTIVE_GEAR: { sizes: ["S", "M", "L","free"],
             hours: [24] 
         },
 
-        TOP: { sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+        TOP: { sizes: ["S", "M", "L", "XL", "2XL", "3XL", "free"],
             hours: [2, 4, 6, 8] 
         },
 
         BOTTOM: { 
-            sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+            sizes: ["S", "M", "L", "XL", "2XL", "3XL", "free"],
             hours: [2, 4, 6, 8] 
         },
 

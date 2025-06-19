@@ -114,7 +114,8 @@ const ItemUpdateForm = () => {
             return;
         }
 
-        if (commonSizeStocks.some((s) => !s.size || !s.totalQuantity || !s.stockQuantity)) {
+        if (formData.category !== "LIFT_TICKET" &&
+            commonSizeStocks.some((s) => !s.size || !s.totalQuantity || !s.stockQuantity)) {
             alert("모든 사이즈/수량 정보를 입력하세요.");
             return;
         }

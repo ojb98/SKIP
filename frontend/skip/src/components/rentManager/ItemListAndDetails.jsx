@@ -144,7 +144,7 @@ const ItemListAndDetails = () => {
     let sizeStocks = Object.entries(sizeStockInputs)
       .filter(([k]) => k !== "selectedSize")
       .map(([size, stock]) => ({
-        size,
+        size: modalItemCategory === "LIFT_TICKET" ? null : size,
         totalQuantity: Number(stock.totalQuantity || 0),
         stockQuantity: Number(stock.stockQuantity || 0)
       }));
@@ -284,7 +284,7 @@ const ItemListAndDetails = () => {
                 onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
               >
                 <option value="">시간 선택</option>
-                {hours.map(h => <option key={h}>{h}시간</option>)}
+                {hours.map(h => <option key={h} value={h}>{h}시간</option>)}
               </select>
               <input
                 type="number"
@@ -292,7 +292,8 @@ const ItemListAndDetails = () => {
                 value={newOptions[0].price}
                 onChange={e => handleOptionChange(0, 'price', e.target.value)}
               />
-              <button type="button" onClick={addEmptyTimePriceOption}>추가</button>
+              <button type="button" onClick={addEmptyTimePriceOption}
+               disabled={modalItemCategory === "LIFT_TICKET"}>추가</button>
             </div>
 
             {/* 추가 옵션 리스트 */}
@@ -301,7 +302,8 @@ const ItemListAndDetails = () => {
                 {newOptions.slice(1).map((opt, idx) => (
                   <li key={idx}>
                     {opt.rentHour}시간 - {opt.price}원
-                    <button onClick={() => setNewOptions(prev => prev.filter((_, i) => i !== idx + 1))}>삭제</button>
+                    <button onClick={() => setNewOptions(prev => prev.filter((_, i) => i !== idx + 1))}
+                       disabled={modalItemCategory === "LIFT_TICKET"}>삭제</button>
                   </li>
                 ))}
               </ul>
@@ -332,7 +334,7 @@ const ItemListAndDetails = () => {
                       type="number"
                       value={sizeStockInputs[sizeStockInputs.selectedSize]?.totalQuantity || ''}
                       onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'totalQuantity', e.target.value)}
-                      disabled={!sizeStockInputs.selectedSize}
+                      disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
                     />
                   </td>
                   <td>
@@ -340,7 +342,7 @@ const ItemListAndDetails = () => {
                       type="number"
                       value={sizeStockInputs[sizeStockInputs.selectedSize]?.stockQuantity || ''}
                       onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'stockQuantity', e.target.value)}
-                      disabled={!sizeStockInputs.selectedSize}
+                      disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
                     />
                   </td>
                 </tr>

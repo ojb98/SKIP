@@ -53,6 +53,14 @@ useEffect(() => {
 
   const handleFormChange = e => {
     const { name, value } = e.target;
+
+    // 카테고리 변경 감지
+    if (name === "category" && value === "LIFT_TICKET") {
+      // LIFT_TICKET이면 timePrices, commonSizeStocks를 1개로 맞춤
+      setTimePrices(current => current.slice(0, 1));
+      setCommonSizeStocks(current => current.slice(0, 1));
+    }
+
     setFormData(data => ({ ...data, [name]: value }));
   };
 
@@ -79,6 +87,12 @@ useEffect(() => {
 
   const handleSubmit = e => {
     e.preventDefault();
+
+     // LIFT_TICKET이면 강제로 1개로 맞추기
+    if (formData.category === "LIFT_TICKET") {
+      if (timePrices.length > 1) setTimePrices(timePrices.slice(0, 1));
+      if (commonSizeStocks.length > 1) setCommonSizeStocks(commonSizeStocks.slice(0, 1));
+    }
 
     if (!formData.rentId) {
       alert("렌탈샵을 선택해주세요.");
@@ -140,14 +154,14 @@ useEffect(() => {
       <div className="form-container">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="form-group">
-            <label>*상호명</label>
+            <label >*상호명</label>
             {rentIdParam ? (
             <select name="rentId" value={formData.rentId} disabled>
               <option value={formData.rentId}>{selectedShopName}</option>
             </select>
             ) : (
               <select name="rentId" value={formData.rentId} onChange={handleFormChange} required>
-                <option value="">상호명 선택</option>
+                <option value="">렌탈샵 선택</option>
                 {rentShops.map(s => (
                   <option key={s.rentId} value={s.rentId}>{s.name}</option>
                 ))}
@@ -184,10 +198,14 @@ useEffect(() => {
                 ))}
               </select>
               <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" />
-              <button type="button" className="delete-btn" onClick={() => removeTimePrice(i)}>삭제</button>
+              <button type="button" className="delete-btn" onClick={() => removeTimePrice(i)}
+                disabled={formData.category === "LIFT_TICKET"}
+                >삭제</button>
             </div>
           ))}
-          <button type="button" className="add-btn" onClick={addTimePrice}>+ 시간 추가</button>
+          <button type="button" className="add-btn" onClick={addTimePrice}
+            disabled={formData.category === "LIFT_TICKET"}
+          >+ 시간 추가</button>
 
           {/* 사이즈/수량 */}
           <h2 className="sub-subject">사이즈 / 수량</h2>
@@ -208,13 +226,15 @@ useEffect(() => {
                     <input type="number" value={s.quantity} onChange={e => handleSizeStockChange(i, "quantity", e.target.value)} required />
                   </td>
                   <td>
-                    <button type="button" className="delete-btn" onClick={() => removeSizeStock(i)}>삭제</button>
+                    <button type="button" className="delete-btn" onClick={() => removeSizeStock(i)}
+                      disabled={formData.category === "LIFT_TICKET"}>삭제</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" className="size-add-btn" onClick={addSizeStock}>+ 사이즈 추가</button>
+          <button type="button" className="size-add-btn" onClick={addSizeStock}
+            disabled={formData.category === "LIFT_TICKET"}>+ 사이즈 추가</button>
 
           <button type="submit" className="add-btn">장비 등록</button>
         </form>

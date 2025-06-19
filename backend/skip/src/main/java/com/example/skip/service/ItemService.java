@@ -31,12 +31,10 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class ItemService {
-
     private final ItemRepository itemRepository;
     private final ItemDetailRepository itemDetailRepository;
     private final RentRepository rentRepository;
     private final FileUtil fileUtil;
-    private final FileUploadUtil fileUploadUtil;
 
     //장비 등록
     public Long registerItem(ItemRequestDTO dto){
@@ -73,6 +71,7 @@ public class ItemService {
 
         return savedItem.getItemId();
     }
+
 
     //장비 + 디테일 리스트
     public List<ItemResponseDTO> getItemByDetailList(Long rentId) {
@@ -111,6 +110,8 @@ public class ItemService {
                     );
                 }).toList();
     }
+
+
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
         Item item = itemRepository.findById(itemId)
@@ -178,32 +179,48 @@ public class ItemService {
 
     //장비수정 (장비 + 디테일)
     public void updateItemByDetail(ItemConfirmDTO dto) {
+        final String NO_SIZE_KEY = "NO_SIZE";
+
         Item item = itemRepository.findById(dto.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
-        List<ItemDetail> existingDetails = item.getItemDetails();
+        // 조회한 Item에 연관된 ItemDetail 리스트를 가져오기
+        List<ItemDetail> existItemDetails = item.getItemDetails();
 
+        // DTO에서 시간·가격 그룹과 사이즈·재고 그룹 리스트를 받아오기
         List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
         List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
 
         // 1. DTO에 있는 조합(시간 + 사이즈) 세트 생성 (이걸로 활성화 여부 체크)
         Set<String> activeKeys = new HashSet<>();
-        if (detailList != null && sizeList != null) {
-            for (ItemConfirmDTO.DetailGroups detail : detailList) {
-                for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                    String key = detail.getRentHour() + "_" + sizeStock.getSize();
+        if (detailList != null) {
+            if (sizeList == null || sizeList.isEmpty()) {
+                // 사이즈가 없을 때 (리프트권 같은 경우)
+                for (ItemConfirmDTO.DetailGroups detail : detailList) {
+                    String key = detail.getRentHour() + "_" + NO_SIZE_KEY;
                     activeKeys.add(key);
+                }
+            } else {
+                // 사이즈가 있을 때
+                for (ItemConfirmDTO.DetailGroups detail : detailList) {
+                    for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                        String sizeKey = (sizeStock.getSize() == null || sizeStock.getSize().isBlank()) ? NO_SIZE_KEY : sizeStock.getSize();
+                        String key = detail.getRentHour() + "_" + sizeKey;
+                        activeKeys.add(key);
+                    }
                 }
             }
         }
 
         // 2. 기존 아이템 디테일 중 DTO에 없는 건 비활성화 처리
-        for (ItemDetail existing : existingDetails) {
-            String existingKey = existing.getRentHour() + "_" + existing.getSize();
+        for (ItemDetail existing : existItemDetails) {
+            String existingSize = (existing.getSize() == null || existing.getSize().isBlank()) ? NO_SIZE_KEY : existing.getSize();
+            String existingKey = existing.getRentHour() + "_" + existingSize;
+
             if (!activeKeys.contains(existingKey)) {
                 existing.setIsActive(YesNo.N); // 비활성화
             } else {
-                existing.setIsActive(YesNo.Y); // 혹시 비활성화 되어있으면 다시 활성화
+                existing.setIsActive(YesNo.Y); // 다시 활성화
             }
         }
 
@@ -211,12 +228,16 @@ public class ItemService {
         if (detailList != null && sizeList != null) {
             for (ItemConfirmDTO.DetailGroups detail : detailList) {
                 for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                    String key = detail.getRentHour() + "_" + sizeStock.getSize();
+                    String sizeKey = (sizeStock.getSize() == null || sizeStock.getSize().isBlank()) ? NO_SIZE_KEY : sizeStock.getSize();
+
+                    // 실제 DB 저장용 사이즈 값: NO_SIZE인 경우는 null로 저장 (필요 시)
+                    String sizeValue = NO_SIZE_KEY.equals(sizeKey) ? null : sizeKey;
 
                     // 기존 데이터 찾기
-                    ItemDetail existing = existingDetails.stream()
+                    ItemDetail existing = existItemDetails.stream()
+                            //조건에 맞는 요소만 걸러내는 작업(기존데이터와 새로들어온 데이터 같은것)
                             .filter(d -> Objects.equals(d.getRentHour(), detail.getRentHour()) &&
-                                    Objects.equals(d.getSize(), sizeStock.getSize()))
+                                    Objects.equals(d.getSize(), sizeValue))
                             .findFirst()
                             .orElse(null);
 
@@ -232,7 +253,7 @@ public class ItemService {
                                 .item(item)
                                 .rentHour(detail.getRentHour())
                                 .price(detail.getPrice())
-                                .size(sizeStock.getSize())
+                                .size(sizeValue)
                                 .totalQuantity(sizeStock.getTotalQuantity())
                                 .stockQuantity(sizeStock.getStockQuantity())
                                 .isActive(YesNo.Y)

@@ -15,8 +15,6 @@ import java.util.Optional;
 
 public interface ItemDetailRepository extends JpaRepository<ItemDetail, Long> {
 
-    List<ItemDetail> findByItem(Item item);
-
     // 비관적 락 : 다른 트랜잭션의 읽기/쓰기 모두 차단(재고 수량 변경)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT i FROM ItemDetail i WHERE i.itemDetailId = :itemDetailId")
