@@ -45,31 +45,45 @@ const ItemUpdateForm = () => {
         const fetchItemDetails = async () => {
             try {
                 const response = await caxios.get(`http://localhost:8080/api/items/${rentId}/${itemId}`);
-                console.log("아이템 조회 ===>", response);
-
                 const item = response.data;
 
                 setFormData({
-                    rentId: rentId,
-                    itemId: itemId,
+                    rentId,
+                    itemId,
                     name: item.name,
                     category: item.category
                 });
 
-                setTimePrices(
-                    item.detailList.map((detail) => ({
-                        rentHour: detail.rentHour,
-                        price: detail.price
-                    }))
-                );
-
-                setCommonSizeStocks(
-                    item.sizeStockList.map((sizeStock) => ({
-                        size: sizeStock.size,
-                        totalQuantity: sizeStock.totalQuantity,
-                        stockQuantity: sizeStock.stockQuantity
-                    }))
-                );
+                // 리프트권이면 options 사용
+                if (item.category === "LIFT_TICKET" && item.options) {
+                    setTimePrices(
+                        item.options.map(opt => ({
+                            rentHour: opt.rentHour,
+                            price: opt.price
+                        }))
+                    );
+                    setCommonSizeStocks(
+                        item.options.map(opt => ({
+                            size: "", // 리프트권은 사이즈 없음
+                            totalQuantity: opt.totalQuantity,
+                            stockQuantity: opt.stockQuantity
+                        }))
+                    );
+                } else {
+                    setTimePrices(
+                        item.detailList.map(detail => ({
+                            rentHour: detail.rentHour,
+                            price: detail.price
+                        }))
+                    );
+                    setCommonSizeStocks(
+                        item.sizeStockList.map(sizeStock => ({
+                            size: sizeStock.size,
+                            totalQuantity: sizeStock.totalQuantity,
+                            stockQuantity: sizeStock.stockQuantity
+                        }))
+                    );
+                }
             } catch (error) {
                 console.error("장비 정보 불러오기 실패:", error);
             }
@@ -124,16 +138,27 @@ const ItemUpdateForm = () => {
         // 이 전체 구조가 백엔드의 ItemConfirmDTO와 일치
         const requestDTO = {
             ...formData,
-            detailList: timePrices.map((tp) => ({
-                rentHour: tp.rentHour,
-                price: tp.price
-            })),
-            sizeStockList: commonSizeStocks.map((s) => ({
-                size: s.size,
-                totalQuantity: parseInt(s.totalQuantity),
-                stockQuantity: parseInt(s.stockQuantity)
-            }))
-        };
+            ...(formData.category === "LIFT_TICKET"
+                ? {
+                    options: timePrices.map((tp, idx) => ({
+                    rentHour: parseInt(tp.rentHour),
+                    price: parseInt(tp.price),
+                    totalQuantity: parseInt(commonSizeStocks[idx]?.totalQuantity || 0),
+                    stockQuantity: parseInt(commonSizeStocks[idx]?.stockQuantity || 0),
+                    })),
+                }
+                : {
+                    detailList: timePrices.map(tp => ({
+                    rentHour: parseInt(tp.rentHour),
+                    price: parseInt(tp.price),
+                    })),
+                    sizeStockList: commonSizeStocks.map(s => ({
+                    size: s.size,
+                    totalQuantity: parseInt(s.totalQuantity),
+                    stockQuantity: parseInt(s.stockQuantity),
+                    })),
+                }),
+            };
 
         const submitData = new FormData();
 
@@ -147,10 +172,14 @@ const ItemUpdateForm = () => {
             submitData.append("image", fileRef.current.files[0]);
         }
 
-        caxios.put("http://localhost:8080/api/items/update", submitData, {
+        const url = formData.category === "LIFT_TICKET"
+        ? "http://localhost:8080/api/items/updateLiftTicket"
+        : "http://localhost:8080/api/items/update";
+
+        caxios.put(url, submitData, {
             headers: { "Content-Type": "multipart/form-data" }
         })
-        .then(response => {
+        .then(resp => {
             alert("장비 수정 완료!");
             navigate(`/rentAdmin/item/list/${rentId}`);
         })
@@ -222,40 +251,63 @@ const ItemUpdateForm = () => {
                 <hr/><br/>
 
                 <h2 className="sub-subject">사이즈 / 수량</h2>
-                <table className="item-table">
-                    <thead className="item-thead">
-                        <tr>
-                            <th>사이즈</th><th>총 수량</th><th>재고 수량</th>
-                        </tr>
-                    </thead>
-                    <tbody className="item-tbody">
-                        {
-                            commonSizeStocks.map((s, idx) => (
-                            <tr key={idx}>
-                                <td>
-                                    <select value={s.size} onChange={(e) => handleSizeStockChange(idx, "size", e.target.value)}>
-                                        <option value="">사이즈 선택</option>
-                                        {
-                                            selectedOptions.sizes.map((size) => (
-                                                <option key={size} value={size}>
-                                                    {size}
-                                                </option>
-                                            ))
-                                        }
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="number" value={s.totalQuantity} onChange={(e) => handleSizeStockChange(idx, "totalQuantity", e.target.value)}/>
-                                </td>
-                                <td>
-                                    <input type="number" value={s.stockQuantity} onChange={(e) => handleSizeStockChange(idx, "stockQuantity", e.target.value)}/>
-                                </td>
-                            </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-
+                {
+                    formData.category !== "LIFT_TICKET" ? (
+                        <table className="item-table">
+                            <thead className="item-thead">
+                                <tr>
+                                    <th>사이즈</th><th>총 수량</th><th>재고 수량</th>
+                                </tr>
+                            </thead>
+                            <tbody className="item-tbody">
+                                {
+                                    commonSizeStocks.map((s, idx) => (
+                                    <tr key={idx}>
+                                        <td>
+                                            <select value={s.size} onChange={(e) => handleSizeStockChange(idx, "size", e.target.value)}>
+                                                <option value="">사이즈 선택</option>
+                                                {
+                                                    selectedOptions.sizes.map((size) => (
+                                                        <option key={size} value={size}>
+                                                            {size}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" value={s.totalQuantity} onChange={(e) => handleSizeStockChange(idx, "totalQuantity", e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            <input type="number" value={s.stockQuantity} onChange={(e) => handleSizeStockChange(idx, "stockQuantity", e.target.value)}/>
+                                        </td>
+                                    </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    ) : (
+                        <table className="item-table">
+                            <thead>
+                                <tr><th>총 수량</th><th>재고 수량</th></tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    commonSizeStocks.map((s, idx) => (
+                                    <tr key={idx}>
+                                        <td>
+                                            <input type="number" value={s.totalQuantity} onChange={(e) => handleSizeStockChange(idx, "totalQuantity", e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input type="number" value={s.stockQuantity} onChange={(e) => handleSizeStockChange(idx, "stockQuantity", e.target.value)} />
+                                        </td>
+                                    </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    )
+                }
                 <hr/><br/>
                 <button type="submit" className="update-btn">장비 수정</button>
             </form>

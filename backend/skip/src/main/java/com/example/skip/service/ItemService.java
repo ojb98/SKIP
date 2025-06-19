@@ -16,7 +16,6 @@ import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
-import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -64,6 +63,10 @@ public class ItemService {
                             .stockQuantity(sizeStock.getStockQuantity())
                             .isActive(YesNo.Y)
                             .build();
+
+                    // 연관관계 주입
+                    savedItem.getItemDetails().add(detail);
+
                     itemDetailRepository.save(detail);
                 }
             }
@@ -129,6 +132,46 @@ public class ItemService {
         itemDetailRepository.save(detail);
     }
 
+    //일반장비인지 리프트권인지 구분
+    public Item findItemEntity(Long rentId, Long itemId) {
+        return itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다."));
+    }
+
+    //리프트권 조회
+    public LiftTicketDTO getLiftTicketByRent(Long rentId, Long itemId) {
+        Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 리프트권을 찾을 수 없습니다."));
+
+        LiftTicketDTO dto = LiftTicketDTO.builder()
+                .itemId(item.getItemId())
+                .rentId(item.getRent().getRentId())
+                .category(item.getCategory().name())
+                .name(item.getName())
+                .options(new ArrayList<>())
+                .build();
+
+        // rentHour + price 단위로 중복 없이 구성
+        Map<String, LiftTicketDTO.LiftTicketOption> optionMap = new LinkedHashMap<>();
+
+        for (ItemDetail detail : item.getItemDetails()) {
+            if (detail.getIsActive() != YesNo.Y) continue;
+
+            String key = detail.getRentHour() + "-" + detail.getPrice();
+            if (!optionMap.containsKey(key)) {
+                optionMap.put(key, LiftTicketDTO.LiftTicketOption.builder()
+                        .rentHour(detail.getRentHour())
+                        .price(detail.getPrice())
+                        .totalQuantity(detail.getTotalQuantity())
+                        .stockQuantity(detail.getStockQuantity())
+                        .build());
+            }
+        }
+
+        dto.setOptions(new ArrayList<>(optionMap.values()));
+        return dto;
+    }
+
     // 장비 조회 (장비 + 디테일 수정용)
     public ItemConfirmDTO getItemByRent(Long rentId, Long itemId) {
         Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
@@ -179,87 +222,64 @@ public class ItemService {
 
     //장비수정 (장비 + 디테일)
     public void updateItemByDetail(ItemConfirmDTO dto) {
-        final String NO_SIZE_KEY = "NO_SIZE";
-
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
-        // 조회한 Item에 연관된 ItemDetail 리스트를 가져오기
         List<ItemDetail> existItemDetails = item.getItemDetails();
 
-        // DTO에서 시간·가격 그룹과 사이즈·재고 그룹 리스트를 받아오기
         List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
         List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
 
-        // 1. DTO에 있는 조합(시간 + 사이즈) 세트 생성 (이걸로 활성화 여부 체크)
+        if (detailList == null || sizeList == null) {
+            throw new IllegalArgumentException("detailList와 sizeStockList는 반드시 존재해야 합니다.");
+        }
+
+        // 활성화 키셋: rentHour + size 조합
         Set<String> activeKeys = new HashSet<>();
-        if (detailList != null) {
-            if (sizeList == null || sizeList.isEmpty()) {
-                // 사이즈가 없을 때 (리프트권 같은 경우)
-                for (ItemConfirmDTO.DetailGroups detail : detailList) {
-                    String key = detail.getRentHour() + "_" + NO_SIZE_KEY;
-                    activeKeys.add(key);
-                }
-            } else {
-                // 사이즈가 있을 때
-                for (ItemConfirmDTO.DetailGroups detail : detailList) {
-                    for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                        String sizeKey = (sizeStock.getSize() == null || sizeStock.getSize().isBlank()) ? NO_SIZE_KEY : sizeStock.getSize();
-                        String key = detail.getRentHour() + "_" + sizeKey;
-                        activeKeys.add(key);
-                    }
-                }
+        for (ItemConfirmDTO.DetailGroups detail : detailList) {
+            for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                String sizeKey = sizeStock.getSize();
+                String key = detail.getRentHour() + "_" + sizeKey;
+                activeKeys.add(key);
             }
         }
 
-        // 2. 기존 아이템 디테일 중 DTO에 없는 건 비활성화 처리
+        // 기존 ItemDetail 활성화 / 비활성화 처리
         for (ItemDetail existing : existItemDetails) {
-            String existingSize = (existing.getSize() == null || existing.getSize().isBlank()) ? NO_SIZE_KEY : existing.getSize();
-            String existingKey = existing.getRentHour() + "_" + existingSize;
-
-            if (!activeKeys.contains(existingKey)) {
-                existing.setIsActive(YesNo.N); // 비활성화
-            } else {
-                existing.setIsActive(YesNo.Y); // 다시 활성화
-            }
+            String existingSize = existing.getSize();
+            String key = existing.getRentHour() + "_" + existingSize;
+            existing.setIsActive(activeKeys.contains(key) ? YesNo.Y : YesNo.N);
         }
 
-        // 3. DTO에 있는 조합들 처리 (업데이트 또는 신규 추가)
-        if (detailList != null && sizeList != null) {
-            for (ItemConfirmDTO.DetailGroups detail : detailList) {
-                for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                    String sizeKey = (sizeStock.getSize() == null || sizeStock.getSize().isBlank()) ? NO_SIZE_KEY : sizeStock.getSize();
+        // DTO 조합 기준으로 업데이트 or 신규 추가
+        for (ItemConfirmDTO.DetailGroups detail : detailList) {
+            for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                String sizeValue = sizeStock.getSize();
 
-                    // 실제 DB 저장용 사이즈 값: NO_SIZE인 경우는 null로 저장 (필요 시)
-                    String sizeValue = NO_SIZE_KEY.equals(sizeKey) ? null : sizeKey;
+                ItemDetail existing = existItemDetails.stream()
+                        .filter(d -> Objects.equals(d.getRentHour(), detail.getRentHour()) &&
+                                Objects.equals(d.getSize(), sizeValue))
+                        .findFirst()
+                        .orElse(null);
 
-                    // 기존 데이터 찾기
-                    ItemDetail existing = existItemDetails.stream()
-                            //조건에 맞는 요소만 걸러내는 작업(기존데이터와 새로들어온 데이터 같은것)
-                            .filter(d -> Objects.equals(d.getRentHour(), detail.getRentHour()) &&
-                                    Objects.equals(d.getSize(), sizeValue))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (existing != null) {
-                        // 업데이트
-                        existing.setPrice(detail.getPrice());
-                        existing.setTotalQuantity(sizeStock.getTotalQuantity());
-                        existing.setStockQuantity(sizeStock.getStockQuantity());
-                        existing.setIsActive(YesNo.Y);
-                    } else {
-                        // 신규 추가
-                        ItemDetail newDetail = ItemDetail.builder()
-                                .item(item)
-                                .rentHour(detail.getRentHour())
-                                .price(detail.getPrice())
-                                .size(sizeValue)
-                                .totalQuantity(sizeStock.getTotalQuantity())
-                                .stockQuantity(sizeStock.getStockQuantity())
-                                .isActive(YesNo.Y)
-                                .build();
-                        item.getItemDetails().add(newDetail);
-                    }
+                if (existing != null) {
+                    // 업데이트
+                    existing.setPrice(detail.getPrice());
+                    existing.setTotalQuantity(sizeStock.getTotalQuantity());
+                    existing.setStockQuantity(sizeStock.getStockQuantity());
+                    existing.setIsActive(YesNo.Y);
+                } else {
+                    // 신규 추가
+                    ItemDetail newDetail = ItemDetail.builder()
+                            .item(item)
+                            .rentHour(detail.getRentHour())
+                            .price(detail.getPrice())
+                            .size(sizeValue)
+                            .totalQuantity(sizeStock.getTotalQuantity())
+                            .stockQuantity(sizeStock.getStockQuantity())
+                            .isActive(YesNo.Y)
+                            .build();
+                    item.getItemDetails().add(newDetail);
                 }
             }
         }
@@ -267,6 +287,72 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+
+    public void updateLiftTicket(LiftTicketDTO dto) {
+        System.out.println("[updateLiftTicket] 호출됨, itemId=" + dto.getItemId());
+
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new RuntimeException("아이템 없음"));
+
+        List<ItemDetail> existItemDetails = item.getItemDetails();
+        System.out.println("[updateLiftTicket] 기존 ItemDetails 개수: " + existItemDetails.size());
+        for (ItemDetail detail : existItemDetails) {
+            System.out.println("  기존 ItemDetail: rentHour=" + detail.getRentHour() + ", price=" + detail.getPrice() + ", isActive=" + detail.getIsActive());
+        }
+
+        List<LiftTicketDTO.LiftTicketOption> options = dto.getOptions();
+        Set<Integer> updatedRentHours = new HashSet<>();
+
+        if (options != null) {
+            for (LiftTicketDTO.LiftTicketOption option : options) {
+                Integer rentHour = option.getRentHour();
+                updatedRentHours.add(rentHour);
+
+                System.out.println("[updateLiftTicket] 처리 중인 옵션: rentHour=" + rentHour + ", price=" + option.getPrice());
+
+                Optional<ItemDetail> match = existItemDetails.stream()
+                        .filter(d -> d.getSize() == null && Objects.equals(d.getRentHour(), rentHour))
+                        .findFirst();
+
+                if (match.isPresent()) {
+                    ItemDetail existing = match.get();
+                    System.out.println("  기존 데이터 업데이트 전: price=" + existing.getPrice() + ", totalQuantity=" + existing.getTotalQuantity() + ", stockQuantity=" + existing.getStockQuantity());
+
+                    existing.setPrice(option.getPrice());
+                    existing.setTotalQuantity(option.getTotalQuantity());
+                    existing.setStockQuantity(option.getStockQuantity());
+                    existing.setIsActive(YesNo.Y);
+
+                    System.out.println("  업데이트 완료: price=" + existing.getPrice() + ", totalQuantity=" + existing.getTotalQuantity() + ", stockQuantity=" + existing.getStockQuantity() + ", isActive=Y");
+                } else {
+                    ItemDetail newDetail = ItemDetail.builder()
+                            .item(item)
+                            .rentHour(option.getRentHour())
+                            .price(option.getPrice())
+                            .size(null)
+                            .totalQuantity(option.getTotalQuantity())
+                            .stockQuantity(option.getStockQuantity())
+                            .isActive(YesNo.Y)
+                            .build();
+                    item.getItemDetails().add(newDetail);
+                    itemDetailRepository.save(newDetail);
+                    System.out.println("  신규 추가: rentHour=" + rentHour + ", price=" + option.getPrice());
+                }
+            }
+        } else {
+            System.out.println("[updateLiftTicket] 옵션 리스트가 비어있음");
+        }
+
+        for (ItemDetail existing : existItemDetails) {
+            if (existing.getSize() == null && !updatedRentHours.contains(existing.getRentHour())) {
+                System.out.println("  isActive=N 처리: rentHour=" + existing.getRentHour());
+                existing.setIsActive(YesNo.N);
+            }
+        }
+
+        itemRepository.save(item);
+        System.out.println("[updateLiftTicket] 저장 완료");
+    }
 
 
     //장비 옵션 추가
@@ -286,6 +372,8 @@ public class ItemService {
             detail.setStockQuantity(sizeDto.getStockQuantity());
 
             detail.setIsActive(YesNo.Y);  // 기본 활성 상태 설정
+            // 연관 리스트에 명시적으로 추가
+            item.getItemDetails().add(detail);
 
             itemDetailRepository.save(detail);
         }
