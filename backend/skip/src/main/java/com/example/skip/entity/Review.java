@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"reservation"})
+@ToString(exclude = {"reservationItem"})
 @Builder
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserveId", nullable = false)
-    private Reservation reservation;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rentItemId", nullable = false)
+    private ReservationItem reservationItem;
 
     @Column(nullable = false)
     private int rating;

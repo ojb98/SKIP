@@ -82,7 +82,8 @@ const BannerApplyForm = () => {
   };
 
   return (
-    <div className="table-container" style={{marginTop:"0px"}}>
+  <div style={{display:"flex"}}>
+    <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
       <h3 className="form-header" >
         🖼️ 배너 광고 신청
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
@@ -93,7 +94,7 @@ const BannerApplyForm = () => {
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="form-group">
             <label>이번 주 최고 입찰가</label>
-            <input type="text" value={maxBid} readOnly style={{width:"50%"}}/>
+            <input type="text" value={maxBid} readOnly/>
           </div>
           <div className="form-group">
             <label>CPC 입찰가</label>
@@ -101,23 +102,22 @@ const BannerApplyForm = () => {
               type="number"
               value={cpcBid}
               onChange={e => setCpcBid(e.target.value)}
-              required
-              style={{width:"50%"}}
+              required             
             />
           </div>
           <div className="form-group">
           <label>
             예상 노출도 점수
             <span className="tooltip-icon">?
-              <span className="tooltip-text">
-                노출도 점수 산정방식: 0.2×평균별점 + 0.3×(입찰가/최고입찰가) + 0.5×최근7일평점
+              <span className="tooltip-text" style={{width:"410px"}}>
+                노출도 점수 산정방식: <br/> 0.2×평균별점 + 0.3×(입찰가/최고입찰가) + 0.5×최근7일평점
 
               </span>
             </span>
           </label>
-          <input type="text" value={finalScore} readOnly style={{width:"50%"}}/>
-          <p className="score-info" style={{ fontSize: '14px', color: '#555' }}>
-            회원님의 예상 점수는 {finalScore}로, 상위 {percentile}%의 순서로 배너가 노출 될 예정입니다
+          <input type="text" value={finalScore} readOnly />
+          <p className="score-info" style={{ fontSize: '10px', color: '#555' }} >
+            상위 {percentile}%의 순서로 배너가 노출 될 예정입니다
           </p>
           </div>
           <div className="form-group">
@@ -126,6 +126,7 @@ const BannerApplyForm = () => {
             <button type="button" className="file-button" onClick={openFile}>
               이미지 선택
             </button>
+            <button type="submit" style={{marginLeft:"100px"}}>신청하기</button> <br />
             <span className="file-name">
               {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
             </span>
@@ -138,10 +139,27 @@ const BannerApplyForm = () => {
             />
           </div>
           </div>
-          <button type="submit">신청하기</button>
+          
         </form>
       </div>
     </div>
+    <div className='table-container' style={{marginLeft:"20px",marginTop:"0px", width:"1100px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
+      <h3 className="form-header" style={{borderBottom:"1px solid #c8c8c8"}}>
+        ⚠️ 주의사항        <br /><br />
+        <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
+          * 배너 등록 요청 시 등록비용으로 150,000원이 차감됩니다. 
+          <br />&nbsp;&nbsp;* 요청된 배너는 내부심사 이후 '승인 반려' 시 등록비용이 반환됩니다.
+          <br />&nbsp;&nbsp;* 승인된 배너는 매주 월요일 오전 3:00에 갱신됩니다.          
+          <br />&nbsp;&nbsp;* 보유 캐시가 모두 소진될 시, 다시 충전될 때 까지 자동으로 배너는 홈페이지에 노출되지 않습니다.
+          <br />&nbsp;&nbsp;* 등록된 배너 및 클릭당 비용은 일주일간 유지되며, 이용자의 클릭 수에 따라 5분에 한번씩 갱신되어 보유캐시에서 차감됩니다.
+          <br /><br />
+        </span>
+      </h3>
+      <h3 className="form-header">
+        👀 미리보기
+      </h3>
+    </div>
+  </div>
   );
 };
 

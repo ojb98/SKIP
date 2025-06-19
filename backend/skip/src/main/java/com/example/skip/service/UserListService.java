@@ -23,7 +23,7 @@ public class UserListService {
 
     public List<ReviewDTO> getUserRecentReviews(Long userId) {
         List<Review> reviews = reviewRepository
-                .findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(userId);
+                .findTop5ByReservationItem_Reservation_User_UserIdOrderByCreatedAtDesc(userId);
 
         return reviews.stream()
                 .map(ReviewDTO::new)

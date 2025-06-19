@@ -13,15 +13,15 @@ public class RefreshTokenService {
     private final StringRedisTemplate stringRedisTemplate;
 
 
-    public void saveRefreshToken(String username, String refreshToken) {
-        stringRedisTemplate.opsForValue().set("refreshToken:" + username, refreshToken, Duration.ofMillis(JwtUtil.refreshTokenValidity));
+    public void saveRefreshToken(String username, String deviceId, String refreshToken) {
+        stringRedisTemplate.opsForValue().set("refreshToken:" + username + ":" + deviceId, refreshToken, Duration.ofMillis(JwtUtil.refreshTokenValidity));
     }
 
-    public String getRefreshToken(String username) {
-        return stringRedisTemplate.opsForValue().get("refreshToken:" + username);
+    public String getRefreshToken(String username, String deviceId) {
+        return stringRedisTemplate.opsForValue().get("refreshToken:" + username + ":" + deviceId);
     }
 
-    public void deleteRefreshToken(String username) {
-        stringRedisTemplate.delete("refreshToken:" + username);
+    public void deleteRefreshToken(String username, String deviceId) {
+        stringRedisTemplate.delete("refreshToken:" + username + ":" + deviceId);
     }
 }

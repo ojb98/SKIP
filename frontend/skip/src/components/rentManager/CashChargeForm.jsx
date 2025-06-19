@@ -68,18 +68,18 @@ const CashChargeForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container" style={{marginTop:"0px"}}>
+    <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
       <h3 className="form-header">
         💰 광고 캐시 충전
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
           📅 {updateDay}(월) 적용 예정
         </span>
       </h3>
-      <div className="form-container" style={{margin:"0px"}}>
+      <div className="form-container">
         <form onSubmit={handleCharge}>
           <div className="form-group">
             <label>현재 보유 캐시</label>
-            <input type="text" value={currentCash} readOnly style={{width:"50%"}} />
+            <input type="text" value={currentCash} readOnly />
           </div>
           <div className="form-group">
             <label>충전 금액</label>
@@ -88,18 +88,16 @@ const CashChargeForm = () => {
               value={amount}
               onChange={e => setAmount(e.target.value)}
               required
-              style={{width:"50%"}}
             />
           </div>
           <div className="form-group">
             <label>결제 수단</label>
-            <select value={pg} onChange={e => setPg(e.target.value)} style={{width:"50%"}}>
+            <select value={pg} onChange={e => setPg(e.target.value)}>
               <option value="kakaopay.TC0ONETIME">카카오페이</option>
               <option value="tosspay.tosstest">토스페이</option>
-              <option value="smilepay.cnstest25m">스마일페이</option>
             </select>
           </div>
-          <button type="submit">결제하기</button>
+          <button type="submit" style={{marginLeft:"260px" , marginTop:"20px"}}>결제하기</button>
         </form>
       </div>
     </div>

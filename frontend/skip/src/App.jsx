@@ -53,7 +53,14 @@ import ReservationList from './components/rentManager/ReservationList';
 
 
 function App() {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem('deviceId', deviceId);
+    }
+
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setProfile());
     }, []);
@@ -90,10 +97,10 @@ function App() {
                             <Route path="/rentAdmin/list" element={<RentList/>}></Route>
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                             <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
-                            <Route path="/rentAdmin/itemAdmin/insert/:rentId" element={<ItemInsertForm/>}></Route>
+                            <Route path="/rentAdmin/item/insert/:rentId" element={<ItemInsertForm/>}></Route>
                             <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
-                            <Route path="/rentAdmin/itemAdmin/list/:rentId" element={<ItemListAndDetails/>}></Route>
-                            <Route path="/rentAdmin/itemAdmin/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
+                            <Route path="/rentAdmin/item/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                            <Route path="/rentAdmin/item/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                             <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
                             <Route path="/rentAdmin/cash" element={<CashChargePage/>}></Route>
@@ -126,7 +133,7 @@ function App() {
                         <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
-                    <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+                    <Route path="/reviews/write/:rentItemId" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
                     <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>

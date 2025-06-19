@@ -1,17 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { createReviewApi } from "../../api/reviewApi";
-
-//임의의 예약 ID
-const reserveId = 17;
-
-// item = 6
-//test -> reservId = 17
-//test2 -> reservId = 24
+import { useEffect, useState } from "react";
+import { createReviewApi, getReviewWriteInfoApi } from "../../api/reviewApi";
+import { useParams } from "react-router-dom";
 
 const ReviewWrite = () => {
-
+  const { rentItemId } = useParams();
+  const [itemInfo, setItemInfo] = useState(null);
   const [imageFile, setImageFile] = useState(null); //실제 이미지 파일
   const [previewUrl, setPreviewUrl] = useState(null); //이미지 미리보기 URL
   const [hoverIndex, setHoverIndex] = useState(-1);
@@ -19,6 +14,19 @@ const ReviewWrite = () => {
   const [reviewText, setReviewText] = useState("");
   const [ratingError, setRatingError] = useState("");
   const [textError, setTextError] = useState("");
+
+  useEffect(() => {
+    const fetchItemInfo = async () => {
+      try {
+        const data = await getReviewWriteInfoApi(rentItemId);
+        setItemInfo(data);
+      } catch (error) {
+        console.error("리뷰 대상 정보 조회 실패:", error);
+        alert("리뷰 대상 정보를 불러오지 못했습니다.");
+      }
+    };
+    fetchItemInfo();
+  }, [rentItemId]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -32,7 +40,6 @@ const ReviewWrite = () => {
       setPreviewUrl(null);
       return;
     }
-
     setImageFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   }
@@ -77,7 +84,7 @@ const ReviewWrite = () => {
     };
 
     try {
-      const response = await createReviewApi(reserveId, reviewData, imageFile);
+      const response = await createReviewApi(rentItemId, reviewData, imageFile);
       console.log("리뷰 등록 성공:", response);
       alert("리뷰가 성공적으로 등록되었습니다.");
       window.close();
@@ -96,11 +103,16 @@ const ReviewWrite = () => {
           <div className="mx-[50px]">
             <div className="flex justify-start items-center gap-[30px] mt-2.5">
               <div>
-                <img src="/images/1.png" className="w-[150px] h-[150px]" />
+                <img 
+                  src={itemInfo?.itemImage} 
+                  className="w-[150px] h-[150px] object-cover"
+                  alt="상품 이미지"
+                />
               </div>
               <div>
-                <p><span className="font-bold">상품명:</span> 리프트 1일권</p>
-                <p><span className="font-bold">상품상세정보:</span> 리프트1일권</p>
+                <p><span className="font-bold">상품명:</span>{itemInfo?.itemName}</p>
+                <p><span className="font-bold">옵션:</span>{itemInfo?.size}</p>
+                <p><span className="font-bold">대여 기간:</span> {itemInfo?.rentStart?.slice(0, 10)} ~ {itemInfo?.rentEnd?.slice(0, 10)}</p>
               </div>
             </div>
             <div>

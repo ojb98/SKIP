@@ -11,6 +11,7 @@ import com.example.skip.repository.AdPaymentRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
 import com.example.skip.repository.BoostRepository;
 import com.example.skip.repository.RentRepository;
+import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import com.example.skip.util.IamportTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class RentAdService {
     private final RentRepository rentRepository;
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerService bannerService;
-    private final FileUtil fileUtil;
+    private final FileUploadUtil fileUploadUtil;
     private final AdPaymentRepository adPaymentRepository;
     private final BoostRepository boostRepository;
     private final IamportTokenUtil iamportTokenUtil;
@@ -121,7 +122,7 @@ public class RentAdService {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
         rent.setRemainAdCash(rent.getRemainAdCash() - BANNER_REGISTRATION_FEE);
-        String url = fileUtil.uploadFile(bannerImage, "banners");
+        String url = fileUploadUtil.uploadFileAndUpdateUrl(bannerImage, null, "banners");
 
         LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
         LocalDateTime registDay = nextMonday.atTime(3, 0);

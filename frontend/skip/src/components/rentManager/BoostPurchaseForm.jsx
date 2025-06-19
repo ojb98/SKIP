@@ -38,18 +38,18 @@ const BoostPurchaseForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container" style={{marginTop:"0px"}}>
+    <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
       <h3 className="form-header">
         🚀 부스트 구매
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
           📅 {updateDay}(월) 적용 예정
         </span>
       </h3>
-      <div className="form-container" style={{margin:"0px"}}>
+      <div className="form-container" >
         <form onSubmit={handlePurchase}>
           <div className="form-group">
             <label>현재 보유 캐시</label>
-            <input type="text" value={currentCash} readOnly style={{width:"50%"}}/>
+            <input type="text" value={currentCash} readOnly />
           </div>
           <div className="form-group">
             <label>부스트 레벨</label>
@@ -58,7 +58,6 @@ const BoostPurchaseForm = () => {
               value={boost}
               onChange={e => setBoost(e.target.value)}
               required
-              style={{width:"50%"}}
             />
           </div>
           <div className="form-group">
@@ -68,10 +67,9 @@ const BoostPurchaseForm = () => {
               value={cpb}
               onChange={e => setCpb(e.target.value)}
               required
-              style={{width:"50%"}}
             />
           </div>
-          <button type="submit">구매하기</button>
+          <button type="submit" style={{marginLeft:"260px" , marginTop:"20px"}}>구매하기</button>
         </form>
       </div>
     </div>

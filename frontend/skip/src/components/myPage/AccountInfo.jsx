@@ -111,6 +111,14 @@ const AccountInfo = () => {
         }
     }, [phoneFormDisabled]);
 
+    useEffect(() => {
+        nickname.current.value = profile.nickname;
+        username.current.value = profile.username;
+        email.current.value = profile.email;
+        name.current.value = profile.name;
+        phone.current.value = profile.phone;
+    }, [profile]);
+
 
     const fileChangeHandler = e => {
         setFileHasChanagedKey(prev => prev + 1);
@@ -221,6 +229,7 @@ const AccountInfo = () => {
             phone: phone.current.value
         }).then(res => {
             if (res.success) {
+                console.log(res);
                 dispatch(setProfile());
                 setPhoneFormDisabled(true);
             } else {

@@ -49,7 +49,7 @@ const RentDashboard = () => {
   
 
   return (
-    <div className="admin-dashboard" style={{ paddingTop:"/0px", backgroundColor: "#f1f3f5" }}>
+    <div className="admin-dashboard" style={{ paddingTop:"0px", backgroundColor: "#f1f3f5" }}>
       <h2>📊 렌탈샵 매출 관리</h2>
       <div style={{ display: "flex", marginTop: "10px" }}>
         <div className="date-card">

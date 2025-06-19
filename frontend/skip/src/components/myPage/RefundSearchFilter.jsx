@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { select } from "../inputs";
 import SelectLabel from "../SelectLabel";
 import { button, radio } from "../buttons";
@@ -53,6 +53,10 @@ const RefundSearchFilter = ({ condition, sort, setSort, setAppliedConditions }) 
 
     const [datesDisabled, setDatesDisabled] = useState();
 
+    useEffect(() => {
+        periodChangeHandler();
+        apply();
+    }, []);
 
     const periodChangeHandler = () => {
         if (periodSelectRef.current.value) {
@@ -121,7 +125,7 @@ const RefundSearchFilter = ({ condition, sort, setSort, setAppliedConditions }) 
                 <ul className="w-110 flex justify-between items-end">
                     <li>
                         <SelectLabel
-                            description={"조회 기간"}
+                            description={"기간"}
                             selectRef={periodSelectRef}
                             options={periodOptions}
                             onChange={periodChangeHandler}
@@ -132,7 +136,7 @@ const RefundSearchFilter = ({ condition, sort, setSort, setAppliedConditions }) 
                     {/* 부터 */}
                     <li>
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-700">From</span>
+                            <span className="text-sm font-medium text-gray-700">시작</span>
 
                             <input
                                 type="date"
@@ -146,7 +150,7 @@ const RefundSearchFilter = ({ condition, sort, setSort, setAppliedConditions }) 
                     {/* 까지 */}
                     <li>
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-700">To</span>
+                            <span className="text-sm font-medium text-gray-700">끝</span>
 
                             <input
                                 type="date"

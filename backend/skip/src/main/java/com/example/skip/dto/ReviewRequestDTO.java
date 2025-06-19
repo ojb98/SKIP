@@ -1,6 +1,7 @@
 package com.example.skip.dto;
 
 import com.example.skip.entity.Reservation;
+import com.example.skip.entity.ReservationItem;
 import com.example.skip.entity.Review;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Builder
 public class ReviewRequestDTO {
-    private Long reserveId;
+    private Long rentItemId;
     private int rating;
     private String content;
 
-    public Review toEntity(Reservation reservation, String imagePath) {
+    public Review toEntity(ReservationItem reservationItem, String imagePath) {
         return Review.builder()
-                .reservation(reservation)
+                .reservationItem(reservationItem)
                 .rating(rating)
                 .content(content)
                 .image(imagePath)

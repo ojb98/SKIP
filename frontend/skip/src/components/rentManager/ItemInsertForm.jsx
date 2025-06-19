@@ -195,8 +195,9 @@ const ItemInsertForm=()=>{
     };
 
     return (
-        <div className="form-container">
+        <div className="rent-container">
             <h1 className="top-subject">장비 등록</h1>
+            <div className="form-container">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" name="rentId" value={formData.rentId} />
 
@@ -296,6 +297,7 @@ const ItemInsertForm=()=>{
 
                 <button type="submit" className="add-btn">장비 등록</button>
             </form>
+            </div>
         </div>
     )
 }

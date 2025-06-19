@@ -18,6 +18,7 @@ public class CartCleanupScheduler {
 
     @Scheduled(cron = "0 0 3 * * *")
     public void deleteOldCartItems(){
+        //오늘날짜. 7일 전 날짜를 계산.자정(00:00:00) [오늘 기준으로 7일 전 00:00]
         LocalDateTime weekAgo = LocalDate.now().minusDays(7).atStartOfDay();
         int deletedCount = cartItemRepository.deleteByCreatedAtBefore(weekAgo);
         log.info("[장바구니 정리] {}개 항목 삭제됨 (기준일: {})", deletedCount, weekAgo);

@@ -274,8 +274,9 @@ const RentInsertForm=()=>{
 
 
     return (
-        <div className="form-container">
-            <h1>가맹점 등록하기</h1>
+        <div className="rent-container">
+            <h1 className="top-subject">가맹점 등록하기</h1>
+            <div className="form-container">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" id="userId" name="userId" value={formData.userId} />
                 <div className="form-group">
@@ -363,6 +364,7 @@ const RentInsertForm=()=>{
 
                 <button type="submit">등록</button>
             </form>
+            </div>
         </div>
     )
 }
