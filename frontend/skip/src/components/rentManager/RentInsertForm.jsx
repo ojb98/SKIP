@@ -338,7 +338,6 @@ const RentInsertForm=()=>{
                     <input type="text" name="bizClosureFlag" id="bizClosureFlag" value={formData.bizClosureFlag} readOnly />
                 </div>
 
-
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">
                     <label htmlFor="thumbnail">*썸네일 이미지</label>
