@@ -287,20 +287,14 @@ public class ItemService {
         itemRepository.save(item);
     }
 
-
+    //리프트권 수정
     public void updateLiftTicket(LiftTicketDTO dto) {
-        System.out.println("[updateLiftTicket] 호출됨, itemId=" + dto.getItemId());
-
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
         List<ItemDetail> existItemDetails = item.getItemDetails();
-        System.out.println("[updateLiftTicket] 기존 ItemDetails 개수: " + existItemDetails.size());
-        for (ItemDetail detail : existItemDetails) {
-            System.out.println("  기존 ItemDetail: rentHour=" + detail.getRentHour() + ", price=" + detail.getPrice() + ", isActive=" + detail.getIsActive());
-        }
-
         List<LiftTicketDTO.LiftTicketOption> options = dto.getOptions();
+
         Set<Integer> updatedRentHours = new HashSet<>();
 
         if (options != null) {
@@ -308,22 +302,16 @@ public class ItemService {
                 Integer rentHour = option.getRentHour();
                 updatedRentHours.add(rentHour);
 
-                System.out.println("[updateLiftTicket] 처리 중인 옵션: rentHour=" + rentHour + ", price=" + option.getPrice());
-
                 Optional<ItemDetail> match = existItemDetails.stream()
                         .filter(d -> d.getSize() == null && Objects.equals(d.getRentHour(), rentHour))
                         .findFirst();
 
                 if (match.isPresent()) {
                     ItemDetail existing = match.get();
-                    System.out.println("  기존 데이터 업데이트 전: price=" + existing.getPrice() + ", totalQuantity=" + existing.getTotalQuantity() + ", stockQuantity=" + existing.getStockQuantity());
-
                     existing.setPrice(option.getPrice());
                     existing.setTotalQuantity(option.getTotalQuantity());
                     existing.setStockQuantity(option.getStockQuantity());
                     existing.setIsActive(YesNo.Y);
-
-                    System.out.println("  업데이트 완료: price=" + existing.getPrice() + ", totalQuantity=" + existing.getTotalQuantity() + ", stockQuantity=" + existing.getStockQuantity() + ", isActive=Y");
                 } else {
                     ItemDetail newDetail = ItemDetail.builder()
                             .item(item)
@@ -336,22 +324,17 @@ public class ItemService {
                             .build();
                     item.getItemDetails().add(newDetail);
                     itemDetailRepository.save(newDetail);
-                    System.out.println("  신규 추가: rentHour=" + rentHour + ", price=" + option.getPrice());
                 }
             }
-        } else {
-            System.out.println("[updateLiftTicket] 옵션 리스트가 비어있음");
         }
 
         for (ItemDetail existing : existItemDetails) {
             if (existing.getSize() == null && !updatedRentHours.contains(existing.getRentHour())) {
-                System.out.println("  isActive=N 처리: rentHour=" + existing.getRentHour());
                 existing.setIsActive(YesNo.N);
             }
         }
 
         itemRepository.save(item);
-        System.out.println("[updateLiftTicket] 저장 완료");
     }
 
 
