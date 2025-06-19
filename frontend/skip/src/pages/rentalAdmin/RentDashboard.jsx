@@ -10,7 +10,7 @@ import Odometer from "react-odometerjs";
 import "odometer/themes/odometer-theme-default.css";
 
 const RentDashboard = () => {
-  const { username } = useSelector(state => state.loginSlice);
+  const { userId } = useSelector(state => state.loginSlice);
   const getToday = () => new Date().toISOString().split("T")[0];
   const getWeekAgo = () => {
     const d = new Date();
@@ -28,26 +28,26 @@ const RentDashboard = () => {
   const [selectedRentId, setSelectedRentId] = useState(0);
 
   useEffect(() => {
-    if (!username) return;
-    findRentByUserId(username).then(list => {
+    if (!userId) return;
+    findRentByUserId(userId).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [username]);
+  }, [userId]);
 
   useEffect(() => {
-    if (!username) return;
+    if (!userId) return;
     loadData();
-    }, [username, selectedRentId, startDate, endDate]);
+    }, [userId, selectedRentId, startDate, endDate]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const loadData = async () => {
-    const summary = await fetchRentSummary(username, selectedRentId, startDate, endDate);
+    const summary = await fetchRentSummary(userId, selectedRentId, startDate, endDate);
     setSummaryData(summary);
-    const chart = await fetchRentChart(username, selectedRentId, startDate, endDate);
+    const chart = await fetchRentChart(userId, selectedRentId, startDate, endDate);
     setChartData(chart);
   };
 
@@ -55,7 +55,7 @@ const RentDashboard = () => {
     setIsClicked(type);
     setTimeout(() => setIsClicked(null), 150);
     const extension = type === ".xlsx" || type === ".cell" ? type : "";
-    window.location.href = `/api/rentAdmin/summary/export?userId=${username}&rentId=${selectedRentId}&atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
+    window.location.href = `/api/rentAdmin/summary/export?userId=${userId}&rentId=${selectedRentId}&atStart=${startDate}&atEnd=${endDate}&extension=${extension}`;
   };
   
 

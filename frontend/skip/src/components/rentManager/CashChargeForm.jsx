@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
 const CashChargeForm = () => {
-  const { username } = useSelector(state => state.loginSlice);
+  const { userId } = useSelector(state => state.loginSlice);
   const [currentCash, setCurrentCash] = useState(0);
   const [amount, setAmount] = useState('');
   const [pg, setPg] = useState('kakaopay.TC0ONETIME');
@@ -14,21 +14,21 @@ const CashChargeForm = () => {
   const [selectedRentId, setSelectedRentId] = useState(0);
 
   useEffect(() => {
-    if (!username) return;
-    findRentByUserId(username).then(list => {
+    if (!userId) return;
+    findRentByUserId(userId).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [username]);
+  }, [userId]);
 
   useEffect(() => {
     const load = async () => {
-      if (!username || !selectedRentId) return;
-      const cash = await fetchCash(username, selectedRentId);
+      if (!userId || !selectedRentId) return;
+      const cash = await fetchCash(userId, selectedRentId);
       setCurrentCash(cash);
     };
     load();
-  }, [username, selectedRentId]);
+  }, [userId, selectedRentId]);
 
   useEffect(() => {
     if (window.IMP) {
@@ -56,11 +56,11 @@ const CashChargeForm = () => {
           impUid: rsp.imp_uid,
           merchantUid: rsp.merchant_uid,
           amount: rsp.paid_amount,
-          username,
+          userId,
           rentId: selectedRentId,
           pgProvider: pg,
         });
-        const cash = await fetchCash(username, selectedRentId);
+        const cash = await fetchCash(userId, selectedRentId);
         setCurrentCash(cash);
       } else {
         alert('결제 실패: ' + rsp.error_msg);

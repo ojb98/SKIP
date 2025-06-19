@@ -8,7 +8,7 @@ import { findRentByUserId } from '../../services/admin/RentListService';
 import { rentIdAndNameApi } from '../../api/rentListApi';
 
 const BannerApplyForm = () => {
-  const { username } = useSelector(state => state.loginSlice);
+  const { userId } = useSelector(state => state.loginSlice);
   const [maxBid, setMaxBid] = useState(0);
   const [cpcBid, setCpcBid] = useState('');
   const [avgRating, setAvgRating] = useState(2.5);
@@ -24,12 +24,12 @@ const BannerApplyForm = () => {
 
 
   useEffect(() => {
-    if (!username) return;
-    findRentByUserId(username).then(list => {
+    if (!userId) return;
+    findRentByUserId(userId).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [username]);
+  }, [userId]);
 
   useEffect(() => {
     const load = async () => {
@@ -78,7 +78,7 @@ const BannerApplyForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     const form = new FormData();
-    form.append('userId', username);
+    form.append('userId', userId);
     form.append('rentId', selectedRentId);
     form.append('cpcBid', cpcBid);
     if (imageRef.current?.files[0]) form.append('bannerImage', imageRef.current.files[0]);

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
 const BoostPurchaseForm = () => {
-  const { username } = useSelector(state => state.loginSlice);
+  const { userId } = useSelector(state => state.loginSlice);
   const [currentCash, setCurrentCash] = useState(0);
   const [boost, setBoost] = useState('');
   const [cpb, setCpb] = useState('');
@@ -14,25 +14,25 @@ const BoostPurchaseForm = () => {
   const [selectedRentId, setSelectedRentId] = useState(0);
 
   useEffect(() => {
-    if (!username) return;
-    findRentByUserId(username).then(list => {
+    if (!userId) return;
+    findRentByUserId(userId).then(list => {
       setRentList(list);
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
-  }, [username]);
+  }, [userId]);
 
   useEffect(() => {
     const load = async () => {
-      if (!username || !selectedRentId) return;
-      const cash = await fetchCash(username, selectedRentId);
+      if (!userId || !selectedRentId) return;
+      const cash = await fetchCash(userId, selectedRentId);
       setCurrentCash(cash);
     };
     load();
-  }, [username, selectedRentId]);
+  }, [userId, selectedRentId]);
 
   const handlePurchase = async e => {
     e.preventDefault();
-    const remaining = await purchaseBoost(username, selectedRentId, Number(boost), Number(cpb));
+    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost), Number(cpb));
     if (remaining != null) setCurrentCash(remaining);
     setBoost('');
     setCpb('');
