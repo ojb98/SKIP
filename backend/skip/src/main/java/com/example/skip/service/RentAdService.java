@@ -5,12 +5,10 @@ import com.example.skip.entity.AdPayment;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.Boost;
+import com.example.skip.enumeration.BannerActiveListStatus;
 import com.example.skip.enumeration.BannerWaitingListStatus;
 import com.example.skip.enumeration.YesNo;
-import com.example.skip.repository.AdPaymentRepository;
-import com.example.skip.repository.BannerWaitingListRepository;
-import com.example.skip.repository.BoostRepository;
-import com.example.skip.repository.RentRepository;
+import com.example.skip.repository.*;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import com.example.skip.util.IamportTokenUtil;
@@ -38,6 +36,7 @@ public class RentAdService {
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerService bannerService;
     private final FileUploadUtil fileUploadUtil;
+    private final BannerActiveListRepository bannerActiveListRepository;
     private final AdPaymentRepository adPaymentRepository;
     private final BoostRepository boostRepository;
     private final IamportTokenUtil iamportTokenUtil;
@@ -47,15 +46,20 @@ public class RentAdService {
     private static final int BANNER_REGISTRATION_FEE = 150_000;
 
 
-    private Rent findRent(Long userId) {
+    private Rent findRent(Long userId, Long rentId) {
+        if (rentId != null) {
+            return rentRepository.findById(rentId)
+                    .filter(r -> r.getUser().getUserId().equals(userId))
+                    .orElseThrow(() -> new IllegalArgumentException("렌탈샵을 찾을 수 없습니다."));
+        }
         return rentRepository.findByUser_UserIdAndUseYn(userId, YesNo.Y, Sort.unsorted())
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("렌탈샵을 찾을 수 없습니다."));
     }
 
-    public int getCash(Long userId) {
-        return findRent(userId).getRemainAdCash();
+    public int getCash(Long userId, Long rentId) {
+        return findRent(userId, rentId).getRemainAdCash();
     }
 
     public int chargeCash(AdCashChargeDTO dto) throws IOException {
@@ -79,7 +83,7 @@ public class RentAdService {
             throw new IllegalStateException("결제 금액 불일치");
         }
 
-        Rent rent = findRent(dto.getUserId());
+        Rent rent = findRent(dto.getUserId(), dto.getRentId());
         rent.setRemainAdCash(rent.getRemainAdCash() + (int) paid);
         rentRepository.save(rent);
 
@@ -97,8 +101,8 @@ public class RentAdService {
         return rent.getRemainAdCash();
     }
 
-    public int purchaseBoost(Long userId, int boost, int cpb) {
-        Rent rent = findRent(userId);
+    public int purchaseBoost(Long userId, Long rentId, int boost, int cpb) {
+        Rent rent = findRent(userId, rentId);
         if (rent.getRemainAdCash() < cpb) {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
@@ -116,8 +120,14 @@ public class RentAdService {
         return rent.getRemainAdCash();
     }
 
-    public int submitBanner(Long userId, int cpcBid, MultipartFile bannerImage) {
-        Rent rent = findRent(userId);
+    public int submitBanner(Long userId, Long rentId, int cpcBid, MultipartFile bannerImage) {
+        Rent rent = findRent(userId, rentId);
+        boolean waitingExists = bannerWaitingListRepository.existsByRent_RentIdAndStatus(rentId, BannerWaitingListStatus.PENDING)
+                || bannerWaitingListRepository.existsByRent_RentIdAndStatus(rentId, BannerWaitingListStatus.APPROVED);
+        boolean activeExists = bannerActiveListRepository.existsByRent_RentIdAndStatus(rentId, BannerActiveListStatus.ACTIVE);
+        if (waitingExists || activeExists) {
+            throw new IllegalStateException("이미 등록 또는 신청된 배너가 있습니다.");
+        }
         if (rent.getRemainAdCash() < BANNER_REGISTRATION_FEE) {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
