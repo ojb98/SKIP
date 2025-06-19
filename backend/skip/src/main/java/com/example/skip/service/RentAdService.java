@@ -43,6 +43,9 @@ public class RentAdService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OkHttpClient client = new OkHttpClient();
 
+    private static final int BANNER_REGISTRATION_FEE = 150_000;
+
+
     private Rent findRent(Long userId) {
         return rentRepository.findByUser_UserIdAndUseYn(userId, YesNo.Y, Sort.unsorted())
                 .stream()
@@ -114,10 +117,10 @@ public class RentAdService {
 
     public int submitBanner(Long userId, int cpcBid, MultipartFile bannerImage) {
         Rent rent = findRent(userId);
-        if (rent.getRemainAdCash() < cpcBid) {
+        if (rent.getRemainAdCash() < BANNER_REGISTRATION_FEE) {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
-        rent.setRemainAdCash(rent.getRemainAdCash() - cpcBid);
+        rent.setRemainAdCash(rent.getRemainAdCash() - BANNER_REGISTRATION_FEE);
         String url = fileUtil.uploadFile(bannerImage, "banners");
 
         LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));

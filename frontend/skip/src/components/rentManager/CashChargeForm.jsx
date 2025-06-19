@@ -8,7 +8,7 @@ const CashChargeForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
   const [currentCash, setCurrentCash] = useState(0);
   const [amount, setAmount] = useState('');
-  const [pg, setPg] = useState('kcp.AO09C');
+  const [pg, setPg] = useState('kakaopay.TC0ONETIME');
 
   useEffect(() => {
     const load = async () => {
@@ -19,11 +19,20 @@ const CashChargeForm = () => {
     load();
   }, [userId]);
 
+  useEffect(() => {
+    if (window.IMP) {
+      window.IMP.init(import.meta.env.VITE_IAMPORT_API_KEY);
+    }
+  }, []);
+
   const handleCharge = async e => {
     e.preventDefault();
     const merchantUid = `adcash_${new Date().getTime()}`;
-    const IMP = window.IMP;
-    IMP.init(import.meta.env.VITE_IAMPORT_API_KEY);
+    const { IMP } = window;
+    if (!IMP) {
+      alert('결제 모듈 로딩 실패');
+      return;
+    }
     IMP.request_pay({
       pg,
       pay_method: 'card',
@@ -59,7 +68,7 @@ const CashChargeForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container" style={{marginTop:"0px"}}>
+    <div className="table-container">
       <h3 className="form-header">
         💰 광고 캐시 충전
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
@@ -80,6 +89,14 @@ const CashChargeForm = () => {
               onChange={e => setAmount(e.target.value)}
               required
             />
+          </div>
+          <div className="form-group">
+            <label>결제 수단</label>
+            <select value={pg} onChange={e => setPg(e.target.value)}>
+              <option value="kakaopay.TC0ONETIME">카카오페이</option>
+              <option value="tosspay.tosstest">토스페이</option>
+              <option value="smilepay.cnstest25m">스마일페이</option>
+            </select>
           </div>
           <button type="submit">결제하기</button>
         </form>

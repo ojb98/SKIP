@@ -34,13 +34,20 @@ const BannerApplyForm = () => {
     const final = Number.isNaN(score) ? 0 : Number(score.toFixed(2));
     setFinalScore(final);
 
-    const scores = [...activeScores, final].sort((a, b) => b - a);
-    const idx = scores.indexOf(final);
-    let perc = (scores.length - idx) / scores.length * 100;
-    perc = Math.ceil(perc / 10) * 10;
-    if (perc > 100) perc = 100;
+    const scores = [...activeScores, final];
+    scores.sort((a, b) => b - a); // 내림차순
+
+    const betterCount = scores.filter(s => s > final).length;
+    let perc = ((scores.length - betterCount) / scores.length) * 100;
+
+    perc = Math.round(perc / 10) * 10; // 10% 단위 표현용
+    if (perc > 100) perc = 100;    
+    perc = 100 - perc;
+    if (perc < 0) perc = 1;
+
     setPercentile(perc);
   }, [cpcBid, maxBid, avgRating, recentRating, activeScores]);
+
 
   const handleFileChange = (event) => {
     if (event.target.files[0]) {
