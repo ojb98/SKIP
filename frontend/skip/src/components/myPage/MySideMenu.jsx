@@ -12,7 +12,7 @@ const MySideMenu = ({group, active}) => {
 
     return (
         <>
-            <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white shadow-xl">
+            <div className="w-[270px] min-h-[600px] flex flex-col justify-between border rounded-2xl border-gray-200 bg-white shadow-md">
                 <div className="px-4 py-6">
                     <div className="flex flex-col items-center gap-2 mt-6 mb-12">
                         {

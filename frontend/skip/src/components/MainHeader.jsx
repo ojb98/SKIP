@@ -74,18 +74,18 @@ const MainHeader = () => {
                                         </button>
 
                                         <AnimatePresence>
-                                        {
-                                            dropdownOpen
-                                            &&
-                                            <motion.div
-                                                initial={{ opacity: 0, zIndex: 50 }}
-                                                animate={{ opacity: 1, zIndex: 50 }}
-                                                exit={{ opacity: 0, zIndex: 50 }}
-                                                transition={{ duration: 0.2 }}
-                                            >
-                                                <MainHeaderProfileDropdown></MainHeaderProfileDropdown>
-                                            </motion.div>
-                                        }
+                                            {
+                                                dropdownOpen
+                                                &&
+                                                <motion.div
+                                                    initial={{ opacity: 0, zIndex: 50 }}
+                                                    animate={{ opacity: 1, zIndex: 50 }}
+                                                    exit={{ opacity: 0, zIndex: 50 }}
+                                                    transition={{ duration: 0.2 }}
+                                                >
+                                                    <MainHeaderProfileDropdown></MainHeaderProfileDropdown>
+                                                </motion.div>
+                                            }
                                         </AnimatePresence>
                                     </li>
                                 </>

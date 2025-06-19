@@ -20,6 +20,9 @@ public interface RefundsHistoryDetailsView {
     @Mapping("reservationItem.rentItemId")
     Long getRentItemId();
 
+    @Mapping("reservationItem.reservation.reserveId")
+    Long getReserveId();
+
     @Mapping("reservationItem.quantity")
     int getQuantity();
 

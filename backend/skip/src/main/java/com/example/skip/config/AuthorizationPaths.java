@@ -5,6 +5,7 @@ import java.util.List;
 public class AuthorizationPaths {
     public static final List<String> PERMIT_ALL = List.of(
             "/images/**", // 이미지 url
+            "/api/public/**",
             "/user/signup",
             "/user/login",
             "/user/find/username",
@@ -15,7 +16,12 @@ public class AuthorizationPaths {
             "/api/banners/list/order",
             "/api/banners/*/click",
             "/api/items/**",
-            "/api/enums/**"
+            "/user/refresh",
+            "/api/enums/**",
+            "/api/qna/item/*",
+            "/api/review/item/*",
+            "/api/review/stats/*",
+            "/api/rents/slide/*"
     );
 
     public static final List<String> ROLE_USER = List.of(

@@ -3,6 +3,7 @@ package com.example.skip.service;
 
 import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.dto.ReviewResponseDTO;
+import com.example.skip.dto.projection.ReviewStatsDTO;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
 import com.example.skip.entity.Review;
@@ -12,9 +13,13 @@ import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUtil;
+import com.querydsl.core.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional

@@ -9,6 +9,7 @@ import com.example.skip.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RefreshController {
@@ -32,14 +34,24 @@ public class RefreshController {
 
     @PostMapping("/user/refresh")
     public ApiResponse refresh(HttpServletRequest request, HttpServletResponse response) throws NullPointerException {
+        log.info("연장 시도중...");
         String accessToken = jwtUtil.extractToken("accessToken", request);
         String refreshToken = jwtUtil.extractToken("refreshToken", request);
+        String deviceId = request.getHeader("X-Device-Id");
+        if (deviceId == null) {
+            return ApiResponse.builder()
+                    .success(false)
+                    .data("DEVICE_ID_IS_NULL!")
+                    .build();
+        }
+
+        log.info("refresh: {}", refreshToken);
 
         // 액세스 토큰이 존재하지 않는 경우
         if (accessToken == null) {
             Map<String, Object> claims = jwtUtil.validateToken(refreshToken);
             String username = (String) claims.get("username");
-            String serverRefreshToken = refreshTokenService.getRefreshToken(username);
+            String serverRefreshToken = refreshTokenService.getRefreshToken(username, deviceId);
             if (refreshToken.equals(serverRefreshToken)) { // 리프레시 토큰이 서버와 일치함
                 UserDto userDto = (UserDto) customUserDetailsService.loadUserByUsername(username);
                 String newAccessToken = jwtUtil.generateAccessToken(userDto.getClaims());

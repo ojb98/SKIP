@@ -41,6 +41,7 @@ import RefundList from "./components/rentManager/RefundList"
 import UserApprovalTable from "./components/adminpage/UserApprovalTable"
 import UserPendingTable from "./components/adminpage/UserPendingTable"
 import UserWithdrawTable from "./components/adminpage/UserWithdrawTable"
+import AdminReviewList from "./components/review/AdminReviewList"
 import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
@@ -49,7 +50,14 @@ import ReservationList from './components/rentManager/ReservationList';
 
 
 function App() {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem('deviceId', deviceId);
+    }
+
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setProfile());
     }, []);
@@ -118,6 +126,7 @@ function App() {
                         <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
                         <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
                         <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
+                        <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>

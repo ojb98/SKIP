@@ -131,7 +131,7 @@ const ReservationSearchFilter = ({ conditions, setAppliedConditions }) => {
             <ul className="w-full flex justify-between items-end">
                 <li>
                     <SelectLabel
-                        description={"조회 기간"}
+                        description={"기간"}
                         selectRef={periodSelectRef}
                         options={periodOptions}
                         onChange={periodChangeHandler}
@@ -142,7 +142,7 @@ const ReservationSearchFilter = ({ conditions, setAppliedConditions }) => {
                 {/* 부터 */}
                 <li>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-700">From</span>
+                        <span className="text-sm font-medium text-gray-700">시작</span>
 
                         <input
                             type="date"
@@ -156,7 +156,7 @@ const ReservationSearchFilter = ({ conditions, setAppliedConditions }) => {
                 {/* 까지 */}
                 <li>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-700">To</span>
+                        <span className="text-sm font-medium text-gray-700">끝</span>
 
                         <input
                             type="date"

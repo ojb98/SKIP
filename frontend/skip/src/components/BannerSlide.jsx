@@ -8,7 +8,7 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { click, listOrderedBanner } from "../api/bannerApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const host = __APP_BASE__;
 
@@ -39,11 +39,6 @@ const BannerSlide = () => {
         }
 
         setPlaying(!playing);
-    };
-
-    const clickHandler = (bannerId, rentId) => {
-        click(bannerId);
-        navigate(`/rent/detail/${rentId}`);
     };
 
     return (
@@ -80,13 +75,17 @@ const BannerSlide = () => {
                                 banners?.map((banner, index) => (
                                     <SwiperSlide
                                         key={index}
-                                        className="!w-[50%] bg-blue-400 rounded-2xl"
+                                        className="!w-[50%] rounded-2xl"
                                     >
-                                        <img
-                                            src={host + '/images' +  banner.bannerImage}
-                                            onClick={() => clickHandler(banner.bannerId, banner.rentId)}
-                                            className="rounded-2xl w-full h-full object-cover cursor-pointer"
-                                        ></img>
+                                        <Link
+                                            to={`/rent/detail/${banner.rentId}`}
+                                            onClick={() => click(banner.bannerId)}
+                                        >
+                                            <img
+                                                src={host + '/images' +  banner.bannerImage}
+                                                className="rounded-2xl w-full h-full object-cover cursor-pointer"
+                                            ></img>
+                                        </Link>
                                     </SwiperSlide>
                                 ))
                             }
@@ -101,20 +100,20 @@ const BannerSlide = () => {
                         <div className="flex gap-2">
                             <div className="flex">
                                 <button
-                                    className="custom-prev w-12 h-10 flex justify-center items-center  border-gray-200 rounded-tl-2xl rounded-bl-2xl shadow-md cursor-pointer hover:bg-gray-50"
+                                    className="custom-prev w-12 h-10 flex justify-center items-center rounded-tl-2xl rounded-bl-2xl shadow-md cursor-pointer hover:bg-gray-50"
                                 >
                                     <ChevronLeft></ChevronLeft>
                                 </button>
 
                                 <button
-                                    className="custom-next w-12 h-10 flex justify-center items-center  border-gray-200 rounded-tr-2xl rounded-br-2xl shadow-md cursor-pointer hover:bg-gray-50"
+                                    className="custom-next w-12 h-10 flex justify-center items-center rounded-tr-2xl rounded-br-2xl shadow-md cursor-pointer hover:bg-gray-50"
                                 >
                                     <ChevronRight></ChevronRight>
                                 </button>
                             </div>
 
                             <button
-                                className="w-10 h-10 flex justify-center items-center  border-gray-200 rounded-full shadow-md cursor-pointer hover:bg-gray-50"
+                                className="w-10 h-10 flex justify-center items-center rounded-full shadow-md cursor-pointer hover:bg-gray-50"
                                 onClick={toggleAutoplay}
                             >
                                 {

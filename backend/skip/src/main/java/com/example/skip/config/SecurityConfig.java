@@ -6,9 +6,12 @@ import com.example.skip.handler.*;
 import com.example.skip.service.CustomOAuth2UserService;
 import com.example.skip.service.CustomUserDetailsService;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +26,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -44,8 +48,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource corsConfigurationSource =new UrlBasedCorsConfigurationSource();
@@ -80,7 +84,10 @@ public class SecurityConfig {
 //                                    ).authenticated()
 //                            .anyRequest()
 //                            .permitAll();
+                    log.info("permit all: {}", AuthorizationPaths.PERMIT_ALL.toArray(new String[0]));
                     authorizationManagerRequestMatcherRegistry
+                            .requestMatchers(HttpMethod.OPTIONS, "/**")
+                            .permitAll()
                             .requestMatchers(AuthorizationPaths.PERMIT_ALL.toArray(new String[0]))
                             .permitAll()
                             .requestMatchers(AuthorizationPaths.ROLE_USER.toArray(new String[0]))
@@ -91,6 +98,14 @@ public class SecurityConfig {
                             .hasAuthority(UserRole.ADMIN.name())
                             .anyRequest()
                             .authenticated();
+                })
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer
+                            .authenticationEntryPoint((request, response, authException) -> {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                            });
                 })
                 .userDetailsService(customUserDetailsService)
                 .formLogin(httpSecurityFormLoginConfigurer -> {

@@ -37,7 +37,8 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         // 레디스 삭제
         String username = ((UserDto) authentication.getPrincipal()).getUsername();
-        refreshTokenService.deleteRefreshToken(username);
+        String deviceId = request.getHeader("X-Device-Id");
+        refreshTokenService.deleteRefreshToken(username, deviceId);
 
         // 시큐리티에서 로그아웃
         SecurityContextHolder.clearContext();

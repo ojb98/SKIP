@@ -34,7 +34,14 @@ public class Review {
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    
+    // Review 삭제 시 ReviewReply도 삭제되도록
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private ReviewReply reviewReply;
+
+
 }

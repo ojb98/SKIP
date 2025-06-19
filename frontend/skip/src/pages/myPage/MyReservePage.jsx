@@ -147,15 +147,16 @@ const MyReservePage = () => {
                                                 i.refundsHistories.some(h =>
                                                     ["REQUESTED", "COMPLETED", "REJECTED"].includes(h.status)
                                                 );
+                                                
                                             return (
                                                 <li
                                                     key={i.rentItemId}
                                                     className="w-full h-40 flex border rounded-xl divide-x divide-gray-200 border-gray-200"
                                                 >
-                                                    <div className="w-[75%] grid grid-cols-3 justify-center items-center place-items-center">
+                                                    <div className="w-[75%] grid grid-cols-4 items-center place-items-center px-1">
                                                         <img src={host + i.itemImage} className="w-30 h-30"></img>
 
-                                                        <div className="col-span-2 grid grid-rows-3 gap-5">
+                                                        <div className="col-span-3 grid grid-rows-3 gap-5">
                                                             <span>
                                                                 {
                                                                     i.isReturned
@@ -167,11 +168,9 @@ const MyReservePage = () => {
                                                             </span>
 
                                                             <div className="space-x-5 text-lg">
-                                                                <span>{itemCategoryMapper[i.itemCategory]} {i.itemName},</span>
-                                                                <span className="text-gray-600">{i.subtotalPrice.toLocaleString()}원 · {i.quantity}</span>
+                                                                <span>{itemCategoryMapper[i.itemCategory]} {i.itemName} {i.itemDetailSize},</span>
+                                                                <span className="text-gray-600">{(i.subtotalPrice / i.quantity).toLocaleString()}원 · {i.quantity}개</span>
                                                             </div>
-
-                                                            <span className="text-sm font-semibold">{i.rentStart.split('T')[0]} {i.rentStart.split('T')[1].substring(0, 5)} - {i.rentEnd.split('T')[0]} {i.rentEnd.split('T')[1].substring(0, 5)}</span>
                                                         </div>
                                                     </div>
 
@@ -209,18 +208,17 @@ const MyReservePage = () => {
                                                                 >
                                                                 환불 신청
                                                                 </button>
-                                                            )
-                                                        )
-                                                    }
-
-                                                </div>
-                                            </li>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </li>
                                         )})
                                     }
                                 </ul>
                             </MyContainer>
                         </li>
                     ))
+
                 }
             </ul>
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>,
@@ -22,11 +23,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     List<Reservation> findReservationsByUserId(@Param("userId") Long userId);
 
 
+    long countByRentAndCreatedAt(Rent rent, LocalDateTime createdAt);
+
+    long countByRentAndCreatedAtBetween(Rent rent, LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    long countByRentAndCreatedAtAfterAndCreatedAtLessThan(Rent rent, LocalDateTime createdAtAfter, LocalDateTime createdAtIsLessThan);
+
     Long countByRent_User_UserId(Long userId);
 
     //해당 렌탈샵 가져오기
     List<Reservation> findByRentIn(List<Rent> rents);
 
     Reservation findDetailByReserveId(Long reserveId);
-
 }

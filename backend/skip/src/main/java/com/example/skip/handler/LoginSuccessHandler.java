@@ -30,6 +30,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Map<String, Object> claims = userDto.getClaims();
 
+        String deviceId = request.getHeader("X-Device-Id");
+
         String refreshToken = jwtUtil.generateRefreshToken(userDto.getUsername());
 
         // 쿠키 저장
@@ -37,7 +39,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         jwtUtil.attachToken("refreshToken", refreshToken, response, JwtUtil.refreshTokenValidity);
 
         // 레디스 저장
-        refreshTokenService.saveRefreshToken(userDto.getUsername(), refreshToken);
+        refreshTokenService.saveRefreshToken(userDto.getUsername(), deviceId, refreshToken);
 
         Gson gson = new Gson();
         String json = gson.toJson(Map.of("success", true));

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { deleteQnaByAdminApi, getQnaListByAdminApi, getUnansweredCountApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
 import AdminPagination from "../adminpage/AdminPagination";
 import { useSelector } from "react-redux";
@@ -255,7 +256,7 @@ const AdminQnaList = () => {
           <button
             onClick={handleViewAll}
             style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
-            <h3><FontAwesomeIcon icon={faComments} /> Q&A 리스트</h3>
+            <h3><FontAwesomeIcon icon={faQuestionCircle} /> Q&A 리스트</h3>
           </button>
           <Link
             onClick={() => {
@@ -361,7 +362,6 @@ const AdminQnaList = () => {
                                     수정일: {answers[index].updatedAt.replace('T', ' ').substring(0, 19)}
                                   </span>
                                 )}
-                                {/* ✅ 버튼은 항상 보이되 클릭 시 권한 체크 */}
                                 <button
                                   onClick={() => {
                                     console.log("현재 로그인 userId:", userId);
