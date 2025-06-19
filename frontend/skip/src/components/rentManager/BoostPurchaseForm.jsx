@@ -45,11 +45,11 @@ const BoostPurchaseForm = () => {
           📅 {updateDay}(월) 적용 예정
         </span>
       </h3>
-      <div className="form-container">
+      <div className="form-container" style={{margin:"0px"}}>
         <form onSubmit={handlePurchase}>
           <div className="form-group">
             <label>현재 보유 캐시</label>
-            <input type="text" value={currentCash} readOnly />
+            <input type="text" value={currentCash} readOnly style={{width:"50%"}}/>
           </div>
           <div className="form-group">
             <label>부스트 레벨</label>
@@ -58,6 +58,7 @@ const BoostPurchaseForm = () => {
               value={boost}
               onChange={e => setBoost(e.target.value)}
               required
+              style={{width:"50%"}}
             />
           </div>
           <div className="form-group">
@@ -67,6 +68,7 @@ const BoostPurchaseForm = () => {
               value={cpb}
               onChange={e => setCpb(e.target.value)}
               required
+              style={{width:"50%"}}
             />
           </div>
           <button type="submit">구매하기</button>

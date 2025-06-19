@@ -89,11 +89,11 @@ const BannerApplyForm = () => {
           📅 {registDay}(월) 등록 예정
         </span>
       </h3>
-      <div className="form-container">
+      <div className="form-container" style={{margin:"0px"}}>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="form-group">
             <label>이번 주 최고 입찰가</label>
-            <input type="text" value={maxBid} readOnly />
+            <input type="text" value={maxBid} readOnly style={{width:"50%"}}/>
           </div>
           <div className="form-group">
             <label>CPC 입찰가</label>
@@ -102,6 +102,7 @@ const BannerApplyForm = () => {
               value={cpcBid}
               onChange={e => setCpcBid(e.target.value)}
               required
+              style={{width:"50%"}}
             />
           </div>
           <div className="form-group">
@@ -114,8 +115,8 @@ const BannerApplyForm = () => {
               </span>
             </span>
           </label>
-          <input type="text" value={finalScore} readOnly />
-          <p className="score-info">
+          <input type="text" value={finalScore} readOnly style={{width:"50%"}}/>
+          <p className="score-info" style={{ fontSize: '14px', color: '#555' }}>
             회원님의 예상 점수는 {finalScore}로, 상위 {percentile}%의 순서로 배너가 노출 될 예정입니다
           </p>
           </div>

@@ -15,7 +15,7 @@
 }
 .tooltip-icon .tooltip-text {
   visibility: hidden;
-  width: 230px;
+  width: 100px;
   background-color: #555;
   color: #fff;
   text-align: center;
