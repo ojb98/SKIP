@@ -122,7 +122,7 @@ function App() {
                         <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
                     </Route>
                     {/* 리뷰 팝업 */}
-                    <Route path="/mypage/review/write" element={<ReviewPopupPage />}></Route>
+                    <Route path="/reviews/write/:rentItemId" element={<ReviewPopupPage />}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
                     <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>

@@ -3,10 +3,7 @@ package com.example.skip.controller;
 import com.example.skip.dto.ReviewRequestDTO;
 import com.example.skip.dto.ReviewResponseDTO;
 import com.example.skip.dto.UserDto;
-import com.example.skip.dto.projection.AdminReviewListDTO;
-import com.example.skip.dto.projection.ReviewListDTO;
-import com.example.skip.dto.projection.ReviewStatsDTO;
-import com.example.skip.dto.projection.UserReviewListDTO;
+import com.example.skip.dto.projection.*;
 import com.example.skip.repository.ReviewRepository;
 import com.example.skip.service.ReviewService;
 import com.example.skip.util.FileUploadUtil;
@@ -30,6 +27,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/reviews")
 @CrossOrigin(origins = "*")
 public class ReviewController {
 
@@ -37,20 +35,26 @@ public class ReviewController {
     private final ReviewRepository reviewRepository;
     private final FileUploadUtil fileUploadUtil;
 
+    // 리뷰 작성 페이지
+    @GetMapping("/info/{rentItemId}")
+    public ResponseEntity<ReviewWriteDTO> getReviewWriteInfo(@PathVariable Long rentItemId,
+                                                             @AuthenticationPrincipal UserDto userDto) {
+        ReviewWriteDTO reviewWriteDTO = reviewService.getReviewWriteInfo(rentItemId, userDto.getUserId());
+        return ResponseEntity.ok(reviewWriteDTO);
+    }
+
     // 리뷰 작성
-    @PostMapping(value = "/api/reviews/{reserveId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long reserveId,
+    @PostMapping(value = "/{rentItemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long rentItemId,
                                                           @RequestPart("review")ReviewRequestDTO reviewRequestDTO,
                                                           @RequestPart(value = "image", required = false)MultipartFile imageFile,
                                                           @AuthenticationPrincipal UserDto userDto){
-        System.out.println("UserDto:" + userDto);
-
-        // 이미지 업로드
+        // 이미지 업로드 (없으면 null로 처리)
         String imagePath = fileUploadUtil.uploadFileAndUpdateUrl(imageFile, null, "review");
 
         // 리뷰 저장
         ReviewResponseDTO responseDTO = reviewService.createReview(
-                reserveId,
+                rentItemId,
                 userDto.getUserId(),
                 reviewRequestDTO,
                 imagePath
@@ -61,7 +65,7 @@ public class ReviewController {
     // 리뷰 수정
 
     // 마이페이지 리뷰 삭제
-    @DeleteMapping("/api/reviews/mypage" +
+/*    @DeleteMapping("/api/reviews/mypage" +
             "/delete/{reviewId}")
     public ResponseEntity<String> deleteReviewFromMyPage(@PathVariable Long reviewId,
                                                          @AuthenticationPrincipal UserDto userDto) {
@@ -75,20 +79,20 @@ public class ReviewController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 삭제 중 오류가 발생했습니다.");
         }
-    }
+    }*/
 
     // 관리자 페이지 리뷰 삭제
-    @DeleteMapping("/api/reviews/admin/delete/{reviewId}")
+/*    @DeleteMapping("/api/reviews/admin/delete/{reviewId}")
     public ResponseEntity<Void> deleteReviewByAdmin(@PathVariable Long reviewId,
                                                     @AuthenticationPrincipal UserDto userDto) {
         reviewService.deleteReviewByAdmin(reviewId);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
 
     // 리뷰 리스트
     // 아이템페이지 리뷰 목록
-    @GetMapping("/api/review/item/{itemId}")
+/*    @GetMapping("/api/review/item/{itemId}")
     public ResponseEntity<Page<ReviewListDTO>> getReviewListByitem(
             @PathVariable Long itemId,
             @RequestParam(defaultValue = "recent") String sort,
@@ -96,33 +100,30 @@ public class ReviewController {
     ) {
         Page<ReviewListDTO> result = reviewService.getReviewListByItem(itemId, sort, pageable);
         return ResponseEntity.ok(result);
-    }
+    }*/
+
+    // 총 리뷰 수, 평균
+/*    @GetMapping("/api/review/stats/{itemId}")
+    public ResponseEntity<ReviewStatsDTO> getReviewStats(@PathVariable Long itemId) {
+        ReviewStatsDTO stats = reviewService.getReviewStats(itemId);
+        return ResponseEntity.ok(stats);
+    }*/
 
     // 관리자페이지 리뷰 목록
-    @GetMapping("/api/reviews/admin")
+/*    @GetMapping("/api/reviews/admin")
     public Page<AdminReviewListDTO> getReviewWithReplyList(@RequestParam(required = false) String username,
                                                            @RequestParam(required = false) String itemName,
                                                            @RequestParam(required = false) Boolean hasReply,
                                                            Pageable pageable) {
         return reviewService.getReviewWithReplyForAdmin(username, itemName, hasReply, pageable);
-    }
+    }*/
 
     // 마이페이지 리뷰 목록
-    @GetMapping("/api/reviews/user")
+/*    @GetMapping("/api/reviews/user")
     public Page<UserReviewListDTO> getUserReviewList(@AuthenticationPrincipal UserDto userDto,
                                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,
                                                      @PageableDefault(size = 5) Pageable pageable) {
         return reviewService.getUserReviewList(userDto.getUserId(), startDate, pageable);
-    }
-
-
-
-    // 총 리뷰 수, 평균
-    @GetMapping("/api/review/stats/{itemId}")
-    public ResponseEntity<ReviewStatsDTO> getReviewStats(@PathVariable Long itemId) {
-        ReviewStatsDTO stats = reviewService.getReviewStats(itemId);
-        return ResponseEntity.ok(stats);
-    }
-
+    }*/
 
 }

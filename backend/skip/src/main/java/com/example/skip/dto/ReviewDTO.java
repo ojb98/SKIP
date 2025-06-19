@@ -21,7 +21,7 @@ public class ReviewDTO {
 
     public ReviewDTO(Review review) {
         this.reviewId = review.getReviewId();
-        this.reserveId = review.getReservation().getReserveId();
+        this.reserveId = review.getReservationItem().getRentItemId();
         this.rating = review.getRating();
         this.content = review.getContent();
         this.image = review.getImage();

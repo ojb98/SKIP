@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import ProductList from "./ProductList";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt, faPhoneAlt } from "@fortawesome/free-solid-svg-icons";
 
-const ProductTabs=({rentId, tab, setTab, shopName})=>{
+const ProductTabs=({rentId, tab, setTab, shopName, shopPhone, shopAddress})=>{
 
   const tabList = [
     {key: "LIFT_TICKET", label: "리프트권"},
@@ -17,6 +19,10 @@ const ProductTabs=({rentId, tab, setTab, shopName})=>{
   return(
     <div>
       <h2 className="h2-title">{shopName}</h2>
+      <div className="flex justify-center gap-14">
+        <p><FontAwesomeIcon icon={faPhoneAlt} className="mr-[5px]" style={{ color: '#4072c0' }}/>{shopPhone}</p>
+        <p><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-[5px] text-gray-400" style={{ color: '#4072c0' }}/> {shopAddress}</p>
+      </div>
       <div className="tab-menu">
         {tabList.map((item)=>(
           <button 
@@ -30,6 +36,7 @@ const ProductTabs=({rentId, tab, setTab, shopName})=>{
         }
       </div>
       <ProductList rentId={rentId} category={tab} />
+
     </div>
   )
 }

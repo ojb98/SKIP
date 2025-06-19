@@ -94,12 +94,12 @@ const UserQnaList = () => {
           </span>
         </h2>
         <div className="flex justify-end">
-          <select value={hasReply} onChange={(e) => setHasReply(e.target.value)}>
+          <select className="px-3 w-[100px] border rounded border-[#cdcdcd]" value={hasReply} onChange={(e) => setHasReply(e.target.value)}>
             <option value="">전체</option>
             <option value="answered">답변</option>
             <option value="unanswered">미답변</option>
           </select>
-          <select className="ml-4" value={period} onChange={(e) => setPeriod(e.target.value)}>
+          <select className="ml-4 px-3 w-[100px] border rounded border-[#cdcdcd]" value={period} onChange={(e) => setPeriod(e.target.value)}>
             <option value="1week">1주일</option>
             <option value="1month">1개월</option>
             <option value="3months">3개월</option>

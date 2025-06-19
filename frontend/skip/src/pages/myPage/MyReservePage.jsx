@@ -173,6 +173,14 @@ const MyReservePage = () => {
                                                     <button
                                                         type="button"
                                                         className={button({ color: "primary-outline", className: 'w-36 h-10' })}
+                                                        onClick={() => {
+                                                        if (!i.isReturned) {
+                                                            alert("반납 후 리뷰를 작성할 수 없습니다.");
+                                                        } else if (i.reviewed) {
+                                                            alert("이미 리뷰를 작성했습니다.");
+                                                        } else {
+                                                            window.open(`/reviews/write/${i.rentItemId}`, '_blank', 'width=600,height=850')}
+                                                        }}
                                                     >
                                                         리뷰 쓰기
                                                     </button>

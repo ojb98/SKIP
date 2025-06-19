@@ -1,15 +1,15 @@
 package com.example.skip.repository;
 
-import com.example.skip.dto.projection.AdminReviewListDTO;
-import com.example.skip.dto.projection.ReviewListDTO;
-import com.example.skip.dto.projection.ReviewStatsDTO;
-import com.example.skip.dto.projection.UserReviewListDTO;
+import com.example.skip.dto.projection.*;
+import com.example.skip.entity.ReservationItem;
 import com.example.skip.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,8 +17,11 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    // 리뷰 작성시 RentItemId 기반 중복 확인
+    boolean existsByReservationItem_RentItemId(Long rentItemId);
+
     // 아이템페이지 리뷰 리스트
-    @Query(value = """
+/*    @Query(value = """
     SELECT
         r.reviewId AS reviewId,
         res.reserveId AS reserveId,
@@ -67,10 +70,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             @Param("itemId") Long itemId,
             @Param("sort") String sort,
             Pageable pageable
-    );
+    );*/
 
     // 관리자페이지 리뷰 리스트
-    @Query("""
+/*    @Query("""
         SELECT
             r.reviewId AS reviewId,
             res.reserveId AS reserveId,
@@ -107,10 +110,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<AdminReviewListDTO> findAllReviewWithReplyForAdmin(@Param("username") String username,
                                                             @Param("itemName") String itemName,
                                                             @Param("hasReply") Boolean hasReply,
-                                                            Pageable pageable);
+                                                            Pageable pageable);*/
 
     // 마이페이지 리뷰 리스트
-    @Query("""
+/*    @Query("""
         SELECT
             r.reviewId AS reviewId,
             res.reserveId AS reserveId,
@@ -137,13 +140,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     Page<UserReviewListDTO> findUserReviewListByUserIdAndDate(@Param("userId") Long userId,
                                                               @Param("startDate")LocalDateTime startDate,
-                                                              Pageable pageable);
+                                                              Pageable pageable);*/
 
 
 
 
     // 리뷰 평균 and 총계
-    @Query("""
+/*    @Query("""
         SELECT
             count(r) AS count,
             coalesce(avg(r.rating),0) AS average
@@ -154,13 +157,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         JOIN idt.item i
         WHERE i.itemId =:itemId
     """)
-    ReviewStatsDTO getReviewsStatsByItemId(@Param("itemId") Long itemId);
+    ReviewStatsDTO getReviewsStatsByItemId(@Param("itemId") Long itemId);*/
 
-    List<Review> findTop5ByReservation_User_UserIdOrderByCreatedAtDesc(Long userId);
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId")
+    List<Review> findTop5ByReservationItem_Reservation_User_UserIdOrderByCreatedAtDesc(Long userId);
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservationItem.reservation.rent.rentId = :rentId")
     BigDecimal findAverageRatingByRentId(@Param("rentId") Long rentId);
 
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.rent.rentId = :rentId AND r.createdAt >= :recent")
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservationItem.reservation.rent.rentId = :rentId AND r.createdAt >= :recent")
     BigDecimal findRecent7dRatingByRentId(@Param("rentId") Long rentId, @Param("recent") LocalDateTime recent);
 
+    // Scheduler 삭제 건수 반환
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Review r WHERE r.createdAt < :cutoff")
+    int deleteByCreatedAtBefore(LocalDateTime createdAtBefore);
 }

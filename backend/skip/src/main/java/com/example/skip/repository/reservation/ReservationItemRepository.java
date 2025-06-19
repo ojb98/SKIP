@@ -1,5 +1,6 @@
 package com.example.skip.repository.reservation;
 
+import com.example.skip.dto.projection.ReviewWriteDTO;
 import com.example.skip.entity.Reservation;
 import com.example.skip.entity.ReservationItem;
 import com.example.skip.enumeration.ItemCategory;
@@ -67,4 +68,21 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
 
     //당일 예약 목록을 가져와 재고 차감(스케줄러)
     List<ReservationItem> findAllByRentStartBetween(LocalDateTime start, LocalDateTime end);
+
+    // 리뷰 작성 페이지
+    @Query("""
+        SELECT
+            ri.rentItemId AS rentItemId,
+            i.name AS itemName,
+            i.image AS itemImage,
+            idt.size AS size,
+            ri.rentStart AS rentStart,
+            ri.rentEnd AS rentEnd
+        FROM ReservationItem ri
+        JOIN ri.itemDetail idt
+        JOIN idt.item i
+        WHERE ri.rentItemId =:rentItemId
+        AND ri.reservation.user.userId =:userId 
+    """)
+    Optional<ReviewWriteDTO> findReviewWriteInfo(Long rentItemId, Long userId);
 }

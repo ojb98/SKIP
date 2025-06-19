@@ -10,6 +10,8 @@ const RentalshopPage=()=>{
 
   const[images, setImages] = useState([]);
   const[shopName, setShopName] = useState("");
+  const[shopPhone, setShopPhone] = useState("");
+  const[shopAddress, setShopAddress] = useState("");
   const[tab, setTab] = useState("LIFT_TICKET");
 
   useEffect(() => {
@@ -18,6 +20,8 @@ const RentalshopPage=()=>{
       const imageList = [thumbnail, image1, image2, image3].filter(Boolean);
       setImages(imageList);
       setShopName(res.name);
+      setShopPhone(res.phone);
+      setShopAddress(res.streetAddress);
     });
   }, [rentId]);
   
@@ -25,7 +29,7 @@ const RentalshopPage=()=>{
   return(
     <main className="w-[1000px]">
       <Slide images={images}/>
-      <ProductTabs rentId={rentId} tab={tab} setTab={setTab} shopName={shopName}/>
+      <ProductTabs rentId={rentId} tab={tab} setTab={setTab} shopName={shopName} shopPhone={shopPhone} shopAddress={shopAddress} />
     </main>
   )
 }
