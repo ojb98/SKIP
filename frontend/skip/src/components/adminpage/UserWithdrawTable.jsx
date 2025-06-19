@@ -4,6 +4,7 @@ import AdminPagination from './AdminPagination.jsx';
 import { formatDate, formatDate1 } from '../../utils/formatdate.js';
 import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
+const STATUS_FILTER = 'WITHDRAWN';
 
   function WithdrawTable() {
     const [rents, setRents] = useState([]);
@@ -57,6 +58,7 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
         if (!Array.isArray(data)) {     
           data = [data];
         }
+        data = data.filter(rent => rent.status === STATUS_FILTER);
         setRents(data);
         setCurrentPage(1);
       }catch(e){

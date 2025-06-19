@@ -43,7 +43,7 @@ const CashChargeForm = () => {
     if (!IMP) {
       alert('결제 모듈 로딩 실패');
       return;
-    }
+    }    
     IMP.request_pay({
       pg,
       pay_method: 'card',
@@ -80,15 +80,16 @@ const CashChargeForm = () => {
   const updateDay = getNextMonday0AM();
 
   return (
-    <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
-      <h3 className="form-header">
-        💰 광고 캐시 충전
-        <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
-          📅 {updateDay}(월) 적용 예정
-        </span>
-      </h3>
-      <div className="form-container">
-        <form onSubmit={handleCharge}>
+    <div style={{display:"flex"}}>
+      <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
+        <h3 className="form-header">
+          💰 광고 캐시 충전
+          <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
+            📅 {updateDay}(월) 적용 예정
+          </span>
+        </h3>
+        <div className="form-container">
+          <form onSubmit={handleCharge}>
             <div className="form-group">
             <label>렌탈샵 선택</label>
             <select value={selectedRentId} onChange={e => setSelectedRentId(Number(e.target.value))}>
@@ -118,7 +119,20 @@ const CashChargeForm = () => {
             </select>
           </div>
           <button type="submit" style={{marginLeft:"260px" , marginTop:"20px"}}>결제하기</button>
-        </form>
+          </form>
+        </div>
+      </div>
+      <div className='table-container' style={{marginLeft:"20px",marginTop:"0px",width:"1100px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
+        <h3 className="form-header" style={{borderBottom:"1px solid #c8c8c8"}}>
+          ⚠️ 주의사항        <br /><br />
+          <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
+            * 광고 캐시는 환불되지 않습니다.
+            <br />&nbsp;&nbsp;* 결제 후 충전된 캐시는 즉시 사용 가능합니다.
+            <br />&nbsp;&nbsp;* 충전 캐시는 광고 상품 구매에만 사용되며 현금으로 환급되지 않습니다.
+            <br />&nbsp;&nbsp;* 결제 오류 발생 시 고객센터로 문의 바랍니다.
+            <br /><br />
+          </span>
+        </h3>
       </div>
     </div>
   );

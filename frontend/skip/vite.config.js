@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../backend/.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../backend/skip/.env') });
 
 // https://vite.dev/config/
 export default defineConfig({
