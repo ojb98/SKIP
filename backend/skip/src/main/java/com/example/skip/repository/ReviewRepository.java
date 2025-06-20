@@ -1,7 +1,6 @@
 package com.example.skip.repository;
 
 import com.example.skip.dto.projection.*;
-import com.example.skip.entity.ReservationItem;
 import com.example.skip.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +20,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsByReservationItem_RentItemId(Long rentItemId);
 
     // 아이템페이지 리뷰 리스트
-/*    @Query(value = """
+    @Query(value = """
     SELECT
         r.reviewId AS reviewId,
-        res.reserveId AS reserveId,
+        ri.rentItemId AS rentItemId,
         r.rating AS rating,
         r.content AS content,
         r.image AS image,
@@ -42,10 +41,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         rr.updatedAt AS replyUpdatedAt,
         ru.username AS adminUsername
     FROM Review r
-    JOIN r.reservation res
+    JOIN r.reservationItem ri
+    JOIN ri.reservation res
     JOIN res.user u
-    JOIN ReservationItem ri ON ri.reservation = res
-    JOIN ItemDetail idt ON ri.itemDetail = idt
+    JOIN ri.itemDetail idt
     JOIN idt.item i
     LEFT JOIN ReviewReply rr ON rr.review = r
     LEFT JOIN rr.user ru
@@ -55,28 +54,28 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         CASE WHEN :sort = 'lowRating' THEN r.rating END ASC,
         CASE WHEN :sort = 'recent' THEN r.createdAt END DESC,
         r.createdAt DESC
-    """,
-            countQuery = """
+    """
+/*    countQuery = """
         SELECT COUNT(r)
         FROM Review r
-        JOIN r.reservation res
-        JOIN ReservationItem ri ON ri.reservation = res
-        JOIN ItemDetail idt ON ri.itemDetail = idt
+        JOIN r.reservationItem ri
+        JOIN ri.itemDetail idt
         JOIN idt.item i
         WHERE i.itemId = :itemId
-    """
+    """*/
     )
     Page<ReviewListDTO> findReviewListByItemWithReply(
             @Param("itemId") Long itemId,
             @Param("sort") String sort,
             Pageable pageable
-    );*/
+    );
 
     // 관리자페이지 리뷰 리스트
-/*    @Query("""
+    @Query("""
         SELECT
             r.reviewId AS reviewId,
-            res.reserveId AS reserveId,
+            ri.rentItemId AS rentItemId,
+            res.rent.rentId AS rentId,
             r.rating AS rating,
             r.content AS content,
             r.image AS image,
@@ -92,31 +91,32 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             rr.updatedAt AS replyUpdatedAt,
             ru.username AS adminUsername
         FROM Review r
-        JOIN r.reservation res
+        JOIN r.reservationItem  ri
+        JOIN ri.reservation res
         JOIN res.user u
-        JOIN ReservationItem ri ON ri.reservation = res
-        JOIN ItemDetail idt ON ri.itemDetail = idt
+        JOIN ri.itemDetail idt
         JOIN idt.item i
         LEFT JOIN ReviewReply rr ON rr.review = r
         LEFT JOIN rr.user ru
-        WHERE
-            (:username IS NULL OR u.username LIKE %:username%) AND
-            (:itemName IS NULL OR i.name LIKE %:itemName%) AND
-            (:hasReply IS NULL OR
+        WHERE res.rent.rentId =:rentId
+        AND (:username IS NULL OR u.username LIKE %:username%)
+        AND (:itemName IS NULL OR i.name LIKE %:itemName%)
+        AND (:hasReply IS NULL OR
                 (:hasReply = true AND rr.replyId IS NOT NULL) OR
                 (:hasReply = false AND rr.replyId IS NULL)
              )
     """)
-    Page<AdminReviewListDTO> findAllReviewWithReplyForAdmin(@Param("username") String username,
+    Page<AdminReviewListDTO> findAllReviewWithReplyForAdmin(@Param("rentId") Long rentId,
+                                                            @Param("username") String username,
                                                             @Param("itemName") String itemName,
                                                             @Param("hasReply") Boolean hasReply,
-                                                            Pageable pageable);*/
+                                                            Pageable pageable);
 
     // 마이페이지 리뷰 리스트
-/*    @Query("""
+    @Query("""
         SELECT
             r.reviewId AS reviewId,
-            res.reserveId AS reserveId,
+            ri.rentItemId AS rentItemId,
             r.rating AS rating,
             r.content AS content,
             r.image AS image,
@@ -129,9 +129,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             rr.content AS replyContent,
             rr.createdAt AS replyCreatedAt
         FROM Review r
-        JOIN r.reservation res
-        JOIN ReservationItem ri ON ri.reservation = res
-        JOIN ItemDetail idt ON ri.itemDetail = idt
+        JOIN r.reservationItem ri
+        JOIN ri.reservation res
+        JOIN ri.itemDetail idt
         JOIN idt.item i
         LEFT JOIN ReviewReply rr ON rr.review = r
         WHERE res.user.userId =:userId
@@ -140,24 +140,54 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     Page<UserReviewListDTO> findUserReviewListByUserIdAndDate(@Param("userId") Long userId,
                                                               @Param("startDate")LocalDateTime startDate,
-                                                              Pageable pageable);*/
+                                                              Pageable pageable);
 
 
-
+    // 리뷰 수정용 단건 조회
+    @Query("""
+        SELECT
+            r.reviewId AS reviewId,
+            r.rating AS rating,
+            r.content AS content,
+            r.image AS image,
+            i.itemId AS itemId,
+            i.name AS itemName,
+            i.image AS itemImage,
+            idt.size AS size,
+            ri.rentStart AS rentStart,
+            ri.rentEnd AS rentEnd
+        FROM Review r
+        JOIN r.reservationItem ri
+        JOIN ri.itemDetail idt
+        JOIN idt.item i
+        WHERE r.reviewId =:reviewId
+    """)
+    ReviewUpdateDTO findReviewUpdateInfoById(@Param("reviewId") Long ReviewId);
 
     // 리뷰 평균 and 총계
-/*    @Query("""
+    @Query("""
         SELECT
             count(r) AS count,
             coalesce(avg(r.rating),0) AS average
         FROM Review r
-        JOIN r.reservation res
-        JOIN ReservationItem ri ON ri.reservation = res
-        JOIN ItemDetail idt ON ri.itemDetail = idt
+        JOIN r.reservationItem ri
+        JOIN ri.itemDetail idt
         JOIN idt.item i
         WHERE i.itemId =:itemId
     """)
-    ReviewStatsDTO getReviewsStatsByItemId(@Param("itemId") Long itemId);*/
+    ReviewStatsDTO getReviewsStatsByItemId(@Param("itemId") Long itemId);
+
+    // 리뷰 수정
+    @Query("""
+        SELECT r
+        FROM Review r
+        JOIN FETCH r.reservationItem ri
+        JOIN FETCH ri.itemDetail idt
+        JOIN FETCH idt.item i
+        WHERE r.reviewId =:reviewId
+    """)
+    Review findReviewDetailById(@Param("reviewId") Long reviewId);
+
 
     List<Review> findTop5ByReservationItem_Reservation_User_UserIdOrderByCreatedAtDesc(Long userId);
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public interface ReviewListDTO {
     // Review
     Long getReviewId();
-    Long getReserveId();
+    Long getRentItemId();
     int getRating();
     String getContent();
     String getImage();

@@ -34,52 +34,70 @@ export const createReviewApi = async (rentItemId, reviewData, imageFile) => {
 }
 
 // 리뷰 수정
+export const updateReviewApi = async(reviewId, { rating, content, imageFile, deleteImage }) => {
+  const formData = new FormData();
+  formData.append("rating", rating);
+  formData.append("content", content);
+  formData.append("deleteImage", deleteImage);
 
+  if(imageFile) {
+    formData.append("image", imageFile);
+  }
+
+  const response = await caxios.put(`${host}/${reviewId}`, formData);
+  return response.data;
+}
 
 // 리뷰 삭제(관리자)
-// export const deleteReviewByAdmin = (reviewId) => {
-//   return caxios.delete(`${host}/admin/delete/${reviewId}`)
-// }
+export const deleteReviewByAdmin = (reviewId) => {
+  return caxios.delete(`${host}/admin/delete/${reviewId}`)
+}
 
-// // 리뷰 삭제(유저)
-// export const deleteUserReviewApi = async (reviewId) => {
-//   return await caxios.delete(`${host}/mypage/delete/${reviewId}`);
-// }
+// 리뷰 삭제(유저)
+export const deleteUserReviewApi = async (reviewId) => {
+  return await caxios.delete(`${host}/mypage/delete/${reviewId}`);
+}
 
-// // 마이페이지 리뷰 목록 조회
-// export const getUserReviewListApi = ({ startDate, page, size }) => {
-//   const params = { page, size };
-//   if(startDate) params.startDate = startDate;
-//   return caxios.get(`${host}/user`,{ params });
-// }
+// 마이페이지 리뷰 목록 조회
+export const getUserReviewListApi = ({ startDate, page, size }) => {
+  const params = { page, size };
+  if(startDate) params.startDate = startDate;
+  return caxios.get(`${host}/mypage`,{ params });
+}
+
+// 관리자페이지 리뷰 목록 조회
+export const getReviewListForAdmin = async ({rentId, username, itemName, hasReply, page = 0, size = 10}) => {
+  const params = {
+    ...(rentId !== undefined && {rentId}),
+    ...(username && { username }),
+    ...(itemName && { itemName }),
+    ...(hasReply !== null && hasReply !== undefined && { hasReply }),
+    page,
+    size,
+  };
+  const response = await caxios.get(`${host}/admin`,{ params });
+  return response.data;
+}
 
 
-// // 관리자페이지 리뷰 목록 조회
-// export const getReviewListForAdmin = async (username, itemName, hasReply, page = 0, size = 10) => {
-//   const params = {
-//     ...(username && { username }),
-//     ...(itemName && { itemName }),
-//     ...(hasReply !== null && hasReply !== undefined && { hasReply }),
-//     page,
-//     size,
-//   };
-//   const response = await caxios.get(`${host}/admin`,{ params });
-//   return response.data;
-// }
+// 아이템페이지 리뷰 목록 조회
+export const getReviewListByItem = async (itemId, sort = "recent", page = 0, size = 10) => {
+  const response = await axios.get(`${host}/item/${itemId}`, {
+    params: {sort, page, size}
+  })
+  return response.data;
+}
 
+// 리뷰 단건 조회
+export const getReviewUpdateInfoApi = async (reviewId) => {
+  const response = await caxios.get(`${host}/updateInfo/${reviewId}`);
+  return response.data;
+}
 
-// // 아이템페이지 리뷰 목록 조회
-// export const getReviewListByItem = async (itemId, sort = "recent", page = 0, size = 10) => {
-//   const response = await axios.get(`http://localhost:8080/api/review/item/${itemId}`, {
-//     params: {sort, page, size}
-//   })
-//   return response.data;
-// }
-
-// // 총 리뷰 수, 평균
-// export const getReviewStatsByItem = async(itemId) => {
-//   const response = await axios.get(`http://localhost:8080/api/review/stats/${itemId}`);
-//   return response.data;
-// }
+// 총 리뷰 수, 평균
+export const getReviewStatsByItem = async(itemId) => {
+  const response = await axios.get(`${host}/stats/${itemId}`);
+  return response.data;
+}
 
 

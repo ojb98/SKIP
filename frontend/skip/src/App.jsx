@@ -102,6 +102,8 @@ function App() {
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
                             <Route path="/rentAdmin/boost"></Route>
                             <Route path="/rentAdmin/banner"></Route>
+                            <Route path="/rentAdmin/qna" element={<AdminQnaList></AdminQnaList>} />
+                            <Route path="/rentAdmin/review" element={<AdminReviewList></AdminReviewList>} />
                         </Route>
 
 
@@ -124,12 +126,11 @@ function App() {
                         <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
                         <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
-                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
-                        <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
-                        <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
+                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/reviews/write/:rentItemId" element={<ReviewPopupPage />}></Route>
+                    <Route path="/reviews/edit/:reviewId" element={<ReviewPopupPage/>}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
                     <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>

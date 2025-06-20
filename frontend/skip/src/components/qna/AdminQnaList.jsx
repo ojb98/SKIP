@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { deleteQnaByAdminApi, getQnaListByAdminApi, getUnansweredCountApi } from "../../api/qnaApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,11 +7,14 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { createReply, deleteReply, getReplySummary, updateReply } from "../../api/qnaReplyApi";
 import AdminPagination from "../adminpage/AdminPagination";
 import { useSelector } from "react-redux";
+import { rentIdAndNameApi } from "../../api/rentListApi";
 
 const AdminQnaList = () => {
   const profile = useSelector((state) => state.loginSlice);
   const userId = profile?.userId;
 
+  const [rentList, setRentList] = useState([]);
+  const [selectedRentId, setSelectedRentId] = useState(null);
   const [qnaList, setQnaList] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
   const [allChecked, setAllChecked] = useState(false);
@@ -26,62 +29,65 @@ const AdminQnaList = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const size = 10;
-  const rentId = 2;
 
+  // 렌탈샵 목록
   useEffect(() => {
-    const fetchQnaList = async () => {
+    const fetchRentList = async () => {
+      if (!userId) return;
       try {
-        const username = searchParams.isSearchMode && searchParams.searchType === "username" ? searchParams.searchKeyword : null;
-        const itemName = searchParams.isSearchMode && searchParams.searchType === "name" ? searchParams.searchKeyword : null;
-        const status = searchParams.isSearchMode && searchParams.searchType === "status" ? searchParams.searchKeyword : null;
-        const hasReply = searchParams.isSearchMode && searchParams.searchType === "hasReply" ? searchParams.searchKeyword === "false" ? false : true : null;
+        const result = await rentIdAndNameApi(userId);
+        setRentList(result);
+        setSelectedRentId(result[0]?.rentId);
+      } catch (err) {
+        console.error("렌탈샵 목록 조회 실패:", err);
+      }
+    };
+    fetchRentList();
+  }, [userId]);
 
-        const data = await getQnaListByAdminApi(rentId, status, username, itemName, null, hasReply, page, size);
-        setQnaList(data.content);
-        setCheckedItems(Array(data.content.length).fill(false));
+  // QnA 목록 조회 함수 (useCallback)
+  const fetchQnaList = useCallback(async () => {
+    if (!selectedRentId) return;
+    try {
+      const username = searchParams.isSearchMode && searchParams.searchType === "username" ? searchParams.searchKeyword : null;
+      const itemName = searchParams.isSearchMode && searchParams.searchType === "name" ? searchParams.searchKeyword : null;
+      const status = searchParams.isSearchMode && searchParams.searchType === "status" ? searchParams.searchKeyword : null;
+      const hasReply = searchParams.isSearchMode && searchParams.searchType === "hasReply"
+        ? searchParams.searchKeyword === "false" ? false : true : null;
 
-        const answerStates = await Promise.all(
-          data.content.map(async (qna) => {
-            try {
-              const reply = await getReplySummary(qna.qnaId);
-              if (reply) {
-                return {
-                  answer: reply.content,
-                  originalAnswer: reply.content,
-                  userId: reply.userId,
-                  username: reply.username,
-                  updatedAt: reply.updatedAt,
-                  createdAt: reply.createdAt,
-                  saved: true,
-                  editing: false,
-                };
-              } else {
-                return {
-                  answer: "",
-                  originalAnswer: "",
-                  saved: false,
-                  editing: false,
-                };
-              }
-            } catch (err) {
+      const data = await getQnaListByAdminApi(selectedRentId, status, username, itemName, null, hasReply, page, size);
+      setQnaList(data.content);
+      setCheckedItems(Array(data.content.length).fill(false));
+
+      const answerStates = await Promise.all(
+        data.content.map(async (qna) => {
+          try {
+            const reply = await getReplySummary(qna.qnaId);
+            if (reply) {
               return {
-                answer: "",
-                originalAnswer: "",
-                saved: false,
+                answer: reply.content,
+                originalAnswer: reply.content,
+                userId: reply.userId,
+                username: reply.username,
+                updatedAt: reply.updatedAt,
+                createdAt: reply.createdAt,
+                saved: true,
                 editing: false,
               };
             }
-          })
-        )
-        setAnswers(answerStates);
-        setTotalElements(data.totalElements);
-        setTotalPages(data.totalPages);
-      } catch (err) {
-        console.error("QnA 불러오기 실패:", err);
-      }
-    };
-    fetchQnaList();
-  }, [page, searchParams]);
+            return { answer: "", originalAnswer: "", saved: false, editing: false };
+          } catch {
+            return { answer: "", originalAnswer: "", saved: false, editing: false };
+          }
+        })
+      );
+      setAnswers(answerStates);
+      setTotalElements(data.totalElements);
+      setTotalPages(data.totalPages);
+    } catch (err) {
+      console.error("QnA 불러오기 실패:", err);
+    }
+  }, [selectedRentId, searchParams, page, size]);
 
   useEffect(() => {
     setOpenIndex(null);
@@ -198,16 +204,15 @@ const AdminQnaList = () => {
 
     try {
       for (let qna of toDelete) {
-        await deleteQnaByAdminApi(qna.qnaId, rentId);
+        await deleteQnaByAdminApi(qna.qnaId, selectedRentId);
       }
+      await fetchQnaList();
+      await fetchUnansweredCount();
       alert("삭제가 완료되었습니다.");
-
-      setPage(0);
-      setSearchParams({ ...searchParams });
     } catch (err) {
       console.error("삭제 실패:", err);
     }
-  }
+  };
 
   // Q&A 답변 삭제
   const handleDeleteReply = async (index, qnaId) => {
@@ -218,12 +223,14 @@ const AdminQnaList = () => {
       const updated = [...answers];
       updated[index] = { answer: "", saved: false, editing: false };
       setAnswers(updated);
+      await fetchQnaList();
+      await fetchUnansweredCount();
       alert("답변이 삭제되었습니다.");
     } catch (err) {
       console.error("삭제 실패:", err);
       alert("답변 삭제 실패");
     }
-  }
+  };
 
   // 수정 취소 버튼
   const handleCancelEdit = (index) => {
@@ -236,18 +243,32 @@ const AdminQnaList = () => {
     setAnswers(updated);
   }
 
-  // 미답변 갯수
+// 미답변 수 조회 함수 (useCallback)
+  const fetchUnansweredCount = useCallback(async () => {
+    if (!selectedRentId) return;
+    try {
+      const count = await getUnansweredCountApi(selectedRentId);
+      setUnansweredCount(count);
+    } catch (err) {
+      console.error("미답변 수 불러오기 실패:", err);
+    }
+  }, [selectedRentId]);
+
+  // selectedRentId, searchParams, page가 바뀔 때마다 호출
   useEffect(() => {
-    const fetchUnansweredCount = async () => {
-      try {
-        const count = await getUnansweredCountApi(rentId);
-        setUnansweredCount(count);
-      } catch (err) {
-        console.error("미답변 수 불러오기 실패:", err);
-      }
-    };
+    fetchQnaList();
     fetchUnansweredCount();
-  }, []);
+  }, [fetchQnaList, fetchUnansweredCount]);
+
+  // 렌탈샵 변경 시 검색조건 초기화
+  useEffect(() => {
+    if (selectedRentId) {
+      setSearchParams({ isSearchMode: false, searchType: "username", searchKeyword: "" });
+      setSearchType("username");
+      setSearchKeyword("");
+      setPage(0);
+    }
+  }, [selectedRentId]);
 
   return (
     <div>
@@ -258,6 +279,15 @@ const AdminQnaList = () => {
             style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
             <h3><FontAwesomeIcon icon={faQuestionCircle} /> Q&A 리스트</h3>
           </button>
+          <select
+            className="filter ml-2.5"
+            value={selectedRentId || ""}
+            onChange={(e) => setSelectedRentId(Number(e.target.value))}
+          >
+            {rentList.map((rent) => (
+              <option key={rent.rentId} value={rent.rentId}>{rent.name}</option>
+            ))}
+          </select>
           <Link
             onClick={() => {
               setSearchParams((prev) => ({

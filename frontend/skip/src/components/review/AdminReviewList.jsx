@@ -2,253 +2,299 @@ import React from "react";
 import { faCommentDots } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-// import { deleteReviewByAdmin, getReviewListForAdmin } from "../../api/reviewApi";
-// import { createReviewReply, deleteReviewReply, getReplySummary, getReviewReplyByReviewId, updateReviewReply } from "../../api/reviewReplyApi";
+import { deleteReviewByAdmin, getReviewListForAdmin } from "../../api/reviewApi";
+import { createReviewReply, deleteReviewReply, getReplySummary, getReviewReplyByReviewId, updateReviewReply } from "../../api/reviewReplyApi";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import AdminPagination from "../adminpage/AdminPagination";
+import { rentIdAndNameApi } from "../../api/rentListApi";
 
 const AdminReviewList = () => {
   const profile = useSelector((state) => state.loginSlice);
   const userId = profile?.userId;
 
-  // const [reviewList, setReviewList] = useState([]);
-  // const [answers, setAnswers] = useState([]);
-  // const [answerErrors, setAnswerErrors] = useState([]);
-  // const [openIndex, setOpenIndex] = useState(null);
-  // const [page, setPage] = useState(0);
-  // const [totalElements, setTotalElements] = useState(0);
-  // const [searchType, setSearchType] = useState("username");
-  // const [searchKeyword, setSearchKeyword] = useState("");
-  // const [searchparams, setSearchParams] = useState({ isSearchMode: false, searchType: "username", searchKeyword: "" });
-  // const [checkedItems, setCheckedItems] = useState([]);
-  // const [allchecked, setAllChecked] = useState(false);
-  // const size = 10;
+  const [selectedRentId, setSelectedRentId] = useState("");
+  const [rentList, setRentList] = useState([]);
+  const [reviewList, setReviewList] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [answerErrors, setAnswerErrors] = useState([]);
+  const [openIndex, setOpenIndex] = useState(null);
+  const [page, setPage] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [searchType, setSearchType] = useState("username");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchparams, setSearchParams] = useState({ isSearchMode: false, searchType: "username", searchKeyword: "" });
+  const [checkedItems, setCheckedItems] = useState([]);
+  const [allchecked, setAllChecked] = useState(false);
+  const size = 10;
 
-  // useEffect(() => {
-  //   const fetchReviews = async () => {
-  //     try {
-  //       setOpenIndex(null);
+  useEffect(() => {
+    if (!userId) return;
 
-  //       const username = searchparams.isSearchMode && searchparams.searchType === "username" ? searchparams.searchKeyword : null;
-  //       const itemName = searchparams.isSearchMode && searchparams.searchType === "name" ? searchparams.searchKeyword : null;
+const fetchRentIds = async () => {
+    try {
+      const result = await rentIdAndNameApi(userId);
+      setRentList(result);
+      setSelectedRentId(result[0]?.rentId ?? ""); // fallback
+    } catch (err) {
+      console.error("렌탈샵 목록 조회 실패:", err);
+    }
+  };
+    fetchRentIds();
+  },[userId]);
 
-  //       const data = await getReviewListForAdmin(username, itemName, null, page, size);
+  useEffect(() => {
+    const fetchReviews = async () => {
+       if (!selectedRentId) return;
 
-  //     if (!data || !Array.isArray(data.content)) {
-  //       console.error("리뷰 API 응답이 예상과 다릅니다:", data);
-  //       setReviewList([]);
-  //       setAnswers([]);
-  //       setAnswerErrors([]);
-  //       setCheckedItems([]);
-  //       setAllChecked(false);
-  //       setTotalElements(0);
-  //       return;
-  //     }
+      try {
+        setOpenIndex(null);
 
-  //       setReviewList(data.content);
-  //       setTotalElements(data.totalElements);
-  //       setCheckedItems(Array(data.content.length).fill(false));
-  //       setAllChecked(false);
+        const username = searchparams.isSearchMode && searchparams.searchType === "username" ? searchparams.searchKeyword : null;
+        const itemName = searchparams.isSearchMode && searchparams.searchType === "name" ? searchparams.searchKeyword : null;
 
-  //       const replyList = await Promise.all(
-  //         data.content.map(async (review) => {
-  //           try {
-  //             const reply = await getReplySummary(review.reviewId);
-  //             if (reply && reply.content) {
-  //               return {
-  //                 answer: reply.content,
-  //                 originalAnswer: reply.content,
-  //                 username: reply.username,
-  //                 userId: reply.userId,
-  //                 createdAt: reply.createdAt,
-  //                 updatedAt: reply.updatedAt,
-  //                 saved: true,
-  //                 editing: false,
-  //               };
-  //             } else {
-  //               return {
-  //                 answer: "",
-  //                 originalAnswer: "",
-  //                 saved: false,
-  //                 editing: true,
-  //               };
-  //             }
-  //           } catch (err) {
-  //             return {
-  //               answer: "",
-  //               originalAnswer: "",
-  //               saved: false,
-  //               editing: true,
-  //             };
-  //           }
-  //         })
-  //       );
-  //       setAnswers(replyList);
-  //       setAnswerErrors(Array(data.content.length).fill(""));
-  //     } catch (err) {
-  //       console.error("리뷰 목록 조회 실패:", err);
-  //     }
-  //   };
-  //   fetchReviews();
-  // }, [page, searchparams]);
+        const params = {rentId: selectedRentId, username, itemName, hasReply:null, page, size};
 
-  // const handleAllCheck = () => {
-  //   const newChecked = !allchecked;
-  //   setAllChecked(newChecked);
-  //   setCheckedItems(Array(reviewList.length).fill(newChecked));
-  // };
+        const data = await getReviewListForAdmin(params);
 
-  // const handleItemCheck = (index) => {
-  //   const updated = [...checkedItems];
-  //   updated[index] = !updated[index];
-  //   setCheckedItems(updated);
-  //   setAllChecked(updated.every((checked) => checked));
-  // }
+      if (!data || !Array.isArray(data.content)) {
+        console.error("리뷰 API 응답이 예상과 다릅니다:", data);
+        setReviewList([]);
+        setAnswers([]);
+        setAnswerErrors([]);
+        setCheckedItems([]);
+        setAllChecked(false);
+        setTotalElements(0);
+        return;
+      }
 
-  // const handleToggle = (index) => {
-  //   const updatedAnswers = [...answers];
-  //   const updatedErrors = [...answerErrors];
+        setReviewList(data.content);
+        setTotalElements(data.totalElements);
+        setCheckedItems(Array(data.content.length).fill(false));
+        setAllChecked(false);
 
-  //   if (openIndex === index) {
-  //     setOpenIndex(null);
-  //   } else {
-  //     updatedAnswers[index].answer = updatedAnswers[index].originalAnswer || "";
-  //     updatedAnswers[index].editing = false;
-  //     updatedErrors[index] = "";
-  //     setAnswers(updatedAnswers);
-  //     setAnswerErrors(updatedErrors);
-  //     setOpenIndex(index);
-  //   }
-  // }
+        const replyList = await Promise.all(
+          data.content.map(async (review) => {
+            try {
+              const reply = await getReplySummary(review.reviewId);
+              if (reply && reply.content) {
+                return {
+                  answer: reply.content,
+                  originalAnswer: reply.content,
+                  username: reply.username,
+                  userId: reply.userId,
+                  createdAt: reply.createdAt,
+                  updatedAt: reply.updatedAt,
+                  saved: true,
+                  editing: false,
+                };
+              } else {
+                return {
+                  answer: "",
+                  originalAnswer: "",
+                  saved: false,
+                  editing: true,
+                };
+              }
+            } catch (err) {
+              return {
+                answer: "",
+                originalAnswer: "",
+                saved: false,
+                editing: true,
+              };
+            }
+          })
+        );
+        setAnswers(replyList);
+        setAnswerErrors(Array(data.content.length).fill(""));
+      } catch (err) {
+        console.error("리뷰 목록 조회 실패:", err);
+      }
+    };
+    fetchReviews();
+  }, [page, searchparams, selectedRentId]);
 
-  // const handleSave = async (index, reviewId) => {
-  //   const reply = answers[index];
+  const handleAllCheck = () => {
+    const newChecked = !allchecked;
+    setAllChecked(newChecked);
+    setCheckedItems(Array(reviewList.length).fill(newChecked));
+  };
 
-  //   if (!reply.answer.trim()) {
-  //     const updatedErrors = [...answerErrors];
-  //     updatedErrors[index] = "답변을 입력해주세요.";
-  //     setAnswerErrors(updatedErrors);
-  //     return;
-  //   }
+  const handleItemCheck = (index) => {
+    const updated = [...checkedItems];
+    updated[index] = !updated[index];
+    setCheckedItems(updated);
+    setAllChecked(updated.every((checked) => checked));
+  }
 
-  //   try {
-  //     if (reply.saved) {
-  //       await updateReviewReply(reviewId, { content: reply.answer });
-  //     } else {
-  //       await createReviewReply({ reviewId, content: reply.answer });
-  //     }
-  //     const newReply = await getReplySummary(reviewId);
-  //     const updated = [...answers];
-  //     updated[index] = {
-  //       answer: newReply.content,
-  //       originalAnswer: newReply.content,
-  //       userId : newReply.userId,
-  //       username: newReply.username,
-  //       createdAt: newReply.createdAt,
-  //       updatedAt: newReply.updatedAt,
-  //       saved: true,
-  //       editing: false
-  //     };
-  //     setAnswers(updated);
-  //     alert("답변이 저장되었습니다.");
-  //   } catch (err) {
-  //     console.error("답변 저장 실패:", err);
-  //     alert("답변 저장에 실패했습니다.");
-  //   }
-  // };
+  const handleToggle = (index) => {
+    const updatedAnswers = [...answers];
+    const updatedErrors = [...answerErrors];
 
-  // const handleDeleteSelected = async () => {
-  //   const selectedReviews = reviewList.filter((_, idx) => checkedItems[idx]);
-  //   if (selectedReviews.length === 0) {
-  //     alert("삭제할 리뷰를 선택하세요.");
-  //     return;
-  //   }
-  //   const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  //   if (!confirmed) return;
+    if (openIndex === index) {
+      setOpenIndex(null);
+    } else {
+      updatedAnswers[index].answer = updatedAnswers[index].originalAnswer || "";
+      updatedAnswers[index].editing = false;
+      updatedErrors[index] = "";
+      setAnswers(updatedAnswers);
+      setAnswerErrors(updatedErrors);
+      setOpenIndex(index);
+    }
+  }
 
-  //   try {
-  //     for (let review of selectedReviews) {
-  //       await deleteReviewByAdmin(review.reviewId);
-  //     }
-  //     alert("선택한 리뷰가 삭제되었습니다.");
-  //     setPage(0);
-  //     setSearchParams({ ...searchparams });
-  //   } catch (err) {
-  //     console.error("삭제 실패:", err);
-  //     alert("선택한 리뷰 삭제 실패하였습니다.");
-  //   }
-  // };
+  const handleSave = async (index, reviewId) => {
+    const reply = answers[index];
 
-  // const handleDeleteReply = async (index, reviewId) => {
-  //   const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  //   if (!confirmed) return;
-  //   try {
-  //     await deleteReviewReply(reviewId);
-  //     const updated = [...answers];
-  //     updated[index] = { answer: "", originalAnswer: "", saved: false, editing: true };
-  //     setAnswers(updated);
-  //     alert("답변이 삭제되었습니다.");
-  //   } catch (err) {
-  //     console.error("삭제 실패:", err);
-  //     alert("답변 삭제 실패");
-  //   }
-  // };
+    if (!reply.answer.trim()) {
+      const updatedErrors = [...answerErrors];
+      updatedErrors[index] = "답변을 입력해주세요.";
+      setAnswerErrors(updatedErrors);
+      return;
+    }
 
-  // const handleAnswerchange = (index, value) => {
-  //   const updated = [...answers];
-  //   updated[index].answer = value;
-  //   setAnswers(updated);
+    try {
+      if (reply.saved) {
+        await updateReviewReply(reviewId, { content: reply.answer });
+      } else {
+        await createReviewReply({ reviewId, content: reply.answer });
+      }
+      const newReply = await getReplySummary(reviewId);
+      const updated = [...answers];
+      updated[index] = {
+        answer: newReply.content,
+        originalAnswer: newReply.content,
+        userId : newReply.userId,
+        username: newReply.username,
+        createdAt: newReply.createdAt,
+        updatedAt: newReply.updatedAt,
+        saved: true,
+        editing: false
+      };
+      setAnswers(updated);
+      alert("답변이 저장되었습니다.");
+    } catch (err) {
+      console.error("답변 저장 실패:", err);
+      alert("답변 저장에 실패했습니다.");
+    }
+  };
 
-  //   const updatedErrors = [...answerErrors];
-  //   updatedErrors[index] = "";
-  //   setAnswerErrors(updatedErrors);
-  // }
+  const handleDeleteSelected = async () => {
+    const selectedReviews = reviewList.filter((_, idx) => checkedItems[idx]);
+    if (selectedReviews.length === 0) {
+      alert("삭제할 리뷰를 선택하세요.");
+      return;
+    }
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
 
-  // const handleCancelEdit = (index) => {
-  //   const updated = [...answers];
-  //   updated[index] = {
-  //     ...updated[index],
-  //     answer: updated[index].originalAnswer,
-  //     editing: false,
-  //   };
-  //   setAnswers(updated);
-  // };
+    try {
+      for (let review of selectedReviews) {
+        await deleteReviewByAdmin(review.reviewId);
+      }
+      alert("선택한 리뷰가 삭제되었습니다.");
+      setPage(0);
+      setSearchParams({ ...searchparams });
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      alert("선택한 리뷰 삭제 실패하였습니다.");
+    }
+  };
 
-  // const handleSearch = () => {
-  //   if (!searchKeyword.trim()) {
-  //     alert("검색어를 입력하세요.");
-  //     return;
-  //   }
-  //   setSearchParams({ isSearchMode: true, searchType, searchKeyword });
-  //   setPage(0);
-  // };
+  const handleDeleteReply = async (index, reviewId) => {
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
+    try {
+      await deleteReviewReply(reviewId);
+      const updated = [...answers];
+      updated[index] = { answer: "", originalAnswer: "", saved: false, editing: true };
+      setAnswers(updated);
+      alert("답변이 삭제되었습니다.");
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      alert("답변 삭제 실패");
+    }
+  };
 
-  // const handleViewAll = () => {
-  //   setSearchParams({ isSearchMode: false, searchType: "username", searchKeyword: "" });
-  //   setSearchType("username");
-  //   setSearchKeyword("");
-  //   setPage(0);
-  // };
+  const handleAnswerchange = (index, value) => {
+    const updated = [...answers];
+    updated[index].answer = value;
+    setAnswers(updated);
 
-  // const renderStars = (count) => {
-  //   return Array.from({ length: 5 }, (_, i) => (
-  //     <FontAwesomeIcon
-  //       key={i}
-  //       icon={faStar}
-  //       style={{ color: i < count ? "#e9d634" : "#bfbfbf" }}
-  //     />
-  //   ));
-  // };
+    const updatedErrors = [...answerErrors];
+    updatedErrors[index] = "";
+    setAnswerErrors(updatedErrors);
+  }
+
+  const handleCancelEdit = (index) => {
+    const updated = [...answers];
+    updated[index] = {
+      ...updated[index],
+      answer: updated[index].originalAnswer,
+      editing: false,
+    };
+    setAnswers(updated);
+  };
+
+  const handleSearch = () => {
+    if (!searchKeyword.trim()) {
+      alert("검색어를 입력하세요.");
+      return;
+    }
+    setSearchParams({ isSearchMode: true, searchType, searchKeyword });
+    setPage(0);
+  };
+
+  useEffect(() => {
+  // 렌탈샵 선택이 바뀔 때 검색 조건 초기화
+  setSearchParams({
+    isSearchMode: false,
+    searchType: "username",
+    searchKeyword: "",
+  });
+  setSearchType("username");
+  setSearchKeyword("");
+  setPage(0);
+}, [selectedRentId]);
+
+  const handleViewAll = () => {
+    setSearchParams({ isSearchMode: false, searchType: "username", searchKeyword: "" });
+    setSearchType("username");
+    setSearchKeyword("");
+    setPage(0);
+  };
+
+  const renderStars = (count) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <FontAwesomeIcon
+        key={i}
+        icon={faStar}
+        style={{ color: i < count ? "#e9d634" : "#bfbfbf" }}
+      />
+    ));
+  };
 
   return (
     <div>
-      {/* <div className="table-container">
+      <div className="table-container">
         <div className="flex">
-          <button
-            style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
-            <h3><FontAwesomeIcon icon={faCommentDots} /> Review 리스트</h3>
-          </button>
+          <div className="flex">
+            <button
+              onClick={handleViewAll}
+              style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
+              <h3><FontAwesomeIcon icon={faCommentDots} /> Review 리스트</h3>
+            </button>
+            <select 
+              className="filter ml-2.5"
+              value={selectedRentId} 
+              onChange={(e) => setSelectedRentId(Number(e.target.value))}
+            >
+            {rentList.map((rent) => (
+              <option key={rent.rentId} value={rent.rentId}>{rent.name}</option>
+            ))}
+          </select>
+          </div>
           <div className="search-filter">
             <select
               className="filter"
@@ -345,9 +391,6 @@ const AdminReviewList = () => {
                                 )}
                                 <button
                                   onClick={() => {
-                                    console.log("현재 로그인 userId:", userId);
-                                    console.log("답변 작성자 userId:", answers[index]?.userId);
-
                                     if (Number(answers[index]?.userId) !== Number(userId)) {
                                       alert("작성자만 수정할 수 있습니다.");
                                       return;
@@ -438,7 +481,7 @@ const AdminReviewList = () => {
           groupSize={10}
           onPageChange={(newPage) => setPage(newPage - 1)}
         />
-      </div> */}
+      </div>
     </div>
   )
 }

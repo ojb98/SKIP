@@ -19,8 +19,8 @@ public class AuthorizationPaths {
             "/user/refresh",
             "/api/enums/**",
             "/api/qna/item/*",
-            "/api/review/item/*",
-            "/api/review/stats/*",
+            "/api/reviews/item/*",
+            "/api/reviews/stats/*",
             "/api/rents/slide/*"
     );
 

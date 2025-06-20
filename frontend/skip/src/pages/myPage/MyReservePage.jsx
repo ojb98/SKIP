@@ -45,7 +45,6 @@ const MyReservePage = () => {
         searchHandler(0);
     }, [appliedConditions]);
 
-
     const searchHandler = (page = 0) => {
         searchReservations({
             ...appliedConditions,
@@ -177,17 +176,23 @@ const MyReservePage = () => {
                                                 <div className="w-[25%] flex flex-col justify-evenly items-center">
                                                     <button
                                                         type="button"
-                                                        className={button({ color: "primary-outline", className: 'w-36 h-10' })}
+                                                        className={button({
+                                                            color: i.reviewed ? "gray-outline" : "primary-outline", 
+                                                            className: 'w-36 h-10' 
+                                                        })}
+                                                        disabled={i.reviewed}
                                                         onClick={() => {
                                                         if (!i.isReturned) {
-                                                            alert("반납 후 리뷰를 작성할 수 없습니다.");
+                                                            alert("리뷰를 작성할 수 없습니다.");
                                                         } else if (i.reviewed) {
                                                             alert("이미 리뷰를 작성했습니다.");
                                                         } else {
                                                             window.open(`/reviews/write/${i.rentItemId}`, '_blank', 'width=600,height=850')}
                                                         }}
                                                     >
-                                                        리뷰 쓰기
+                                                        {
+                                                            i.reviewed ? "작성 완료" : "리뷰 쓰기"
+                                                        }
                                                     </button>
 
                                                         {/* 환불 신청 버튼 상태 분기 */}
