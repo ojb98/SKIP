@@ -171,6 +171,8 @@ const MyReservePage = () => {
                                                                 <span>{itemCategoryMapper[i.itemCategory]} {i.itemName} {i.itemDetailSize},</span>
                                                                 <span className="text-gray-600">{(i.subtotalPrice / i.quantity).toLocaleString()}원 · {i.quantity}개</span>
                                                             </div>
+
+                                                            <span className="text-sm font-semibold">{i.rentStart.split('T')[0]} {i.rentStart.split('T')[1].substring(0, 5)} - {i.rentEnd.split('T')[0]} {i.rentEnd.split('T')[1].substring(0, 5)}</span>
                                                         </div>
                                                     </div>
 

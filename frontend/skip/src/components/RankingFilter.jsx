@@ -14,7 +14,6 @@ const RankingFilter = ({ conditions, conditionSetters }) => {
         const handleClickOutside = e => {
             if (filterRef.current && !filterRef.current.contains(e.target)) {
                 filterRef.current.open = false;
-                console.log(filterRef);
             }
         };
 
@@ -28,7 +27,6 @@ const RankingFilter = ({ conditions, conditionSetters }) => {
     useEffect(() => {
         fromRef.current.value = period?.from;
         toRef.current.value = period?.to;
-        console.log(period);
     }, [region]);
 
 
