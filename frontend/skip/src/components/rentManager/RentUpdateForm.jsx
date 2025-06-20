@@ -245,19 +245,16 @@ const RentUpdateForm = () => {
                         <label htmlFor="detailedAddress">상세 주소</label>
                         <input type="text" id="detailedAddress" name="detailedAddress" value={formData.detailedAddress} onChange={handleChange} />
                     </div>
-                    <span style={{ color: '#e74c3c', fontSize: 13, display: 'block', marginBottom: 10 }}>*사업자등록번호 변경시 다시 심사 받아야 합니다.</span>
+                    <span className="text-red-500 text-[13px] block mb-2 font-bold">*사업자등록번호 변경시 다시 심사 받아야 합니다.</span>
                     <div className="form-group">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <label htmlFor="bizRegNumber">사업자 등록번호</label>
-                            <button type="button" onClick={toggleBizRegReadonly} className="rent-readonly-btn" style={{ width: 32, height: 32, fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+                        <div className="flex flex-row gap-2">
+                            <label htmlFor="bizRegNumber" className="mb-0 whitespace-nowrap">사업자 등록번호</label>
+                            <button type="button" onClick={toggleBizRegReadonly} className="rent-readonly-btn cursor-pointer">
                                 {bizRegNumberReadonly ? (
                                     <Pencil width={20} />
-                                  
                                 ) : (
                                     <Lock width={20} />
-                                
-                                )}    
-                                
+                                )}
                             </button>
                         </div>
                         <div style={{ display: 'flex', gap: 8 }}>

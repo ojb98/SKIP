@@ -172,7 +172,7 @@ const RentInsertForm = () => {
                         <label htmlFor="detailedAddress">상세 주소</label>
                         <input type="text" id="detailedAddress" name="detailedAddress" value={formData.detailedAddress} onChange={handleChange} />
                     </div>
-                    
+                    <span className="text-red-500 text-[13px] block mb-2 font-bold">*사업자등록번호 변경시 다시 심사 받아야 합니다.</span>
                     <div className="form-group">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <label htmlFor="bizRegNumber"><span className="required-asterisk">*</span>사업자 등록번호</label>

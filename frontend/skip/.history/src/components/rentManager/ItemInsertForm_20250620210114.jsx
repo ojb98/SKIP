@@ -183,31 +183,18 @@ const ItemInsertForm = () => {
           <input type="file" ref={fileRef} accept="image/*" required />
         </div>
         <div className="sub-subject">대여 옵션</div>
-        <table className="item-table">
-          <thead>
-            <tr><th>시간</th><th>가격</th><th>삭제</th></tr>
-          </thead>
-          <tbody>
-            {timePrices.map((tp, i) => (
-              <tr key={i}>
-                <td>
-                  <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)} className="form-hour-select">
-                    <option value="">시간 선택</option>
-                    {selectedOptions.hours.map(h => (
-                      <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" className="form-price-input" />
-                </td>
-                <td>
-                  <button type="button" className="item-delete-btn" onClick={() => removeTimePrice(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {timePrices.map((tp, i) => (
+          <div key={i} className="form-inline-row">
+            <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)} className="form-hour-selecte">
+              <option value="">시간 선택</option>
+              {selectedOptions.hours.map(h => (
+                <option key={h} value={h} ca>{h === 8760 ? "1년" : `${h}시간`}</option>
+              ))}
+            </select>
+            <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" className="form-price-input"/>
+            <button type="button" className="item-delete-btn" onClick={() => removeTimePrice(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
+          </div>
+        ))}
         <button type="button" className="item-add-btn" onClick={addTimePrice} disabled={formData.category === "LIFT_TICKET"}>+ 시간 추가</button>
         <div className="sub-subject">사이즈 / 수량</div>
         <table className="item-table">
