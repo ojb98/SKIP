@@ -17,4 +17,5 @@ public class ReservationItemSummaryDTO {
     private int quantity;
     private Long subtotalPrice;
     private boolean isReturned;
+    private boolean reviewed; // 리뷰 여부 확인
 }

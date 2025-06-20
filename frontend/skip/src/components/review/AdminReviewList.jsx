@@ -7,11 +7,14 @@ import { createReviewReply, deleteReviewReply, getReplySummary, getReviewReplyBy
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import AdminPagination from "../adminpage/AdminPagination";
+import { rentIdAndNameApi } from "../../api/rentListApi";
 
 const AdminReviewList = () => {
   const profile = useSelector((state) => state.loginSlice);
   const userId = profile?.userId;
 
+  const [selectedRentId, setSelectedRentId] = useState("");
+  const [rentList, setRentList] = useState([]);
   const [reviewList, setReviewList] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [answerErrors, setAnswerErrors] = useState([]);
@@ -26,14 +29,33 @@ const AdminReviewList = () => {
   const size = 10;
 
   useEffect(() => {
+    if (!userId) return;
+
+const fetchRentIds = async () => {
+    try {
+      const result = await rentIdAndNameApi(userId);
+      setRentList(result);
+      setSelectedRentId(result[0]?.rentId ?? ""); // fallback
+    } catch (err) {
+      console.error("렌탈샵 목록 조회 실패:", err);
+    }
+  };
+    fetchRentIds();
+  },[userId]);
+
+  useEffect(() => {
     const fetchReviews = async () => {
+       if (!selectedRentId) return;
+
       try {
         setOpenIndex(null);
 
         const username = searchparams.isSearchMode && searchparams.searchType === "username" ? searchparams.searchKeyword : null;
         const itemName = searchparams.isSearchMode && searchparams.searchType === "name" ? searchparams.searchKeyword : null;
 
-        const data = await getReviewListForAdmin(username, itemName, null, page, size);
+        const params = {rentId: selectedRentId, username, itemName, hasReply:null, page, size};
+
+        const data = await getReviewListForAdmin(params);
 
       if (!data || !Array.isArray(data.content)) {
         console.error("리뷰 API 응답이 예상과 다릅니다:", data);
@@ -91,7 +113,7 @@ const AdminReviewList = () => {
       }
     };
     fetchReviews();
-  }, [page, searchparams]);
+  }, [page, searchparams, selectedRentId]);
 
   const handleAllCheck = () => {
     const newChecked = !allchecked;
@@ -224,6 +246,18 @@ const AdminReviewList = () => {
     setPage(0);
   };
 
+  useEffect(() => {
+  // 렌탈샵 선택이 바뀔 때 검색 조건 초기화
+  setSearchParams({
+    isSearchMode: false,
+    searchType: "username",
+    searchKeyword: "",
+  });
+  setSearchType("username");
+  setSearchKeyword("");
+  setPage(0);
+}, [selectedRentId]);
+
   const handleViewAll = () => {
     setSearchParams({ isSearchMode: false, searchType: "username", searchKeyword: "" });
     setSearchType("username");
@@ -243,12 +277,24 @@ const AdminReviewList = () => {
 
   return (
     <div>
-      <div className="table-container">
+      <div className="table-container" style={{marginTop: "20px"}}>
         <div className="flex">
-          <button
-            style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
-            <h3><FontAwesomeIcon icon={faCommentDots} /> Review 리스트</h3>
-          </button>
+          <div className="flex">
+            <button
+              onClick={handleViewAll}
+              style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom: "25px" }}>
+              <h3><FontAwesomeIcon icon={faCommentDots} /> Review 리스트</h3>
+            </button>
+            <select 
+              className="filter ml-2.5"
+              value={selectedRentId} 
+              onChange={(e) => setSelectedRentId(Number(e.target.value))}
+            >
+            {rentList.map((rent) => (
+              <option key={rent.rentId} value={rent.rentId}>{rent.name}</option>
+            ))}
+          </select>
+          </div>
           <div className="search-filter">
             <select
               className="filter"
@@ -345,9 +391,6 @@ const AdminReviewList = () => {
                                 )}
                                 <button
                                   onClick={() => {
-                                    console.log("현재 로그인 userId:", userId);
-                                    console.log("답변 작성자 userId:", answers[index]?.userId);
-
                                     if (Number(answers[index]?.userId) !== Number(userId)) {
                                       alert("작성자만 수정할 수 있습니다.");
                                       return;

@@ -49,6 +49,7 @@ public class ReservationItemService {
                 .totalQuantity(detail.getTotalQuantity())
                 .stockQuantity(detail.getStockQuantity())
                 .rentHour(detail.getRentHour())
+
                 .build();
     }
 

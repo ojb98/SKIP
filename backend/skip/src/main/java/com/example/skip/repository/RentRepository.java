@@ -1,5 +1,6 @@
 package com.example.skip.repository;
 
+import com.example.skip.dto.projection.RentSummaryDTO;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.enumeration.RentCategory;
@@ -8,6 +9,7 @@ import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

@@ -49,6 +49,11 @@ public class ReservationItem {
     @Builder.Default
     private boolean stockDeducted = false;
 
+    // 리뷰 작성 유무
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean reviewed = false;
+
     @OneToMany(mappedBy = "reservationItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefundsHistory> refundsHistories = new ArrayList<>();
 

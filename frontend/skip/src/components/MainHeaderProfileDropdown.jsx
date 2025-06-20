@@ -37,13 +37,6 @@ const MainHeaderProfileDropdown = () => {
                     </Link>
 
 
-                    {/* 상엽 */}
-                    <Link
-                        onClick={()=>window.open("/mypage/review/write","_blank","width=600,height=850")}
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer"
-                    >리뷰작성하기</Link>
-
-
                     {
                         roles.includes('MANAGER')
                         &&

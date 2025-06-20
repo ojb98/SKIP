@@ -4,7 +4,6 @@ import com.example.skip.dto.projection.QnaListDTO;
 import com.example.skip.dto.projection.QnaWithReplyDTO;
 import com.example.skip.entity.Qna;
 import com.example.skip.enumeration.QnaStatus;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -184,9 +184,9 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
                                                           @Param("currentUserId") Long currentUserId,
                                                           Pageable pageable);
 
-    // Q&A 3개월 마다 자동 삭제
-    @Transactional
+    // Scheduler 삭제 건수 반환
     @Modifying
+    @Transactional
     @Query("DELETE FROM Qna q WHERE q.createdAt < :cutoff")
-    void deleteByCreatedAtBefore(@Param("cutoff") LocalDateTime cutoff);
+    int deleteByCreatedAtBefore(LocalDateTime createdAtBefore);
 }

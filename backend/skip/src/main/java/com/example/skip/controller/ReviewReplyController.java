@@ -42,7 +42,7 @@ public class ReviewReplyController {
         return ResponseEntity.noContent().build();
     }
 
-    // 리뷰 답변 단건 조회 (수정, 삭제용)
+    // 리뷰 답변 단건 조회 (수정용)
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewReplyResponseDTO> get(@PathVariable Long reviewId,
                                                       @AuthenticationPrincipal UserDto userDto) {
