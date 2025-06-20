@@ -7,7 +7,7 @@ import { findRentByUserId } from '../../services/admin/RentListService';
 
 const CashChargeForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
-  const [currentCash, setCurrentCash] = useState(0);
+  const [cashToken, setCashToken] = useState('');
   const [amount, setAmount] = useState('');
   const [pg, setPg] = useState('kakaopay.TC0ONETIME');
   const [rentList, setRentList] = useState([]);
@@ -24,8 +24,8 @@ const CashChargeForm = () => {
   useEffect(() => {
     const load = async () => {
       if (!userId || !selectedRentId) return;
-      const cash = await fetchCash(userId, selectedRentId);
-      setCurrentCash(cash);
+      const token = await fetchCash(userId, selectedRentId);
+      setCashToken(token);
     };
     load();
   }, [userId, selectedRentId]);
@@ -60,9 +60,10 @@ const CashChargeForm = () => {
           userId,
           rentId: selectedRentId,
           pgProvider: pg,
+          cashToken,
         });
-        const cash = await fetchCash(userId, selectedRentId);
-        setCurrentCash(cash);
+        const token = await fetchCash(userId, selectedRentId);
+        setCashToken(token);
       } else {
         alert('결제 실패: ' + rsp.error_msg);
       }
@@ -103,7 +104,7 @@ const CashChargeForm = () => {
             <label>현재 보유 캐시</label>
            <input
             type="text"
-            value={currentCash.toLocaleString() + ' 원'}
+            value={cashToken.toLocaleString() + ' 원'}
             readOnly
             style={{ textAlign: 'right' }}
           />

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 export const fetchCash = async (userId, rentId) => {
   const resp = await axios.get('/api/rentAdmin/cash', { params: { userId, rentId } });
   return resp.data.remainingCash;
@@ -15,14 +16,20 @@ export const fetchCpb = async (userId, rentId) => {
   return resp.data.cpb;
 };
 
-export const purchaseBoost = async (userId, rentId, boost) => {
-  const resp = await axios.post('/api/rentAdmin/boost', { userId, rentId, boost });
+export const fetchActiveBoost = async (userId, rentId) => {
+  const resp = await axios.get('/api/rentAdmin/boost', { params: { userId, rentId } });
+  return resp.data.activeBoost;
+};
+
+export const purchaseBoost = async (userId, rentId, boost, cpb, cashToken) => {
+  const resp = await axios.post('/api/rentAdmin/boost', { userId, rentId, boost, cpb, cashToken });
   return resp.data.remainingCash;
 };
 
-export const submitBannerRequest = async formData => {
+export const submitBannerRequest = async (formData, cashToken) => {
+  formData.append('cashToken', cashToken);
   const resp = await axios.post('/api/rentAdmin/banner', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-  return resp.data;
+  return resp.data.remainingCash;
 };

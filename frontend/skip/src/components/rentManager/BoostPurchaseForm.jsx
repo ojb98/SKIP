@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchCash, purchaseBoost, fetchCpb } from '../../services/admin/rent/AdService';
+import { fetchCash, purchaseBoost, fetchCpb, fetchActiveBoost } from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
 const BoostPurchaseForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
-  const [currentCash, setCurrentCash] = useState(0);
+  const [cashToken, setCashToken] = useState('');
   const [boost, setBoost] = useState('');
   const [cpb, setCpb] = useState(0);
   const [rentList, setRentList] = useState([]);
   const [selectedRentId, setSelectedRentId] = useState(0);
+  const [activeBoost, setActiveBoost] = useState(0);
 
   useEffect(() => {
     if (!userId) return;
@@ -24,8 +25,10 @@ const BoostPurchaseForm = () => {
   useEffect(() => {
     const load = async () => {
       if (!userId || !selectedRentId) return;
-      const cash = await fetchCash(userId, selectedRentId);
-      setCurrentCash(cash);
+      const token = await fetchCash(userId, selectedRentId);
+      setCashToken(token);
+      const ab = await fetchActiveBoost(userId, selectedRentId);
+      setActiveBoost(ab);
       const price = await fetchCpb(userId, selectedRentId);
       setCpb(price);
     };
@@ -34,8 +37,12 @@ const BoostPurchaseForm = () => {
 
   const handlePurchase = async e => {
     e.preventDefault();
-    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost));
-    if (remaining != null) setCurrentCash(remaining);
+    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost), Number(cpb), cashToken);
+    if (remaining != null) {
+      setCashToken(remaining);
+      const ab = await fetchActiveBoost(userId, selectedRentId);
+      setActiveBoost(ab);
+    }
     setBoost('');
   };
 
@@ -69,8 +76,8 @@ const BoostPurchaseForm = () => {
             </select>
           </div>
           <div className="form-group">
-            <label>현재 보유 캐시</label>
-            <input type="text" value={currentCash} readOnly />
+            <label>현재 보유 캐시 토큰</label>
+            <input type="text" value={cashToken} readOnly />
           </div>
           <div className="form-group">
             <div style={{display:"flex"}}>
@@ -110,6 +117,9 @@ const BoostPurchaseForm = () => {
           <br /><br />
         </span>
       </h3>
+      <p style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
+        현재 적용 중인 부스트 수: {activeBoost}
+      </p>
       
     </div>
     </div>

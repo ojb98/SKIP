@@ -10,4 +10,5 @@ public class AdCashChargeDTO {
     private Long userId;
     private Long rentId;
     private String pgProvider;
+    private String cashToken;
 }

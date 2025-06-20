@@ -83,6 +83,8 @@ public class RentAdService {
     }
 
     public String chargeCash(AdCashChargeDTO dto) throws IOException {
+        Rent rent = findRent(dto.getUserId(), dto.getRentId());
+        verifyCashToken(rent, dto.getCashToken());
     String token = iamportTokenUtil.getIamportToken();
     Request req = new Request.Builder()
             .url("https://api.iamport.kr/payments/" + dto.getImpUid())
@@ -103,7 +105,6 @@ public class RentAdService {
             throw new IllegalStateException("결제 금액 불일치");
         }
 
-        Rent rent = findRent(dto.getUserId(), dto.getRentId());
         rent.setRemainAdCash(rent.getRemainAdCash() + (int) paid);
         rentRepository.save(rent);
 
@@ -118,19 +119,19 @@ public class RentAdService {
                 .build();
         adPaymentRepository.save(adPayment);
 
-            return aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
+        return aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
     }
 
-    public int purchaseBoost(Long userId, Long rentId, int boost) {
+    public String purchaseBoost(Long userId, Long rentId, int boost, int cpb, String cashToken) {
         Rent rent = findRent(userId, rentId);
-        int cpb = calculateCpb(rent);
+        verifyCashToken(rent, cashToken);
         int total = cpb * boost;
         if (rent.getRemainAdCash() < total) {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
         rent.setRemainAdCash(rent.getRemainAdCash() - total);
         LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-        LocalDateTime endDate = nextMonday.atStartOfDay();
+        LocalDateTime endDate = nextMonday.atTime(3,0);
         Boost newBoost = Boost.builder()
                 .rentId(rent.getRentId())
                 .boost(boost)
@@ -139,10 +140,18 @@ public class RentAdService {
                 .build();
         boostRepository.save(newBoost);
         rentRepository.save(rent);
-        return rent.getRemainAdCash();
+        return aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
     }
 
-    public int submitBanner(Long userId, Long rentId, int cpcBid, MultipartFile bannerImage) {
+    public int getActiveBoost(Long userId, Long rentId) {
+        Rent rent = findRent(userId, rentId);
+        return boostRepository.findAllByRentIdAndEndDateAfter(rent.getRentId(), LocalDateTime.now())
+                .stream()
+                .mapToInt(Boost::getBoost)
+                .sum();
+    }
+
+    public String submitBanner(Long userId, Long rentId, int cpcBid, MultipartFile bannerImage, String cashToken) {
         Rent rent = findRent(userId, rentId);
         boolean waitingExists = bannerWaitingListRepository.existsByRent_RentIdAndStatus(rentId, BannerWaitingListStatus.PENDING)
                 || bannerWaitingListRepository.existsByRent_RentIdAndStatus(rentId, BannerWaitingListStatus.APPROVED);
@@ -170,6 +179,13 @@ public class RentAdService {
         bannerService.populateRatings(waiting);
         bannerWaitingListRepository.save(waiting);
         rentRepository.save(rent);
-        return rent.getRemainAdCash();
+        return aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
+    }
+
+    private void verifyCashToken(Rent rent, String token) {
+        String expected = aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
+        if (!expected.equals(token)) {
+            throw new IllegalArgumentException("잔여 캐시 검증 실패");
+        }
     }
 }

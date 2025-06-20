@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
 import { fetchActiveBanners } from '../../services/admin/BannerService';
-import { submitBannerRequest } from '../../services/admin/rent/AdService';
+import { submitBannerRequest , fetchCash} from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 import { rentIdAndNameApi } from '../../api/rentListApi';
@@ -18,6 +18,7 @@ const BannerApplyForm = () => {
   const [activeScores, setActiveScores] = useState([]);
   const [selectedFileName, setSelectedFileName] = useState(''); 
   const [previewUrl, setPreviewUrl] = useState('');
+  const [cashToken, setCashToken] = useState('');
   const imageRef = useRef();
   const [rentList, setRentList] = useState([]);
   const [selectedRentId, setSelectedRentId] = useState(0);
@@ -30,6 +31,16 @@ const BannerApplyForm = () => {
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
   }, [userId]);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!userId || !selectedRentId) return;
+      const token = await fetchCash(userId, selectedRentId);
+      setCashToken(token);
+    };
+    load();
+  }, [userId, selectedRentId]);
+
 
   useEffect(() => {
     const load = async () => {
@@ -82,7 +93,7 @@ const BannerApplyForm = () => {
     form.append('rentId', selectedRentId);
     form.append('cpcBid', cpcBid);
     if (imageRef.current?.files[0]) form.append('bannerImage', imageRef.current.files[0]);
-    await submitBannerRequest(form);
+    await submitBannerRequest(form, cashToken);
     setCpcBid('');
     if (imageRef.current) imageRef.current.value = null;
   };

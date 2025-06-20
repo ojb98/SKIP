@@ -31,12 +31,22 @@ public class RentAdController {
     }
 
     @PostMapping("/boost")
-    public ResponseEntity<Map<String, Integer>> purchaseBoost(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<Map<String, String>> purchaseBoost(@RequestBody Map<String, Object> body) {
         Long userId = ((Number) body.get("userId")).longValue();
         Long rentId = body.get("rentId") != null ? ((Number) body.get("rentId")).longValue() : null;
         int boost = ((Number) body.get("boost")).intValue();
-        int remaining = rentAdService.purchaseBoost(userId, rentId, boost);
+        String token = (String) body.get("cashToken");
+        String remaining = rentAdService.purchaseBoost(userId, rentId, boost, token);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
+    }
+
+    @GetMapping("/boost")
+    public ResponseEntity<Map<String, Integer>> getActiveBoost(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Long rentId
+    ) {
+        int count = rentAdService.getActiveBoost(userId, rentId);
+        return ResponseEntity.ok(Map.of("activeBoost", count));
     }
 
     @GetMapping("/boost/cpb")
@@ -55,7 +65,7 @@ public class RentAdController {
             @RequestParam Integer cpcBid,
             @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage
     ) {
-        int remaining = rentAdService.submitBanner(userId, rentId, cpcBid, bannerImage);
+        String remaining = rentAdService.submitBanner(userId, rentId, cpcBid, bannerImage, cashToken);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 }
