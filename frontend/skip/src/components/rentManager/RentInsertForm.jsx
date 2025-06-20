@@ -274,13 +274,13 @@ const RentInsertForm=()=>{
 
 
     return (
-        <div className="rent-container">
+        <div className="rent-insert-container">
             <h1 className="top-subject">가맹점 등록하기</h1>
-            <div className="form-container">
+            <div className="rent-insert-form-container">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input type="hidden" id="userId" name="userId" value={formData.userId} />
                 <div className="form-group">
-                    <label htmlFor="category">*카테고리</label>
+                    <label htmlFor="category"><span className="required">*</span>카테고리</label>
                     <select name="category" id="category" value={formData.category} onChange={handleChange}>
                         <option value="">카테고리를 선택하세요</option>
                         {
@@ -293,26 +293,26 @@ const RentInsertForm=()=>{
                     </select>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="name">*상호명</label>
+                    <label htmlFor="name"><span className="required">*</span>상호명</label>
                     <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="phone">*전화번호</label>
+                    <label htmlFor="phone"><span className="required">*</span>전화번호</label>
                     <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="010-111-1234" required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="postalCode">*우편번호</label>
+                    <label htmlFor="postalCode"><span className="required">*</span>우편번호</label>
                     <div className="flex">
                         <input type="text" id="postalCode" name="postalCode" value={formData.postalCode} readOnly />
                         <button type="button" onClick={handleAddressSearch}>주소 검색</button>
                     </div>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="basicAddress">*지번 주소</label>
+                    <label htmlFor="basicAddress"><span className="required">*</span>지번 주소</label>
                     <input type="text" id="basicAddress" name="basicAddress" value={formData.basicAddress} readOnly />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="streetAddress">*도로명 주소</label>
+                    <label htmlFor="streetAddress"><span className="required">*</span>도로명 주소</label>
                     <input type="text" id="streetAddress" name="streetAddress" value={formData.streetAddress} readOnly />
                 </div>  
                 <div className="form-group">
@@ -321,10 +321,10 @@ const RentInsertForm=()=>{
                 </div>
                 
                 <div className="form-group">
-                    <label htmlFor="bizRegNumber">*사업자 등록번호</label>
+                    <label htmlFor="bizRegNumber"><span className="required">*</span>사업자 등록번호</label>
                     <div className="flex">
                         <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange} placeholder="숫자만 입력하세요" required/>
-                        <button type="button" onClick={handleBizNumberCheck}>진위확인</button>
+                        <button type="button" onClick={handleBizNumberCheck} className="exist-check-btn">진위확인</button>
                     </div>
                 </div>
 
@@ -340,7 +340,7 @@ const RentInsertForm=()=>{
 
                 {/* accept="image/*" : 모든 종류의 이미지(JPEG, PNG, GIF 등)만 선택 */}
                 <div className="form-group">
-                    <label htmlFor="thumbnail">*썸네일 이미지</label>
+                    <label htmlFor="thumbnail"><span className="required">*</span>썸네일 이미지</label>
                     <input type="file" id="thumbnail" name="thumbnail" ref={fileRefs.thumbnail} accept="image/*" />
                 </div>
                 <div className="form-group">
@@ -361,7 +361,7 @@ const RentInsertForm=()=>{
                     <textarea id="description" name="description" onChange={handleChange}></textarea>
                 </div>
 
-                <button type="submit">등록</button>
+                <button type="submit" className="rent-insert-btn">등록</button>
             </form>
             </div>
         </div>

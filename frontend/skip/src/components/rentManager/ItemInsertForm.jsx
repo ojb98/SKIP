@@ -22,8 +22,7 @@ const ItemInsertForm = () => {
   const [selectedShopName, setSelectedShopName] = useState("");
   const selectedOptions = useCategoryOptions(formData.category);
 
-    // 렌탈샵 목록 불러오기 (rentIdParam 없을 경우)
-useEffect(() => {
+  useEffect(() => {
     if (rentIdParam) {
       rentNameApi(rentIdParam)
         .then(name => setSelectedShopName(name))
@@ -41,7 +40,6 @@ useEffect(() => {
     }
   }, [rentIdParam, userId]);
 
-  // 카테고리 목록 불러오기
   useEffect(() => {
     caxios.get("/api/enums/itemCategory")
       .then(res => setCategories(res.data))
@@ -53,14 +51,10 @@ useEffect(() => {
 
   const handleFormChange = e => {
     const { name, value } = e.target;
-
-    // 카테고리 변경 감지
     if (name === "category" && value === "LIFT_TICKET") {
-      // LIFT_TICKET이면 timePrices, commonSizeStocks를 1개로 맞춤
       setTimePrices(current => current.slice(0, 1));
       setCommonSizeStocks(current => current.slice(0, 1));
     }
-
     setFormData(data => ({ ...data, [name]: value }));
   };
 
@@ -87,13 +81,10 @@ useEffect(() => {
 
   const handleSubmit = e => {
     e.preventDefault();
-
-     // LIFT_TICKET이면 강제로 1개로 맞추기
     if (formData.category === "LIFT_TICKET") {
       if (timePrices.length > 1) setTimePrices(timePrices.slice(0, 1));
       if (commonSizeStocks.length > 1) setCommonSizeStocks(commonSizeStocks.slice(0, 1));
     }
-
     if (!formData.rentId) {
       alert("렌탈샵을 선택해주세요.");
       return;
@@ -115,7 +106,6 @@ useEffect(() => {
       alert("모든 사이즈/수량 정보를 입력하세요.");
       return;
     }
-
     const details = timePrices.map(tp => ({
       rentHour: tp.rentHour,
       price: tp.price,
@@ -124,16 +114,13 @@ useEffect(() => {
         return { size: s.size, totalQuantity: q, stockQuantity: q };
       })
     }));
-
     const requestDTO = {
       ...formData,
       detailList: details
     };
-
     const submitData = new FormData();
     submitData.append("itemRequest", new Blob([JSON.stringify(requestDTO)], { type: "application/json" }));
     submitData.append("image", fileRef.current.files[0]);
-
     caxios.post("/api/items", submitData, {
       headers: { "Content-Type": "multipart/form-data" }
     }).then(res => {
@@ -149,96 +136,84 @@ useEffect(() => {
   };
 
   return (
-    <div className="rent-container">
-      <h1 className="top-subject">장비 등록</h1>
-      <div className="form-container">
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <div className="form-group">
-            <label >*상호명</label>
-            {rentIdParam ? (
+    <div className="item-detail-wrapper">
+      <div className="top-subject">장비 등록</div>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <div className="form-group">
+          <label><span className="required-asterisk">*</span>상호명</label>
+          {rentIdParam ? (
             <select name="rentId" value={formData.rentId} disabled>
               <option value={formData.rentId}>{selectedShopName}</option>
             </select>
-            ) : (
-              <select name="rentId" value={formData.rentId} onChange={handleFormChange} required>
-                <option value="">렌탈샵 선택</option>
-                {rentShops.map(s => (
-                  <option key={s.rentId} value={s.rentId}>{s.name}</option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label>*카테고리</label>
-            <select name="category" value={formData.category} onChange={handleFormChange} required>
-              <option value="">카테고리를 선택하세요</option>
-              {categories.map(c => (
-                <option key={c.code} value={c.code}>{c.label}</option>
+          ) : (
+            <select name="rentId" value={formData.rentId} onChange={handleFormChange} required>
+              <option value="">렌탈샵 선택</option>
+              {rentShops.map(s => (
+                <option key={s.rentId} value={s.rentId}>{s.name}</option>
               ))}
             </select>
-          </div>
-          <div className="form-group">
-            <label>*장비명</label>
-            <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="장비명" required />
-          </div>
-          <div className="form-group">
-            <label>*이미지</label>
-            <input type="file" ref={fileRef} accept="image/*" required />
-          </div>
-
-          {/* 시간/가격 */}
-          <h2 className="sub-subject">대여 옵션</h2>
-          {timePrices.map((tp, i) => (
-            <div key={i} className="form-inline-row">
-              <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)}>
-                <option value="">시간 선택</option>
-                {selectedOptions.hours.map(h => (
-                  <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
-                ))}
-              </select>
-              <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" />
-              <button type="button" className="delete-btn" onClick={() => removeTimePrice(i)}
-                disabled={formData.category === "LIFT_TICKET"}
-                >삭제</button>
-            </div>
-          ))}
-          <button type="button" className="add-btn" onClick={addTimePrice}
-            disabled={formData.category === "LIFT_TICKET"}
-          >+ 시간 추가</button>
-
-          {/* 사이즈/수량 */}
-          <h2 className="sub-subject">사이즈 / 수량</h2>
-          <table className="item-table">
-            <thead><tr><th>사이즈</th><th>수량</th><th>삭제</th></tr></thead>
-            <tbody>
-              {commonSizeStocks.map((s, i) => (
-                <tr key={i}>
-                  <td>
-                    <select value={s.size} onChange={e => handleSizeStockChange(i, "size", e.target.value)}>
-                      <option value="">사이즈 선택</option>
-                      {selectedOptions.sizes.map(sz => (
-                        <option key={sz} value={sz}>{sz}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input type="number" value={s.quantity} onChange={e => handleSizeStockChange(i, "quantity", e.target.value)} required />
-                  </td>
-                  <td>
-                    <button type="button" className="delete-btn" onClick={() => removeSizeStock(i)}
-                      disabled={formData.category === "LIFT_TICKET"}>삭제</button>
-                  </td>
-                </tr>
+          )}
+        </div>
+        <div className="form-group">
+          <label><span className="required-asterisk">*</span>카테고리</label>
+          <select name="category" value={formData.category} onChange={handleFormChange} required>
+            <option value="">카테고리를 선택하세요</option>
+            {categories.map(c => (
+              <option key={c.code} value={c.code}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label><span className="required-asterisk">*</span>장비명</label>
+          <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="장비명" required />
+        </div>
+        <div className="form-group">
+          <label><span className="required-asterisk">*</span>이미지</label>
+          <input type="file" ref={fileRef} accept="image/*" required />
+        </div>
+        <div className="sub-subject">대여 옵션</div>
+        {timePrices.map((tp, i) => (
+          <div key={i} className="form-inline-row">
+            <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)}>
+              <option value="">시간 선택</option>
+              {selectedOptions.hours.map(h => (
+                <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
               ))}
-            </tbody>
-          </table>
-          <button type="button" className="size-add-btn" onClick={addSizeStock}
-            disabled={formData.category === "LIFT_TICKET"}>+ 사이즈 추가</button>
-
-          <button type="submit" className="add-btn">장비 등록</button>
-        </form>
-      </div>
+            </select>
+            <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" />
+            <button type="button" className="item-delete-btn" onClick={() => removeTimePrice(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
+          </div>
+        ))}
+        <button type="button" className="item-add-btn" onClick={addTimePrice} disabled={formData.category === "LIFT_TICKET"}>+ 시간 추가</button>
+        <div className="sub-subject">사이즈 / 수량</div>
+        <table className="item-table">
+          <thead><tr><th>사이즈</th><th>수량</th><th>삭제</th></tr></thead>
+          <tbody>
+            {commonSizeStocks.map((s, i) => (
+              <tr key={i}>
+                <td>
+                  <select value={s.size} onChange={e => handleSizeStockChange(i, "size", e.target.value)}>
+                    <option value="">사이즈 선택</option>
+                    {selectedOptions.sizes.map(sz => (
+                      <option key={sz} value={sz}>{sz}</option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <input type="number" value={s.quantity} onChange={e => handleSizeStockChange(i, "quantity", e.target.value)} required />
+                </td>
+                <td>
+                  <button type="button" className="item-delete-btn" onClick={() => removeSizeStock(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" className="item-size-add-btn" onClick={addSizeStock} disabled={formData.category === "LIFT_TICKET"}>+ 사이즈 추가</button>
+        <div style={{ textAlign: "center" }}>
+          <button type="submit" className="item-insert-btn">장비 등록</button>
+        </div>
+      </form>
     </div>
   );
 };

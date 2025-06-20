@@ -1,97 +1,233 @@
-/* 컨테이너 */
-.rent-list-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+/* 전체 페이지 컨테이너 */
+.rent-page-wrapper {
+  padding: 32px 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff; /* 기본 흰 배경 */
+  color: #000; /* 기본 검정 텍스트 */
+  box-sizing: border-box;
 }
 
-/* 제목 스타일 */
-.top-subject {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
+/* 리스트 테이블는 전체 너비 */
+.rent-table-wrapper {
+  width: 100%;
+  margin-bottom: 30px; /* 상세와 간격 */
 }
 
-.sub-subject {
-    font-size: 1.2rem;
-    color: #777;
-    margin-top: 10px;
-}
-
-/* 테이블 스타일 */
-.list-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.list-thead th {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-.list-tbody td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-/* 행 hover 효과 */
-.clickable-row:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
+/* 상세 정보는 아래쪽, 왼쪽 정렬, 너비 고정 */
+.rent-detail-wrapper {
+  width: 600px; /* 상세 정보 넓이 */
+  background-color: transparent;
+  border: 1px solid #000;
+  padding: 20px;
+  border-radius: 0;
+  margin-left: 0; /* 왼쪽 정렬을 위해 margin-left 없음 */
+  /* margin-right:auto도 가능 */
 }
 
 
-/* 이미지 썸네일 크기 및 스타일 */
+/* 리스트 테이블 기본 스타일 */
+.rent-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.rent-list-table,
+.rent-list-tbody {
+  border: 1px solid #000;
+}
+  
+
+.rent-list-thead th {
+  padding: 12px 10px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #ffffff;
+  background-color: #253463;
+  text-align: center;
+  border-bottom: 1px solid #000;
+}
+
+.rent-list-tbody tr {
+  border-bottom: 1px solid #000;
+  cursor: pointer; 
+}
+
+.rent-list-tbody tr:hover {
+  background-color: #c7c6c6;
+}
+
+.rent-list-tbody td {
+  padding: 10px 8px;
+  font-size: 13px;
+  color: #000;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+}
+
+/* 이미지 - 기본 크기만 유지, 테두리/그림자 제거 */
 .rent-img {
-    width: 100px;
-    height: auto;
-    object-fit: cover;
-    border-radius: 4px;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* 등록 버튼 */
+/* 상태 셀 공통 */
+.status-cell {
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 2px;
+  display: inline-block;
+  min-width: 72px;
+  border: 1px solid;
+}
+
+/* 승인완료 - 연녹색 */
+.status-cell.approved {
+  background-color: #d8f5d2;
+  color: #267b26;
+}
+
+/* 대기 - 연노랑 */
+.status-cell.pending {
+  background-color: #fff6cc;
+  color: #b89e00;
+}
+
+/* 반려 - 연핑크 */
+.status-cell.withdrawn {
+  background-color: #fbd6d6;
+  color: #cc4444;
+}
+
+
+/* 버튼 - 배경과 색 모두 제거하고 기본 버튼 스타일로 */
+.register-btn,
+.register-btn-disabled,
+.rent-del-btn {
+  all: unset; 
+  border-radius: 10%;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+}
+
 .register-btn {
-    text-decoration: none;
-    padding: 8px 16px;
-    color: white;
-    background-color: #4CAF50;
-    border-radius: 4px;
-    font-weight: bold;
-    display: inline-block;
-    transition: background-color 0.3s ease;
+  background-color: #bccefa;
 }
 
-.register-btn:hover {
-    background-color: #45a049;
+.register-btn:hover{
+  color: white;
+  background-color: #89a5ec;
 }
 
-/* 비활성 등록 버튼 */
+.rent-del-btn {
+  background-color: #F59794;
+}
+
+.rent-del-btn:hover{
+  color: white;
+  background-color: #e07370;
+}
+
+
+/* 비활성화 버튼 커서 기본으로 */
 .register-btn-disabled {
-    padding: 8px 16px;
-    background-color: #ccc;
-    color: #fff;
-    border-radius: 4px;
-    cursor: not-allowed;
-    font-weight: bold;
+  cursor: default;
+  background-color: #6c6f79;
 }
 
-/* 삭제 버튼 */
-.delete-btn {
-    padding: 8px 16px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+
+/* 상세 정보 컨테이너 */
+.rent-detail-wrapper {
+  width: 600px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 0;
+  border: 1px solid #000;
+  color: #000;
+  margin-left: 0; /* 왼쪽 정렬 */
 }
 
-.delete-btn:hover {
-    background-color: #e53935;
+/* 상세 테이블 */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: none;
 }
+
+
+.detail-tbody th {
+  background-color: #253463 !important;
+  font-weight: 600;
+  text-align: left;
+  color: white !important;
+  font-size: small;
+  
+}
+
+.detail-tbody td {
+  text-align: left;
+  color: black;
+  
+}
+
+.detail-table th,
+.detail-table td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  color: #000;
+  border: 1px solid #4b5175 !important; 
+}
+
+.detail-table th {
+  width: 30%;
+  background-color: transparent;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.detail-table td {
+  background-color: transparent;
+}
+
+/* 상세 이미지 */
+.detail-table img {
+  max-width: 120px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: 6px;
+}
+
+/* 수정 버튼 */
+.detail-action button {
+  all: unset;
+  border-radius: 10% !important;
+  padding: 8px 20px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #000;
+  background-color: #f9e79f;
+  color: #000;
+  border-radius: 0;
+  margin-top: 20px;
+}
+
+.detail-action button:hover{
+  background-color: #e9d275;
+}
+

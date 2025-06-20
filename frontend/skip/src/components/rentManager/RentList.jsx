@@ -27,6 +27,8 @@ const RentList = () => {
             rentDetailApi(selectedRentId).then(data => {
                 setRentDetail({ ...data });
             });
+        } else {
+            setRentDetail(null); //상세 닫힘 처리
         }
     }, [selectedRentId]);
 
@@ -44,39 +46,50 @@ const RentList = () => {
     const getStatusLabel = (status) => {
         switch (status) {
             case "PENDING":
-                return "대기";
+                return "⏳ 대기";
             case "APPROVED":
-                return "승인완료";
+                return "✔️ 승인완료";
             case "WITHDRAWN":
-                return "반려";
+                return "⛔ 반려";
             default:
                 return status;
         }
     };
 
     return (
-        <div className="rent-list-container">
+        <div className="rent-page-wrapper">
+            <div className="rent-table-wrapper">
             <h1 className="top-subject">가맹점 리스트</h1>
 
             {rent.length === 0 ? (
                 <h1 className="sub-subject">현재 등록된 가맹점이 없습니다.</h1>
             ) : (
-                <table className="list-table">
-                    <thead className="list-thead">
+                <table className="rent-list-table">
+                    <thead className="rent-list-thead">
                         <tr>
                             <th>번호</th><th>썸네일</th><th>상호명</th><th>전화번호</th><th>주소</th><th>승인상태</th><th>등록일</th>
                             <th>장비등록</th><th>탈퇴</th>
                         </tr>
                     </thead>
-                    <tbody className="list-tbody">
+                    <tbody className="rent-list-tbody">
                         {rent.map((r, index) => (
-                            <tr key={r.rentId} onClick={() => setSelectedRentId(r.rentId)} className="clickable-row">
+                            <tr
+                                key={r.rentId}
+                                onClick={() => {
+                                    setSelectedRentId(prev => (prev === r.rentId ? null : r.rentId));
+                                }}
+                                className={`clickable-row ${selectedRentId === r.rentId ? 'selected' : ''}`}
+                            >
                                 <td>{index + 1}</td>
                                 <td><img className="rent-img" src={`http://localhost:8080${r.thumbnail}`} /></td>
                                 <td>{r.name}</td>
                                 <td>{r.phone}</td>
                                 <td>{r.streetAddress}</td>
-                                <td>{getStatusLabel(r.status)}</td>
+                                <td class="status-column">
+                                    <span className={`status-cell ${r.status.toLowerCase()}`}>
+                                        {getStatusLabel(r.status)}
+                                    </span>
+                                </td>
                                 <td>{r.createdAt}</td>
                                 <td onClick={(e) => e.stopPropagation()}>
                                     {r.status === "APPROVED" ? (
@@ -89,17 +102,18 @@ const RentList = () => {
                                     e.stopPropagation();
                                     deleteRent(r.rentId);
                                 }}>
-                                    <button className="delete-btn">탈퇴</button>
+                                    <button className="rent-del-btn">탈퇴</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             )}
+            </div>
 
             {/* 상세 정보 출력 영역 */}
             {rentDetail && (
-                <div className="rent-detail-container" style={{ marginTop: "40px" }}>
+                <div className="rent-detail-wrapper">
                     <table className="detail-table">
                         <tbody className="detail-tbody">
                             <tr><th>사업자등록번호</th><td>{rentDetail.bizRegNumber}</td></tr>
@@ -118,15 +132,12 @@ const RentList = () => {
                         </tbody>
                     </table>
 
-                    <div style={{ marginTop: '20px' }}>
+                    <div className="detail-action">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 window.location.href = `/rentAdmin/update/${rentDetail.rentId}`; 
-                            }}
-                            className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            수정
+                            }}>수정
                         </button>
                     </div>
                 </div>

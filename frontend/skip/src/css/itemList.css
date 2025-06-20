@@ -1,23 +1,29 @@
-/* 컨테이너 전체 레이아웃 */
+/* 관리자페이지 스타일 결로 통일 */
 .item-list-container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 20px;
-    font-family: 'Noto Sans KR', sans-serif;
+    padding: 32px 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+    color: #000;
+    box-sizing: border-box;
 }
 
 /* 제목 스타일 */
 .top-subject {
-    text-align: center;
     font-size: 28px;
-    margin-bottom: 20px;
-    color: #333;
+    font-weight: 700;
+    color: #253463;
+    margin-bottom: 32px;
+    text-align: left;
 }
 
 .sub-subject {
-    text-align: center;
-    font-size: 20px;
-    color: #777;
+    font-size: 18px;
+    font-weight: 600;
+    color: #253463;
+    margin: 32px 0 16px;
+    text-align: left;
 }
 
 /* 카테고리 버튼 영역 */
@@ -56,57 +62,26 @@
 
 /* 장비 카드 */
 .item-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #4b5175;
+    border-radius: 0;
     padding: 20px;
     margin-bottom: 25px;
-    background-color: #fafafa;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background-color: transparent;
+    box-shadow: none;
 }
 
 /* 이미지 스타일 */
 .item-card img {
     margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    border-radius: 0;
+    border: 1px solid #4b5175;
 }
 
 /* 상세 정보 제목 */
-.bottom-subject {
-    margin-top: 15px;
-    font-size: 18px;
-    color: #333;
-}
-
-/* 테이블 전체 스타일 */
-.table-list {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-/* 테이블 헤더 */
-.list-thead th {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    font-size: 14px;
-    text-align: center;
-}
-
-/* 테이블 바디 */
-.list-tbody td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-}
-
-/* 장비 이름 스타일 */
 .bottom-subject2 {
     font-size: 20px;
-    font-weight: bold;
-    color: #222;
+    font-weight: 700;
+    color: #253463;
     margin-bottom: 8px;
 }
 
@@ -118,18 +93,39 @@
     color: #444;
 }
 
+/* 테이블 전체 스타일 */
+.table-list {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: transparent;
+}
+
+/* 테이블 헤더 */
+.table-list th {
+    background-color: #253463;
+    color: #fff;
+    padding: 10px 12px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #4b5175;
+}
+
+/* 테이블 바디 */
+.table-list td {
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid #4b5175;
+    font-size: 14px;
+    background: transparent;
+    color: #000;
+}
 
 /* 등록된 장비 없음 컨테이너 */
 .none-item {
     text-align: center;
     margin-top: 40px;
-}
-
-/* 메시지 텍스트 스타일 */
-.sub-subject {
-    font-size: 20px;
-    color: #777;
-    margin-bottom: 16px;
 }
 
 /* 링크 이동 영역 (버튼과 여백) */
@@ -174,254 +170,200 @@
 }
 
 .button-list {
-  list-style: none;
-  display: flex;
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  gap: 10px; /* 버튼 사이 간격 */
-  padding: 0;
-  margin: 10px 0;
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0;
+    margin: 10px 0;
 }
 
 .button-list li {
-  display: inline-block;
+    display: inline-block;
 }
 
-.update-btn,
-.delete-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.button-list .itemlist-update-btn {
+    all: unset;
+    border: 1px solid #b89e00;
+    border-radius: 0;
+    padding: 8px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #f9e79f;
+    color: #222;
+    margin-left: 8px;
+    user-select: none;
+    text-align: center;
 }
 
-.update-btn {
-  background-color: #facc15;
-  color: white;
+.button-list .itemlist-update-btn:hover {
+    background-color: #f1dd8b;
+    color: #b89e00;
 }
 
-.delete-btn {
-  background-color: #f44336;
-  color: white;
+.button-list .itemlist-add-option-btn {
+    all: unset;
+    border: 1px solid #267b26;
+    border-radius: 0;
+    padding: 8px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #d8f5d2;
+    color: #222;
+    margin-left: 8px;
+    user-select: none;
+    text-align: center;
 }
 
-.add-option-btn {
-    background-color: #5cb85c;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
+.button-list .itemlist-add-option-btn:hover {
+    background-color: #b6e6b0;
+    color: #222;
+}
+
+.button-list .itemlist-delete-selected-btn {
+    all: unset;
+    border: 1px solid #dc3545;
+    border-radius: 0;
+    padding: 8px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #fbd6d6;
+    color: #cc4444;
+    margin-left: 8px;
+    user-select: none;
+    text-align: center;
+}
+
+.button-list .itemlist-delete-selected-btn:hover {
+    background-color: #f17c7c;
+    color: #fff;
+}
+
+.itemlist-all-selected-btn {
     cursor: pointer;
 }
-
-.add-option-btn:hover {
-    background-color: #4cae4c;
-}
-
 
 /* 모달창 css */
 /* 모달 전체 오버레이 */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 
 /* 모달 내용 컨테이너 */
 .modal-content {
-  background-color: #fff;
-  width: 100%;
-  max-width: 640px;
-  border-radius: 8px;
-  padding: 24px 32px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    border: 1.5px solid #4b5175;
+    border-radius: 0;
+    padding: 32px 40px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    color: #222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* 제목 스타일 */
 .modal-subject {
-  margin: 0 0 20px 0;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #253463;
+    margin-bottom: 24px;
+    text-align: left;
 }
 
-/* 옵션 입력 그룹 */
-.model-size-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+.modal-content label {
+    font-size: 14px;
+    color: #253463;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
 }
 
-/* select, input 공통 스타일 권새미씨.. 클래스좀 붙여요.. */
-/* select,
-input[type="number"] {
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline-offset: 2px;
-  outline-color: transparent;
-  transition: outline-color 0.2s ease;
-  min-width: 120px;
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content select {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #4b5175;
+    border-radius: 0;
+    font-size: 15px;
+    color: #000;
+    background: #fff;
+    margin-bottom: 16px;
+    box-sizing: border-box;
 }
 
-select:focus,
-input[type="number"]:focus {
-  outline-color: #4a90e2;
-  border-color: #4a90e2;
-} */
-
-/* 추가된 시간/가격 리스트 그룹 */
-.model-add-group {
-  margin-bottom: 24px;
+.modal-hour-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.model-add-group h4 {
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #555;
-}
-
-.model-add-group ul {
-  list-style: none;
-  padding-left: 0;
-  max-height: 160px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.model-add-group li {
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  font-size: 1rem;
-  color: #444;
-}
-
-.model-add-group li:last-child {
-  border-bottom: none;
-}
-
-
-/* 테이블 스타일 */
-.model-size-table {
-  width: 100%;
-  min-width: 600px;
-  border-collapse: collapse;
-  margin-bottom: 24px;
-  font-size: 1rem;
-  color: #444;
-}
-
-.model-size-table th,
-.model-size-table td {
-  border: 1px solid #ccc;
-  padding: 10px 12px;
-  text-align: center;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.model-size-table thead {
-  background-color: #f5f5f5;
-  font-weight: 600;
-  color: #333;
-}
-
-.model-size-table select,
-.model-size-table input[type="number"] {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* 모달 하단 버튼 그룹 */
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-/* 저장 버튼 */
-.option-save-btn {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.option-save-btn:hover {
-  background-color:  #347fd6;
-}
-
-/* 취소 버튼 */
-.option-cancel-btn {
-  background-color: #bdc3c7;
-  color: #333;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.option-cancel-btn:hover {
-  background-color: #95a5a6;
-}
-
-
-/* 추가 버튼 스타일 */
 .modal-add-btn {
-  background-color: #4a90e2;
-  border: none;
-  color: white;
-  height: 40px;           
-  padding: 0 18px;           
-  border-radius: 4px;
-  font-size: 1rem;           
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  transition: background-color 0.3s ease;
+    all: unset;
+    border: 1px solid #4b5175;
+    border-radius: 0;
+    padding: 10px 24px;
+    font-size: 15px;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+    margin-right: 12px;
+    background-color: #bccefa;
+    color: #222;
 }
 
 .modal-add-btn:hover {
-  background-color: #357ABD;
+    background-color: #89a5ec;
+    color: #222;
 }
 
-/* 삭제 버튼 스타일 */
 .modal-del-btn {
-  background-color: #e74c3c;
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  margin-left: 8px;
-  transition: background-color 0.3s ease;
+    all: unset;
+    border: 1px solid #dc3545;
+    border-radius: 0;
+    padding: 10px 24px;
+    font-size: 15px;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+    background-color: #fbd6d6;
+    color: #cc4444;
 }
 
 .modal-del-btn:hover {
-  background-color: #c0392b;
+    background-color: #f17c7c;
+    color: #fff;
 }
+
+.modal-btn:last-child {
+    margin-right: 0;
+}
+
+.modal-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 32px;
+}
+
+.modal-size-select {
+    min-width: 180px;
+    flex: 2;
+}
+
+.modal-qty-input {
+    min-width: 60px;
+    flex: 1;
+}
+
