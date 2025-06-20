@@ -35,8 +35,9 @@ public class RentAdController {
         Long userId = ((Number) body.get("userId")).longValue();
         Long rentId = body.get("rentId") != null ? ((Number) body.get("rentId")).longValue() : null;
         int boost = ((Number) body.get("boost")).intValue();
+        int cpb = ((Number) body.get("cpb")).intValue();
         String token = (String) body.get("cashToken");
-        String remaining = rentAdService.purchaseBoost(userId, rentId, boost, token);
+        String remaining = rentAdService.purchaseBoost(userId, rentId, cpb, token);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 
@@ -63,7 +64,8 @@ public class RentAdController {
             @RequestParam Long userId,
             @RequestParam(required = false) Long rentId,
             @RequestParam Integer cpcBid,
-            @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage
+            @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage,
+            @RequestParam String cashToken
     ) {
         String remaining = rentAdService.submitBanner(userId, rentId, cpcBid, bannerImage, cashToken);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
