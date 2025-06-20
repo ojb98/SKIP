@@ -51,13 +51,17 @@ public class ReviewService {
         if(!reservationItem.isReturned()) {
             throw new IllegalStateException("반납 완료된 상품에 대해서만 리뷰를 작성할 수 있습니다.");
         }
-        // 이미 리뷰가 존재하는지 확인 (중복 방지)
-        if(reviewRepository.existsByReservationItem_RentItemId(rentItemId)) {
-            throw new IllegalStateException("이미 리뷰가 작성된 상품입니다.");
+
+        // 중복 작성 방지
+        if(reservationItem.isReviewed()) {
+            throw new IllegalStateException("이미 리뷰가 작성된 예약 상품입니다.");
         }
 
         Review review = dto.toEntity(reservationItem, imagePath);
         Review savedReview = reviewRepository.save(review);
+
+        // reservationItem의 reviewed true 설정
+        reservationItem.setReviewed(true);
 
         return ReviewResponseDTO.builder()
                 .reviewId(savedReview.getReviewId())

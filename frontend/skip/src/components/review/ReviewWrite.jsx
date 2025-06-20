@@ -114,6 +114,9 @@ const ReviewWrite = ({ mode }) => {
         await updateReviewApi(reviewId, { rating: selectedRating, content: reviewText, deleteImage, imageFile });
         alert("리뷰가 성공적으로 수정되었습니다.");
       }
+      if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+      }
       window.close();
     } catch (error) {
       console.error("리뷰 처리 실패:", error);

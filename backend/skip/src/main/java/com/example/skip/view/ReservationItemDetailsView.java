@@ -44,4 +44,6 @@ public interface ReservationItemDetailsView {
     int getQuantity();
 
     boolean getIsReturned();
+
+    boolean getReviewed();
 }

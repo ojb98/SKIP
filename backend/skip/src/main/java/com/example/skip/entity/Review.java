@@ -27,6 +27,7 @@ public class Review {
     private int rating;
 
     @Column(nullable = false)
+
     private String content;
 
     private String image;

@@ -272,7 +272,7 @@ const AdminQnaList = () => {
 
   return (
     <div>
-      <div className="table-container">
+      <div className="table-container" style={{marginTop: "20px"}}>
         <div className="flex">
           <button
             onClick={handleViewAll}

@@ -16,9 +16,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    // 리뷰 작성시 RentItemId 기반 중복 확인
-    boolean existsByReservationItem_RentItemId(Long rentItemId);
-
     // 아이템페이지 리뷰 리스트
     @Query(value = """
     SELECT

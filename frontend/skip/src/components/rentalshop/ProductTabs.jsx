@@ -4,7 +4,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faPhoneAlt } from "@fortawesome/free-solid-svg-icons";
 
-const ProductTabs=({rentId, tab, setTab, shopName, shopPhone, shopAddress})=>{
+const ProductTabs=({rentId, tab, setTab, shopName, shopPhone, shopAddress, shopDescription})=>{
 
   const tabList = [
     {key: "LIFT_TICKET", label: "리프트권"},
@@ -22,6 +22,9 @@ const ProductTabs=({rentId, tab, setTab, shopName, shopPhone, shopAddress})=>{
       <div className="flex justify-center gap-14">
         <p><FontAwesomeIcon icon={faPhoneAlt} className="mr-[5px]" style={{ color: '#4072c0' }}/>{shopPhone}</p>
         <p><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-[5px] text-gray-400" style={{ color: '#4072c0' }}/> {shopAddress}</p>
+      </div>
+      <div>
+        <p className="text-center mt-2.5">{shopDescription}</p>
       </div>
       <div className="tab-menu">
         {tabList.map((item)=>(
