@@ -1,5 +1,6 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.projection.RentSummaryDTO;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;

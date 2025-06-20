@@ -34,7 +34,6 @@ public class ReservationDetailDTO {
     private Integer totalQuantity;
     private Integer stockQuantity;
     private Integer rentHour;
-
 }
 
 

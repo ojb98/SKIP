@@ -45,7 +45,6 @@ const MyReservePage = () => {
         searchHandler(0);
     }, [appliedConditions]);
 
-
     const searchHandler = (page = 0) => {
         searchReservations({
             ...appliedConditions,
@@ -133,7 +132,7 @@ const MyReservePage = () => {
                                         r.status == 'PARTIALLY_CANCELLED'
                                         &&
                                         <PartiallyCancelledBadge>부분 취소</PartiallyCancelledBadge>
-                                        || 
+                                        ||
                                         r.status == 'CANCELLED'
                                         &&
                                         <CancelledBadge>예약 취소됨</CancelledBadge>
@@ -147,7 +146,7 @@ const MyReservePage = () => {
                                                 i.refundsHistories.some(h =>
                                                     ["REQUESTED", "COMPLETED", "REJECTED"].includes(h.status)
                                                 );
-                                                
+
                                             return (
                                                 <li
                                                     key={i.rentItemId}
@@ -176,53 +175,62 @@ const MyReservePage = () => {
                                                         </div>
                                                     </div>
 
-                                                <div className="w-[25%] flex flex-col justify-evenly items-center">
-                                                    <button
-                                                        type="button"
-                                                        className={button({ color: "primary-outline", className: 'w-36 h-10' })}
-                                                        onClick={() => {
-                                                        if (!i.isReturned) {
-                                                            alert("반납 후 리뷰를 작성할 수 없습니다.");
-                                                        } else if (i.reviewed) {
-                                                            alert("이미 리뷰를 작성했습니다.");
-                                                        } else {
-                                                            window.open(`/reviews/write/${i.rentItemId}`, '_blank', 'width=600,height=850')}
-                                                        }}
-                                                    >
-                                                        리뷰 쓰기
-                                                    </button>
+                                                    <div className="w-[25%] flex flex-col justify-evenly items-center">
+                                                        {/* 리뷰 작성 버튼 상태 분기 */}
+                                                        <button
+                                                            type="button"
+                                                            className={button({
+                                                                color: !i.isReturned || i.reviewed ? "gray-outline" : "primary-outline",
+                                                                className: 'w-36 h-10'
+                                                            })}
+                                                            onClick={() => {
+                                                                if (!i.isReturned) {
+                                                                    alert("사용 후 리뷰를 작성할 수 있습니다.");
+                                                                } else if (i.reviewed) {
+                                                                    alert("이미 작성된 리뷰입니다.");
+                                                                } else {
+                                                                    window.open(`/reviews/write/${i.rentItemId}`, '_blank', 'width=600,height=850');
+                                                                }
+                                                            }}
+                                                        >
+                                                            {
+                                                                !i.isReturned ? "리뷰 쓰기" :
+                                                                    i.reviewed ? "작성 완료" : "리뷰 쓰기"
+                                                            }
+                                                        </button>
 
                                                         {/* 환불 신청 버튼 상태 분기 */}
                                                         {
                                                             // 반납 후 → 환불 불가 (비활성화)
                                                             i.isReturned ? (
-                                                            <button type="button" disabled
-                                                            className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
-                                                            >
-                                                                환불 불가
-                                                            </button>
-                                                            ) : (
-                                                            // 반납 전
-                                                            isRefundRequested ?  (
-                                                                // 환불 신청 완료 → 비활성화
                                                                 <button type="button" disabled
                                                                     className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
                                                                 >
-                                                                환불신청됨
+                                                                    환불 불가
                                                                 </button>
                                                             ) : (
-                                                                // 환불 신청 가능 → 활성화 버튼
-                                                                <button type="button"
-                                                                    onClick={() => openRefundModal(i.rentItemId)}
-                                                                    className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
-                                                                >
-                                                                환불 신청
-                                                                </button>
-                                                            ))
+                                                                // 반납 전
+                                                                isRefundRequested ? (
+                                                                    // 환불 신청 완료 → 비활성화
+                                                                    <button type="button" disabled
+                                                                        className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
+                                                                    >
+                                                                        환불신청됨
+                                                                    </button>
+                                                                ) : (
+                                                                    // 환불 신청 가능 → 활성화 버튼
+                                                                    <button type="button"
+                                                                        onClick={() => openRefundModal(i.rentItemId)}
+                                                                        className={button({ color: "secondary-outline", className: 'w-36 h-10' })}
+                                                                    >
+                                                                        환불 신청
+                                                                    </button>
+                                                                ))
                                                         }
                                                     </div>
                                                 </li>
-                                        )})
+                                            )
+                                        })
                                     }
                                 </ul>
                             </MyContainer>
@@ -233,9 +241,9 @@ const MyReservePage = () => {
             </ul>
 
             <Pagination pageNumber={reservationsPage.number} totalPages={reservationsPage.totalPages} searchHandler={searchHandler}></Pagination>
-        
+
             {showModal && (
-                <RefundRequestModal onClose={closeRefundModal} onSubmit={submitRefund}/>
+                <RefundRequestModal onClose={closeRefundModal} onSubmit={submitRefund} />
             )}
         </>
     )

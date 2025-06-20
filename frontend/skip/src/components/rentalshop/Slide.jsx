@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import axios from "axios";
 
 const slide=({ images })=>{
 

@@ -111,7 +111,7 @@
 .admin-layout__content {
     margin-left: 250px;
     /* padding: 20px; */
-    width: 1650px;
+    /* width: 1650px; */
     background-color: #f1f3f5;
     min-height: 100vh;
     box-sizing: border-box;

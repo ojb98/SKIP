@@ -7,7 +7,7 @@ const MyReviewPage = () => {
 
     return (
         <>
-            {/* <UserReviewList></UserReviewList> */}
+            <UserReviewList></UserReviewList>
         </>
     )
 }

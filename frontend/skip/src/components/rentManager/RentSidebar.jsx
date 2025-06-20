@@ -60,6 +60,14 @@ const RentSidebar = () => {
                         </ul>
                     </CustomAccordion>
                 </li>
+                <li>
+                    <CustomAccordion title="리뷰 · 문의 관리" isOpen={openIndex === 5} onClick={() => handleAccordionClick(5)}>
+                        <ul className="sub-menu">
+                            <li><Link to="/rentAdmin/review">리뷰</Link></li>
+                            <li><Link to="/rentAdmin/qna">문의</Link></li>
+                        </ul>
+                    </CustomAccordion>
+                </li>
             </ul>
         </aside>
     );

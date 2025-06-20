@@ -23,7 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +63,17 @@ public class ReviewService {
         if(!reservationItem.isReturned()) {
             throw new IllegalStateException("반납 완료된 상품에 대해서만 리뷰를 작성할 수 있습니다.");
         }
-        // 이미 리뷰가 존재하는지 확인 (중복 방지)
-        if(reviewRepository.existsByReservationItem_RentItemId(rentItemId)) {
-            throw new IllegalStateException("이미 리뷰가 작성된 상품입니다.");
+
+        // 중복 작성 방지
+        if(reservationItem.isReviewed()) {
+            throw new IllegalStateException("이미 리뷰가 작성된 예약 상품입니다.");
         }
 
         Review review = dto.toEntity(reservationItem, imagePath);
         Review savedReview = reviewRepository.save(review);
+
+        // reservationItem의 reviewed true 설정
+        reservationItem.setReviewed(true);
 
         return ReviewResponseDTO.builder()
                 .reviewId(savedReview.getReviewId())
@@ -86,16 +92,36 @@ public class ReviewService {
 
 
     // 리뷰 수정
+    public void updateReview(Long reviewId, int rating, String content, MultipartFile imageFile, boolean deleteImage) throws IOException {
+        Review review = reviewRepository.findReviewDetailById(reviewId);
 
+        review.setRating(rating);
+        review.setContent(content);
+
+        // 이미지 삭제 요청이 있는 경우
+        if(deleteImage && review.getImage() != null) {
+            fileUtil.deleteFile(review.getImage());
+            review.setImage(null);
+        }
+
+        // 새 이미지로 변경하는 경우
+        if(imageFile != null && !imageFile.isEmpty()) {
+            if(review.getImage() != null) {
+                fileUtil.deleteFile(review.getImage());
+            }
+            String updateFileName = fileUtil.uploadFile(imageFile, "review");
+            review.setImage(updateFileName);
+        }
+    }
 
     // 리뷰 삭제
     // 마이페이지 리뷰 삭제
-    /*public void deleteReviewByUser(Long reviewId, Long userId) {
+    public void deleteReviewByUser(Long reviewId, Long userId) {
         // 리뷰 조회
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
         // 본인 확인
-        if (!review.getReservation().getUser().getUserId().equals(userId)) {
+        if (!review.getReservationItem().getReservation().getUser().getUserId().equals(userId)) {
             throw new SecurityException("본인의 리뷰만 삭제할 수 있습니다.");
         }
         // 이미지파일 삭제
@@ -108,10 +134,10 @@ public class ReviewService {
         }
         // 리뷰 삭제
         reviewRepository.delete(review);
-    }*/
+    }
 
     // 관리자페이지 리뷰 삭제
-/*    public void deleteReviewByAdmin(Long reviewId) {
+    public void deleteReviewByAdmin(Long reviewId) {
         // 리뷰 확인
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
@@ -125,38 +151,42 @@ public class ReviewService {
         }
         // 리뷰 삭제
         reviewRepository.delete(review);
-    }*/
+    }
 
     // 리뷰 목록
-
     // 아이템페이지 리뷰 리스트
-/*    public Page<ReviewListDTO> getReviewListByItem(Long itemId, String sortType, Pageable pageable) {
+    public Page<ReviewListDTO> getReviewListByItem(Long itemId, String sortType, Pageable pageable) {
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         return reviewRepository.findReviewListByItemWithReply(itemId, sortType, pageOnly);
-    }*/
+    }
 
     // 관리자페이지 리뷰 리스트
-/*    public Page<AdminReviewListDTO> getReviewWithReplyForAdmin(String username, String itemName, Boolean hasReply, Pageable pageable) {
+    public Page<AdminReviewListDTO> getReviewWithReplyForAdmin(Long rentId, String username, String itemName, Boolean hasReply, Pageable pageable) {
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize()
         );
-        return reviewRepository.findAllReviewWithReplyForAdmin(username, itemName, hasReply, sortedPageable);
-    }*/
+        return reviewRepository.findAllReviewWithReplyForAdmin(rentId, username, itemName, hasReply, sortedPageable);
+    }
 
     // 마이페이지 리뷰 리스트
-/*    public Page<UserReviewListDTO> getUserReviewList(Long userId, LocalDateTime startDate, Pageable pageable) {
+    public Page<UserReviewListDTO> getUserReviewList(Long userId, LocalDateTime startDate, Pageable pageable) {
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize()
         );
         return reviewRepository.findUserReviewListByUserIdAndDate(userId, startDate, sortedPageable);
-    }*/
+    }
+
+    // 리뷰 단건 조회 (수정용)
+    public ReviewUpdateDTO getReviewUpdateInfo(Long reviewId) {
+        return reviewRepository.findReviewUpdateInfoById(reviewId);
+    }
 
     // 총 리뷰 수, 평균
-/*    public ReviewStatsDTO getReviewStats(Long itemId){
+    public ReviewStatsDTO getReviewStats(Long itemId){
         return reviewRepository.getReviewsStatsByItemId(itemId);
-    }*/
+    }
 
     // 렌트 아이디 리스트의 리뷰 평점 받아오기
     public Map<Long, Double> getAverageRatingsOf(List<Long> rentIds) {
