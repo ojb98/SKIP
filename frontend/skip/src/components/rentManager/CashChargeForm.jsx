@@ -30,11 +30,11 @@ const CashChargeForm = () => {
     load();
   }, [userId, selectedRentId]);
 
-  useEffect(() => {
-    if (window.IMP) {
-      window.IMP.init(import.meta.env.VITE_IAMPORT_API_KEY);
-    }
-  }, []);
+  const handleAmountChange = e => {
+    const raw = e.target.value.replace(/[^0-9]/g, ''); // 숫자만
+    setAmount(raw);
+  };
+
 
   const handleCharge = async e => {
     e.preventDefault();
@@ -44,6 +44,7 @@ const CashChargeForm = () => {
       alert('결제 모듈 로딩 실패');
       return;
     }    
+    IMP.init('imp57043461');
     IMP.request_pay({
       pg,
       pay_method: 'card',
@@ -100,17 +101,24 @@ const CashChargeForm = () => {
           </div>
           <div className="form-group">
             <label>현재 보유 캐시</label>
-            <input type="text" value={currentCash} readOnly />
-          </div>
-          <div className="form-group">
-            <label>충전 금액</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              required
-            />
-          </div>
+           <input
+            type="text"
+            value={currentCash.toLocaleString() + ' 원'}
+            readOnly
+            style={{ textAlign: 'right' }}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>충전 금액</label>
+          <input
+            type="text"
+            value={amount ? `${Number(amount).toLocaleString()} 원` : ''}
+            onChange={handleAmountChange}
+            required
+            style={{ textAlign: 'right' }}
+          />
+        </div>
           <div className="form-group">
             <label>결제 수단</label>
             <select value={pg} onChange={e => setPg(e.target.value)}>

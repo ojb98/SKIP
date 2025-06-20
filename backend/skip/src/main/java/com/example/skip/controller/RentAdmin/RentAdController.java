@@ -17,16 +17,16 @@ public class RentAdController {
     private final RentAdService rentAdService;
 
     @GetMapping("/cash")
-    public ResponseEntity<Map<String, Integer>> getCash(
+    public ResponseEntity<Map<String, String>> getCash(
             @RequestParam Long userId,
             @RequestParam(required = false) Long rentId) {
-        int remaining = rentAdService.getCash(userId, rentId);
+        String remaining = rentAdService.getCash(userId, rentId);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 
     @PostMapping("/cash")
-    public ResponseEntity<Map<String, Integer>> chargeCash(@RequestBody AdCashChargeDTO dto) throws Exception {
-        int remaining = rentAdService.chargeCash(dto);
+    public ResponseEntity<Map<String, String>> chargeCash(@RequestBody AdCashChargeDTO dto) throws Exception {
+        String remaining = rentAdService.chargeCash(dto);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
 
@@ -35,10 +35,18 @@ public class RentAdController {
         Long userId = ((Number) body.get("userId")).longValue();
         Long rentId = body.get("rentId") != null ? ((Number) body.get("rentId")).longValue() : null;
         int boost = ((Number) body.get("boost")).intValue();
-        int cpb = ((Number) body.get("cpb")).intValue();
-        int remaining = rentAdService.purchaseBoost(userId, rentId, boost, cpb);
+        int remaining = rentAdService.purchaseBoost(userId, rentId, boost);
         return ResponseEntity.ok(Map.of("remainingCash", remaining));
     }
+
+    @GetMapping("/boost/cpb")
+    public ResponseEntity<Map<String, Integer>> getCpb(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Long rentId) {
+        int cpb = rentAdService.getCpb(userId, rentId);
+        return ResponseEntity.ok(Map.of("cpb", cpb));
+    }
+
 
     @PostMapping(value = "/banner", consumes = "multipart/form-data")
     public ResponseEntity<Map<String, Integer>> submitBanner(

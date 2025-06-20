@@ -138,7 +138,7 @@ const BannerApplyForm = () => {
           <label>
             예상 노출도 점수
             <span className="tooltip-icon">?
-              <span className="tooltip-text" style={{width:"410px"}}>
+              <span className="tooltip-text" style={{width:"590px"}}>
                 노출도 점수 산정방식: 
                 <br/> 0.2×평균별점 + 0.3×(해당 배너의 입찰가 ÷ 해당 주차의 최대 입찰가) + 0.5×최근7일평점                 
               </span>

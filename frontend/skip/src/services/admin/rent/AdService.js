@@ -10,8 +10,13 @@ export const chargeCash = async data => {
   return resp.data.remainingCash;
 };
 
-export const purchaseBoost = async (userId, rentId, boost, cpb) => {
-  const resp = await axios.post('/api/rentAdmin/boost', { userId, rentId, boost, cpb });
+export const fetchCpb = async (userId, rentId) => {
+  const resp = await axios.get('/api/rentAdmin/boost/cpb', { params: { userId, rentId } });
+  return resp.data.cpb;
+};
+
+export const purchaseBoost = async (userId, rentId, boost) => {
+  const resp = await axios.post('/api/rentAdmin/boost', { userId, rentId, boost });
   return resp.data.remainingCash;
 };
 

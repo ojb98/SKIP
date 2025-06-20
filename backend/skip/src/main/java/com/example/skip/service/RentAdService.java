@@ -10,7 +10,7 @@ import com.example.skip.enumeration.BannerWaitingListStatus;
 import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.*;
 import com.example.skip.util.FileUploadUtil;
-import com.example.skip.util.FileUtil;
+import com.example.skip.util.AesUtil;
 import com.example.skip.util.IamportTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -39,12 +40,30 @@ public class RentAdService {
     private final BannerActiveListRepository bannerActiveListRepository;
     private final AdPaymentRepository adPaymentRepository;
     private final BoostRepository boostRepository;
+    private final ReviewRepository reviewRepository;
     private final IamportTokenUtil iamportTokenUtil;
+    private final AesUtil aesUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OkHttpClient client = new OkHttpClient();
 
     private static final int BANNER_REGISTRATION_FEE = 150_000;
+    private static final int BASE_BOOST_PRICE = 1_000;
 
+    private int calculateCpb(Rent rent) {
+        BigDecimal avg = reviewRepository.findAverageRatingByRentId(rent.getRentId());
+        BigDecimal recent = reviewRepository.findRecent7dRatingByRentId(rent.getRentId(), LocalDateTime.now().minusDays(7));
+
+        double a = avg != null ? avg.doubleValue() : 2.5;
+        double r = recent != null ? recent.doubleValue() : 2.5;
+
+        double multiplier = 1 + (5.0 - a) * 0.1 + (5.0 - r) * 0.1;
+        return (int) Math.round(BASE_BOOST_PRICE * multiplier);
+    }
+
+    public int getCpb(Long userId, Long rentId) {
+        Rent rent = findRent(userId, rentId);
+        return calculateCpb(rent);
+    }
 
     private Rent findRent(Long userId, Long rentId) {
         if (rentId != null) {
@@ -58,17 +77,18 @@ public class RentAdService {
                 .orElseThrow(() -> new IllegalArgumentException("렌탈샵을 찾을 수 없습니다."));
     }
 
-    public int getCash(Long userId, Long rentId) {
-        return findRent(userId, rentId).getRemainAdCash();
+    public String getCash(Long userId, Long rentId) {
+        int remain = findRent(userId, rentId).getRemainAdCash();
+        return aesUtil.encrypt(String.valueOf(remain));
     }
 
-    public int chargeCash(AdCashChargeDTO dto) throws IOException {
-        String token = iamportTokenUtil.getIamportToken();
-        Request req = new Request.Builder()
-                .url("https://api.iamport.kr/payments/" + dto.getImpUid())
-                .get()
-                .addHeader("Authorization", token)
-                .build();
+    public String chargeCash(AdCashChargeDTO dto) throws IOException {
+    String token = iamportTokenUtil.getIamportToken();
+    Request req = new Request.Builder()
+            .url("https://api.iamport.kr/payments/" + dto.getImpUid())
+            .get()
+            .addHeader("Authorization", token)
+            .build();
 
         long paid;
         String merchantUid;
@@ -98,15 +118,17 @@ public class RentAdService {
                 .build();
         adPaymentRepository.save(adPayment);
 
-        return rent.getRemainAdCash();
+            return aesUtil.encrypt(String.valueOf(rent.getRemainAdCash()));
     }
 
-    public int purchaseBoost(Long userId, Long rentId, int boost, int cpb) {
+    public int purchaseBoost(Long userId, Long rentId, int boost) {
         Rent rent = findRent(userId, rentId);
-        if (rent.getRemainAdCash() < cpb) {
+        int cpb = calculateCpb(rent);
+        int total = cpb * boost;
+        if (rent.getRemainAdCash() < total) {
             throw new IllegalArgumentException("잔여 캐시가 부족합니다.");
         }
-        rent.setRemainAdCash(rent.getRemainAdCash() - cpb);
+        rent.setRemainAdCash(rent.getRemainAdCash() - total);
         LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
         LocalDateTime endDate = nextMonday.atStartOfDay();
         Boost newBoost = Boost.builder()

@@ -134,3 +134,7 @@ openweather:
 iamport:
   apiKey: ${IAMPORT_API_KEY}
   secretKey: ${IAMPORT_SECRET_KEY}
+
+
+encryption:
+  key: ${ENCRYPTION_KEY}

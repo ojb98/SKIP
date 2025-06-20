@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchCash, purchaseBoost } from '../../services/admin/rent/AdService';
+import { fetchCash, purchaseBoost, fetchCpb } from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
@@ -9,7 +9,7 @@ const BoostPurchaseForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
   const [currentCash, setCurrentCash] = useState(0);
   const [boost, setBoost] = useState('');
-  const [cpb, setCpb] = useState('');
+  const [cpb, setCpb] = useState(0);
   const [rentList, setRentList] = useState([]);
   const [selectedRentId, setSelectedRentId] = useState(0);
 
@@ -26,16 +26,17 @@ const BoostPurchaseForm = () => {
       if (!userId || !selectedRentId) return;
       const cash = await fetchCash(userId, selectedRentId);
       setCurrentCash(cash);
+      const price = await fetchCpb(userId, selectedRentId);
+      setCpb(price);
     };
     load();
   }, [userId, selectedRentId]);
 
   const handlePurchase = async e => {
     e.preventDefault();
-    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost), Number(cpb));
+    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost));
     if (remaining != null) setCurrentCash(remaining);
     setBoost('');
-    setCpb('');
   };
 
   const getNextMonday0AM = () => {
@@ -43,7 +44,7 @@ const BoostPurchaseForm = () => {
     const diff = (8 - today.getDay()) % 7 || 7;
     const monday = new Date(today);
     monday.setDate(today.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
+    monday.setHours(3, 0, 0, 0);
     return monday.toISOString().split('T')[0] + ' 00:00';
   };
   const updateDay = getNextMonday0AM();
@@ -72,13 +73,16 @@ const BoostPurchaseForm = () => {
             <input type="text" value={currentCash} readOnly />
           </div>
           <div className="form-group">
+            <div style={{display:"flex"}}>
             <label>부스트 한 개당 가격</label>
-            <input
-              type="number"
-              value={cpb}
-              onChange={e => setCpb(e.target.value)}
-              required
-            />
+            <span className="tooltip-icon" style={{width:"15px", height:"25px"}}>?
+              <span className="tooltip-text" style={{width:"400px"}}>
+                부스트 가격 산정방식: 
+                <br/> 1 + (5.0 - 평균 평점) * 0.1 + (5.0 - 최근7일 평균평점) * 0.1            
+              </span>
+            </span>
+            </div>
+            <input type="number" value={cpb} readOnly />
           </div>
           <div className="form-group">
             <label>부스트 갯수</label>
@@ -100,6 +104,7 @@ const BoostPurchaseForm = () => {
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
           * 부스트는 사용자가 렌탈샵 일반검색 시 상단에 노출되게 하는 광고형 상품입니다.
           <br />&nbsp;&nbsp;* 부스트는 매주 월요일 오전 3:00에 초기화됩니다.     
+          <br />&nbsp;&nbsp;* 부스트의 가격 책정은 제공된 계산식에 따라 계산되며, 신규 입점업체를 위한 최소 점수가 배정되어 있습니다.
           <br />&nbsp;&nbsp;* 부스트는 보유한 갯수에 따라 상단 노출 순위가 결정되며, 가게의 최근 리뷰 평점에 따라 가격이 산정됩니다.
           <br />&nbsp;&nbsp;* 최근 리뷰가 없는 신규 입점 업체는 기본값으로 설정된 최소점수가 반영됩니다.                              
           <br /><br />
