@@ -17,31 +17,32 @@ const ReservationRow = ({ reservation, expanded, onToggle, onReturnSuccess}) => 
 
   	return (
     	<>
-		<tr onClick={onToggle} style={{ cursor: "pointer", backgroundColor: expanded ? "#eef7ff" : "white" }}>
-			<td>{reservation.reserveId}</td>
-			<td>{reservation.username}</td>
-			<td>{reservation.merchantUid}</td>
-			<td>{reservation.rentName}</td>
-			<td>{reservation.totalPrice.toLocaleString()}원</td>
-			<td>{new Date(reservation.createdAt).toLocaleString()}</td>
-			<td>{getStatusLabel(reservation.status)}</td>
+		<tr className={`reservation-main-row ${expanded ? 'reservation-main-row-expanded' : ''}`} onClick={onToggle}>
+			<td className="reservation-main-cell">{reservation.reserveId}</td>
+			<td className="reservation-main-cell">{reservation.username}</td>
+			<td className="reservation-main-cell">{reservation.merchantUid}</td>
+			<td className="reservation-main-cell">{reservation.rentName}</td>
+			<td className="reservation-main-cell">{reservation.totalPrice.toLocaleString()}원</td>
+			<td className="reservation-main-cell">{new Date(reservation.createdAt).toLocaleString()}</td>
+			<td className="reservation-main-cell">{getStatusLabel(reservation.status)}</td>
 		</tr>
 
 		{expanded && (
-			<tr>
-				<td colSpan="7">
-					<div style={{
-						border: "1px solid #ccc",
-						padding: "12px",
-						backgroundColor: "#f9f9f9",
-						borderRadius: "8px",}}>
+			<tr className="reservation-detail-row">
+				<td colSpan="7" className="reservation-detail-cell">
+					<div className="reservation-detail-container">
 
-					<strong>예약 리스트</strong>
-					<table style={{ width: "100%", marginTop: "10px", fontSize: "14px" }}>
+					<strong className="reservation-detail-title">예약 리스트</strong>
+					<table className="reservation-item-table">
 						<thead>
-							<tr style={{ textAlign: "left" }}>
-								<th>상세ID</th><th>상품명</th><th>사이즈</th><th>수량</th>
-								<th>소계</th><th>반납여부</th><th>장비 반납</th>
+							<tr className="reservation-item-header-row">
+								<th className="reservation-item-header">상세ID</th>
+								<th className="reservation-item-header">상품명</th>
+								<th className="reservation-item-header">사이즈</th>
+								<th className="reservation-item-header">수량</th>
+								<th className="reservation-item-header">소계</th>
+								<th className="reservation-item-header">반납여부</th>
+								<th className="reservation-item-header">장비 반납</th>
 							</tr>
 						</thead>
 						<tbody>

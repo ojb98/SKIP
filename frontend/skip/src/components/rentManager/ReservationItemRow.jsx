@@ -47,23 +47,23 @@ const ReservationItemRow = ({ item, onReturnSuccess }) => {
 
 	return (
 		<>
-		<tr style={{ cursor: "pointer", backgroundColor: "#fff" }} onClick={handleRowClick}>
-			<td>{item.rentItemId}</td>
-			<td>{item.itemName}</td>
-			<td>{item.size}</td>
-			<td>{item.quantity}</td>
-			<td>{item.subtotalPrice.toLocaleString()}원</td>
-			<td>{item.returned ? "✔️" : "❌" }</td>
-			<td>
-				<button onClick={handleReturnClick} disabled={item.returned}>
+		<tr className={`reservation-item-row ${expanded ? 'reservation-item-row-expanded' : ''}`} onClick={handleRowClick}>
+			<td className="reservation-item-cell">{item.rentItemId}</td>
+			<td className="reservation-item-cell">{item.itemName}</td>
+			<td className="reservation-item-cell">{item.size}</td>
+			<td className="reservation-item-cell">{item.quantity}</td>
+			<td className="reservation-item-cell">{item.subtotalPrice.toLocaleString()}원</td>
+			<td className="reservation-item-cell">{item.returned ? "✔️" : "❌" }</td>
+			<td className="reservation-item-cell">
+				<button className="reservation-return-button" onClick={handleReturnClick} disabled={item.returned}>
 					{item.returned ? "반납 완료" : "반납하기"}
 				</button>
 			</td>
 		</tr>
 
 		{expanded && detail && (
-			<tr>
-				<td colSpan="7">
+			<tr className="reservation-item-detail-row">
+				<td colSpan="7" className="reservation-item-detail-cell">
 					<ReservationItemDetail detail={detail} />
 				</td>
 			</tr>
