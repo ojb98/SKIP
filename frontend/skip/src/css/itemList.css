@@ -14,7 +14,7 @@
     font-size: 28px;
     font-weight: 700;
     color: #253463;
-    margin-bottom: 32px;
+    margin-bottom: 50px;
     text-align: left;
 }
 
@@ -29,10 +29,9 @@
 /* 카테고리 버튼 영역 */
 .category-buttons {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 30px;
     gap: 10px;
+    margin: 32px 0;
+    flex-wrap: wrap;
 }
 
 /* 카테고리 버튼 공통 스타일 */
@@ -294,7 +293,7 @@
 .modal-content input[type="number"],
 .modal-content select {
     width: 100%;
-    padding: 14px 12px;
+    padding: 11px 9px;
     border: 1px solid #4b5175;
     border-radius: 0;
     font-size: 15px;
@@ -307,7 +306,7 @@
 /* 시간/가격 입력 그룹 */
 .modal-hour-select {
     width: 100%;
-    padding: 14px 12px;
+    padding: 11px 9px;
     border: 1px solid #4b5175;
     border-radius: 0;
     font-size: 15px;
@@ -318,7 +317,7 @@
 
 .modal-price-input {
     width: 100%;
-    padding: 14px 12px;
+    padding: 11px 9px;
     border: 1px solid #4b5175;
     border-radius: 0;
     font-size: 15px;
@@ -326,6 +325,32 @@
     background: #fff;
     margin-top: 16px;
     box-sizing: border-box;
+}
+
+/* 한 줄 배치를 위한 컨테이너 */
+.modal-option-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.modal-option-row .form-group {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.modal-option-row .form-group label {
+    margin-bottom: 0;
+}
+
+.modal-option-row .form-group:last-child {
+    flex: 0 0 auto;
+}
+
+.modal-option-row .modal-hour-select,
+.modal-option-row .modal-price-input {
+    margin-top: 0;
 }
 
 /* 추가 버튼 */
@@ -340,6 +365,8 @@
     background-color: #bccefa;
     color: #000;
     transition: all 0.2s ease;
+    height: 48px;
+    box-sizing: border-box;
 }
 
 .itemlist-modal-add-btn:hover {
@@ -404,7 +431,6 @@
 .modal-opt-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 24px 0;
     border: 1px solid #4b5175;
 }
 
@@ -428,7 +454,7 @@
 }
 
 .modal-itemlist-tbody td {
-    padding: 10px 6px;
+    padding: 4px 6px;
     border: 1px solid #4b5175;
     font-size: 12px;
     text-align: center;
@@ -438,7 +464,7 @@
 
 .modal-size-select {
     width: 100%;
-    padding: 8px 6px;
+    padding: 2px 4px;
     border: 1px solid #4b5175;
     border-radius: 0;
     font-size: 12px;
@@ -450,7 +476,7 @@
 .modal-totalqty-input,
 .modal-stockqty-input {
     width: 100%;
-    padding: 8px 6px;
+    padding: 2px 4px;
     border: 1px solid #4b5175;
     border-radius: 0;
     font-size: 12px;

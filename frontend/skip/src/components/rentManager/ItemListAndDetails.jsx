@@ -281,40 +281,42 @@ const ItemListAndDetails = () => {
             <h2 className="modal-subject">옵션 추가</h2>
 
             {/* 시간/가격 조합 추가 */}
-            <div className="form-group">
-              <label>시간 선택</label>
-              <select
-                className="modal-hour-select"
-                value={newOptions[0].rentHour}
-                onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
-              >
-                <option value="">시간 선택</option>
-                {hours.map(h => (
-                  <option key={h} value={h}>{h}시간</option>
-                ))}
-              </select>
-            </div>
+            <div className="modal-option-row">
+              <div className="form-group">
+                <label>시간 선택</label>
+                <select
+                  className="modal-hour-select"
+                  value={newOptions[0].rentHour}
+                  onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
+                >
+                  <option value="">시간 선택</option>
+                  {hours.map(h => (
+                    <option key={h} value={h}>{h}시간</option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="form-group">
-              <label>가격</label>
-              <input 
-                type="number" 
-                className="modal-price-input"
-                placeholder="가격을 입력하세요"
-                value={newOptions[0].price}
-                onChange={e => handleOptionChange(0, 'price', e.target.value)}
-              />
-            </div>
+              <div className="form-group">
+                <label>가격</label>
+                <input 
+                  type="number" 
+                  className="modal-price-input"
+                  placeholder="가격을 입력하세요"
+                  value={newOptions[0].price}
+                  onChange={e => handleOptionChange(0, 'price', e.target.value)}
+                />
+              </div>
 
-            <div className="form-group">
-              <button
-                type="button"
-                onClick={addEmptyTimePriceOption}
-                disabled={modalItemCategory === "LIFT_TICKET"}
-                className="itemlist-modal-add-btn"
-              >
-                옵션 추가
-              </button>
+              <div className="form-group">
+                <button
+                  type="button"
+                  onClick={addEmptyTimePriceOption}
+                  disabled={modalItemCategory === "LIFT_TICKET"}
+                  className="itemlist-modal-add-btn"
+                >
+                  옵션 추가
+                </button>
+              </div>
             </div>
 
             {/* 추가 옵션 리스트 */}

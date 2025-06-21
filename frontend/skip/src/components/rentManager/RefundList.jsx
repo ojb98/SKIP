@@ -3,6 +3,7 @@ import { refundsApproveApi, refundsListApi, refundsRejectApi } from "../../api/r
 import { useSelector } from "react-redux";
 import RefundListDetail from "./RefundListDetail";
 import { rentIdAndNameApi } from "../../api/rentListApi";
+import '../../css/refundList.css';
 
 
 const RefundList = () => {
@@ -129,13 +130,13 @@ const RefundList = () => {
     }
 
     return (
-        <div>
-        <h2 className="top-subject">환불 요청 목록</h2>
+        <div className="refund-list-container">
+        <h2 className="refund-top-subject">환불 요청 목록</h2>
 
         {/* 필터 */}
-        <div className="filter-form">
+        <div className="refund-filter-form">
             <select value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-                <option value="">전체</option>
+                <option value="">전체 상태</option>
                 <option value="REQUESTED">환불 요청</option>
                 <option value="COMPLETED">환불 완료</option>
                 <option value="REJECTED">환불 거절</option>
@@ -154,8 +155,8 @@ const RefundList = () => {
                     )}
             </select>
 
-            <input type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)}/>
-            <input type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)}/>
+            <input type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)} placeholder="시작일"/>
+            <input type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)} placeholder="종료일"/>
 
             <select value={filters.sort} onChange={(e) => handleFilterChange('sort', e.target.value)}>
                 <option value="DESC">최신순</option>
@@ -165,29 +166,39 @@ const RefundList = () => {
             <button onClick={fetchRefunds}>검색</button>
         </div>
 
-        {loading && <p>불러오는 중...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {loading && <div className="refund-loading-message">불러오는 중...</div>}
+        {error && <div className="refund-error-message">{error}</div>}
 
         {/* 환불 목록 테이블 */}
-        <table border="1" cellPadding="5" style={{ marginTop: 20 }}>
+        <table className="refund-table">
             <thead>
                 <tr>
-                    <th>환불ID</th><th>주문번호</th><th>상호명</th><th>상품명</th><th>수량</th>
-                    <th>환불금액</th><th>요청일</th><th>상태</th><th>승인</th><th>거부</th>
+                    <th>환불ID</th>
+                    <th>주문번호</th>
+                    <th>상호명</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>환불금액</th>
+                    <th>요청일</th>
+                    <th>상태</th>
+                    <th>승인</th>
+                    <th>거부</th>
                 </tr>
             </thead>
             <tbody>
                 {refunds.length === 0 ? (
                     <tr>
-                        <td colSpan="11" style={{ textAlign: 'center' }}>
+                        <td colSpan="10" className="refund-no-data-message">
                             환불 내역이 없습니다.
                         </td>
                     </tr>
                 ) : (
                     refunds.map((refund) => (
                     <React.Fragment key={refund.refundId}>
-                        <tr onClick={() => toggleAccordion(refund.refundId)}
-                            style={{cursor: "pointer", backgroundColor: selectedRefundId === refund.refundId? "#f0f8ff" : "white",}}>
+                        <tr 
+                            onClick={() => toggleAccordion(refund.refundId)}
+                            className={selectedRefundId === refund.refundId ? 'selected' : ''}
+                        >
                             <td>{refund.refundId}</td>
                             <td>{refund.merchantUid}</td>
                             <td>{refund.rentName}</td>
@@ -195,27 +206,41 @@ const RefundList = () => {
                             <td>{refund.quantity}</td>
                             <td>{refund.refundPrice.toLocaleString()}원</td>
                             <td>{new Date(refund.createdAt).toLocaleString()}</td>
-                            <td>{getStatusLabel(refund.status)}</td>
+                            <td>
+                                <span className={`refund-status-badge refund-status-${refund.status.toLowerCase()}`}>
+                                    {getStatusLabel(refund.status)}
+                                </span>
+                            </td>
                             <td>
                                 {refund.status === "REQUESTED" && (
-                                    <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleApprove(refund.refundId);
-                                    }}>✔️</button>
+                                    <button 
+                                        className="refund-approve-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleApprove(refund.refundId);
+                                        }}
+                                    >
+                                        승인
+                                    </button>
                                 )}
                             </td>
                             <td>
                                 {refund.status === "REQUESTED" && (
-                                    <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleReject(refund.refundId);
-                                    }}>❌</button>
+                                    <button 
+                                        className="refund-reject-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleReject(refund.refundId);
+                                        }}
+                                    >
+                                        거부
+                                    </button>
                                 )}
                             </td>
                         </tr>
                         {selectedRefundId === refund.refundId && (
                         <tr>
-                            <td colSpan="11">
+                            <td colSpan="10">
                                 <RefundListDetail refundId={refund.refundId} />
                             </td>
                         </tr>
