@@ -147,9 +147,8 @@ const ItemInsertForm = () => {
   };
 
   return (
-    <>
-    <h1 className="top-subject">장비 등록</h1>
     <div className="item-detail-wrapper">
+      
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <label><span className="required-asterisk">*</span>상호명</label>
@@ -242,7 +241,6 @@ const ItemInsertForm = () => {
         </div>
       </form>
     </div>
-    </>
   );
 };
 

@@ -208,9 +208,9 @@ const ItemUpdateForm = () => {
     }
 
     return (
-        <>
         <h1 className="top-subject">장비 수정</h1>
         <div className="item-detail-wrapper">
+            <div className="top-subject">장비 수정</div>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="form-group">
                     <label>상호명</label>
@@ -310,7 +310,6 @@ const ItemUpdateForm = () => {
                 </div>
             </form>
         </div>
-        </>
     )
 }
 

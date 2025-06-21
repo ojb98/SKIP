@@ -1,9 +1,8 @@
 /* 환불 관리 페이지 스타일 */
 .refund-list-container {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 10px;
   background-color: transparent;
   color: #000;
   box-sizing: border-box;
@@ -81,6 +80,7 @@
 /* 테이블 스타일 */
 .refund-table {
   width: 100%;
+  min-width: 1400px;
   border-collapse: collapse;
   margin-top: 20px;
   border: 1px solid #4b5175;
@@ -88,22 +88,22 @@
 
 .refund-table-header {
   padding: 12px 8px;
-  border: 1px solid #4b5175;
   font-size: 14px;
   text-align: center;
   background-color: #253463;
   color: #fff;
   font-weight: 600;
   font-size: 16px;
+  border-bottom: 1px solid #4b5175;
 }
 
 .refund-table-cell {
   padding: 10px 8px;
-  border: 1px solid #4b5175;
   font-size: 14px;
   text-align: center;
   background-color: transparent;
   color: #000;
+  border-bottom: 1px solid #4b5175;
 }
 
 .refund-table-row {
@@ -115,8 +115,17 @@
   background-color: #c7c6c6;
 }
 
+.refund-table-row:hover .refund-table-cell {
+  color: #000;
+}
+
 .refund-table-row.selected {
-  background-color: #e6f3ff;
+  background-color: #5c74b2;
+  color: #fff;
+}
+
+.refund-table-row.selected .refund-table-cell {
+  color: #fff;
 }
 
 /* 상세 정보가 있는 행은 호버 효과 제거 */
@@ -136,16 +145,16 @@
   cursor: pointer;
   user-select: none;
   text-align: center;
-  border: 1px solid #267b26;
-  background-color: #d8f5d2;
-  color: #222;
+  border: 1px solid #000;
+  background-color: #bccefa;
+  color: #000;
   border-radius: 0;
   transition: all 0.2s ease;
 }
 
 .refund-approve-btn:hover {
-  background-color: #b6e6b0;
-  color: #222;
+  color: #fff;
+  background-color: #89a5ec;
 }
 
 .refund-approve-btn:disabled {
@@ -193,21 +202,21 @@
 }
 
 .refund-status-requested {
-  background-color: #fff3cd;
+  background-color: #ffeaa7;
   color: #856404;
-  border: 1px solid #ffeaa7;
+  border: 1px solid #fdcb6e;
 }
 
 .refund-status-completed {
-  background-color: #d4edda;
+  background-color: #b8e6b8;
   color: #155724;
-  border: 1px solid #c3e6cb;
+  border: 1px solid #a3d9a3;
 }
 
 .refund-status-rejected {
-  background-color: #f8d7da;
+  background-color: #f5c6cb;
   color: #721c24;
-  border: 1px solid #f5c6cb;
+  border: 1px solid #f1b0b7;
 }
 
 /* 상세 정보 스타일 */

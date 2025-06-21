@@ -310,7 +310,6 @@ const ItemUpdateForm = () => {
                 </div>
             </form>
         </div>
-        </>
     )
 }
 

@@ -98,9 +98,8 @@
 /* 예약 관리 페이지 스타일 */
 .reservation-list-container {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 10px;
   background-color: transparent;
   color: #000;
   box-sizing: border-box;
@@ -193,6 +192,7 @@
 /* 메인 테이블 스타일 */
 .reservation-main-table {
   width: 100%;
+  min-width: 1400px;
   border-collapse: collapse;
   margin-top: 20px;
   border: 1px solid #4b5175;

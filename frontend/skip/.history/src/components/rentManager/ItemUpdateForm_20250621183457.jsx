@@ -208,7 +208,6 @@ const ItemUpdateForm = () => {
     }
 
     return (
-        <>
         <h1 className="top-subject">장비 수정</h1>
         <div className="item-detail-wrapper">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -310,7 +309,6 @@ const ItemUpdateForm = () => {
                 </div>
             </form>
         </div>
-        </>
     )
 }
 
