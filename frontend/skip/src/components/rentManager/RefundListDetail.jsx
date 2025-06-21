@@ -43,19 +43,19 @@ const RefundListDetail = ({ refundId }) => {
                 환불 상세 정보
             </h4>
             <div className="refund-detail-content">
-                <p><strong>유저:</strong> {detail.userName}</p>
-                <p><strong>이메일:</strong> {detail.userEmail}</p>
-                <p><strong>총 결제 금액:</strong> {detail.totalPaymentPrice.toLocaleString()}원</p>
-                <p><strong>환불금액:</strong> {detail.refundPrice.toLocaleString()}원</p>
-                <p><strong>결제 수단:</strong> {detail.method} ({detail.pgProvider})</p>
-                <p><strong>환불 사유:</strong> {detail.reason}</p>
-                <p><strong>환불 상태:</strong> 
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">유저:</strong> {detail.userName}</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">이메일:</strong> {detail.userEmail}</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">총 결제 금액:</strong> {detail.totalPaymentPrice.toLocaleString()}원</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">환불금액:</strong> {detail.refundPrice.toLocaleString()}원</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">결제 수단:</strong> {detail.method} ({detail.pgProvider})</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">환불 사유:</strong> {detail.reason}</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">환불 상태:</strong> 
                     <span className={`refund-status-badge refund-status-${detail.status.toLowerCase()}`} style={{ marginLeft: '8px' }}>
                         {getStatusLabel(detail.status)}
                     </span>
                 </p>
-                <p><strong>대여 기간:</strong> {new Date(detail.rentStart).toLocaleString()} ~ {new Date(detail.rentEnd).toLocaleString()}</p>
-                <p><strong>환불 완료일:</strong> {detail.refundedAt ? new Date(detail.refundedAt).toLocaleString() : "없음"}</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">대여 기간:</strong> {new Date(detail.rentStart).toLocaleString()} ~ {new Date(detail.rentEnd).toLocaleString()}</p>
+                <p className="refund-detail-paragraph"><strong className="refund-detail-label">환불 완료일:</strong> {detail.refundedAt ? new Date(detail.refundedAt).toLocaleString() : "없음"}</p>
             </div>
         </div>
     )

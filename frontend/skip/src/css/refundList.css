@@ -20,18 +20,24 @@
 /* 필터 폼 스타일 */
 .refund-filter-form {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-items: center;
   margin-bottom: 24px;
   padding: 16px;
   background: #f7f9fc;
   border: 1px solid #253463;
   border-radius: 6px;
+}
+
+.refund-filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
-.refund-filter-form select,
-.refund-filter-form input[type="date"] {
+.refund-filter-select,
+.refund-filter-date {
   padding: 8px 12px;
   border: 1px solid #4b5175;
   border-radius: 0;
@@ -41,7 +47,20 @@
   min-width: 120px;
 }
 
-.refund-filter-form button {
+.refund-filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #253463;
+  margin-right: 8px;
+}
+
+.refund-filter-separator {
+  font-size: 14px;
+  color: #253463;
+  margin: 0 4px;
+}
+
+.refund-filter-button {
   all: unset;
   padding: 8px 16px;
   font-size: 14px;
@@ -54,7 +73,7 @@
   transition: all 0.2s ease;
 }
 
-.refund-filter-form button:hover {
+.refund-filter-button:hover {
   color: #fff;
   background-color: #89a5ec;
 }
@@ -67,7 +86,7 @@
   border: 1px solid #4b5175;
 }
 
-.refund-table th {
+.refund-table-header {
   padding: 12px 8px;
   border: 1px solid #4b5175;
   font-size: 14px;
@@ -78,7 +97,7 @@
   font-size: 16px;
 }
 
-.refund-table td {
+.refund-table-cell {
   padding: 10px 8px;
   border: 1px solid #4b5175;
   font-size: 14px;
@@ -87,25 +106,25 @@
   color: #000;
 }
 
-.refund-table tr {
+.refund-table-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.refund-table tr:hover {
-  background-color: #f0f8ff;
+.refund-table-row:hover {
+  background-color: #c7c6c6;
 }
 
-.refund-table tr.selected {
+.refund-table-row.selected {
   background-color: #e6f3ff;
 }
 
 /* 상세 정보가 있는 행은 호버 효과 제거 */
-.refund-table tr:has(td[colspan]) {
+.refund-table-row-detail {
   cursor: default;
 }
 
-.refund-table tr:has(td[colspan]):hover {
+.refund-table-row-detail:hover {
   background-color: transparent;
 }
 
@@ -129,6 +148,13 @@
   color: #222;
 }
 
+.refund-approve-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #000;
+  cursor: not-allowed;
+}
+
 .refund-reject-btn {
   all: unset;
   padding: 6px 12px;
@@ -146,6 +172,13 @@
 .refund-reject-btn:hover {
   background-color: #f17c7c;
   color: #fff;
+}
+
+.refund-reject-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #000;
+  cursor: not-allowed;
 }
 
 /* 상태 배지 스타일 */
@@ -186,23 +219,24 @@
   text-align: left;
 }
 
-.refund-detail p {
+.refund-detail-paragraph {
   margin: 8px 0;
   font-size: 14px;
   line-height: 1.5;
   text-align: left;
 }
 
-.refund-detail strong {
+.refund-detail-label {
   color: #253463;
   font-weight: 600;
   margin-right: 8px;
+  font-size: 14px;
 }
 
 .refund-detail-title {
   margin-bottom: 16px;
   color: #253463;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
 }
 

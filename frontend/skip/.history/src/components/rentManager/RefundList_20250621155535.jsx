@@ -65,7 +65,7 @@ const RefundList = () => {
             status: filters.status || undefined,
             startDate: filters.startDate || undefined,
             endDate: filters.endDate || undefined,
-            // sort: filters.sort || undefined,
+            sort: filters.sort || undefined,
         }
 
         console.log("filters payload:", payload);
@@ -135,35 +135,35 @@ const RefundList = () => {
 
         {/* 필터 */}
         <div className="refund-filter-form">
-            <div className="refund-filter-row">
-                <select className="refund-filter-select" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-                    <option value="">전체 상태</option>
-                    <option value="REQUESTED">환불 요청</option>
-                    <option value="COMPLETED">환불 완료</option>
-                    <option value="REJECTED">환불 거절</option>
-                </select>
+            <select value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+                <option value="">전체 상태</option>
+                <option value="REQUESTED">환불 요청</option>
+                <option value="COMPLETED">환불 완료</option>
+                <option value="REJECTED">환불 거절</option>
+            </select>
 
-                <select className="refund-filter-select" value={filters.rentId} onChange={(e) => handleFilterChange("rentId", e.target.value === '' ? '' : Number(e.target.value))}>
-                    <option value="">전체 상호명</option>
-                        {rents.length > 0 ? (
-                            rents.map((rent) => (
-                            <option key={rent.rentId} value={rent.rentId}>
-                                {rent.name}
-                            </option>
-                            ))
-                        ) : (
-                            <option disabled>로딩 중...</option>
-                        )}
-                </select>
-            </div>
-            
-            <div className="refund-filter-row">
-                <label className="refund-filter-label">환불요청일:</label>
-                <input className="refund-filter-date" type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)} placeholder="시작일"/>
-                <span className="refund-filter-separator"><strong>~</strong></span>
-                <input className="refund-filter-date" type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)} placeholder="종료일"/>
-                <button className="refund-filter-button" onClick={fetchRefunds}>검색</button>
-            </div>
+            <select value={filters.rentId} onChange={(e) => handleFilterChange("rentId", e.target.value === '' ? '' : Number(e.target.value))}>
+                <option value="">전체 상호명</option>
+                    {rents.length > 0 ? (
+                        rents.map((rent) => (
+                        <option key={rent.rentId} value={rent.rentId}>
+                            {rent.name}
+                        </option>
+                        ))
+                    ) : (
+                        <option disabled>로딩 중...</option>
+                    )}
+            </select>
+
+            <input type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)} placeholder="시작일"/>
+            <input type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)} placeholder="종료일"/>
+
+            <select value={filters.sort} onChange={(e) => handleFilterChange('sort', e.target.value)}>
+                <option value="DESC">최신순</option>
+                <option value="ASC">오래된순</option>
+            </select>
+
+            <button onClick={fetchRefunds}>검색</button>
         </div>
 
         {loading && <div className="refund-loading-message">불러오는 중...</div>}
@@ -173,16 +173,16 @@ const RefundList = () => {
         <table className="refund-table">
             <thead>
                 <tr>
-                    <th className="refund-table-header">환불ID</th>
-                    <th className="refund-table-header">주문번호</th>
-                    <th className="refund-table-header">상호명</th>
-                    <th className="refund-table-header">상품명</th>
-                    <th className="refund-table-header">수량</th>
-                    <th className="refund-table-header">환불금액</th>
-                    <th className="refund-table-header">요청일</th>
-                    <th className="refund-table-header">상태</th>
-                    <th className="refund-table-header">승인</th>
-                    <th className="refund-table-header">거부</th>
+                    <th>환불ID</th>
+                    <th>주문번호</th>
+                    <th>상호명</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>환불금액</th>
+                    <th>요청일</th>
+                    <th>상태</th>
+                    <th>승인</th>
+                    <th>거부</th>
                 </tr>
             </thead>
             <tbody>
@@ -196,46 +196,50 @@ const RefundList = () => {
                     refunds.map((refund) => (
                     <React.Fragment key={refund.refundId}>
                         <tr 
-                            className={`refund-table-row ${selectedRefundId === refund.refundId ? 'selected' : ''}`}
                             onClick={() => toggleAccordion(refund.refundId)}
+                            className={selectedRefundId === refund.refundId ? 'selected' : ''}
                         >
-                            <td className="refund-table-cell">{refund.refundId}</td>
-                            <td className="refund-table-cell">{refund.merchantUid}</td>
-                            <td className="refund-table-cell">{refund.rentName}</td>
-                            <td className="refund-table-cell">{refund.itemName}</td>
-                            <td className="refund-table-cell">{refund.quantity}</td>
-                            <td className="refund-table-cell">{refund.refundPrice.toLocaleString()}원</td>
-                            <td className="refund-table-cell">{new Date(refund.createdAt).toLocaleString()}</td>
-                            <td className="refund-table-cell">
+                            <td>{refund.refundId}</td>
+                            <td>{refund.merchantUid}</td>
+                            <td>{refund.rentName}</td>
+                            <td>{refund.itemName}</td>
+                            <td>{refund.quantity}</td>
+                            <td>{refund.refundPrice.toLocaleString()}원</td>
+                            <td>{new Date(refund.createdAt).toLocaleString()}</td>
+                            <td>
                                 <span className={`refund-status-badge refund-status-${refund.status.toLowerCase()}`}>
                                     {getStatusLabel(refund.status)}
                                 </span>
                             </td>
-                            <td className="refund-table-cell">
-                                <button className="refund-approve-btn"
-                                    disabled={refund.status !== "REQUESTED"}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleApprove(refund.refundId);
-                                    }}
-                                >
-                                    승인
-                                </button>
+                            <td disabled>
+                                {refund.status === "REQUESTED" && (
+                                    <button 
+                                        className="refund-approve-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleApprove(refund.refundId);
+                                        }}
+                                    >
+                                        승인
+                                    </button>
+                                )}
                             </td>
-                            <td className="refund-table-cell">
-                                <button className="refund-reject-btn"
-                                    disabled={refund.status !== "REQUESTED"}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleReject(refund.refundId);
-                                    }}
-                                >
-                                    거부
-                                </button>
+                            <td>
+                                {refund.status === "REQUESTED" && (
+                                    <button 
+                                        className="refund-reject-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleReject(refund.refundId);
+                                        }}
+                                    >
+                                        거부
+                                    </button>
+                                )}
                             </td>
                         </tr>
                         {selectedRefundId === refund.refundId && (
-                        <tr className="refund-table-row-detail">
+                        <tr>
                             <td colSpan="10">
                                 <RefundListDetail refundId={refund.refundId} />
                             </td>
