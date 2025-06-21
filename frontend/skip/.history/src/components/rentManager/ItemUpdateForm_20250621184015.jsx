@@ -208,108 +208,108 @@ const ItemUpdateForm = () => {
     }
 
     return (
-        <div className="item-page-wrapper">
-            <h1 className="top-subject">장비 수정</h1>
-            <div className="item-detail-wrapper">
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                    <div className="form-group">
-                        <label>상호명</label>
-                        <input type="hidden" name="rentId" value={formData.rentId} />
-                        <input type="text" name="rentname" value={rentName} disabled className="form-control" />
-                    </div>
-                    <div className="form-group">
-                        <label>카테고리</label>
-                        <select name="category" value={formData.category} onChange={handleFormChange} disabled>
-                            <option value="">카테고리를 선택하세요</option>
-                            {categories.map((cat, index) => (
-                                <option key={index} value={cat.code}>{cat.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label><span className="required-asterisk">*</span>장비명</label>
-                        <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="장비명" required />
-                    </div>
-                    <div className="form-group">
-                        <label><span className="required-asterisk">*</span>이미지</label>
-                        <input type="file" name="image" ref={fileRef} accept="image/*" />
-                    </div>
-                    <div className="sub-subject">대여 옵션</div>
-                    <table className="item-table">
-                    <thead>
-                        <tr><th>시간</th><th>가격</th></tr>
-                    </thead>
-                    <tbody>
-                        {timePrices.map((tp, i) => (
-                        <tr key={i}>
-                            <td>
-                            <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)} className="form-hour-select">
-                                <option value="">시간 선택</option>
-                                {selectedOptions.hours.map(h => (
-                                <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
-                                ))}
-                            </select>
-                            </td>
-                            <td>
-                            <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" className="form-price-input" />
-                            </td>
-                        </tr>
+            <div className="item-page-wrapper">
+      <h1 className="top-subject">장비 등록</h1>
+        <div className="item-detail-wrapper">
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="form-group">
+                    <label>상호명</label>
+                    <input type="hidden" name="rentId" value={formData.rentId} />
+                    <input type="text" name="rentname" value={rentName} disabled className="form-control" />
+                </div>
+                <div className="form-group">
+                    <label>카테고리</label>
+                    <select name="category" value={formData.category} onChange={handleFormChange} disabled>
+                        <option value="">카테고리를 선택하세요</option>
+                        {categories.map((cat, index) => (
+                            <option key={index} value={cat.code}>{cat.label}</option>
                         ))}
-                    </tbody>
-                    </table>
-                    <div className="sub-subject">사이즈 / 수량</div>
-                    {formData.category !== "LIFT_TICKET" ? (
-                        <table className="item-table">
-                            <thead>
-                                <tr>
-                                    <th>사이즈</th><th>총 수량</th><th>재고 수량</th>
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label><span className="required-asterisk">*</span>장비명</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="장비명" required />
+                </div>
+                <div className="form-group">
+                    <label><span className="required-asterisk">*</span>이미지</label>
+                    <input type="file" name="image" ref={fileRef} accept="image/*" />
+                </div>
+                <div className="sub-subject">대여 옵션</div>
+                <table className="item-table">
+                  <thead>
+                    <tr><th>시간</th><th>가격</th></tr>
+                  </thead>
+                  <tbody>
+                    {timePrices.map((tp, i) => (
+                      <tr key={i}>
+                        <td>
+                          <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)} className="form-hour-select">
+                            <option value="">시간 선택</option>
+                            {selectedOptions.hours.map(h => (
+                              <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" className="form-price-input" />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="sub-subject">사이즈 / 수량</div>
+                {formData.category !== "LIFT_TICKET" ? (
+                    <table className="item-table">
+                        <thead>
+                            <tr>
+                                <th>사이즈</th><th>총 수량</th><th>재고 수량</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {commonSizeStocks.map((s, idx) => (
+                                <tr key={idx}>
+                                    <td>
+                                        <select value={s.size} onChange={e => handleSizeStockChange(idx, "size", e.target.value)}>
+                                            <option value="">사이즈 선택</option>
+                                            {selectedOptions.sizes.map((size) => (
+                                                <option key={size} value={size}>{size}</option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" value={s.totalQuantity} onChange={e => handleSizeStockChange(idx, "totalQuantity", e.target.value)} />
+                                    </td>
+                                    <td>
+                                        <input type="number" value={s.stockQuantity} onChange={e => handleSizeStockChange(idx, "stockQuantity", e.target.value)} />
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {commonSizeStocks.map((s, idx) => (
-                                    <tr key={idx}>
-                                        <td>
-                                            <select value={s.size} onChange={e => handleSizeStockChange(idx, "size", e.target.value)}>
-                                                <option value="">사이즈 선택</option>
-                                                {selectedOptions.sizes.map((size) => (
-                                                    <option key={size} value={size}>{size}</option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" value={s.totalQuantity} onChange={e => handleSizeStockChange(idx, "totalQuantity", e.target.value)} />
-                                        </td>
-                                        <td>
-                                            <input type="number" value={s.stockQuantity} onChange={e => handleSizeStockChange(idx, "stockQuantity", e.target.value)} />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <table className="item-table">
-                            <thead>
-                                <tr><th>총 수량</th><th>재고 수량</th></tr>
-                            </thead>
-                            <tbody>
-                                {commonSizeStocks.map((s, idx) => (
-                                    <tr key={idx}>
-                                        <td>
-                                            <input type="number" value={s.totalQuantity} onChange={e => handleSizeStockChange(idx, "totalQuantity", e.target.value)} />
-                                        </td>
-                                        <td>
-                                            <input type="number" value={s.stockQuantity} onChange={e => handleSizeStockChange(idx, "stockQuantity", e.target.value)} />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                    <div style={{ textAlign: "center" }}>
-                        <button type="submit" className="item-insert-btn">장비 수정</button>
-                    </div>
-                </form>
-            </div>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <table className="item-table">
+                        <thead>
+                            <tr><th>총 수량</th><th>재고 수량</th></tr>
+                        </thead>
+                        <tbody>
+                            {commonSizeStocks.map((s, idx) => (
+                                <tr key={idx}>
+                                    <td>
+                                        <input type="number" value={s.totalQuantity} onChange={e => handleSizeStockChange(idx, "totalQuantity", e.target.value)} />
+                                    </td>
+                                    <td>
+                                        <input type="number" value={s.stockQuantity} onChange={e => handleSizeStockChange(idx, "stockQuantity", e.target.value)} />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+                <div style={{ textAlign: "center" }}>
+                    <button type="submit" className="item-insert-btn">장비 수정</button>
+                </div>
+            </form>
+        </div>
         </div>
     )
 }
