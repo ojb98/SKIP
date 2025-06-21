@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ReservationItemDetail from "./ReservationItemDetail";
 import { reservDetailApi, reservItemReturnApi } from "../../api/reservationApi";
+import '../../css/reservationItemList.css';
 
 const ReservationItemRow = ({ item, onReturnSuccess }) => {
 	const [expanded, setExpanded] = useState(false);
