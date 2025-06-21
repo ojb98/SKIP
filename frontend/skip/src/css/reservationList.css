@@ -261,6 +261,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  border: 1px solid #4b5175;
 }
 
 .reservation-item-header {
@@ -270,6 +271,7 @@
   background-color: #253463;
   color: #fff;
   font-weight: 600;
+  border-bottom: 1px solid #4b5175;
 }
 
 .reservation-item-cell {
@@ -278,6 +280,7 @@
   text-align: center;
   background-color: transparent;
   color: #000;
+  border-bottom: 1px solid #4b5175;
 }
 
 .reservation-item-row {
