@@ -35,7 +35,12 @@
 }
 
 .reservation-item-row-expanded {
-  background-color: #e6f3ff;
+  background-color: #b8c7e8;
+  color: #000;
+}
+
+.reservation-item-row-expanded .reservation-item-cell {
+  color: #000;
 }
 
 /* 반납 버튼 스타일 */
@@ -46,16 +51,16 @@
   cursor: pointer;
   user-select: none;
   text-align: center;
-  border: 1px solid #267b26;
-  background-color: #d8f5d2;
-  color: #222;
+  border: 1px solid #000;
+  background-color: #bccefa;
+  color: #000;
   border-radius: 0;
   transition: all 0.2s ease;
 }
 
 .reservation-return-button:hover {
-  background-color: #b6e6b0;
-  color: #222;
+  color: #fff;
+  background-color: #89a5ec;
 }
 
 .reservation-return-button:disabled {

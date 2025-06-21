@@ -24,7 +24,11 @@ const ReservationRow = ({ reservation, expanded, onToggle, onReturnSuccess}) => 
 			<td className="reservation-main-cell">{reservation.rentName}</td>
 			<td className="reservation-main-cell">{reservation.totalPrice.toLocaleString()}원</td>
 			<td className="reservation-main-cell">{new Date(reservation.createdAt).toLocaleString()}</td>
-			<td className="reservation-main-cell">{getStatusLabel(reservation.status)}</td>
+			<td className="reservation-main-cell">
+				<span className={`reservation-status-badge reservation-status-${reservation.status.toLowerCase()}`}>
+					{getStatusLabel(reservation.status)}
+				</span>
+			</td>
 		</tr>
 
 		{expanded && (
