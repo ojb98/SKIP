@@ -281,92 +281,120 @@ const ItemListAndDetails = () => {
             <h2 className="modal-subject">옵션 추가</h2>
 
             {/* 시간/가격 조합 추가 */}
-            <div>
-              <div className="flex items-center gap-2">
-                <select
-                  className="modal-hour-select w-4/5 h-10 px-2 border border-[#4b5175] rounded-none text-[15px] text-black bg-white"
-                  value={newOptions[0].rentHour}
-                  onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
-                >
-                  <option value="">시간 선택</option>
-                  {hours.map(h => (
-                    <option key={h} value={h}>{h}시간</option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={addEmptyTimePriceOption}
-                  disabled={modalItemCategory === "LIFT_TICKET"}
-                  className="itemlist-modal-add-btn w-1/5 h-10 flex items-center justify-center border border-[#267b26] bg-[#d8f5d2] text-[#222] cursor-pointer disabled:opacity-50"
-                >
-                  추가
-                </button>
-              </div>
+            <div className="form-group">
+              <label>시간 선택</label>
+              <select
+                className="modal-hour-select"
+                value={newOptions[0].rentHour}
+                onChange={e => handleOptionChange(0, 'rentHour', e.target.value)}
+              >
+                <option value="">시간 선택</option>
+                {hours.map(h => (
+                  <option key={h} value={h}>{h}시간</option>
+                ))}
+              </select>
+            </div>
 
-              <input type="number" className="modal-price-input"
-                placeholder="가격"
+            <div className="form-group">
+              <label>가격</label>
+              <input 
+                type="number" 
+                className="modal-price-input"
+                placeholder="가격을 입력하세요"
                 value={newOptions[0].price}
                 onChange={e => handleOptionChange(0, 'price', e.target.value)}
               />
-              
+            </div>
+
+            <div className="form-group">
+              <button
+                type="button"
+                onClick={addEmptyTimePriceOption}
+                disabled={modalItemCategory === "LIFT_TICKET"}
+                className="itemlist-modal-add-btn"
+              >
+                옵션 추가
+              </button>
             </div>
 
             {/* 추가 옵션 리스트 */}
             {newOptions.length > 1 && (
-              <ul className="modal-optlist-ul"> 
-                {newOptions.slice(1).map((opt, idx) => (
-                  <li key={idx} className="modal-optlist-li">
-                    {opt.rentHour}시간 - {opt.price}원
-                    <button onClick={() => setNewOptions(prev => prev.filter((_, i) => i !== idx + 1))}
-                       disabled={modalItemCategory === "LIFT_TICKET"} className="itemlist-modal-del-btn">삭제</button>
-                  </li>
-                ))}
-              </ul>
+              <div className="form-group">
+                <label>추가된 옵션</label>
+                <ul className="modal-optlist-ul"> 
+                  {newOptions.slice(1).map((opt, idx) => (
+                    <li key={idx} className="modal-optlist-li">
+                      <span>{opt.rentHour}시간 - {opt.price}원</span>
+                      <button 
+                        onClick={() => setNewOptions(prev => prev.filter((_, i) => i !== idx + 1))}
+                        disabled={modalItemCategory === "LIFT_TICKET"} 
+                        className="itemlist-modal-del-btn"
+                      >
+                        삭제
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {/* 사이즈/재고 입력 */}
-            <table className="modal-opt-table">
-              <thead className="modal-itemlist-thead">
-                <tr><th>사이즈</th><th>총수량</th><th>재고수량</th></tr>
-              </thead>
-              <tbody className="modal-itemlist-tbody">
-                <tr>
-                  <td>
-                    <select className="modal-size-select"
-                      value={sizeStockInputs.selectedSize || ''}
-                      onChange={e =>
-                        setSizeStockInputs(prev => ({
-                          ...prev,
-                          selectedSize: e.target.value,
-                          [e.target.value]: prev[e.target.value] || { totalQuantity: '', stockQuantity: '' }
-                        }))
-                      }
-                    >
-                      <option value="">사이즈 선택</option>
-                      {sizes.map(s => <option key={s}>{s}</option>)}
-                    </select>
-                  </td>
-                  <td>
-                    <input type="number" className="modal-totalqty-input"
-                      value={sizeStockInputs[sizeStockInputs.selectedSize]?.totalQuantity || ''}
-                      onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'totalQuantity', e.target.value)}
-                      disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
-                    />
-                  </td>
-                  <td>
-                    <input type="number" className="modal-stockqty-input"
-                      value={sizeStockInputs[sizeStockInputs.selectedSize]?.stockQuantity || ''}
-                      onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'stockQuantity', e.target.value)}
-                      disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="form-group">
+              <label>사이즈 및 재고 관리</label>
+              <table className="modal-opt-table">
+                <thead className="modal-itemlist-thead">
+                  <tr>
+                    <th>사이즈</th>
+                    <th>총수량</th>
+                    <th>재고수량</th>
+                  </tr>
+                </thead>
+                <tbody className="modal-itemlist-tbody">
+                  <tr>
+                    <td>
+                      <select 
+                        className="modal-size-select"
+                        value={sizeStockInputs.selectedSize || ''}
+                        onChange={e =>
+                          setSizeStockInputs(prev => ({
+                            ...prev,
+                            selectedSize: e.target.value,
+                            [e.target.value]: prev[e.target.value] || { totalQuantity: '', stockQuantity: '' }
+                          }))
+                        }
+                      >
+                        <option value="">사이즈 선택</option>
+                        {sizes.map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </td>
+                    <td>
+                      <input 
+                        type="number" 
+                        className="modal-totalqty-input"
+                        placeholder="총수량"
+                        value={sizeStockInputs[sizeStockInputs.selectedSize]?.totalQuantity || ''}
+                        onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'totalQuantity', e.target.value)}
+                        disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="number" 
+                        className="modal-stockqty-input"
+                        placeholder="재고수량"
+                        value={sizeStockInputs[sizeStockInputs.selectedSize]?.stockQuantity || ''}
+                        onChange={e => handleSizeStockChange(sizeStockInputs.selectedSize, 'stockQuantity', e.target.value)}
+                        disabled={modalItemCategory !== "LIFT_TICKET" && !sizeStockInputs.selectedSize}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-            <div>
-              <button onClick={handleModalSave} className="modal-add-btn">저장</button>
-              <button onClick={closeModal} className="modal-del-btn">취소</button>
+            <div className="modal-actions">
+              <button onClick={handleModalSave} className="option-save-btn">저장</button>
+              <button onClick={closeModal} className="option-cancel-btn">취소</button>
             </div>
           </div>
         </div>
