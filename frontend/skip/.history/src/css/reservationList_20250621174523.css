@@ -226,12 +226,7 @@
 }
 
 .reservation-main-row-expanded {
-  background-color: #5c74b2;
-  color: #fff;
-}
-
-.reservation-main-row-expanded .reservation-main-cell {
-  color: #fff;
+  background-color: #848ff5;
 }
 
 /* 상세 정보 행 */

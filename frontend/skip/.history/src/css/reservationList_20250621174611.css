@@ -230,10 +230,6 @@
   color: #fff;
 }
 
-.reservation-main-row-expanded .reservation-main-cell {
-  color: #fff;
-}
-
 /* 상세 정보 행 */
 .reservation-detail-row {
   cursor: default;

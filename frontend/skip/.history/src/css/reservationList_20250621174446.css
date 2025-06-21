@@ -226,11 +226,7 @@
 }
 
 .reservation-main-row-expanded {
-  background-color: #5c74b2;
-  color: #fff;
-}
-
-.reservation-main-row-expanded .reservation-main-cell {
+  background-color: #bbb4f8;
   color: #fff;
 }
 
