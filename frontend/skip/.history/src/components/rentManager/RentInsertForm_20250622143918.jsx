@@ -102,6 +102,7 @@ const RentInsertForm = () => {
             }
         }
 
+        // 이미지 필수 체크 추가
         if (!fileRefs.thumbnail.current?.files.length || !fileRefs.image1.current?.files.length) {
             alert("썸네일과 이미지1은 반드시 업로드해야 합니다.");
             return;
@@ -112,23 +113,19 @@ const RentInsertForm = () => {
             alert("전화번호 형식이 올바르지 않습니다. 예: 010-1234-5678");
             return;
         }
-
         if (formData.bizStatus !== 'Y' && formData.bizClosureFlag === 'Y') {
             alert("운영 중인 사업자가 아닙니다.");
             return;
         }
-
         const submitData = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
             submitData.append(key, value);
         });
-
         Object.entries(fileRefs).forEach(([key, ref]) => {
             if (ref.current && ref.current.files.length > 0) {
                 submitData.append(key, ref.current.files[0]);
             }
         });
-
         try {
             await caxios.post("/api/rents", submitData, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -138,7 +135,6 @@ const RentInsertForm = () => {
         } catch (err) {
             alert("렌탈샵 등록 중 오류 발생");
         }
-        
     };
 
     return (

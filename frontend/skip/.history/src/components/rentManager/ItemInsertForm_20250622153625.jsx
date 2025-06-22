@@ -5,7 +5,6 @@ import '../../css/itemInsertForm.css';
 import caxios from "../../api/caxios";
 import { useSelector } from "react-redux";
 import { rentIdAndNameApi, rentNameApi } from "../../api/rentListApi";
-import { formatRentHour } from "../../utils/formatRentHour";
 
 const ItemInsertForm = () => {
   const { rentId: rentIdParam } = useParams();
@@ -31,8 +30,7 @@ const ItemInsertForm = () => {
           console.error("렌탈샵 이름 조회 실패", err);
           setSelectedShopName("이름 불러오기 실패");
         });
-    } else if (userId) {
-      console.log("userId 확인:", userId); 
+    } else {
       rentIdAndNameApi(userId)
         .then(data => setRentShops(data))
         .catch(err => {
@@ -72,18 +70,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addTimePrice = () => {
-    setTimePrices(list => [...list, { rentHour: "", price: "" }]);
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeTimePrice = idx => {
-    setTimePrices(list => list.filter((_, i) => i !== idx));
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addTimePrice = () => setTimePrices(list => [...list, { rentHour: "", price: "" }]);
+  const removeTimePrice = idx => setTimePrices(list => list.filter((_, i) => i !== idx));
 
   const handleSizeStockChange = (idx, field, val) => {
     setCommonSizeStocks(list => {
@@ -92,16 +80,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addSizeStock = () => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeSizeStock = idx => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addSizeStock = () => setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
+  const removeSizeStock = idx => setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -135,30 +115,29 @@ const ItemInsertForm = () => {
     }
 
     const submitData = new FormData();
-
     if (formData.category === "LIFT_TICKET") {
-      // 리프트권 여러 옵션 처리
-      const options = timePrices.map((tp, idx) => {
-        const quantity = parseInt(commonSizeStocks[idx]?.quantity) || 0;
-        return {
-          rentHour: parseInt(tp.rentHour),
-          price: parseInt(tp.price),
-          totalQuantity: quantity,
-          stockQuantity: quantity
-        };
-      });
+      // 🎿 리프트권 전용 등록 DTO 생성
+      const option = timePrices[0];
+      const quantity = parseInt(commonSizeStocks[0]?.quantity) || 0;
 
       const liftTicketRequest = {
         rentId: formData.rentId,
         name: formData.name,
         category: formData.category,
-        options
+        options: [
+          {
+            rentHour: parseInt(option.rentHour),
+            price: parseInt(option.price),
+            totalQuantity: quantity,
+            stockQuantity: quantity
+          }
+        ]
       };
 
       submitData.append("itemRequest", new Blob([JSON.stringify(liftTicketRequest)], { type: "application/json" }));
-      submitData.append("image", fileRef.current.files[0]);
+      submitData.append("image", imageInput.files[0]);
 
-      caxios.post("/api/items/liftTicket", submitData, {
+      caxios.post("/api/lift-tickets", submitData, {
         headers: { "Content-Type": "multipart/form-data" }
       }).then(() => {
         alert("리프트권 등록 완료!");
@@ -168,9 +147,8 @@ const ItemInsertForm = () => {
         alert("리프트권 등록 실패");
       });
 
-
     } else {
-      // 일반 장비 등록 DTO 생성
+      // 🧤 일반 장비 등록 DTO 생성
       const details = timePrices.map(tp => ({
         rentHour: parseInt(tp.rentHour),
         price: parseInt(tp.price),
@@ -184,38 +162,28 @@ const ItemInsertForm = () => {
         })
       }));
 
-      const requestDTO = {
-        ...formData,
-        detailList: details
-      };
+    const requestDTO = {
+      ...formData,
+      detailList: details
+    };
 
     
-      submitData.append("itemRequest", new Blob([JSON.stringify(requestDTO)], { type: "application/json" }));
-      submitData.append("image", fileRef.current.files[0]);
+  //   submitData.append("itemRequest", new Blob([JSON.stringify(requestDTO)], { type: "application/json" }));
+  //   submitData.append("image", fileRef.current.files[0]);
 
-      caxios.post("/api/items", submitData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      }).then(res => {
-        alert("장비 등록 완료!");
-        resetForm();
-
-        fileRef.current.value = null;
-
-
-      }).catch(err => {
-        console.error("장비등록 실패", err);
-        alert("장비등록에 실패했습니다.");
-      });
-    };
-  }
-
-  //리셋
-  const resetForm = () => {
-    setFormData({ rentId: rentIdParam || "", name: "", category: "" });
-    setTimePrices([{ rentHour: "", price: "" }]);
-    setCommonSizeStocks([{ size: "", quantity: "" }]);
-    if (fileRef.current) fileRef.current.value = null;
-  };
+  //   caxios.post("/api/items", submitData, {
+  //     headers: { "Content-Type": "multipart/form-data" }
+  //   }).then(res => {
+  //     alert("장비 등록 완료!");
+  //     setFormData({ rentId: rentIdParam || "", name: "", category: "" });
+  //     setTimePrices([{ rentHour: "", price: "" }]);
+  //     setCommonSizeStocks([{ size: "", quantity: "" }]);
+  //     fileRef.current.value = null;
+  //   }).catch(err => {
+  //     console.error("장비등록 실패", err);
+  //     alert("장비등록에 실패했습니다.");
+  //   });
+  // };
 
   return (
     <div className="item-page-wrapper">
@@ -266,7 +234,7 @@ const ItemInsertForm = () => {
                     <select name="rentHour" value={tp.rentHour} onChange={e => handleTimePriceChange(i, e)} className="form-hour-select">
                       <option value="">시간 선택</option>
                       {selectedOptions.hours.map(h => (
-                        <option key={h} value={h}>{formatRentHour(h, formData.category)}</option>
+                        <option key={h} value={h}>{h === 8760 ? "1년" : `${h}시간`}</option>
                       ))}
                     </select>
                   </td>
@@ -274,17 +242,13 @@ const ItemInsertForm = () => {
                     <input type="number" name="price" value={tp.price} onChange={e => handleTimePriceChange(i, e)} placeholder="가격" className="form-price-input" />
                   </td>
                   <td>
-                    <button type="button" className="item-delete-btn" onClick={() => removeTimePrice(i)}
-                     //disabled={formData.category === "LIFT_TICKET"}
-                    >삭제</button>
+                    <button type="button" className="item-delete-btn" onClick={() => removeTimePrice(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" className="item-add-btn" onClick={addTimePrice}
-           //disabled={formData.category === "LIFT_TICKET"}
-          >+ 시간 추가</button>
+          <button type="button" className="item-add-btn" onClick={addTimePrice} disabled={formData.category === "LIFT_TICKET"}>+ 시간 추가</button>
           <div className="sub-subject">사이즈 / 수량</div>
           <table className="item-table">
             <thead className="item-insert-thead">
@@ -305,17 +269,13 @@ const ItemInsertForm = () => {
                     <input type="number" value={s.quantity} onChange={e => handleSizeStockChange(i, "quantity", e.target.value)} required />
                   </td>
                   <td>
-                    <button type="button" className="item-delete-btn" onClick={() => removeSizeStock(i)}
-                     //disabled={formData.category === "LIFT_TICKET"}
-                    >삭제</button>
+                    <button type="button" className="item-delete-btn" onClick={() => removeSizeStock(i)} disabled={formData.category === "LIFT_TICKET"}>삭제</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" className="item-size-add-btn" onClick={addSizeStock}
-           //disabled={formData.category === "LIFT_TICKET"}
-          >+ 사이즈 추가</button>
+          <button type="button" className="item-size-add-btn" onClick={addSizeStock} disabled={formData.category === "LIFT_TICKET"}>+ 사이즈 추가</button>
           <div className="text-center">
             <button type="submit" className="item-insert-btn">장비 등록</button>
           </div>

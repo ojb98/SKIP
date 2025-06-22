@@ -93,15 +93,11 @@ const ItemInsertForm = () => {
     });
   };
   const addSizeStock = () => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeSizeStock = idx => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  if (formData.category !== "LIFT_TICKET") {
+    setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
+  }
+};
+  const removeSizeStock = idx => setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
 
   const handleSubmit = e => {
     e.preventDefault();

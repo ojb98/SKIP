@@ -128,7 +128,7 @@ const RentInsertForm = () => {
                 submitData.append(key, ref.current.files[0]);
             }
         });
-
+        
         try {
             await caxios.post("/api/rents", submitData, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -138,7 +138,6 @@ const RentInsertForm = () => {
         } catch (err) {
             alert("렌탈샵 등록 중 오류 발생");
         }
-        
     };
 
     return (

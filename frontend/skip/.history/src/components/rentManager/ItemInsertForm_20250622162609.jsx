@@ -72,18 +72,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addTimePrice = () => {
-    setTimePrices(list => [...list, { rentHour: "", price: "" }]);
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeTimePrice = idx => {
-    setTimePrices(list => list.filter((_, i) => i !== idx));
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addTimePrice = () => setTimePrices(list => [...list, { rentHour: "", price: "" }]);
+  const removeTimePrice = idx => setTimePrices(list => list.filter((_, i) => i !== idx));
 
   const handleSizeStockChange = (idx, field, val) => {
     setCommonSizeStocks(list => {
@@ -92,16 +82,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addSizeStock = () => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeSizeStock = idx => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addSizeStock = () => setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
+  const removeSizeStock = idx => setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
 
   const handleSubmit = e => {
     e.preventDefault();

@@ -72,18 +72,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addTimePrice = () => {
-    setTimePrices(list => [...list, { rentHour: "", price: "" }]);
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeTimePrice = idx => {
-    setTimePrices(list => list.filter((_, i) => i !== idx));
-    if (formData.category === "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addTimePrice = () => setTimePrices(list => [...list, { rentHour: "", price: "" }]);
+  const removeTimePrice = idx => setTimePrices(list => list.filter((_, i) => i !== idx));
 
   const handleSizeStockChange = (idx, field, val) => {
     setCommonSizeStocks(list => {
@@ -92,16 +82,8 @@ const ItemInsertForm = () => {
       return copy;
     });
   };
-  const addSizeStock = () => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
-    }
-  };
-  const removeSizeStock = idx => {
-    if (formData.category !== "LIFT_TICKET") {
-      setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
-    }
-  };
+  const addSizeStock = () => setCommonSizeStocks(list => [...list, { size: "", quantity: "" }]);
+  const removeSizeStock = idx => setCommonSizeStocks(list => list.filter((_, i) => i !== idx));
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -135,28 +117,27 @@ const ItemInsertForm = () => {
     }
 
     const submitData = new FormData();
-
     if (formData.category === "LIFT_TICKET") {
-      // 리프트권 여러 옵션 처리
-      const options = timePrices.map((tp, idx) => {
-        const quantity = parseInt(commonSizeStocks[idx]?.quantity) || 0;
-        return {
-          rentHour: parseInt(tp.rentHour),
-          price: parseInt(tp.price),
-          totalQuantity: quantity,
-          stockQuantity: quantity
-        };
-      });
+      // 리프트권 전용 등록 DTO 생성
+      const option = timePrices[0];
+      const quantity = parseInt(commonSizeStocks[0]?.quantity) || 0;
 
       const liftTicketRequest = {
         rentId: formData.rentId,
         name: formData.name,
         category: formData.category,
-        options
+        options: [
+          {
+            rentHour: parseInt(option.rentHour),
+            price: parseInt(option.price),
+            totalQuantity: quantity,
+            stockQuantity: quantity
+          }
+        ]
       };
 
       submitData.append("itemRequest", new Blob([JSON.stringify(liftTicketRequest)], { type: "application/json" }));
-      submitData.append("image", fileRef.current.files[0]);
+      submitData.append("image", imageInput.files[0]);
 
       caxios.post("/api/items/liftTicket", submitData, {
         headers: { "Content-Type": "multipart/form-data" }
@@ -167,7 +148,6 @@ const ItemInsertForm = () => {
         console.error("리프트권 등록 실패", err);
         alert("리프트권 등록 실패");
       });
-
 
     } else {
       // 일반 장비 등록 DTO 생성
@@ -197,8 +177,9 @@ const ItemInsertForm = () => {
         headers: { "Content-Type": "multipart/form-data" }
       }).then(res => {
         alert("장비 등록 완료!");
-        resetForm();
-
+        setFormData({ rentId: rentIdParam || "", name: "", category: "" });
+        setTimePrices([{ rentHour: "", price: "" }]);
+        setCommonSizeStocks([{ size: "", quantity: "" }]);
         fileRef.current.value = null;
 
 
@@ -208,8 +189,6 @@ const ItemInsertForm = () => {
       });
     };
   }
-
-  //리셋
   const resetForm = () => {
     setFormData({ rentId: rentIdParam || "", name: "", category: "" });
     setTimePrices([{ rentHour: "", price: "" }]);
