@@ -52,3 +52,28 @@ export const rentNameApi = async (rentId) => {
     });
     return data;
 };
+
+
+export const fetchRegions = async () => {
+    const data = await axios.get(`${host}/regions`).then(res => {
+        return res.data;
+    });
+
+    return data;
+};
+
+export const fetchAutocomplete = async req => {
+    const data = await axios.get(`${host}/autocomplete`, { params: { keyword: req } }).then(res => {
+        return res.data;
+    });
+
+    return data;
+};
+
+export const fetchItemCategories = async () => {
+    const data = await axios.get(`${host}/categories`).then(res => {
+        return res.data;
+    });
+
+    return data;
+};

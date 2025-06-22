@@ -5,7 +5,6 @@ import React from "react";
 
 const CustomDateInput = React.forwardRef(({ value, onClick, from, to }, ref) => {
     const range = from && to ? `${format(from, 'MM.dd.eee', { locale: ko })} - ${format(to, 'MM.dd.eee', { locale: ko })}` : null;
-    console.log(range);
 
 
     return (
@@ -13,7 +12,7 @@ const CustomDateInput = React.forwardRef(({ value, onClick, from, to }, ref) => 
             type="button"
             onClick={onClick}
             ref={ref}
-            className="w-75 h-13 flex justify-between items-center px-5 bg-gray-100/90 border border-gray-200 rounded-xl text-sm font-semibold cursor-pointer"
+            className="w-75 h-13 flex justify-between items-center px-5 bg-gray-100/90 rounded-md text-sm text-gray-600 cursor-pointer"
         >
             <span>{range || '예약 일정을 선택하세요'}</span>
 

@@ -1,7 +1,7 @@
 import DatePicker from "react-datepicker";
 import CustomDateInput from "./CustomDateInput";
 import { ko } from "date-fns/locale";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { button, radio } from "./buttons";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -17,6 +17,10 @@ const isSameDay = (d1, d2) => {
         d1.getMonth() === d2.getMonth() &&
         d1.getDate() === d2.getDate()
     );
+};
+
+const isInRange = (start, current, end) => {
+    return start < current && current < end;
 };
 
 const getDatesBetween = (start, end) => {
@@ -36,25 +40,32 @@ const getDatesBetween = (start, end) => {
 };
 
 
-const DatetimeRangeSelect = ({ fromState, toState }) => {
+const DateRangeSelect = ({ fromState, toState }) => {
     const datepickerRef = useRef();
-
     const [from, setFrom] = fromState;
     const [to, setTo] = toState;
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [activeTab, setActiveTab] = useState('start');
 
+    useEffect(() => {
+        if (startDate) {
+            setActiveTab('end');
+        }
+    }, [startDate]);
+
+    useEffect(() => {
+        if (endDate) {
+            setActiveTab('start');
+        }
+    }, [endDate]);
+
 
     const handleSelect = date => {
         if (activeTab == 'start') {
-            if (startDate == null) {
-                setStartDate(date);
-                setActiveTab('end');
-            } else {
-                setStartDate(date);
+            setStartDate(date);
+            if (startDate) {
                 setEndDate(null);
-                setActiveTab('end');
             }
         } else {
             if (date < startDate) {
@@ -70,8 +81,8 @@ const DatetimeRangeSelect = ({ fromState, toState }) => {
     const CustomCalendarContainer = ({ children }) => {
         return (
             <>
-                <div className="absolute -left-33">
-                    <div className="w-full h-fit z-10 flex flex-col rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.25)] bg-white">
+                <div className="absolute z-0 -left-37.5 -top-21.5">
+                    <div className="w-full h-fit z-100 flex flex-col rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.25)] bg-white">
                         <div className="h-25 grid grid-cols-2 gap-4 p-4 bg-gray-50">
                             <label
                                 htmlFor="start"
@@ -116,7 +127,7 @@ const DatetimeRangeSelect = ({ fromState, toState }) => {
 
                         {children}
 
-                        <div className="flex justify-end items-center gap-5 p-5">
+                        <div className="flex justify-end gap-5 p-5">
                             <button
                                 type="button"
                                 onClick={() => {
@@ -196,6 +207,7 @@ const DatetimeRangeSelect = ({ fromState, toState }) => {
         const isSaturday = dayOfWeek === 6;
         const isDisabled = date.getDate() < now.getDate();
         const isStart = isSameDay(startDate, date);
+        const isRange = isInRange(startDate, date, endDate);
         const isEnd = isSameDay(endDate, date);
         let className = "";
         if (isStart || isEnd) {
@@ -213,6 +225,8 @@ const DatetimeRangeSelect = ({ fromState, toState }) => {
                 className += "text-red-400";
             } else if (isSaturday) {
                 className += "text-blue-400";
+            } else if (isRange) {
+                className += "text-white";
             }
         }
 
@@ -274,4 +288,4 @@ const DatetimeRangeSelect = ({ fromState, toState }) => {
     )
 };
 
-export default DatetimeRangeSelect;
+export default DateRangeSelect;
