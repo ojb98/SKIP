@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useCategoryOptions from "../../hooks/useCategoryOptions";
 import '../../css/itemInsertForm.css';
 import caxios from "../../api/caxios";
@@ -10,24 +10,19 @@ import { formatRentHour } from "../../utils/formatRentHour";
 const ItemInsertForm = () => {
   const { rentId: rentIdParam } = useParams();
   const { userId } = useSelector((state) => state.loginSlice);
-  const location = useLocation();  // navigate에서 넘긴값처리
-  const searchParams = new URLSearchParams(location.search);
-  const categoryFromQuery = searchParams.get("category") || "";
-
   const [rentShops, setRentShops] = useState([]);
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     rentId: rentIdParam || "",
     name: "",
-    category: categoryFromQuery,
+    category: "",
   });
-
   const [timePrices, setTimePrices] = useState([{ rentHour: "", price: "" }]);
   const [commonSizeStocks, setCommonSizeStocks] = useState([{ size: "", quantity: "" }]);
   const fileRef = useRef();
   const [selectedShopName, setSelectedShopName] = useState("");
   const selectedOptions = useCategoryOptions(formData.category);
-  
+  const location = useLocation();
 
   useEffect(() => {
     if (rentIdParam) {
@@ -47,15 +42,6 @@ const ItemInsertForm = () => {
         });
     }
   }, [rentIdParam, userId]);
-
-  useEffect(() => {
-    if (categoryFromQuery) {  // 빈 문자열이 아닐 때만 업데이트
-      setFormData(data => ({
-        ...data,
-        category: categoryFromQuery,
-      }));
-    }
-  }, [categoryFromQuery]);
 
   useEffect(() => {
     caxios.get("/api/enums/itemCategory")

@@ -7,9 +7,9 @@ const useCategoryOptions = (category) => {
 
         //반일권 4~6시간  , 1일권 8~10시간
         //  168 -> 1주일, 720 -> 1개월,  8760 -> 1년 
-        LIFT_TICKET: { sizes: [], hours: [4,8,9] },
+        LIFT_TICKET: { sizes: [], hours: [4,6,8,10 ] },
         
-        PACKAGE: { sizes: ["S", "M", "L", "XL", "2XL", "3XL","free"], hours: [4,8] },
+        PACKAGE: { sizes: ["S", "M", "L", "XL", "2XL", "3XL","free"], hours: [3, 4, 6, 8, 9] },
 
         SKI: {
             sizes: ["90cm", "100cm", "110cm", "120cm", "130cm", "140cm", "150cm", "160cm", "165cm"],

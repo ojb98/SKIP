@@ -11,8 +11,9 @@ const ItemInsertForm = () => {
   const { rentId: rentIdParam } = useParams();
   const { userId } = useSelector((state) => state.loginSlice);
   const location = useLocation();  // navigate에서 넘긴값처리
-  const searchParams = new URLSearchParams(location.search);
-  const categoryFromQuery = searchParams.get("category") || "";
+  const location = useLocation();
+const searchParams = new URLSearchParams(location.search);
+const categoryFromQuery = searchParams.get("category") || "";
 
   const [rentShops, setRentShops] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -47,15 +48,6 @@ const ItemInsertForm = () => {
         });
     }
   }, [rentIdParam, userId]);
-
-  useEffect(() => {
-    if (categoryFromQuery) {  // 빈 문자열이 아닐 때만 업데이트
-      setFormData(data => ({
-        ...data,
-        category: categoryFromQuery,
-      }));
-    }
-  }, [categoryFromQuery]);
 
   useEffect(() => {
     caxios.get("/api/enums/itemCategory")

@@ -49,14 +49,13 @@ const ItemInsertForm = () => {
   }, [rentIdParam, userId]);
 
   useEffect(() => {
-    if (categoryFromQuery) {  // 빈 문자열이 아닐 때만 업데이트
-      setFormData(data => ({
-        ...data,
-        category: categoryFromQuery,
-      }));
-    }
-  }, [categoryFromQuery]);
-
+  if (categoryFromQuery) {  // 빈 문자열이 아닐 때만 업데이트
+    setFormData(data => ({
+      ...data,
+      category: categoryFromQuery,
+    }));
+  }
+}, [categoryFromQuery]);
   useEffect(() => {
     caxios.get("/api/enums/itemCategory")
       .then(res => setCategories(res.data))

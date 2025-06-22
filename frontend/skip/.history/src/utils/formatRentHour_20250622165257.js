@@ -3,7 +3,7 @@ export const formatRentHour = (hour, category) => {
     return "1일권";
   }
   if ([4, 5, 6].includes(hour)) return `반일권 (${hour}시간)`;
-  if ([8, 9, 10, 24].includes(hour)) return `1일권 (${hour}시간)`;
+  if ([8, 9, 10].includes(hour)) return `1일권 (${hour}시간)`;
   switch (hour) {
     case 168: return "1주일";
     case 720: return "1개월";
