@@ -22,7 +22,7 @@ const useCategoryOptions = (category) => {
         },
 
         PROTECTIVE_GEAR: { sizes: ["S", "M", "L","free"],
-            hours: [24] 
+            hours: [4,24] 
         },
 
         TOP: { sizes: ["S", "M", "L", "XL", "2XL", "3XL", "free"],

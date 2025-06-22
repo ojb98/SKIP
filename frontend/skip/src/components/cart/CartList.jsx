@@ -260,67 +260,67 @@ const CartList=()=>{
 
 
     return(
-        <div className="cart-container">
-            <h1 className="top-subject">장바구니</h1>
+        <div className="skip-cart-container">
+            <h1 className="skip-cart-top-subject">장바구니</h1>
 
             {/* 결제 수단 선택 모달 삽입 위치 */}
             {showPaymentModal && (
-                <div className="modal-backdrop">
-                    <div className="modal">
+                <div className="skip-cart-modal-backdrop">
+                    <div className="skip-cart-modal">
                     <h3>결제 수단을 선택하세요</h3>
-                    <div className="modal-buttons">
+                    <div className="skip-cart-modal-buttons">
                         <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
                         <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
                         <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
-                        <button className="modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
+                        <button className="skip-cart-modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
                     </div>
                     </div>
                 </div>
             )}
 
             {cartGroups.length === 0 || cartGroups.every(group => group.items.length === 0) ? (
-                <div className="empty-cart-message">장바구니가 비어 있습니다.</div>
+                <div className="skip-cart-empty-message">장바구니가 비어 있습니다.</div>
             ) : (
                 <>
-                <div className="select-group">
-                    <div className="left-btn">
-                        <button onClick={toggleAllCheck} className="select-btn">전체 선택</button>
+                <div className="skip-cart-select-group">
+                    <div className="skip-cart-left-btn">
+                        <button onClick={toggleAllCheck} className="skip-cart-select-btn">전체 선택</button>
                     </div>
-                    <div className="right-btn">
-                        <button onClick={deleteSelectedCheck} className="select-del-btn">선택 삭제</button>
+                    <div className="skip-cart-right-btn">
+                        <button onClick={deleteSelectedCheck} className="skip-cart-select-del-btn">선택 삭제</button>
                     </div>
                 </div>
 
-                <span className="block mt-4 text-sm text-gray-500 italic">
+                <span className="skip-cart-auto-clear-notice">
                     * 자동으로 일주일단위로 비워집니다
                 </span>
-                <div className="cart-items-container">
+                <div className="skip-cart-items-container">
                 {
                     cartGroups.map(group => (
-                        <div key={group.rentId} className="cart-group">
+                        <div key={group.rentId} className="skip-cart-group">
                         {
                             group.items.map(item => (
-                            <div key={item.cartId} className="item-group">
+                            <div key={item.cartId} className="skip-cart-item-group">
                     
-                                <label htmlFor={`checkbox-${item.cartId}`} className={`item-wrapper ${checkedItems.has(item.cartId) ? "checked" : ""}`}>
+                                <label htmlFor={`checkbox-${item.cartId}`} className={`skip-cart-item-wrapper ${checkedItems.has(item.cartId) ? "skip-cart-checked" : ""}`}>
                             
                                 <input type="checkbox" id={`checkbox-${item.cartId}`} checked={checkedItems.has(item.cartId)}
-                                    onChange={() => toggleCheck(item.cartId)} className="checkbox-btn" />    
-                                    <div className="item-content">
+                                    onChange={() => toggleCheck(item.cartId)} className="skip-cart-checkbox-btn" />    
+                                    <div className="skip-cart-item-content">
                                         <button type="button" onClick={(e) => {
                                             // 버튼 클릭 시 오직 삭제 기능만 작동하기 위함
                                                 e.preventDefault();  // label의 기본 동작 (checkbox 토글)을 막음
                                                 e.stopPropagation();  // label까지 이벤트가 전달되지 않도록 막음
                                                 deleteCartItem(item.cartId);
                                             }} 
-                                            className="cart-remove-btn" title="장바구니에서 제거">
+                                            className="skip-cart-remove-btn" title="장바구니에서 제거">
                                             X
                                         </button>
 
-                                        <img className="item-img" src={`http://localhost:8080${item.image}`} alt={item.itemName} />
+                                        <img className="skip-cart-item-img" src={`http://localhost:8080${item.image}`} alt={item.itemName} />
 
-                                        <div className="itemdatail-group">
-                                            <div className="item-content-group">
+                                        <div className="skip-cart-item-detail-group">
+                                            <div className="skip-cart-item-content-group">
                                                 <h4 onClick={() => navigate(`/rent/product/${group.rentId}/${item.itemId}`,{
                                                     state : {
                                                         date: formatDate(item.rentStart),
@@ -328,7 +328,7 @@ const CartList=()=>{
                                                         duration: getDurationHour(item.rentStart, item.rentEnd),
                                                         size: item.size,
                                                     }
-                                                })} className="link-area">
+                                                })} className="skip-cart-link-area">
                                                     <strong>{group.name}</strong>
                                                 </h4> 
                                                 <span>{item.itemName}</span><br />
@@ -339,9 +339,9 @@ const CartList=()=>{
                                                 }</p>
                                                 <p>대여시간: {formatTime(item.rentStart)} ~ {formatTime(item.rentEnd)}</p>
                                                 <p>사이즈: {item.size}</p>
-                                                <div className="count-btn">
+                                                <div className="skip-cart-count-btn">
                                                     <p>수량:</p>
-                                                    <div className="quantity-btn">
+                                                    <div className="skip-cart-quantity-btn">
                                                         <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, -1); }}>-</button>
                                                         <span>{item.quantity}</span>
                                                         <button type="button" onClick={(e) => { e.stopPropagation(); updateQuantity(item.cartId, 1); }}>+</button> 개
@@ -360,8 +360,8 @@ const CartList=()=>{
                 }
                 </div>
 
-                <div className="payment-group">
-                    <div className="totalPrice-div">
+                <div className="skip-cart-payment-group">
+                    <div className="skip-cart-total-price-div">
                         <p>총 결제 금액: {totalPrice.toLocaleString()}원</p>
                     </div>
                         <button onClick={() => {
@@ -370,7 +370,7 @@ const CartList=()=>{
                             }
                             setShowPaymentModal(true); // 모달 열기
                         }}
-                        className="payment-btn" disabled={checkedItems.size === 0}>
+                        className="skip-cart-payment-btn" disabled={checkedItems.size === 0}>
                             결제하기
                         </button>
                 </div>

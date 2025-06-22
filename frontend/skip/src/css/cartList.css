@@ -1,5 +1,5 @@
 /* 전체 컨테이너 */
-.cart-container {
+.skip-cart-container {
   max-width: 1200px; /* 넉넉하게 조정 */
   margin: 0 auto;
   padding: 24px;
@@ -8,7 +8,7 @@
 }
 
 /* 상단 제목 */
-.top-subject {
+.skip-cart-top-subject {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 28px;
@@ -16,7 +16,7 @@
 }
 
 /* 장바구니 항목이 없을때 메시지 */
-.empty-cart-message {
+.skip-cart-empty-message {
   text-align: center;
   font-size: 1.2rem;
   color: #888;
@@ -24,15 +24,18 @@
 }
 
 /* 전체선택/선택삭제 버튼 */
-.select-group {
+.skip-cart-select-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  width: 650px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.select-btn,
-.select-del-btn {
+.skip-cart-select-btn,
+.skip-cart-select-del-btn {
   padding: 10px 18px;
   font-size: 15px;
   background-color: #f2f2f2;
@@ -42,18 +45,43 @@
   transition: background-color 0.2s ease;
 }
 
-.select-btn:hover,
-.select-del-btn:hover {
+.skip-cart-select-btn:hover,
+.skip-cart-select-del-btn:hover {
   background-color: #ddd;
 }
 
+/* 자동 삭제 안내 */
+.skip-cart-auto-clear-notice {
+  display: block;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  text-align: left;
+  width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 장바구니 아이템 컨테이너 */
+.skip-cart-items-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 /* 장바구니 그룹 */
-.cart-group {
+.skip-cart-group {
   margin-bottom: 36px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* 항목 감싸는 라벨 */
-.item-wrapper {
+.skip-cart-item-wrapper {
   width: 650px;
   display: flex;
   align-items: flex-start;
@@ -67,13 +95,13 @@
   gap: 22px;
 }
 
-.item-wrapper.checked {
+.skip-cart-item-wrapper.skip-cart-checked {
   background-color: #eef6ff;
   border-left: 4px solid #007bff;
 }
 
 /* 체크박스 */
-.checkbox-btn {
+.skip-cart-checkbox-btn {
   width: 20px;
   height: 20px;
   margin-top: 6px;
@@ -82,7 +110,7 @@
 }
 
 /* 콘텐츠 레이아웃 */
-.item-content {
+.skip-cart-item-content {
   display: flex;
   gap: 22px;
   width: 100%;
@@ -90,7 +118,7 @@
 }
 
 /* 삭제 버튼 */
-.cart-remove-btn {
+.skip-cart-remove-btn {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -104,12 +132,12 @@
   cursor: pointer;
 }
 
-.cart-remove-btn:hover {
+.skip-cart-remove-btn:hover {
   background: #e04b4b;
 }
 
 /* 상품 이미지 */
-.item-img {
+.skip-cart-item-img {
   width: 130px;
   height: 130px;
   object-fit: contain;
@@ -119,7 +147,7 @@
 }
 
 /* 상세 그룹 */
-.itemdatail-group {
+.skip-cart-item-detail-group {
   flex: 1;
   display: flex;
   justify-content: space-between;
@@ -128,28 +156,27 @@
 }
 
 /* 텍스트 영역 */
-.item-content-group {
+.skip-cart-item-content-group {
   font-size: 15px;
   line-height: 1.6;
   flex: 1 1 55%;
   min-width: 300px;
 }
 
-
-.count-btn {
+.skip-cart-count-btn {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 15px;
 }
 
-.quantity-btn {
+.skip-cart-quantity-btn {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.quantity-btn button {
+.skip-cart-quantity-btn button {
   width: 28px;
   height: 28px;
   border: 1px solid #aaa;
@@ -160,43 +187,38 @@
   transition: background-color 0.2s ease;
 }
 
-.quantity-btn button:hover {
+.skip-cart-quantity-btn button:hover {
   background-color: #f0f0f0;
 }
 
-.quantity-btn span {
+.skip-cart-quantity-btn span {
   min-width: 24px;
   text-align: center;
   font-weight: bold;
   font-size: 15px;
 }
 
-.update-div p {
-  font-size: 16px;
-  margin: 0;
-  font-weight: bold;
-  margin-top: 4px;
-  color: #333;
-}
-
 /* 결제 영역 */
-.payment-group {
+.skip-cart-payment-group {
   margin-top: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  width: 650px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 총 금액 */
-.totalPrice-div p {
+.skip-cart-total-price-div p {
   font-size: 20px;
   font-weight: bold;
   color: #111;
 }
 
 /* 결제 버튼 */
-.payment-btn {
+.skip-cart-payment-btn {
   background-color: #007bff;
   color: white;
   font-size: 17px;
@@ -207,21 +229,81 @@
   transition: background-color 0.2s ease;
 }
 
-.payment-btn:hover {
+.skip-cart-payment-btn:hover {
   background-color: #0056b3;
 }
 
-.payment-btn:disabled {
+.skip-cart-payment-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
 /* 링크 영역 */
-.link-area {
+.skip-cart-link-area {
   cursor: pointer;
 }
 
-.link-area:hover {
+.skip-cart-link-area:hover {
   text-decoration: underline;
   color: #007bff;
+}
+
+/* 모달 스타일 */
+.skip-cart-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.skip-cart-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+}
+
+.skip-cart-modal h3 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+}
+
+.skip-cart-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skip-cart-modal-buttons button {
+  padding: 12px 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.skip-cart-modal-buttons button:hover {
+  background-color: #e9ecef;
+}
+
+.skip-cart-modal-cancel-btn {
+  background-color: #6c757d !important;
+  color: white !important;
+  border-color: #6c757d !important;
+}
+
+.skip-cart-modal-cancel-btn:hover {
+  background-color: #5a6268 !important;
 }
