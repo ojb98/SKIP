@@ -298,7 +298,7 @@
 .kakaopay {
   position: absolute;
   width: 65px;
-  /* height: 27px; */
+  height: 27px;
   top: 10px;
   left: 63px;
 }
@@ -314,9 +314,9 @@
 .smilepay {
   position: absolute;
   width: 65px;
-  /* height: 27px; */
+  height: 27px;
   top: 10px;
-  left: 65px;
+  left: 63px;
 }
 
 

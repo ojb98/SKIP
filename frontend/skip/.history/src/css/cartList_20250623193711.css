@@ -295,29 +295,8 @@
   position: relative;
 }
 
-.kakaopay {
-  position: absolute;
-  width: 65px;
-  /* height: 27px; */
-  top: 10px;
-  left: 63px;
-}
+.skip-cart-modal-buttons
 
-.tosspay {
-  position: absolute;
-    width: 110px;
-    /* height: 80px; */
-    top: -4px;
-    left: 41px;
-}
-
-.smilepay {
-  position: absolute;
-  width: 65px;
-  /* height: 27px; */
-  top: 10px;
-  left: 65px;
-}
 
 
 /* .skip-cart-modal-buttons button::before {

@@ -8,6 +8,7 @@ import { addWishApi } from "../api/wishApi";
 import '../css/paymentModel.css';
 import axios from "axios";
 import caxios from "../api/caxios";
+import PaymentModal from "../components/modal/PaymentModal";
 
 
 const ProductPage=()=>{
@@ -459,17 +460,11 @@ const ProductPage=()=>{
 
       {/* 결제 모달 영역 추가 */}
       {showPaymentModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h3>결제 수단을 선택하세요</h3>
-            <div className="modal-buttons">
-              <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
-              <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
-              <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
-              <button className="modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
-            </div>
-          </div>
-        </div>
+        <PaymentModal
+          show={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          onSelect={handlePayment}
+        />
       )}
       </main>
   )

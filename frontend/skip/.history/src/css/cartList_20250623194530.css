@@ -298,25 +298,25 @@
 .kakaopay {
   position: absolute;
   width: 65px;
-  /* height: 27px; */
+  height: 27px;
   top: 10px;
   left: 63px;
 }
 
 .tosspay {
   position: absolute;
-    width: 110px;
-    /* height: 80px; */
-    top: -4px;
-    left: 41px;
+  width: 65px;
+  height: 27px;
+  top: 10px;
+  left: 63px;
 }
 
 .smilepay {
   position: absolute;
   width: 65px;
-  /* height: 27px; */
+  height: 27px;
   top: 10px;
-  left: 65px;
+  left: 63px;
 }
 
 

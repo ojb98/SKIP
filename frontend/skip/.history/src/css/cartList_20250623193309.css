@@ -295,39 +295,14 @@
   position: relative;
 }
 
-.kakaopay {
-  position: absolute;
-  width: 65px;
-  /* height: 27px; */
-  top: 10px;
-  left: 63px;
-}
-
-.tosspay {
-  position: absolute;
-    width: 110px;
-    /* height: 80px; */
-    top: -4px;
-    left: 41px;
-}
-
-.smilepay {
-  position: absolute;
-  width: 65px;
-  /* height: 27px; */
-  top: 10px;
-  left: 65px;
-}
-
-
-/* .skip-cart-modal-buttons button::before {
+.skip-cart-modal-buttons button::before {
   content: '';
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background: url('/public/images/TossPay_Logo_Primary.png') no-repeat center/cover;
+  width: 20px;
+  height: 20px;
+  background: url('/public/images/');
 
-} */
+}
 
 .skip-cart-modal-buttons button:hover {
   background-color: #e9ecef;

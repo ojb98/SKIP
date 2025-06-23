@@ -7,6 +7,7 @@ import { updateCartItemApi } from "../../api/cartApi";
 import axios from "axios";
 import "../../css/cartList.css";
 import caxios from "../../api/caxios";
+import PaymentModal from "../modal/PaymentModal";
 
 const CartList=()=>{
     const navigate = useNavigate();
@@ -373,19 +374,12 @@ const CartList=()=>{
         <div className="skip-cart-container">
             <h1 className="skip-cart-top-subject">장바구니</h1>
 
-            {/* 결제 수단 선택 모달 삽입 위치 */}
             {showPaymentModal && (
-                <div className="skip-cart-modal-backdrop">
-                    <div className="skip-cart-modal">
-                    <h3>결제 수단을 선택하세요</h3>
-                    <div className="skip-cart-modal-buttons">
-                        <button onClick={() => handlePayment("kakaopay.TC0ONETIME")}>카카오페이</button>
-                        <button onClick={() => handlePayment("tosspay.tosstest")}>토스페이</button>
-                        <button onClick={() => handlePayment("smilepay.cnstest25m")}>스마일페이</button>
-                        <button className="skip-cart-modal-cancel-btn" onClick={() => setShowPaymentModal(false)}>취소</button>
-                    </div>
-                    </div>
-                </div>
+                <PaymentModal
+                  show={showPaymentModal}
+                  onClose={() => setShowPaymentModal(false)}
+                  onSelect={handlePayment}
+                />
             )}
 
             {cartGroups.length === 0 || cartGroups.every(group => group.items.length === 0) ? (
