@@ -73,8 +73,7 @@ public class BannerService {
     public List<BannerActiveListDTO> getActiveBanners() {
         // 1. 등록된 배너 엔티티 조회
         List<BannerActiveList> banners = bannerActiveListRepository
-                .findAllByEndDateBetween(mondayAt3AM, mondayAt3AM10M);
-        //
+                .findAllByUploadDateBetween(mondayAt3AM, mondayAt3AM10M);
 
         // 3. DTO 변환
         return banners.stream()

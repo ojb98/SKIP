@@ -1,6 +1,7 @@
 package com.example.skip.service;
 
 import com.example.skip.dto.ad.AdCashChargeDTO;
+import com.example.skip.dto.banner.BannerWaitingListDTO;
 import com.example.skip.entity.AdPayment;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.entity.Rent;
@@ -192,5 +193,48 @@ public class RentAdService {
     public int decryptCash(String cashToken) {
         String plain = aesUtil.decrypt(cashToken);
         return Integer.parseInt(plain);
+    }
+
+
+    public BannerWaitingListDTO getBanner(Long userId, Long waitingId) {
+        BannerWaitingList banner = bannerService.getBannerWaitingById(waitingId)
+                .orElseThrow(() -> new IllegalArgumentException("배너 요청을 찾을 수 없습니다."));
+        if (!banner.getRent().getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+        return new BannerWaitingListDTO(banner);
+    }
+
+    public BannerWaitingListDTO resubmitBanner(Long userId, Long waitingId, int cpcBid, MultipartFile bannerImage) {
+        BannerWaitingList banner = bannerService.getBannerWaitingById(waitingId)
+                .orElseThrow(() -> new IllegalArgumentException("배너 요청을 찾을 수 없습니다."));
+        if (!banner.getRent().getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+        if (banner.getStatus() != BannerWaitingListStatus.WITHDRAWN) {
+            throw new IllegalStateException("반려된 배너만 수정할 수 있습니다.");
+        }
+
+        banner.setCpcBid(cpcBid);
+        String url = fileUploadUtil.uploadFileAndUpdateUrl(bannerImage, banner.getBannerImage(), "banners");
+        banner.setBannerImage(url);
+
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        banner.setRegistDay(nextMonday.atTime(3, 0));
+        banner.setStatus(BannerWaitingListStatus.PENDING);
+        banner.setComments(null);
+
+        bannerService.populateRatings(banner);
+        bannerWaitingListRepository.save(banner);
+        return new BannerWaitingListDTO(banner);
+    }
+
+    public BannerWaitingListDTO getLatestWithdrawnBanner(Long userId) {
+        BannerWaitingList banner = bannerWaitingListRepository
+                .findTopByRent_User_UserIdAndStatusOrderByUpdatedAtDesc(userId, BannerWaitingListStatus.WITHDRAWN);
+        if (banner == null) {
+            return null;
+        }
+        return new BannerWaitingListDTO(banner);
     }
 }

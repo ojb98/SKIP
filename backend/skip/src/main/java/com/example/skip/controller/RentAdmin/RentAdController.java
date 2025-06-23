@@ -1,6 +1,7 @@
 package com.example.skip.controller.RentAdmin;
 
 import com.example.skip.dto.ad.AdCashChargeDTO;
+import com.example.skip.dto.banner.BannerWaitingListDTO;
 import com.example.skip.service.RentAdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -76,5 +77,35 @@ public class RentAdController {
         String remaining = rentAdService.submitBanner(userId, rentId, cpcBid, bannerImage, cashToken);
         Map<String, String> response = Map.of("remainingCash", remaining);
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/banner/{waitingId}")
+    public ResponseEntity<BannerWaitingListDTO> getBanner(
+            @RequestParam Long userId,
+            @PathVariable Long waitingId
+    ) {
+        BannerWaitingListDTO dto = rentAdService.getBanner(userId, waitingId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/banner/withdrawn")
+    public ResponseEntity<BannerWaitingListDTO> getWithdrawnBanner(@RequestParam Long userId) {
+        BannerWaitingListDTO dto = rentAdService.getLatestWithdrawnBanner(userId);
+        if (dto == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping(value = "/banner/{waitingId}", consumes = "multipart/form-data")
+    public ResponseEntity<BannerWaitingListDTO> resubmitBanner(
+            @RequestParam Long userId,
+            @PathVariable Long waitingId,
+            @RequestParam Integer cpcBid,
+            @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage
+    ) {
+        BannerWaitingListDTO dto = rentAdService.resubmitBanner(userId, waitingId, cpcBid, bannerImage);
+        return ResponseEntity.ok(dto);
     }
 }

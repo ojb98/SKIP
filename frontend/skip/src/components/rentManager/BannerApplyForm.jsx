@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
 import { fetchActiveBanners } from '../../services/admin/BannerService';
-import { submitBannerRequest , fetchCash} from '../../services/admin/rent/AdService';
+import { submitBannerRequest , fetchCash, fetchWithdrawnBanner} from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 import { rentIdAndNameApi } from '../../api/rentListApi';
@@ -16,12 +17,13 @@ const BannerApplyForm = () => {
   const [finalScore, setFinalScore] = useState(0);
   const [percentile, setPercentile] = useState(0);
   const [activeScores, setActiveScores] = useState([]);
-  const [selectedFileName, setSelectedFileName] = useState(''); 
+  const [selectedFileName, setSelectedFileName] = useState('');
   const [previewUrl, setPreviewUrl] = useState('');
   const [cashToken, setCashToken] = useState('');
   const imageRef = useRef();
   const [rentList, setRentList] = useState([]);
   const [selectedRentId, setSelectedRentId] = useState(0);
+  const [withdrawn, setWithdrawn] = useState(null);
 
 
   useEffect(() => {
@@ -31,6 +33,14 @@ const BannerApplyForm = () => {
       if (list.length > 0) setSelectedRentId(list[0].rentId);
     });
   }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    fetchWithdrawnBanner(userId).then(data => {
+      setWithdrawn(data || null);
+    });
+  }, [userId]);
+
 
   useEffect(() => {
     const load = async () => {
@@ -122,7 +132,13 @@ const BannerApplyForm = () => {
           📅 {registDay}(월) 등록 예정
         </span>
       </h3>
-      <div className="form-container" style={{margin:"0px"}}>
+      {withdrawn && (
+        <div style={{ margin: '10px 0', fontSize: '14px' }}>
+          ⚠️최근 반려된 배너가 있습니다.          
+          <Link to={`/rentAdmin/banner/edit/${withdrawn.waitingId}`} className='modify-link'>수정하러 가기</Link>
+        </div>
+      )}
+      <div className="form-container" style={{margin:"0px", paddingTop:"40px"}}>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="form-group">
             <label>렌탈샵 선택</label>

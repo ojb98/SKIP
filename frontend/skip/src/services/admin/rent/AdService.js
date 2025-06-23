@@ -39,3 +39,33 @@ export const submitBannerRequest = async (formData, cashToken) => {
   });
   return resp.data.remainingCash;
 };
+
+export const fetchBannerDetail = async (userId, waitingId) => {
+  const resp = await axios.get(`/api/rentAdmin/banner/${waitingId}`, {
+    params: { userId },
+  });
+  return resp.data;
+};
+
+export const fetchWithdrawnBanner = async userId => {
+  const resp = await axios.get('/api/rentAdmin/banner/withdrawn', {
+    params: { userId },
+  });
+  return resp.data;
+};
+
+export const resubmitBannerRequest = async (
+  waitingId,
+  userId,
+  cpcBid,
+  bannerImage,
+) => {
+  const form = new FormData();
+  form.append('userId', userId);
+  form.append('cpcBid', cpcBid);
+  if (bannerImage) form.append('bannerImage', bannerImage);
+  const resp = await axios.put(`/api/rentAdmin/banner/${waitingId}`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return resp.data;
+}

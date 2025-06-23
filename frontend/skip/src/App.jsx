@@ -49,6 +49,7 @@ import MyRefundPage from "./pages/myPage/MyRefundPage"
 import BoostPurchasePage from "./pages/rentalAdmin/BoostPurchasePage"
 import CashChargePage from "./pages/rentalAdmin/CashCahrgePage"
 import BannerApplyPage from "./pages/rentalAdmin/BannerApplyPage"
+import BannerResubmitPage from "./pages/rentalAdmin/BannerResubmitPage"
 import ReservationList from './components/rentManager/ReservationList';
 
 
@@ -106,6 +107,7 @@ function App() {
                             <Route path="/rentAdmin/cash" element={<CashChargePage/>}></Route>
                             <Route path="/rentAdmin/boost" element={<BoostPurchasePage/>}></Route>
                             <Route path="/rentAdmin/banner" element={<BannerApplyPage/>}></Route>
+                            <Route path="/rentAdmin/banner/edit/:waitingId" element={<BannerResubmitPage/>}></Route>
                         </Route>
 
 

@@ -76,24 +76,14 @@ const CashChargeForm = () => {
     setAmount('');
   };
 
-  const getNextMonday0AM = () => {
-    const today = new Date();
-    const diff = (8 - today.getDay()) % 7 || 7;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split('T')[0] + ' 00:00';
-  };
-  const updateDay = getNextMonday0AM();
+ 
 
   return (
     <div style={{display:"flex"}}>
       <div className="table-container" style={{marginLeft:"20px",marginTop:"0px", width:"500px", boxShadow:"0 2px 6px rgba(0, 0, 0, 0.3)"}}>
         <h3 className="form-header">
           💰 광고 캐시 충전
-          <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
-            📅 {updateDay}(월) 적용 예정
-          </span>
+          
         </h3>
         <div className="form-container">
           <form onSubmit={handleCharge}>

@@ -60,7 +60,7 @@ const RentSidebar = () => {
                         <ul className="sub-menu">
                             <li><Link to="/rentAdmin/cash">캐시 충전</Link></li>
                             <li><Link to="/rentAdmin/boost">부스트 구매하기</Link></li>
-                            <li><Link to="/rentAdmin/banner">배너광고 신청·구매하기</Link></li>
+                            <li><Link to="/rentAdmin/banner">배너광고 신청·구매하기</Link></li>                            
                         </ul>
                     </CustomAccordion>
                 </li>
