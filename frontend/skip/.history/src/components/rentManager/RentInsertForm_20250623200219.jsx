@@ -143,14 +143,9 @@ const RentInsertForm = () => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             alert("렌탈샵이 등록되었습니다.");
-            // 폼 초기화
-            setFormData(initialFormData);
-            // 파일 input 초기화
-            Object.values(fileRefs).forEach(ref => {
-                if (ref.current) ref.current.value = null;
-            });
+            // navigate("/rentAdmin/list");
 
-            navigate("/rentAdmin/list");
+
         } catch (err) {
             alert("렌탈샵 등록 중 오류 발생");
         }

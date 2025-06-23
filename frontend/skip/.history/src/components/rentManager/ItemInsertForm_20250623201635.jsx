@@ -28,18 +28,17 @@ const ItemInsertForm = () => {
   const [selectedShopName, setSelectedShopName] = useState("");
   const selectedOptions = useCategoryOptions(formData.category);
 
-  
   useEffect(() => {
-    const handlePopState = () => {
-      resetForm();  // 뒤로가기나 앞으로가기 할 때 폼 초기화!
-    };
+  const handlePopState = () => {
+    resetForm();  // 뒤로가기나 앞으로가기 할 때 폼 초기화!
+  };
 
-    window.addEventListener("popstate", handlePopState);
+  window.addEventListener("popstate", handlePopState);
 
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, []);
+  return () => {
+    window.removeEventListener("popstate", handlePopState);
+  };
+}, []);
   
 
   useEffect(() => {

@@ -28,7 +28,7 @@ const ItemInsertForm = () => {
   const [selectedShopName, setSelectedShopName] = useState("");
   const selectedOptions = useCategoryOptions(formData.category);
 
-  
+  //뒤로가기 
   useEffect(() => {
     const handlePopState = () => {
       resetForm();  // 뒤로가기나 앞으로가기 할 때 폼 초기화!

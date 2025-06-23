@@ -210,8 +210,8 @@ const ItemUpdateForm = () => {
         })
         .then(resp => {
             alert("장비 수정 완료!");
-            resetForm();
-            navigate(`/rentAdmin/item/list`);
+            
+            navigate(`/rentAdmin/item/list/${rentId}`);
         })
         .catch(error => {
             console.error("장비 수정 실패:", error);

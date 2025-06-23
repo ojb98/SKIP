@@ -9,7 +9,6 @@ const RentInsertForm = () => {
     const profile = useSelector(state => state.loginSlice);
     const [categories, setCategories] = useState([]);
     const [isBizChecked, setIsBizChecked] = useState(false);
-
     const initialFormData = {
         userId: profile.userId,
         category: '',
@@ -25,8 +24,22 @@ const RentInsertForm = () => {
         bizClosureFlag: '',
     };
 
-    const [formData, setFormData] = useState(initialFormData);
-    
+// 컴포넌트 내부에 선언해두고
+const [formData, setFormData] = useState(initialFormData);
+    const [formData, setFormData] = useState({
+        userId: profile.userId,
+        category: '',
+        name: '',
+        phone: '',
+        postalCode: '',
+        basicAddress: '',
+        streetAddress: '',
+        detailedAddress: '',
+        description: '',
+        bizRegNumber: '',
+        bizStatus: '',
+        bizClosureFlag: '',
+    });
     const fileRefs = {
         thumbnail: useRef(),
         image1: useRef(),
@@ -143,13 +156,6 @@ const RentInsertForm = () => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             alert("렌탈샵이 등록되었습니다.");
-            // 폼 초기화
-            setFormData(initialFormData);
-            // 파일 input 초기화
-            Object.values(fileRefs).forEach(ref => {
-                if (ref.current) ref.current.value = null;
-            });
-
             navigate("/rentAdmin/list");
         } catch (err) {
             alert("렌탈샵 등록 중 오류 발생");

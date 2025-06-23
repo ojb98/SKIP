@@ -150,7 +150,7 @@ const RentInsertForm = () => {
                 if (ref.current) ref.current.value = null;
             });
 
-            navigate("/rentAdmin/list");
+            // navigate("/rentAdmin/list");
         } catch (err) {
             alert("렌탈샵 등록 중 오류 발생");
         }

@@ -2,16 +2,26 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import '../../css/rentInsertForm.css';
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import caxios from "../../api/caxios";
+import { Lock, Pencil } from "lucide-react";
 
-const RentInsertForm = () => {
+const RentUpdateForm = () => {
+    const { rentId } = useParams(); // 주소에서 rentId 가져옴
     const profile = useSelector(state => state.loginSlice);
+    const navigate = useNavigate();
+
     const [categories, setCategories] = useState([]);
     const [isBizChecked, setIsBizChecked] = useState(false);
+    const [bizRegNumberReadonly, setBizRegNumberReadonly] = useState(true);
+
+    const toggleBizRegReadonly = () => {
+        setBizRegNumberReadonly(prev => !prev);
+    };
 
     const initialFormData = {
-        userId: profile.userId,
+        rentId: "", // 필수
+        userId: profile.userId || "",
         category: '',
         name: '',
         phone: '',
@@ -26,31 +36,68 @@ const RentInsertForm = () => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
-    
+
     const fileRefs = {
         thumbnail: useRef(),
         image1: useRef(),
         image2: useRef(),
         image3: useRef()
     };
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        // 렌탈샵 정보 조회
+        const fetchRent = async () => {
             try {
-                const response = await caxios.get('/api/enums/rentCategory');
-                setCategories(response.data);
-            } catch (error) {
-                setCategories([]);
+                const res = await caxios.get(`/api/rents/${rentId}`);
+                const data = res.data;
+
+                setFormData(prev => ({
+                    ...prev,
+                    rentId: data.rentId,
+                    userId: data.userId,
+                    category: data.category,
+                    name: data.name,
+                    phone: data.phone,
+                    postalCode: data.postalCode,
+                    basicAddress: data.basicAddress,
+                    streetAddress: data.streetAddress,
+                    detailedAddress: data.detailedAddress,
+                    description: data.description,
+                    bizRegNumber: data.bizRegNumber,
+                    bizStatus: data.bizStatus,
+                    bizClosureFlag: data.bizClosureFlag
+                }));
+
+                setIsBizChecked(true); // 기존 사업자등록번호는 진위확인되어 있다고 가정
+
+            } catch (err) {
+                console.error("렌탈 정보 불러오기 실패", err);
+                alert("렌탈 정보를 불러오지 못했습니다.");
+                navigate("/rentAdmin/list");
             }
         };
-        fetchCategories();
-    }, []);
+
+        fetchRent();
+
+        // 카테고리 조회
+        caxios.get('/api/enums/rentCategory')
+            .then(res => setCategories(res.data))
+            .catch(err => {
+                console.error("카테고리 불러오기 실패", err);
+                setCategories([]);
+            });
+
+    }, [rentId, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        if (name === "bizRegNumber") setIsBizChecked(false);
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        if (name === "bizRegNumber") {
+            setIsBizChecked(false);
+        }
     };
 
     const handleAddressSearch = () => {
@@ -71,49 +118,52 @@ const RentInsertForm = () => {
             alert("사업자등록번호를 하이픈 없이 입력하세요.");
             return;
         }
+
         try {
             const response = await caxios.post("/api/business/verify", {
                 bizRegNumber: formData.bizRegNumber
             });
+
             const bizInfo = response.data;
+
             if (!bizInfo || bizInfo.utcc_yn === "") {
                 alert("유효하지 않은 사업자입니다.");
-                setFormData(prev => ({ ...prev, bizStatus: "", bizClosureFlag: "" }));
+                setFormData(prev => ({
+                    ...prev,
+                    bizStatus: "",
+                    bizClosureFlag: ""
+                }));
                 return;
             }
+
             setFormData(prev => ({
                 ...prev,
                 bizStatus: bizInfo.b_stt_cd === "01" ? "Y" : "N",
                 bizClosureFlag: bizInfo.utcc_yn
             }));
+
             setIsBizChecked(true);
         } catch (err) {
+            console.error("사업자번호 진위확인 실패", err);
             alert("진위확인 중 오류 발생");
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // // userId 없으면 로그인 페이지로 리디렉트
-        // if (!profile?.userId) {
-        //     navigate("/login"); return;
-        // }
 
         if (!isBizChecked) {
             alert("사업자 진위확인을 먼저 해주세요.");
             return;
         }
+
+        // 기본 유효성 체크
         const requiredFields = ["category", "name", "phone", "bizRegNumber", "postalCode", "basicAddress", "streetAddress"];
         for (const field of requiredFields) {
             if (!formData[field]) {
                 alert("필수 항목을 모두 입력해주세요.");
                 return;
             }
-        }
-
-        if (!fileRefs.thumbnail.current?.files.length || !fileRefs.image1.current?.files.length) {
-            alert("썸네일과 이미지1은 반드시 업로드해야 합니다.");
-            return;
         }
 
         const phonePattern = /^[0-9-]+$/;
@@ -132,6 +182,7 @@ const RentInsertForm = () => {
             submitData.append(key, value);
         });
 
+        // 파일 업로드
         Object.entries(fileRefs).forEach(([key, ref]) => {
             if (ref.current && ref.current.files.length > 0) {
                 submitData.append(key, ref.current.files[0]);
@@ -139,10 +190,13 @@ const RentInsertForm = () => {
         });
 
         try {
-            await caxios.post("/api/rents", submitData, {
-                headers: { "Content-Type": "multipart/form-data" }
+            await caxios.post("/api/rents/update", submitData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
             });
-            alert("렌탈샵이 등록되었습니다.");
+            alert("렌탈샵 정보가 수정되었습니다.");
+            
             // 폼 초기화
             setFormData(initialFormData);
             // 파일 input 초기화
@@ -152,20 +206,21 @@ const RentInsertForm = () => {
 
             navigate("/rentAdmin/list");
         } catch (err) {
-            alert("렌탈샵 등록 중 오류 발생");
+            console.error("렌탈샵 수정 실패", err);
+            alert("렌탈샵 수정 중 오류 발생");
         }
-        
     };
 
     return (
         <div className="rent-page-wrapper">
-            <h1 className="top-subject">가맹점 등록하기</h1>
+            <h1 className="top-subject">가맹점 수정하기</h1>
             <div className="rent-detail-wrapper" style={{ maxWidth: 600, margin: '0 auto' }}>
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
+                    <input type="hidden" name="rentId" value={formData.rentId} />
                     <input type="hidden" name="userId" value={formData.userId} />
                     <div className="form-group">
-                        <label htmlFor="category"><span className="required-asterisk">*</span>카테고리</label>
-                        <select name="category" id="category" value={formData.category} onChange={handleChange} required>
+                        <label htmlFor="category"><span className="required">*</span>카테고리</label>
+                        <select name="category" id="category" value={formData.category} onChange={handleChange} disabled>
                             <option value="">카테고리를 선택하세요</option>
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat.code}>{cat.label}</option>
@@ -173,39 +228,47 @@ const RentInsertForm = () => {
                         </select>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="name"><span className="required-asterisk">*</span>상호명</label>
+                        <label htmlFor="name"><span className="required">*</span>상호명</label>
                         <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="phone"><span className="required-asterisk">*</span>전화번호</label>
+                        <label htmlFor="phone"><span className="required">*</span>전화번호</label>
                         <input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="010-111-1234" required />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="postalCode"><span className="required-asterisk">*</span>우편번호</label>
+                        <label htmlFor="postalCode"><span className="required">*</span>우편번호</label>
                         <div style={{ display: 'flex', gap: 8 }}>
                             <input type="text" id="postalCode" name="postalCode" value={formData.postalCode} readOnly style={{ flex: 1 }} />
                             <button type="button" onClick={handleAddressSearch} className="rent-insert-btn" style={{ width: 120 }}>주소 검색</button>
                         </div>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="basicAddress"><span className="required-asterisk">*</span>지번 주소</label>
+                        <label htmlFor="basicAddress"><span className="required">*</span>지번 주소</label>
                         <input type="text" id="basicAddress" name="basicAddress" value={formData.basicAddress} readOnly />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="streetAddress"><span className="required-asterisk">*</span>도로명 주소</label>
+                        <label htmlFor="streetAddress"><span className="required">*</span>도로명 주소</label>
                         <input type="text" id="streetAddress" name="streetAddress" value={formData.streetAddress} readOnly />
                     </div>
                     <div className="form-group">
                         <label htmlFor="detailedAddress">상세 주소</label>
                         <input type="text" id="detailedAddress" name="detailedAddress" value={formData.detailedAddress} onChange={handleChange} />
                     </div>
-                    
+                    <span className="text-red-500 text-[13px] block mb-2 font-bold">*사업자등록번호 변경시 다시 심사 받아야 합니다.</span>
                     <div className="form-group">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <label htmlFor="bizRegNumber"><span className="required-asterisk">*</span>사업자 등록번호</label>
+                        <div className="flex flex-row gap-2">
+                            <label htmlFor="bizRegNumber" className="mb-0 whitespace-nowrap">사업자 등록번호</label>
+                            <button type="button" onClick={toggleBizRegReadonly} className="rent-readonly-btn cursor-pointer">
+                                {bizRegNumberReadonly ? (
+                                    <Pencil width={20} />
+                                ) : (
+                                    <Lock width={20} />
+                                )}
+                            </button>
                         </div>
                         <div style={{ display: 'flex', gap: 8 }}>
-                            <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange} placeholder="숫자만 입력하세요" required style={{ flex: 1 }} />
+                            <input type="text" id="bizRegNumber" name="bizRegNumber" value={formData.bizRegNumber} onChange={handleChange}
+                                readOnly={bizRegNumberReadonly} placeholder="숫자만 입력하세요" required style={{ flex: 1 }} />
                             <button type="button" onClick={handleBizNumberCheck} className="rent-insert-btn" style={{ width: 120 }}>진위확인</button>
                         </div>
                     </div>
@@ -218,11 +281,11 @@ const RentInsertForm = () => {
                         <input type="text" name="bizClosureFlag" id="bizClosureFlag" value={formData.bizClosureFlag} readOnly />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="thumbnail"><span className="required-asterisk">*</span>썸네일 이미지</label>
+                        <label htmlFor="thumbnail"><span className="required">*</span>썸네일 이미지</label>
                         <input type="file" id="thumbnail" name="thumbnail" ref={fileRefs.thumbnail} accept="image/*" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="image1"><span className="required-asterisk">*</span>이미지 1</label>
+                        <label htmlFor="image1">이미지 1</label>
                         <input type="file" id="image1" name="image1" ref={fileRefs.image1} accept="image/*" />
                     </div>
                     <div className="form-group">
@@ -237,15 +300,13 @@ const RentInsertForm = () => {
                         <label htmlFor="description">설명</label>
                         <textarea id="description" name="description" value={formData.description} onChange={handleChange}></textarea>
                     </div>
-                    <div style={{ textAlign: 'center', marginTop: 32 }}>
-                        <button type="submit" className="rent-insert-btn" style={{ width: 180, fontSize: 16 }}>등록</button>
-                    </div>
                 </form>
+                <div style={{ textAlign: 'center', marginTop: 32 }}>
+                    <button type="submit" form="" className="rent-insert-btn" style={{ width: 180, fontSize: 16 }}>수정</button>
+                </div>
             </div>
         </div>
     );
 };
 
-export default RentInsertForm;
-
-
+export default RentUpdateForm;
