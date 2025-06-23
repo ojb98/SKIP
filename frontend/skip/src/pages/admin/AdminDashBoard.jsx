@@ -28,17 +28,17 @@ const AdminDashboard = () => {
         return d.toISOString().split("T")[0];
     }
 
-    const getBeforeStart = (startDate) => {
-        const d = new Date();
-        d.setDate(startDate);
-        return d.toISOString().split("T")[0];
-    }
+    // const getBeforeStart = (startDate) => {
+    //     const d = new Date();
+    //     d.setDate(startDate);
+    //     return d.toISOString().split("T")[0];
+    // }
 
-    const getBeforeEnd = (endDate) => {
-        const d = new Date();
-        d.setDate(endDate);
-        return d.toISOString().split("T")[0];
-    }
+    // const getBeforeEnd = (endDate) => {
+    //     const d = new Date();
+    //     d.setDate(endDate);
+    //     return d.toISOString().split("T")[0];
+    // }
 
     const getRelativeDate = (base, diffDays) => {
         const d = new Date(base)
@@ -285,7 +285,7 @@ const loadDashboardData = async () => {
                     </div>
                 </div>
 
-                <div className="card-refresh" onClick={()=>{handleClick("refresh"); refreshData()}} style={{cursor:"pointer", backgroundColor: isClicked==="refresh" ? "#ccc" : "transparent"}}>
+                <div className="card-refresh" onClick={refreshData} style={{cursor:"pointer", backgroundColor: isClicked==="refresh" ? "#ccc" : "transparent"}}>
                     <img src="/public/images/icons8-refresh-60.png" style={{width:"60px"}}/>
                 </div>
             </div>

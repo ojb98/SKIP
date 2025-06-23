@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import './index.css'
 import './css/Rentalshop.css'
 import './css/admin.css'

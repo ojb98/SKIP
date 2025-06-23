@@ -15,17 +15,17 @@ const BannerApprovalTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
 
-  // 이번 주 월요일 오전 3시
-  const getThisWeekMonday3AM = () => {
+  // 다음 주 월요일 오전 3시
+  const getNextMonday3AM = () => {
     const today = new Date();
-    const day = today.getDay();
-    const diffToMonday = (9 - day) % 7 || 7;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diffToMonday);
-    monday.setHours(3, 0, 0, 0);
-    return monday.toISOString().split('T')[0] + ' 오전 3시';
+    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(3, 0, 0, 0);
+    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
   };
-  const registDay = getThisWeekMonday3AM();
+  const registDay = getNextMonday3AM();
 
   // API 호출
   const loadBanners = async () => {

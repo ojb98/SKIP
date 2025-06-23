@@ -35,9 +35,12 @@ export const radio = tv({
         'has-checked:border-black has-checked:text-black'
     ],
     variants: {
+        type: {
+            "time-select": 'border-none rounded-none shadow-none text-black hover:bg-gray-100 has-checked:bg-blue-400 has-checked:text-white'
+        },
         color: {
             primary: 'text-black border-gray-200 has-checked:bg-blue-400 has-checked:text-white has-checked:border-blue-400 has-checked:font-semibold',
-            "secondary-text": 'border-none shadow-none hover:bg-white hover:text-gray-500 has-checked:font-semibold'
+            "secondary-text": 'border-none shadow-none hover:bg-white hover:text-gray-500 has-checked:font-semibold',
         }
     }
 });

@@ -142,6 +142,7 @@
   height: 30px;
   margin-top: 7px;
   border-radius: 50%;
+  overflow: hidden;
 }
 
 .review-user-default-img {
@@ -437,9 +438,22 @@
 }
 
 .product-option input[type="date"],
-.product-option select{
+.product-option select,
+.product-option input[type="text"]{
   width: 100%;
   padding: 5px;
+}
+
+.readonly-input {
+  color: #888;
+  background-color: #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.readonly-input::placeholder {
+  color: #888;
+  opacity: 1;
 }
 
 .product-added-options {

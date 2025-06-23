@@ -2,7 +2,7 @@ package com.example.skip.service;
 
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.BannerActiveListStatus;
-import com.example.skip.repository.BannerWaitingListRepository;
+import com.example.skip.repository.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,7 @@ import com.example.skip.dto.banner.BannerActiveListDTO;
 import com.example.skip.dto.banner.BannerWaitingListDTO;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.enumeration.BannerWaitingListStatus;
-import com.example.skip.repository.BannerActiveListRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
-import com.example.skip.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,13 +42,10 @@ public class BannerService {
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-
     private static final QBannerActiveList bannerActiveList = QBannerActiveList.bannerActiveList;
-
     private static final QRent rent = QRent.rent;
-
     private static final String REDIS_KEY = "banner:clicks";
-
+    private final RentRepository rentRepository;
 
     LocalDate today = LocalDate.now();
     // 항상 다음 주 월요일 계산
@@ -73,13 +68,22 @@ public class BannerService {
                 .map(BannerWaitingListDTO::new)
                 .toList();
     }
+    //승인된 대기 배너 조회
+    public List<BannerWaitingListDTO> getApprovedWaitingBanners() {
+        List<BannerWaitingList> banners = bannerWaitingListRepository
+                .findAllByStatusAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+        banners.forEach(this::populateRatings);
+        return banners.stream()
+                .map(BannerWaitingListDTO::new)
+                .toList();
+    }
+
 
     //등록된 배너 조회
     public List<BannerActiveListDTO> getActiveBanners() {
         // 1. 등록된 배너 엔티티 조회
         List<BannerActiveList> banners = bannerActiveListRepository
-                .findAllByEndDateBetween(mondayAt3AM, mondayAt3AM10M);
-        //
+                .findAllByUploadDateBetween(mondayAt3AM, mondayAt3AM10M);
 
         // 3. DTO 변환
         return banners.stream()
@@ -151,10 +155,33 @@ public class BannerService {
         return list;
     }
 
-    // 배너 클릭 버퍼링
-    public void clickBanner(Long bannerId) {
+    private static final int FiveMin_CLICK_PER_IP = 5;
+    private static final int OneHour_CLICK_PER_IP = 8;
+    private static final String IP_KEY_PREFIX = "banner:click:ip:";
+
+    // 배너 클릭 버퍼링  - 1시간에 5회 이상 클릭 시 클릭당 비용이 더이상 차감되지 않음
+    public void clickBanner(Long bannerId, String ip) {
+        String ipKey = IP_KEY_PREFIX + ip + ":" + bannerId;
+        Long countFor5Minutes = redisTemplate.opsForValue().increment(ipKey);
+        Long countFor1Hour = redisTemplate.opsForValue().increment(ipKey);
+        if (countFor5Minutes != null && countFor5Minutes == 1) {
+            redisTemplate.expire(ipKey, java.time.Duration.ofMinutes(5)); //5분 후 초기화
+        }
+        if (countFor1Hour != null && countFor1Hour == 1) {
+            redisTemplate.expire(ipKey, java.time.Duration.ofHours(1)); //1시간 후 초기화
+        }
+        //
+        if (countFor5Minutes != null && countFor5Minutes > FiveMin_CLICK_PER_IP) {  //5분이내 누적 5회클릭 이상 = 광고비차감X
+            log.warn("IP {} banner {} 과다 클릭 감지", ip, bannerId);
+            return;
+        }
+        if (countFor1Hour != null && countFor1Hour > OneHour_CLICK_PER_IP) { //1시간이내 누적 8회클릭 이상 = 광고비차감X
+            log.warn("IP {} banner {} 과다 클릭 감지", ip, bannerId);
+            return;
+        }
         redisTemplate.opsForHash().increment(REDIS_KEY, bannerId.toString(), 1);
     }
+
 
     // 배너 클릭 플러시
     @Scheduled(fixedRate = 5 * 60 * 1000) // 5분마다 flush
@@ -167,6 +194,18 @@ public class BannerService {
             BannerActiveList bannerActiveList = bannerActiveListRepository.findById(bannerId).orElseThrow();
 
             bannerActiveList.setClickCnt(bannerActiveList.getClickCnt() + count);
+
+            int totalCost = bannerActiveList.getCpcBid() * count;
+            Rent rent = bannerActiveList.getRent();
+            rent.setRemainAdCash(rent.getRemainAdCash() - totalCost);
+
+            if (rent.getRemainAdCash() < 0) {
+                bannerActiveList.setStatus(BannerActiveListStatus.DISABLE);
+                log.info("배너 {} 잔액 부족으로 비활성화", bannerId);
+            }
+
+            rentRepository.save(rent);
+            bannerActiveListRepository.save(bannerActiveList);
             log.info("{}: flushed", bannerId);
         }
         redisTemplate.delete(REDIS_KEY);

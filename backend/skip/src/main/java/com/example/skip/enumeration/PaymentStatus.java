@@ -4,4 +4,5 @@ public enum PaymentStatus {
     READY,
     PAID,
     CANCELLED,
+    READY,
 }

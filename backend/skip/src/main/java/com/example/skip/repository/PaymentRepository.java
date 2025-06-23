@@ -163,4 +163,77 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                                  @Param("end") LocalDateTime end);
 
     Optional<Payment> findByMerchantUid(String merchantUid);
+
+
+    // ===== 렌탈샵 단일 대시보드를 위한 쿼리 =====
+
+    @Query("""
+    SELECT COALESCE(SUM(p.totalPrice), 0)
+    FROM Payment p
+    JOIN p.reservations r
+    WHERE r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'PAID'
+    """)
+    Double getTotalPaidPriceByRent(@Param("userId") Long userId,
+                                   @Param("rentId") Long rentId,
+                                   @Param("start") LocalDateTime start,
+                                   @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(p)
+    FROM Payment p
+    JOIN p.reservations r
+    WHERE r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'PAID'
+    """)
+    Long getPaidCountByRent(@Param("userId") Long userId,
+                            @Param("rentId") Long rentId,
+                            @Param("start") LocalDateTime start,
+                            @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.rentPrice), 0)
+    FROM Payment p
+    JOIN p.reservations r
+    WHERE r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'PAID'
+    """)
+    Double getRentProfitByRent(@Param("userId") Long userId,
+                               @Param("rentId") Long rentId,
+                               @Param("start") LocalDateTime start,
+                               @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.totalPrice), 0)
+    FROM Payment p
+    JOIN p.reservations r
+    WHERE r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'CANCELLED'
+    """)
+    Double getCancelledSalesByRent(@Param("userId") Long userId,
+                                   @Param("rentId") Long rentId,
+                                   @Param("start") LocalDateTime start,
+                                   @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT COUNT(p)
+    FROM Payment p
+    JOIN p.reservations r
+    WHERE r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'CANCELLED'
+    """)
+    Long getCancelledCountByRent(@Param("userId") Long userId,
+                                 @Param("rentId") Long rentId,
+                                 @Param("start") LocalDateTime start,
+                                 @Param("end") LocalDateTime end);
 }
