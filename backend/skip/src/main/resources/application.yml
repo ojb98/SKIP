@@ -41,7 +41,7 @@ spring:
 
   data:
     redis:
-#      host: ${database.host}
+      host: ${database.host}
       port: 6379
 
   elasticsearch:
