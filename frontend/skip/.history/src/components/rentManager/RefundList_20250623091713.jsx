@@ -136,15 +136,14 @@ const RefundList = () => {
         {/* 필터 */}
         <div className="refund-filter-form">
             <div className="refund-filter-row">
-                <label className="refund-filter-label">환불구분: </label>
+                
                 <select className="refund-filter-select" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
                     <option value="">전체 상태</option>
                     <option value="REQUESTED">환불 요청</option>
                     <option value="COMPLETED">환불 완료</option>
                     <option value="REJECTED">환불 거절</option>
                 </select>
-                
-                <label className="refund-filter-label">상호명: </label>
+
                 <select className="refund-filter-select" value={filters.rentId} onChange={(e) => handleFilterChange("rentId", e.target.value === '' ? '' : Number(e.target.value))}>
                     <option value="">전체 상호명</option>
                         {rents.length > 0 ? (
@@ -160,7 +159,7 @@ const RefundList = () => {
             </div>
             
             <div className="refund-filter-row">
-                <label className="refund-filter-label">환불요청일: </label>
+                <label className="refund-filter-label">환불요청일:</label>
                 <input className="refund-filter-date" type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)} placeholder="시작일"/>
                 <span className="refund-filter-separator"><strong>~</strong></span>
                 <input className="refund-filter-date" type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)} placeholder="종료일"/>

@@ -197,7 +197,7 @@
 
 .button-list .itemlist-update-btn:hover {
     background-color: #f1dd8b;
-    color: #000;
+    color: #;
 }
 
 .button-list .itemlist-add-option-btn {
@@ -227,7 +227,7 @@
     font-size: 14px;
     cursor: pointer;
     background-color: #fbd6d6;
-    color: #000;
+    color: #cc4444;
     margin-left: 8px;
     user-select: none;
     text-align: center;

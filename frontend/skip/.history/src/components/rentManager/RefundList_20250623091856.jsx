@@ -160,7 +160,7 @@ const RefundList = () => {
             </div>
             
             <div className="refund-filter-row">
-                <label className="refund-filter-label">환불요청일: </label>
+                <label className="refund-filter-label">환불요청일:</label>
                 <input className="refund-filter-date" type="date" value={filters.startDate} onChange={(e) => handleFilterChange('startDate', e.target.value)} placeholder="시작일"/>
                 <span className="refund-filter-separator"><strong>~</strong></span>
                 <input className="refund-filter-date" type="date" value={filters.endDate} onChange={(e) => handleFilterChange('endDate', e.target.value)} placeholder="종료일"/>

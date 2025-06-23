@@ -227,7 +227,7 @@
     font-size: 14px;
     cursor: pointer;
     background-color: #fbd6d6;
-    color: #000;
+    color: ##;
     margin-left: 8px;
     user-select: none;
     text-align: center;
@@ -235,7 +235,7 @@
 
 .button-list .itemlist-delete-selected-btn:hover {
     background-color: #f17c7c;
-    color: #fff;
+    color: #000;
 }
 
 .itemlist-all-selected-btn {
