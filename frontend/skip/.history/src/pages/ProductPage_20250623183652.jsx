@@ -140,12 +140,6 @@ const ProductPage=()=>{
 
   //장바구니 담기
   const handleAddToCart = async() => {
-
-    // userId 없으면 로그인 페이지로 리디렉트
-    if (!profile?.userId) {
-      navigate("/login"); return;
-    }
-
     if(selectedOptions.length === 0){
       alert("장비을 선택해주세요");
       return;
@@ -182,9 +176,9 @@ const ProductPage=()=>{
   const handleAddToWish = async() =>{
     // userId 없으면 로그인 페이지로 리디렉트
     if (!profile?.userId) {
-      navigate("/login"); return;
-    }
-
+            navigate("/login");
+            return;
+        }
     if (!itemData || !itemData.detailList || itemData.detailList.length === 0) {
     alert("찜 등록할 수 있는 상품이 없습니다.");
     return;
@@ -207,11 +201,6 @@ const ProductPage=()=>{
 
   //결제 전처리 작업
   const preparePayment = async () => {
-    // userId 없으면 로그인 페이지로 리디렉트
-    if (!profile?.userId) {
-      navigate("/login"); return;
-    }
-
     const totalAmount = selectedOptions.reduce((sum, item) => sum + item.price * item.count, 0);
 
     const reservationItems = selectedOptions.map(opt => ({

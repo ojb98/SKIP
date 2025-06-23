@@ -6,7 +6,6 @@ import { removeCartItemApi } from "../../api/cartApi";
 import { updateCartItemApi } from "../../api/cartApi";
 import axios from "axios";
 import "../../css/cartList.css";
-import caxios from "../../api/caxios";
 
 const CartList=()=>{
     const navigate = useNavigate();
@@ -184,9 +183,9 @@ const CartList=()=>{
     // reduce() : 배열의 모든 요소를 하나의 값으로 축약(누적)할 때 사용
     const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
-
-    //결제 전처리 작업
-    const preparePayment = async () => {
+    // 결제   
+    const handlePayment = async (pg) => {
+        setShowPaymentModal(false);  //모달 닫기
 
         if (checkedItems.size === 0) {
             alert("결제할 상품을 선택해주세요.");
@@ -205,55 +204,22 @@ const CartList=()=>{
                 .map(item => ({
                     cartId: item.cartId,
                     rentId: group.rentId,
-                    rentStart: new Date(item.rentStart).toISOString().replace("Z", ""),
-                    rentEnd: new Date(item.rentEnd).toISOString().replace("Z", ""),
+                    rentStart: new Date(item.rentStart).toISOString(),
+                    rentEnd: new Date(item.rentEnd).toISOString(),
                     quantity: item.quantity,
                     subtotalPrice: item.price,
                 }))
         );
 
-        const response = await caxios.post("/api/payments/cart/prepare", {
-            userId: profile.userId,
-            reservationItems,
-        });
-
-        console.log("결제전처리==>",response);
-        return response.data;   // merchantUid,amount 
-    }
+        console.log("reservationItems ==>",reservationItems);
 
 
-    //결제
-    const handlePayment = async (pg) => {
-        setShowPaymentModal(false); // 모달 닫기
-    
-        try {
-    
-          const response = await preparePayment();
-    
-          // 성공 여부 체크 (서버가 { success: false, ... } 반환하면 여기서 처리)
-          if (response.success === false) {
-            alert(`결제 준비 실패: ${response.message || '알 수 없는 오류'}`);
-            return; // 실패면 결제 진행 중단
-          }
-    
-          const { merchantUid, totalPrice: serverTotalPrice } = response;
-    
-          const IMP = window.IMP;
-          IMP.init("imp57043461");
-    
-          // merchantUid가 없으면 실패 처리
-          if (!merchantUid) {
-            alert("결제 준비 중 오류가 발생했습니다. 다시 시도해 주세요.");
-            return;
-          }
-    
-          // 3. 서버에서 받은 금액과 클라이언트 계산 금액 비교 (검증)
-          if (totalPrice !== serverTotalPrice) {
-            alert("결제 금액이 서버와 다릅니다. 결제를 진행할 수 없습니다.");
-            return;
-          }
-    
-          IMP.request_pay({
+        const merchantUid = `order_${pg}_${new Date().getTime()}`;
+        const IMP = window.IMP;
+        IMP.init("imp57043461");  //아임포트 초기화
+
+        //결제 요청(아임포트에 보낼 결제 정보)
+        IMP.request_pay({
             pg,
             pay_method: "card",
             merchant_uid: merchantUid,
@@ -261,112 +227,36 @@ const CartList=()=>{
             amount: totalPrice,
             buyer_email: profile.email,
             buyer_name: profile.name,
-          }, async (rsp) => {
-            if (rsp.success) {
-              try {
-                await caxios.post("/api/payments/confirm", {
-                  impUid: rsp.imp_uid,
-                  merchantUid: rsp.merchant_uid,
-                  amount: totalPrice,
-                  userId: profile.userId,
-                  pgProvider: pg,
-                });
-    
-                alert("결제 완료!");
-                navigate("/mypage/reserve");
-              } catch (err) {
-                alert("결제 성공 후 서버 처리 실패: " + err.response?.data?.message);
-              }
-            } else {
-              alert("결제 실패: " + rsp.error_msg);
-            }
-          });
-        } catch (e) {
-          console.error("결제 준비 에러:", e);
-          const errorMsg =
-            e.response?.data?.message ??
-            e.message ??
-            "알 수 없는 오류입니다.";
-    
-          alert("결제 준비 실패: " + errorMsg);
-        }
-      };
-
-
-    // // 결제   
-    // const handlePayment = async (pg) => {
-    //     setShowPaymentModal(false);  //모달 닫기
-
-    //     if (checkedItems.size === 0) {
-    //         alert("결제할 상품을 선택해주세요.");
-    //         return;
-    //     }
-        
-    //     if (cartGroups.length === 0) {
-    //         alert("예약할 상품이 없습니다.");
-    //         return;
-    //     }
-
-    //     // 선택된 장바구니만 필터링해서 결제에 사용할 예약 데이터 
-    //     const reservationItems = cartGroups.flatMap(group =>
-    //         group.items.filter(item => checkedItems.has(item.cartId))
-    //             // 새로운 객체 형태로 변환
-    //             .map(item => ({
-    //                 cartId: item.cartId,
-    //                 rentId: group.rentId,
-    //                 rentStart: new Date(item.rentStart).toISOString(),
-    //                 rentEnd: new Date(item.rentEnd).toISOString(),
-    //                 quantity: item.quantity,
-    //                 subtotalPrice: item.price,
-    //             }))
-    //     );
-
-    //     console.log("reservationItems ==>",reservationItems);
-
-
-    //     const merchantUid = `order_${pg}_${new Date().getTime()}`;
-    //     const IMP = window.IMP;
-    //     IMP.init("imp57043461");  //아임포트 초기화
-
-    //     //결제 요청(아임포트에 보낼 결제 정보)
-    //     IMP.request_pay({
-    //         pg,
-    //         pay_method: "card",
-    //         merchant_uid: merchantUid,
-    //         name: "대여 결제",
-    //         amount: totalPrice,
-    //         buyer_email: profile.email,
-    //         buyer_name: profile.name,
-    //         buyer_username: profile.username,
-    //     }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
-    //         console.log("결제 응답 ===>",resp);
-    //         if (resp.success) {  
-    //             try {
-    //                 // 결제 정보를 보내어 결제 검증 및 예약 처리 
-    //                 const res = await axios.post("/api/payments/complete", {
-    //                     impUid: resp.imp_uid,
-    //                     merchantUid: resp.merchant_uid,
-    //                     amount: resp.paid_amount,
-    //                     userId: profile.userId,
-    //                     totalPrice,
-    //                     reservationItems, // 리스트 전송
-    //                 });
+            buyer_username: profile.username,
+        }, async (resp) => {  //결제 완료 시 실행할 콜백 함수 정의 (resp는 아임포트 응답 객체)
+            console.log("결제 응답 ===>",resp);
+            if (resp.success) {  
+                try {
+                    // 결제 정보를 보내어 결제 검증 및 예약 처리 
+                    const res = await axios.post("/api/payments/complete", {
+                        impUid: resp.imp_uid,
+                        merchantUid: resp.merchant_uid,
+                        amount: resp.paid_amount,
+                        userId: profile.userId,
+                        totalPrice,
+                        reservationItems, // 리스트 전송
+                    });
 
                     
-    //                 console.log("결제 완료:", res.data);
-    //                 alert("결제가 완료되었습니다!");
-    //                 // navigate("/payment", { state: { payment: resp.data } });
+                    console.log("결제 완료:", res.data);
+                    alert("결제가 완료되었습니다!");
+                    // navigate("/payment", { state: { payment: resp.data } });
 
-    //             } catch (err) {
-    //                 console.log(err.response.data.error);
-    //                 alert("결제 실패:" + err.response.data.error);
-    //             }
-    //         } else {
-    //             alert("결제 실패: " + resp.error_msg);
-    //         }
+                } catch (err) {
+                    console.log(err.response.data.error);
+                    alert("결제 실패:" + err.response.data.error);
+                }
+            } else {
+                alert("결제 실패: " + resp.error_msg);
+            }
             
-    //     });
-    // }
+        });
+    }
 
 
     return(

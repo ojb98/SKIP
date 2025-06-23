@@ -268,12 +268,12 @@ const CartList=()=>{
                   impUid: rsp.imp_uid,
                   merchantUid: rsp.merchant_uid,
                   amount: totalPrice,
-                  userId: profile.userId,
+                  //userId: profile.userId,
                   pgProvider: pg,
                 });
     
                 alert("결제 완료!");
-                navigate("/mypage/reserve");
+                //navigate("/mypage/reservations");
               } catch (err) {
                 alert("결제 성공 후 서버 처리 실패: " + err.response?.data?.message);
               }

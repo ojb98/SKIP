@@ -211,7 +211,6 @@ const ProductPage=()=>{
     if (!profile?.userId) {
       navigate("/login"); return;
     }
-
     const totalAmount = selectedOptions.reduce((sum, item) => sum + item.price * item.count, 0);
 
     const reservationItems = selectedOptions.map(opt => ({

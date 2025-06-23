@@ -90,10 +90,10 @@ const RentInsertForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // // userId 없으면 로그인 페이지로 리디렉트
-        // if (!profile?.userId) {
-        //     navigate("/login"); return;
-        // }
+        // userId 없으면 로그인 페이지로 리디렉트
+        if (!profile?.userId) {
+        navigate("/login"); return;
+        }
 
         if (!isBizChecked) {
             alert("사업자 진위확인을 먼저 해주세요.");

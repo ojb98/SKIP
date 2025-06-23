@@ -10,7 +10,8 @@ public enum PaymentErrorCode {
     ITEM_DETAIL_NOT_FOUND("아이템 상세 정보 없음"),
     PAYMENT_CANCEL_FAIL("결제 취소 실패"),
     UNKNOWN_ERROR("알 수 없는 오류"),
-    PAYMENT_NOT_FOUND("결제 없음");
+    PAYMENT_NOT_FOUND("결제 없음"),
+    USER_MISMATCH("유저가 다름");
 
     private final String message;
 

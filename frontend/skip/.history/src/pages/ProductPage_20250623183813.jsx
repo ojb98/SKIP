@@ -234,6 +234,10 @@ const ProductPage=()=>{
 
   //결제
   const handlePayment = async (pg) => {
+    // userId 없으면 로그인 페이지로 리디렉트
+    if (!profile?.userId) {
+      navigate("/login"); return;
+    }
     setShowPaymentModal(false); // 모달 닫기
 
     try {

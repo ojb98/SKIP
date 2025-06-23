@@ -213,10 +213,9 @@ const CartList=()=>{
         );
 
         const response = await caxios.post("/api/payments/cart/prepare", {
-            userId: profile.userId,
-            reservationItems,
+        userId: profile.userId,
+        reservationItems,
         });
-
         console.log("결제전처리==>",response);
         return response.data;   // merchantUid,amount 
     }
@@ -273,7 +272,7 @@ const CartList=()=>{
                 });
     
                 alert("결제 완료!");
-                navigate("/mypage/reserve");
+                //navigate("/mypage/reservations");
               } catch (err) {
                 alert("결제 성공 후 서버 처리 실패: " + err.response?.data?.message);
               }

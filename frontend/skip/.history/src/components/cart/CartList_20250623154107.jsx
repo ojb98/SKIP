@@ -205,18 +205,17 @@ const CartList=()=>{
                 .map(item => ({
                     cartId: item.cartId,
                     rentId: group.rentId,
-                    rentStart: new Date(item.rentStart).toISOString().replace("Z", ""),
-                    rentEnd: new Date(item.rentEnd).toISOString().replace("Z", ""),
+                    rentStart: new Date(item.rentStart).toISOString(),
+                    rentEnd: new Date(item.rentEnd).toISOString(),
                     quantity: item.quantity,
                     subtotalPrice: item.price,
                 }))
         );
 
         const response = await caxios.post("/api/payments/cart/prepare", {
-            userId: profile.userId,
-            reservationItems,
+        userId: profile.userId,
+        reservationItems,
         });
-
         console.log("결제전처리==>",response);
         return response.data;   // merchantUid,amount 
     }
@@ -267,13 +266,13 @@ const CartList=()=>{
                 await caxios.post("/api/payments/confirm", {
                   impUid: rsp.imp_uid,
                   merchantUid: rsp.merchant_uid,
-                  amount: totalPrice,
+                  amount: clientTotalAmount,
                   userId: profile.userId,
                   pgProvider: pg,
                 });
     
                 alert("결제 완료!");
-                navigate("/mypage/reserve");
+                //navigate("/mypage/reservations");
               } catch (err) {
                 alert("결제 성공 후 서버 처리 실패: " + err.response?.data?.message);
               }

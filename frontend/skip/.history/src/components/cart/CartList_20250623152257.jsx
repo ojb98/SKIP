@@ -6,7 +6,6 @@ import { removeCartItemApi } from "../../api/cartApi";
 import { updateCartItemApi } from "../../api/cartApi";
 import axios from "axios";
 import "../../css/cartList.css";
-import caxios from "../../api/caxios";
 
 const CartList=()=>{
     const navigate = useNavigate();
@@ -187,39 +186,26 @@ const CartList=()=>{
 
     //결제 전처리 작업
     const preparePayment = async () => {
+        const totalAmount = selectedOptions.reduce((sum, item) => sum + item.price * item.count, 0);
 
-        if (checkedItems.size === 0) {
-            alert("결제할 상품을 선택해주세요.");
-            return;
-        }
-        
-        if (cartGroups.length === 0) {
-            alert("예약할 상품이 없습니다.");
-            return;
-        }
+        const reservationItems = selectedOptions.map(opt => ({
+        rentId: parsedRentId,
+        itemDetailId: opt.itemDetailId,
+        rentStart: `${opt.date}T${opt.startTime}:00`,
+        rentEnd: opt.endTime,
+        quantity: opt.count,
+        subtotalPrice: opt.price * opt.count,
+        }));
 
-        // 선택된 장바구니만 필터링해서 결제에 사용할 예약 데이터 
-        const reservationItems = cartGroups.flatMap(group =>
-            group.items.filter(item => checkedItems.has(item.cartId))
-                // 새로운 객체 형태로 변환
-                .map(item => ({
-                    cartId: item.cartId,
-                    rentId: group.rentId,
-                    rentStart: new Date(item.rentStart).toISOString().replace("Z", ""),
-                    rentEnd: new Date(item.rentEnd).toISOString().replace("Z", ""),
-                    quantity: item.quantity,
-                    subtotalPrice: item.price,
-                }))
-        );
-
-        const response = await caxios.post("/api/payments/cart/prepare", {
-            userId: profile.userId,
-            reservationItems,
+        const response = await caxios.post("/api/payments/prepare", {
+        userId: profile.userId,
+        totalPrice: totalAmount,
+        reservationItems,
         });
-
         console.log("결제전처리==>",response);
-        return response.data;   // merchantUid,amount 
+        return response.data; // { merchantUid,amount }
     }
+
 
 
     //결제
@@ -247,8 +233,11 @@ const CartList=()=>{
             return;
           }
     
+          // 2. 프론트에서 직접 계산한 금액
+          const clientTotalAmount = selectedOptions.reduce((sum, item) => sum + Math.floor(item.price * item.count), 0);
+    
           // 3. 서버에서 받은 금액과 클라이언트 계산 금액 비교 (검증)
-          if (totalPrice !== serverTotalPrice) {
+          if (clientTotalAmount !== serverTotalPrice) {
             alert("결제 금액이 서버와 다릅니다. 결제를 진행할 수 없습니다.");
             return;
           }
@@ -258,7 +247,7 @@ const CartList=()=>{
             pay_method: "card",
             merchant_uid: merchantUid,
             name: "대여 결제",
-            amount: totalPrice,
+            amount: clientTotalAmount,
             buyer_email: profile.email,
             buyer_name: profile.name,
           }, async (rsp) => {
@@ -267,13 +256,13 @@ const CartList=()=>{
                 await caxios.post("/api/payments/confirm", {
                   impUid: rsp.imp_uid,
                   merchantUid: rsp.merchant_uid,
-                  amount: totalPrice,
+                  amount: clientTotalAmount,
                   userId: profile.userId,
                   pgProvider: pg,
                 });
     
                 alert("결제 완료!");
-                navigate("/mypage/reserve");
+                //navigate("/mypage/reservations");
               } catch (err) {
                 alert("결제 성공 후 서버 처리 실패: " + err.response?.data?.message);
               }

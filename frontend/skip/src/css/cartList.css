@@ -299,11 +299,11 @@
 }
 
 .skip-cart-modal-cancel-btn {
-  background-color: #6c757d !important;
+  background-color: #ff4d4f !important; /* Red */
   color: white !important;
-  border-color: #6c757d !important;
+  border-color: #ff4d4f !important;
 }
 
 .skip-cart-modal-cancel-btn:hover {
-  background-color: #5a6268 !important;
+  background-color: #d9363e !important; /* Darker red */
 }
