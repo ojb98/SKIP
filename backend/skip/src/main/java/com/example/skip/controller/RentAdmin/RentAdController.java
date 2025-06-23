@@ -65,6 +65,14 @@ public class RentAdController {
         return ResponseEntity.ok(Map.of("cpb", cpb));
     }
 
+    @GetMapping("/banner/ratings")
+    public ResponseEntity<Map<String, Double>> getRatings(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Long rentId
+    ) {
+        Map<String, Double> ratings = rentAdService.getRatings(userId, rentId);
+        return ResponseEntity.ok(ratings);
+    }
 
     @PostMapping(value = "/banner", consumes = "multipart/form-data")
     public ResponseEntity<Map<String, String>> submitBanner(

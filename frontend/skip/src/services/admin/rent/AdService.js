@@ -31,6 +31,11 @@ export const purchaseBoost = async (userId, rentId, boost, cpb, cashToken) => {
   const resp = await caxios.post('/api/rentAdmin/boost', { userId, rentId, boost, cpb, cashToken });
   return resp.data.remainingCash;
 };
+export const fetchRentRatings = async (userId, rentId) => {
+  const resp = await caxios.get('/api/rentAdmin/banner/ratings', { params: { userId, rentId } });
+  return resp.data;
+};
+
 
 export const submitBannerRequest = async (formData, cashToken) => {
   formData.append('cashToken', cashToken);

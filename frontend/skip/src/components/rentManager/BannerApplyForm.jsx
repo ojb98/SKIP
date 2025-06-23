@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
 import { fetchActiveBanners, fetchApprovedWaitingBanners  } from '../../services/admin/BannerService';
-import { submitBannerRequest , fetchCash, fetchWithdrawnBanner} from '../../services/admin/rent/AdService';
+import { submitBannerRequest , fetchCash, fetchWithdrawnBanner, fetchRentRatings} from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 import { rentIdAndNameApi } from '../../api/rentListApi';
@@ -52,6 +52,17 @@ const BannerApplyForm = () => {
   }, [userId, selectedRentId]);
 
 
+  useEffect(() => {
+    const load = async () => {
+      if (!userId || !selectedRentId) return;
+      const data = await fetchRentRatings(userId, selectedRentId);
+      if (data) {
+        setAvgRating(data.averageRating);
+        setRecentRating(data.recentRating);
+      }
+    };
+    load();
+  }, [userId, selectedRentId]);
   useEffect(() => {
     const load = async () => {
       const actives = await fetchActiveBanners();

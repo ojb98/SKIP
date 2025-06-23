@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +65,20 @@ public class RentAdService {
     public int getCpb(Long userId, Long rentId) {
         Rent rent = findRent(userId, rentId);
         return calculateCpb(rent);
+    }
+
+    public Map<String, Double> getRatings(Long userId, Long rentId) {
+        Rent rent = findRent(userId, rentId);
+        BigDecimal avg = reviewRepository.findAverageRatingByRentId(rent.getRentId());
+        BigDecimal recent = reviewRepository.findRecent7dRatingByRentId(rent.getRentId(), LocalDateTime.now().minusDays(7));
+
+        double a = avg != null ? avg.doubleValue() : 2.5;
+        double r = recent != null ? recent.doubleValue() : 2.5;
+
+        return Map.of(
+                "averageRating", a,
+                "recentRating", r
+        );
     }
 
     private Rent findRent(Long userId, Long rentId) {

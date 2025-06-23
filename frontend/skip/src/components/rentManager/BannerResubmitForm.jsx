@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import '../../css/rentAdForm.css';
 import { fetchActiveBanners, fetchApprovedWaitingBanners } from '../../services/admin/BannerService';
-import { fetchBannerDetail, resubmitBannerRequest } from '../../services/admin/rent/AdService';
+import { fetchBannerDetail, resubmitBannerRequest, fetchRentRatings } from '../../services/admin/rent/AdService';
 
 const BannerResubmitForm = () => {
   const { waitingId } = useParams();
@@ -15,8 +15,11 @@ const BannerResubmitForm = () => {
   const [finalScore, setFinalScore] = useState(0);
   const [percentile, setPercentile] = useState(0);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [avgRating, setAvgRating] = useState(2.5);
+  const [recentRating, setRecentRating] = useState(2.5);
   const imageRef = useRef();
 
+  // 기본 배너 정보 가져오기
   useEffect(() => {
     if (!userId) return;
     fetchBannerDetail(userId, waitingId).then(data => {
@@ -26,6 +29,20 @@ const BannerResubmitForm = () => {
     });
   }, [userId, waitingId]);
 
+  // 평균 평점 및 최근 평점 가져오기
+  useEffect(() => {
+    if (!userId || !banner) return;
+    const load = async () => {
+      const ratings = await fetchRentRatings(userId, banner.rentId);
+      if (ratings) {
+        setAvgRating(ratings.averageRating);
+        setRecentRating(ratings.recentRating);
+      }
+    };
+    load();
+  }, [userId, banner]);
+
+  // 활성 배너 정보 불러오기
   useEffect(() => {
     const load = async () => {
       const actives = await fetchActiveBanners();
@@ -40,14 +57,16 @@ const BannerResubmitForm = () => {
     load();
   }, []);
 
+  // 점수 및 백분위 계산
   useEffect(() => {
     if (!banner) return;
     const max = maxBid > 0 ? maxBid : 1;
     const normalized = Number(cpcBid) / max;
     const score =
-      Number(banner.averageRating || 0) * 0.2 +
+      Number(avgRating || 0) * 0.2 +
       normalized * 0.3 +
-      Number(banner.recent7dRating || 0) * 0.5;
+      Number(recentRating || 0) * 0.5;
+
     const final = Number.isNaN(score) ? 0 : Number(score.toFixed(2));
     setFinalScore(final);
 
@@ -60,7 +79,7 @@ const BannerResubmitForm = () => {
     perc = 100 - perc;
     if (perc < 0) perc = 1;
     setPercentile(perc);
-  }, [cpcBid, maxBid, banner, activeScores]);
+  }, [cpcBid, maxBid, banner, avgRating, recentRating, activeScores]);
 
   const handleFileChange = e => {
     const file = e.target.files[0];
@@ -81,8 +100,8 @@ const BannerResubmitForm = () => {
 
   const getNextMonday3AM = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const dayOfWeek = today.getDay();
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
@@ -120,28 +139,28 @@ const BannerResubmitForm = () => {
               <label>배너 이미지</label>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <button
-                    type="button"
-                    className="file-button"
-                    onClick={() => imageRef.current?.click()}
-                    style={{ flex: 1.2 }}
+                  type="button"
+                  className="file-button"
+                  onClick={() => imageRef.current?.click()}
+                  style={{ flex: 1.2 }}
                 >
-                    🏂이미지 선택
+                  🏂이미지 선택
                 </button>
                 <button
-                    type="submit"
-                    className="action-btn"
-                    style={{ flex: 1 }}
+                  type="submit"
+                  className="action-btn"
+                  style={{ flex: 1 }}
                 >
-                    재신청하기
+                  재신청하기
                 </button>
-                </div>    
-                <br />
-                <span className="file-name">
-                  {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
-                </span>
-                <input type="file" ref={imageRef} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
               </div>
-            
+              <br />
+              <span className="file-name">
+                {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
+              </span>
+              <input type="file" ref={imageRef} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+            </div>
+
             {banner.comments && (
               <div className="form-group">
                 <label>관리자 반려 사유</label>
@@ -157,7 +176,11 @@ const BannerResubmitForm = () => {
         </h3>
         {previewUrl && (
           <div style={{ padding: '10px' }}>
-            <img src={previewUrl} alt="배너 미리보기" style={{ width: '100%', maxWidth: '1000px', maxHeight: '300px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '6px' }} />
+            <img
+              src={previewUrl}
+              alt="배너 미리보기"
+              style={{ width: '100%', maxWidth: '1000px', maxHeight: '300px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '6px' }}
+            />
           </div>
         )}
       </div>
