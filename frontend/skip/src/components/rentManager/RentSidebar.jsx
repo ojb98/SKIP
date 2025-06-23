@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CustomAccordion from "../adminpage/CustomAccordian";
 import { useState } from "react";
 import { useSelector } from 'react-redux';
 
 const RentSidebar = () => {
+
+    const { rentId } = useParams();
     const [openIndex, setOpenIndex] = useState(null);
 
     const handleAccordionClick = (index) => {
@@ -43,7 +45,11 @@ const RentSidebar = () => {
                 <li>
                     <CustomAccordion title="상품 관리" isOpen={openIndex === 2} onClick={() => handleAccordionClick(2)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin/select">상품 관리</Link></li>
+                            <Link to={rentId ? `/rentAdmin/item/insert/${rentId}` : "/rentAdmin/item/insert"}>
+                                상품 등록
+                            </Link>
+                            <li><Link to="/rentAdmin/item/list">상품 관리</Link></li>
+
                         </ul>
                     </CustomAccordion>
                 </li>
@@ -61,6 +67,14 @@ const RentSidebar = () => {
                             <li><Link to="/rentAdmin/cash">캐시 충전</Link></li>
                             <li><Link to="/rentAdmin/boost">부스트 구매하기</Link></li>
                             <li><Link to="/rentAdmin/banner">배너광고 신청·구매하기</Link></li>                            
+                        </ul>
+                    </CustomAccordion>
+                </li>
+                <li>
+                    <CustomAccordion title="리뷰 · 문의 관리" isOpen={openIndex === 5} onClick={() => handleAccordionClick(5)}>
+                        <ul className="sub-menu">
+                            <li><Link to="/rentAdmin/review">리뷰</Link></li>
+                            <li><Link to="/rentAdmin/qna">문의</Link></li>
                         </ul>
                     </CustomAccordion>
                 </li>

@@ -1,5 +1,6 @@
 package com.example.skip.service;
 
+import com.example.skip.dto.projection.RentSummaryDTO;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
@@ -173,6 +174,13 @@ public class RentService {
         return rents.stream()
                 .map(r -> new RentInfoDTO(r.getRentId(), r.getName()))
                 .toList();
+    }
+
+    public String getNameById(Long rentId){
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(()-> new IllegalArgumentException("해당 렌탈샵을 찾을 수 없습니다."));
+
+        return rent.getName();
     }
 
     public List<RentDTO> findAllDto() {

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public interface UserReviewListDTO {
     //리뷰 정보
     Long getReviewId();
-    Long getReserveId();
+    Long getRentItemId();
     int getRating();
     String getContent();
     String getImage();

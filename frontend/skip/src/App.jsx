@@ -15,7 +15,6 @@ import RentDetail from "./components/rentManager/RentDetail"
 import RentUpdateForm from "./components/rentManager/RentUpdateForm"
 import ItemInsertForm from "./components/rentManager/ItemInsertForm"
 import ItemListAndDetails from "./components/rentManager/ItemListAndDetails"
-import ItemSelectorByRent from "./components/rentManager/ItemSelectorByRent"
 import ItemUpdateForm from "./components/rentManager/ItemUpdateForm"
 import CartList from "./components/cart/cartList"
 import QnaPopupPage from "./pages/QnaPopupPage"
@@ -98,9 +97,9 @@ function App() {
                             <Route path="/rentAdmin/list" element={<RentList/>}></Route>
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                             <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
-                            <Route path="/rentAdmin/item/insert/:rentId" element={<ItemInsertForm/>}></Route>
-                            <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route>
-                            <Route path="/rentAdmin/item/list/:rentId" element={<ItemListAndDetails/>}></Route>
+                            <Route path="/rentAdmin/item/insert/:rentId?" element={<ItemInsertForm/>}></Route>
+                            {/* <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route> */}
+                            <Route path="/rentAdmin/item/list/" element={<ItemListAndDetails/>}></Route>
                             <Route path="/rentAdmin/item/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                             <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
@@ -108,6 +107,9 @@ function App() {
                             <Route path="/rentAdmin/boost" element={<BoostPurchasePage/>}></Route>
                             <Route path="/rentAdmin/banner" element={<BannerApplyPage/>}></Route>
                             <Route path="/rentAdmin/banner/edit/:waitingId" element={<BannerResubmitPage/>}></Route>
+                            <Route path="/rentAdmin/qna" element={<AdminQnaList></AdminQnaList>} />
+                            <Route path="/rentAdmin/review" element={<AdminReviewList></AdminReviewList>} />
+
                         </Route>
 
 
@@ -130,12 +132,11 @@ function App() {
                         <Route path="/admin/approvallist" element={<UserApprovalTable/>} />                        
                         <Route path="/admin/userlist" element={<UsersList/>} />
                         <Route path="/admin/activebannerList" element={<ActiveBannerList/>} />
-                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />                        
-                        <Route path="/admin/qna" element={<AdminQnaList></AdminQnaList>} />
-                        <Route path="/admin/review" element={<AdminReviewList></AdminReviewList>} />
+                        <Route path="/admin/pendingbannerList" element={<PendingBannerList/>} />
                     </Route>
                     {/* 리뷰 팝업 */}
                     <Route path="/reviews/write/:rentItemId" element={<ReviewPopupPage />}></Route>
+                    <Route path="/reviews/edit/:reviewId" element={<ReviewPopupPage/>}></Route>
                     {/* Q&A 팝업 */}
                     <Route path="/rent/product/:rentId/:itemId/qna/write" element={<QnaPopupPage />}></Route>
                     <Route path="/rent/product/:rentId/:itemId/qna/edit/:qnaId" element={<QnaPopupPage mode="edit"/>}/>
