@@ -7,12 +7,13 @@ import { useSelector } from "react-redux";
 import { addWishApi } from "../api/wishApi";
 import '../css/paymentModel.css';
 import axios from "axios";
+import MyTimePicker from "../components/rentalshop/MyTimePicker";
 
 
-const ProductPage=()=>{
+const ProductPage = () => {
   const { rentId, itemId } = useParams();
   // 유저아이디 꺼내오기
-  const profile = useSelector(status=> status.loginSlice);
+  const profile = useSelector(status => status.loginSlice);
   const navigate = useNavigate();
   //현재 페이지(컴포넌트)의 URL 정보와 함께 전달된 상태(state)
   //const location = useLocation();
@@ -30,17 +31,40 @@ const ProductPage=()=>{
   const [duration, setDuration] = useState("");
   // 유저가 선택한 옵션들을 배열로 저장
   const [selectedOptions, setSelectedOptions] = useState([]);
- 
+
   // 결제 선택모달
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  
+  // 카테고리 리프트권 판단
+  const isLiftTicket = itemData?.category === "LIFT_TICKET";
+  const [liftType, setLiftType] = useState("") //리프트권 시간 타입
+
+  //리프트권 타입 선택시 자동 값 설정
+  useEffect(() => {
+    if (!isLiftTicket || !liftType) return;
+
+    const settings = {
+      MORNING: { start: "09:00", hours: "4" },
+      AFTERNOON: { start: "13:00", hours: "4" },
+      FULL_DAY: { start: "09:00", hours: "8" },
+      NIGHT: { start: "18:00", hours: "4" },
+    };
+
+    const selected = settings[liftType];
+    if (selected) {
+      setStartTime(selected.start);
+      setDuration(selected.hours);
+    }
+  }, [liftType, isLiftTicket]);
+
+
   // 선택 항목들을 초기화하는 함수
-  const resetOptions=()=>{
+  const resetOptions = () => {
     setDate("");
     setSize("");
     setStartTime("");
     setDuration("");
+    setLiftType("");
   };
 
   // 반납 예정시간 (대여시간시작 + 대여시간)
@@ -77,15 +101,18 @@ const ProductPage=()=>{
   const isSizeFree = itemData &&
     itemData.detailList.every(d => !d.size || d.size.toLowerCase() == "free" || d.size == null)
 
-  useEffect(()=>{
-    if(!date || !startTime || !duration) return;
-    if(!isSizeFree && !size) return; 
+  console.log("itemData:", itemData);
+
+
+  useEffect(() => {
+    if (!date || !startTime || !duration) return;
+    if (!isSizeFree && !size) return;
 
     const hour = parseInt(duration, 10);
 
 
     const matched = itemData.detailList.find(d => d.rentHour === hour && (isSizeFree || d.size?.trim() === size));
-    if(!matched) {
+    if (!matched) {
       alert("해당 조건에 맞는 상품이 존재하지 않습니다.");
       return;
     }
@@ -99,35 +126,35 @@ const ProductPage=()=>{
       alert("이미 선택된 옵션입니다.");
       resetOptions();
       return;
-    } 
+    }
 
     // 반납예정시간
-    const endTime = calculateEndTime(date,startTime,hour);
+    const endTime = calculateEndTime(date, startTime, hour);
 
     // 기본 가격 0, 나중에 itemDetail에서 가격 찾으면 반영 가능
-    setSelectedOptions((prev) => [...prev, 
-      {
-        text: optionText,
-        count: 1,
-        price: matched.price,
-        itemDetailId: matched.itemDetailId,
-        size: matched.size,
-        date,
-        startTime,
-        duration: hour,
-        endTime,
-      }
-    ]); 
+    setSelectedOptions((prev) => [...prev,
+    {
+      text: optionText,
+      count: 1,
+      price: matched.price,
+      itemDetailId: matched.itemDetailId,
+      size: matched.size,
+      date,
+      startTime,
+      duration: hour,
+      endTime,
+    }
+    ]);
 
     //초기화하는 함수 호출
     resetOptions();
   }, [date, size, startTime, duration]);
 
   // 옵션 수량을 증가/감소
-  const changeCount = (idx, delta)=>{
+  const changeCount = (idx, delta) => {
     setSelectedOptions(prev =>
       prev.map((opt, i) =>
-        i === idx ? { ...opt, count: Math.max(1, opt.count + delta)} : opt
+        i === idx ? { ...opt, count: Math.max(1, opt.count + delta) } : opt
       )
     );
   };
@@ -138,33 +165,33 @@ const ProductPage=()=>{
   };
 
   //장바구니 담기
-  const handleAddToCart = async() => {
-    if(selectedOptions.length === 0){
+  const handleAddToCart = async () => {
+    if (selectedOptions.length === 0) {
       alert("장비을 선택해주세요");
       return;
     }
 
-    try{
-      for(const opt of selectedOptions){
+    try {
+      for (const opt of selectedOptions) {
         console.log("옵션 확인:", opt);
 
         //서버에 cartItem 저장, quantity는 count사용
-        await addCartItemApi(profile.userId,[{
-            itemDetailId: opt.itemDetailId,
-            quantity: opt.count,
-            rentStart: `${opt.date}T${opt.startTime}`,
-            rentEnd: opt.endTime,
+        await addCartItemApi(profile.userId, [{
+          itemDetailId: opt.itemDetailId,
+          quantity: opt.count,
+          rentStart: `${opt.date}T${opt.startTime}`,
+          rentEnd: opt.endTime,
         }])
       }
 
       setSelectedOptions([]);  //선택된 옵션 목록을 초기화
 
       const goToCart = window.confirm("장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?");
-      if(goToCart){
+      if (goToCart) {
         navigate("/cart/list")
       }
 
-    }catch(error){
+    } catch (error) {
       alert("장바구니 추가 실패");
     }
 
@@ -172,10 +199,10 @@ const ProductPage=()=>{
 
 
   // 찜 추가
-  const handleAddToWish = async() =>{
+  const handleAddToWish = async () => {
     if (!itemData || !itemData.detailList || itemData.detailList.length === 0) {
-    alert("찜 등록할 수 있는 상품이 없습니다.");
-    return;
+      alert("찜 등록할 수 있는 상품이 없습니다.");
+      return;
     }
 
     // 사이즈를 선택하지 않아도 사용자 선택과 관계없이 첫 번째 장비가 찜되는 구조
@@ -216,12 +243,12 @@ const ProductPage=()=>{
       console.log("결제 결과", rsp);
 
       if (rsp.success) {
-        try { 
+        try {
           const reservationItems = selectedOptions.map(opt => ({
             rentId: parsedRentId,
             itemDetailId: opt.itemDetailId,
             rentStart: `${opt.date}T${opt.startTime}:00`,
-            rentEnd: opt.endTime,   
+            rentEnd: opt.endTime,
             quantity: opt.count,
             subtotalPrice: opt.price * opt.count,
           }));
@@ -247,101 +274,125 @@ const ProductPage=()=>{
       } else {
         alert("결제 실패: " + resp.error_msg);
       }
-            
+
     });
   }
 
-  return(
+  return (
     <main className="w-[900px]">
       {itemData ? (
-      <div className="product-wrapper">
-        <div className="product-image">
-          <img src={`http://localhost:8080${itemData.image}`} alt="itemData.name" />
-        </div>
-        <div className="product-info">
-          <h2 className="product-title">{itemData.name}</h2>
-          <p className="product-price">{itemData.detailList[0]?.price.toLocaleString()}원</p>
-          <div className="product-option">
-            <input 
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            min={new Date().toISOString().split("T")[0]}
-            />
+        <div className="product-wrapper">
+          <div className="product-image">
+            <img src={`http://localhost:8080${itemData.image}`} alt="itemData.name" />
           </div>
-          {
-            !isSizeFree && (
-              <div className="product-option">
-                <select onChange={(e) => setSize(e.target.value)} value={size}>
-                  <option value="" disabled hidden>사이즈를 선택하세요.</option>
-                  {[...new Set(itemData.detailList.map((d) => d.size))].map((size, i) => (
-                    <option key={i} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )
-          }
-          <div className="product-option">
-            <select onChange={(e) => setStartTime(e.target.value)} value={startTime}>
-              <option value="" disabled hidden>대여시작시간을 선택하세요.</option>
-              {
-                Array.from({length: 24}, (_, i) => {
-                  const hour = i.toString().padStart(2, "0") + ":00";
-                  return <option key={hour} value={hour}>{hour}</option>;
-                })
-              }
-            </select>
-          </div>
-          <div className="product-option">
-            <select onChange={(e) => setDuration(e.target.value)} value={duration}>
-              <option value="" disabled hidden>이용시간을 선택하세요.</option>
-              {
-                Array.from(
-                  new Map(itemData.detailList.map(d => [d.rentHour, d.price])).entries()
-                ).map(([hour, price], i) =>(
-                  <option key={i} value={hour}>
-                    {hour}시간 ({price.toLocaleString()}원)
-                  </option>
-                ))
-              }
-            </select>
-          </div>
-          <div className="product-added-options">
-            {selectedOptions.map((opt, idx) => (
-              <div className="add-options" key={idx}>
-                <label>{opt.text}</label>
-                <div className="btns">
-                  <div className="count-btn">
-                    <button onClick={() => changeCount(idx, -1)}>-</button>
-                    <span>{opt.count}</span>
-                    <button onClick={() => changeCount(idx, 1)}>+</button>
-                  </div>
-                  <div>
-                    <span className="option-price">{(opt.count * opt.price).toLocaleString()}원</span>
-                    <button className="remove-btn" onClick={() => removeOption(idx)}>✕</button>
+          <div className="product-info">
+            <h2 className="product-title">{itemData.name}</h2>
+            <p className="product-price">{itemData.detailList[0]?.price.toLocaleString()}원</p>
+            <div className="product-option">
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+            {isLiftTicket ? (
+              <>
+                {/* 리프트권 종류 선택 */}
+                <div className="product-option">
+                  <select value={liftType} onChange={(e) => {
+                    setLiftType(e.target.value);
+                  }}>
+                    <option value="" disabled hidden>리프트권 종류 선택</option>
+                    <option value="MORNING">오전권 (09:00~13:00)</option>
+                    <option value="AFTERNOON">오후권 (13:00~17:00)</option>
+                    <option value="FULL_DAY">종일권 (09:00~17:00)</option>
+                    <option value="NIGHT">야간권 (18:00~22:00)</option>
+                  </select>
+                </div>
+
+                {/* 시작시간 표시 (읽기전용) */}
+                <div className="product-option hidden">
+                  <input type="text" value={startTime} readOnly placeholder="대여 시작 시간" className="readonly-input" />
+                </div>
+
+                {/* 이용시간 표시 (읽기전용) */}
+                <div className="product-option hidden">
+                  <input type="text" value={duration} readOnly placeholder="이용 시간" className="readonly-input" />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 기존 일반 상품용 시간 선택 */}
+                {
+                  !isSizeFree && (
+                    <div className="product-option">
+                      <select onChange={(e) => setSize(e.target.value)} value={size}>
+                        <option value="" disabled hidden>사이즈를 선택하세요.</option>
+                        {[...new Set(itemData.detailList.map((d) => d.size))].map((size, i) => (
+                          <option key={i} value={size}>
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )
+                }
+                <div className="product-option p-[5px]">
+                  <MyTimePicker setStartTime={setStartTime} startTime={startTime} />
+                </div>
+                <div className="product-option">
+                  <select onChange={(e) => setDuration(e.target.value)} value={duration}>
+                    <option value="" disabled hidden>이용시간을 선택하세요.</option>
+                    {
+                      Array.from(
+                        new Map(itemData.detailList.map(d => [d.rentHour, d.price])).entries()
+                      ).map(([hour, price], i) => (
+                        <option key={i} value={hour}>
+                          {hour}시간 ({price.toLocaleString()}원)
+                        </option>
+                      ))
+                    }
+                  </select>
+                </div>
+              </>
+            )}
+
+
+            <div className="product-added-options">
+              {selectedOptions.map((opt, idx) => (
+                <div className="add-options" key={idx}>
+                  <label>{opt.text}</label>
+                  <div className="btns">
+                    <div className="count-btn">
+                      <button onClick={() => changeCount(idx, -1)}>-</button>
+                      <span>{opt.count}</span>
+                      <button onClick={() => changeCount(idx, 1)}>+</button>
+                    </div>
+                    <div>
+                      <span className="option-price">{(opt.count * opt.price).toLocaleString()}원</span>
+                      <button className="remove-btn" onClick={() => removeOption(idx)}>✕</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="product-actions">
-            <button onClick={handleAddToCart} className="cart-btn">장바구니에 담기</button>
-            <button onClick={handleAddToWish} className="wish-btn">찜하기</button>
-            <button onClick={() => {
-              if (selectedOptions.length === 0) {
-                alert("장비를 선택해주세요"); return;
-              }
-              setShowPaymentModal(true);
+              ))}
+            </div>
+            <div className="product-actions">
+              <button onClick={handleAddToCart} className="cart-btn">장바구니에 담기</button>
+              <button onClick={handleAddToWish} className="wish-btn">찜하기</button>
+              <button onClick={() => {
+                if (selectedOptions.length === 0) {
+                  alert("장비를 선택해주세요"); return;
+                }
+                setShowPaymentModal(true);
               }} className="buy-btn">바로결제</button>
+            </div>
           </div>
         </div>
-      </div>
       ) : (
         <p>상품 정보를 불러오는 중입니다.....</p>
       )}
-      <BoardTabs rentId={parsedRentId} itemId={parsedItemId}/>
+      <BoardTabs rentId={parsedRentId} itemId={parsedItemId} />
 
       {/* 결제 모달 영역 추가 */}
       {showPaymentModal && (
@@ -357,7 +408,7 @@ const ProductPage=()=>{
           </div>
         </div>
       )}
-      </main>
+    </main>
   )
 }
 export default ProductPage;
