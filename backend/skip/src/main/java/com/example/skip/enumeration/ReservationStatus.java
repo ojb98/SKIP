@@ -7,5 +7,4 @@ public enum ReservationStatus {
     CANCELLED,  // 전체예약 취소
     PARTIALLY_CANCELLED,  // 부분 취소
     PARTIALLY_RETURNED,   //부분 반납
-    READY,
 }
