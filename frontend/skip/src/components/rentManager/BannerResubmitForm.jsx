@@ -118,25 +118,30 @@ const BannerResubmitForm = () => {
             </div>
             <div className="form-group">
               <label>배너 이미지</label>
-              <div>
-                <button type="button" className="file-button" onClick={() => imageRef.current?.click()} style={{ width: '160px', marginLeft: '0px' }}>
-                  🏂이미지 선택
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <button
+                    type="button"
+                    className="file-button"
+                    onClick={() => imageRef.current?.click()}
+                    style={{ flex: 1.2 }}
+                >
+                    🏂이미지 선택
                 </button>
                 <button
-                type="submit"
-                className="action-btn"
-                style={{ marginLeft: "180px" }}
+                    type="submit"
+                    className="action-btn"
+                    style={{ flex: 1 }}
                 >
-                재신청하기
-                </button>{' '}
-                
+                    재신청하기
+                </button>
+                </div>    
                 <br />
                 <span className="file-name">
                   {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
                 </span>
                 <input type="file" ref={imageRef} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
               </div>
-            </div>
+            
             {banner.comments && (
               <div className="form-group">
                 <label>관리자 반려 사유</label>

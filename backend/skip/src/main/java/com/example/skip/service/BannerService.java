@@ -155,10 +155,33 @@ public class BannerService {
         return list;
     }
 
-    // 배너 클릭 버퍼링
-    public void clickBanner(Long bannerId) {
+    private static final int FiveMin_CLICK_PER_IP = 5;
+    private static final int OneHour_CLICK_PER_IP = 8;
+    private static final String IP_KEY_PREFIX = "banner:click:ip:";
+
+    // 배너 클릭 버퍼링  - 1시간에 5회 이상 클릭 시 클릭당 비용이 더이상 차감되지 않음
+    public void clickBanner(Long bannerId, String ip) {
+        String ipKey = IP_KEY_PREFIX + ip + ":" + bannerId;
+        Long countFor5Minutes = redisTemplate.opsForValue().increment(ipKey);
+        Long countFor1Hour = redisTemplate.opsForValue().increment(ipKey);
+        if (countFor5Minutes != null && countFor5Minutes == 1) {
+            redisTemplate.expire(ipKey, java.time.Duration.ofMinutes(5)); //5분 후 초기화
+        }
+        if (countFor1Hour != null && countFor1Hour == 1) {
+            redisTemplate.expire(ipKey, java.time.Duration.ofHours(1)); //1시간 후 초기화
+        }
+        //
+        if (countFor5Minutes != null && countFor5Minutes > FiveMin_CLICK_PER_IP) {  //5분이내 누적 5회클릭 이상 = 광고비차감X
+            log.warn("IP {} banner {} 과다 클릭 감지", ip, bannerId);
+            return;
+        }
+        if (countFor1Hour != null && countFor1Hour > OneHour_CLICK_PER_IP) { //1시간이내 누적 8회클릭 이상 = 광고비차감X
+            log.warn("IP {} banner {} 과다 클릭 감지", ip, bannerId);
+            return;
+        }
         redisTemplate.opsForHash().increment(REDIS_KEY, bannerId.toString(), 1);
     }
+
 
     // 배너 클릭 플러시
     @Scheduled(fixedRate = 5 * 60 * 1000) // 5분마다 flush

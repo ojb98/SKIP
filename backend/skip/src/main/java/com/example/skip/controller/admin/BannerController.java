@@ -6,6 +6,7 @@ import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.service.BannerService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -60,10 +61,12 @@ public class BannerController {
 
     // 배너 클릭
     @PatchMapping("/{bannerId}/click")
-    public ApiResponse click(@PathVariable("bannerId") Long bannerId) {
+    public ApiResponse click(@PathVariable("bannerId") Long bannerId,
+                            HttpServletRequest request) {
         log.info("Click!");
         try {
-            bannerService.clickBanner(bannerId);
+            String ip = request.getRemoteAddr();
+            bannerService.clickBanner(bannerId, ip);
             return ApiResponse.builder()
                     .success(true)
                     .build();
