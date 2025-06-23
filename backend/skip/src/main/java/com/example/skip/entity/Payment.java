@@ -28,7 +28,7 @@ public class Payment {
     @Column(nullable = false, length = 100)
     private String merchantUid;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = true, length = 100)
     private String impUid;
 
     @Column(nullable = false)
@@ -47,7 +47,7 @@ public class Payment {
 
     private String pgProvider;
 
-    @Column(nullable = false)
+    @Column(length = 50, nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 

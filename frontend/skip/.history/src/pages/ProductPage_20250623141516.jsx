@@ -255,7 +255,7 @@ const ProductPage=()=>{
         pay_method: "card",
         merchant_uid: merchantUid,
         name: "대여 결제",
-        amount: clientTotalAmount,
+        amount: totalAmount,
         buyer_email: profile.email,
         buyer_name: profile.name,
       }, async (rsp) => {
@@ -280,11 +280,11 @@ const ProductPage=()=>{
     } catch (e) {
       console.error("결제 준비 에러:", e);
       const errorMsg =
-        e.response?.data?.message ??
-        e.message ??
-        "알 수 없는 오류입니다.";
+    e.response?.data?.message ??
+    e.message ??
+    "알 수 없는 오류입니다.";
 
-      alert("결제 준비 실패: " + errorMsg);
+  alert("결제 준비 실패: " + errorMsg);
     }
   };
 

@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { addWishApi } from "../api/wishApi";
 import '../css/paymentModel.css';
 import axios from "axios";
-import caxios from "../api/caxios";
 
 
 const ProductPage=()=>{
@@ -207,13 +206,13 @@ const ProductPage=()=>{
       subtotalPrice: opt.price * opt.count,
     }));
 
-    const response = await caxios.post("/api/payments/prepare", {
+    const response = await axios.post("/api/payments/prepare", {
       userId: profile.userId,
       totalPrice: totalAmount,
       reservationItems,
     });
-    console.log("결제전처리==>",response);
-    return response.data; // { merchantUid,amount }
+
+    return response.data; // { merchantUid, impUid (optional) }
   }
 
   //결제
@@ -221,50 +220,28 @@ const ProductPage=()=>{
     setShowPaymentModal(false); // 모달 닫기
 
     try {
-
-      const response = await preparePayment();
-
-      // 성공 여부 체크 (서버가 { success: false, ... } 반환하면 여기서 처리)
-      if (response.success === false) {
-        alert(`결제 준비 실패: ${response.message || '알 수 없는 오류'}`);
-        return; // 실패면 결제 진행 중단
-      }
-
-      const { merchantUid, totalPrice: serverTotalPrice } = response;
+      const { merchantUid } = await preparePayment();
 
       const IMP = window.IMP;
       IMP.init("imp57043461");
 
-      // merchantUid가 없으면 실패 처리
-      if (!merchantUid) {
-        alert("결제 준비 중 오류가 발생했습니다. 다시 시도해 주세요.");
-        return;
-      }
-
-      // 2. 프론트에서 직접 계산한 금액
-      const clientTotalAmount = selectedOptions.reduce((sum, item) => sum + Math.floor(item.price * item.count), 0);
-
-      // 3. 서버에서 받은 금액과 클라이언트 계산 금액 비교 (검증)
-      if (clientTotalAmount !== serverTotalPrice) {
-        alert("결제 금액이 서버와 다릅니다. 결제를 진행할 수 없습니다.");
-        return;
-      }
+      const totalAmount = selectedOptions.reduce((sum, item) => sum + item.price * item.count, 0);
 
       IMP.request_pay({
         pg,
         pay_method: "card",
         merchant_uid: merchantUid,
         name: "대여 결제",
-        amount: clientTotalAmount,
+        amount: totalAmount,
         buyer_email: profile.email,
         buyer_name: profile.name,
       }, async (rsp) => {
         if (rsp.success) {
           try {
-            await caxios.post("/api/payments/confirm", {
+            await ㅊaxios.post("/api/payments/confirm", {
               impUid: rsp.imp_uid,
               merchantUid: rsp.merchant_uid,
-              amount: clientTotalAmount,
+              amount: rsp.paid_amount,
               userId: profile.userId,
             });
 
@@ -278,13 +255,7 @@ const ProductPage=()=>{
         }
       });
     } catch (e) {
-      console.error("결제 준비 에러:", e);
-      const errorMsg =
-        e.response?.data?.message ??
-        e.message ??
-        "알 수 없는 오류입니다.";
-
-      alert("결제 준비 실패: " + errorMsg);
+      alert("결제 준비 실패: " + e.response?.data?.message);
     }
   };
 

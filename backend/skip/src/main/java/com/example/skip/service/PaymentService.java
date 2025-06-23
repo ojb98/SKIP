@@ -2,6 +2,8 @@ package com.example.skip.service;
 
 import com.example.skip.dto.payment.PaymentCompleteDTO;
 import com.example.skip.dto.payment.PaymentDirectDTO;
+import com.example.skip.dto.payment.PaymentPrepareDTO;
+import com.example.skip.dto.payment.PaymentPrepareRespDTO;
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.PaymentErrorCode;
 import com.example.skip.enumeration.PaymentStatus;
@@ -356,6 +358,132 @@ public class PaymentService {
         }
     }
 
+    // 결제 전 처리
+    public PaymentPrepareRespDTO preparePayment(PaymentPrepareDTO dto) {
+        // 유저 확인
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new PaymentException(PaymentErrorCode.USER_NOT_FOUND));
+
+        // merchantUid 생성
+        String merchantUid = "order_" + System.currentTimeMillis();
+
+        // 총 금액 계산
+        long totalPrice = dto.getReservationItems().stream()
+                .mapToLong(PaymentPrepareDTO.ReservationItemDTO::getSubtotalPrice)
+                .sum();
+
+        Payment payment = Payment.builder()
+                .merchantUid(merchantUid)
+                .impUid(null) // 아직 결제 전
+                .totalPrice((double) totalPrice)
+                .commissionRate(0.1)
+                .adminPrice(totalPrice * 0.1)
+                .rentPrice(totalPrice * 0.9)
+                .status(PaymentStatus.READY)
+                .method("card")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        paymentRepository.save(payment);
+
+        // RentId별로 묶어서 Reservation 생성
+        Map<Long, List<PaymentPrepareDTO.ReservationItemDTO>> groupedByRent =
+                dto.getReservationItems().stream()
+                        .collect(Collectors.groupingBy(PaymentPrepareDTO.ReservationItemDTO::getRentId));
+
+        for (Map.Entry<Long, List<PaymentPrepareDTO.ReservationItemDTO>> entry : groupedByRent.entrySet()) {
+            Long rentId = entry.getKey();
+            List<PaymentPrepareDTO.ReservationItemDTO> items = entry.getValue();
+
+            Rent rent = rentRepository.findById(rentId)
+                    .orElseThrow(() -> new PaymentException(PaymentErrorCode.RENT_NOT_FOUND));
+
+            long rentTotal = items.stream()
+                    .mapToLong(PaymentPrepareDTO.ReservationItemDTO::getSubtotalPrice)
+                    .sum();
+
+            Reservation reservation = Reservation.builder()
+                    .user(user)
+                    .rent(rent)
+                    .totalPrice(rentTotal)
+                    .merchantUid(merchantUid)
+                    .status(ReservationStatus.READY)
+                    .payment(payment)
+                    .build();
+
+            reservationRepository.save(reservation);
+            payment.getReservations().add(reservation);
+
+            for (PaymentPrepareDTO.ReservationItemDTO item : items) {
+                ItemDetail itemDetail = itemDetailRepository.findByIdWithLock(item.getItemDetailId())
+                        .orElseThrow(() -> new PaymentException(PaymentErrorCode.ITEM_DETAIL_NOT_FOUND));
+
+                int reservedQty = reservationItemRepository.getReservedQuantity(
+                        itemDetail.getItemDetailId(),
+                        LocalDateTime.parse(item.getRentStart()),
+                        LocalDateTime.parse(item.getRentEnd())
+                );
+
+                int availableStock = itemDetail.getStockQuantity() - reservedQty;
+
+                if (availableStock < item.getQuantity()) {
+                    throw new PaymentException(PaymentErrorCode.STOCK_SHORTAGE, "남은 수량: " + availableStock);
+                }
+
+                ReservationItem reservationItem = ReservationItem.builder()
+                        .reservation(reservation)
+                        .itemDetail(itemDetail)
+                        .rentStart(LocalDateTime.parse(item.getRentStart()))
+                        .rentEnd(LocalDateTime.parse(item.getRentEnd()))
+                        .quantity(item.getQuantity())
+                        .subtotalPrice(item.getSubtotalPrice())
+                        .stockDeducted(false)
+                        .build();
+
+                reservationItemRepository.save(reservationItem);
+            }
+        }
+
+        return new PaymentPrepareRespDTO(merchantUid,totalPrice);
+    }
+
+    public void confirmPayment(String impUid, String merchantUid, Long paidAmount) throws IOException {
+        if (paidAmount == null) {
+            throw new PaymentException(PaymentErrorCode.AMOUNT_MISMATCH, "결제 금액이 누락되었습니다.");
+        }
+
+        String token = iamportTokenUtil.getIamportToken();
+
+        // 아임포트로 결제 정보 검증
+        Request request = new Request.Builder()
+                .url("https://api.iamport.kr/payments/" + impUid)
+                .get()
+                .addHeader("Authorization", token)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new PaymentException(PaymentErrorCode.PAYMENT_VERIFICATION_FAILED);
+            }
+
+            JsonNode json = objectMapper.readTree(response.body().string()).get("response");
+            long actualAmount = json.get("amount").asLong();
+
+            if (actualAmount != paidAmount) {
+                throw new PaymentException(PaymentErrorCode.AMOUNT_MISMATCH);
+            }
+        }
+
+        Payment payment = paymentRepository.findByMerchantUid(merchantUid)
+                .orElseThrow(() -> new PaymentException(PaymentErrorCode.PAYMENT_NOT_FOUND));
+
+        payment.setImpUid(impUid);
+        payment.setStatus(PaymentStatus.PAID);
+
+        for (Reservation reservation : payment.getReservations()) {
+            reservation.setStatus(ReservationStatus.RESERVED);
+        }
+    }
 
 
 
