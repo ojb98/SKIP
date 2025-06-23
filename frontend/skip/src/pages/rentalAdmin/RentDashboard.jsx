@@ -18,11 +18,54 @@ const RentDashboard = () => {
     return d.toISOString().split("T")[0];
   };
 
+  const getRelativeDate = (base, diffDays) => {
+    const d = new Date(base);
+    d.setDate(d.getDate() - diffDays);
+    return d.toISOString().split("T")[0];
+  };
+
+  const calcComparisonRange = (startStr, endStr) => {
+    const start = new Date(startStr);
+    const end = new Date(endStr);
+    const diffInDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+    let beforeEnd = new Date(start);
+    beforeEnd.setDate(beforeEnd.getDate() - 1);
+    beforeEnd = beforeEnd.toISOString().split("T")[0];
+
+    let beforeStart = new Date(beforeEnd);
+    beforeStart.setDate(beforeStart.getDate() - diffInDays);
+    beforeStart = beforeStart.toISOString().split("T")[0];
+
+    return {
+      beforeStartDate: beforeStart,
+      beforeEndDate: beforeEnd,
+    };
+  };
+
+
   const [startDate, setStartDate] = useState(getWeekAgo());
-  const [endDate, setEndDate] = useState(getToday());
-  const [summaryData, setSummaryData] = useState({});
-  const [isClicked, setIsClicked] = useState(false);
+  const [endDate, setEndDate] = useState(getToday());  
   const [mounted, setMounted] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [beforeStartDate, setBeforeStartDate] = useState();
+  const [beforeEndDate, setBeforeEndDate] = useState();
+  const emptySummary = {
+    totalSales: 0,
+    totalSalesCount: 0,
+    totalProfit: 0,
+    totalSuccessCount: 0,
+    totalCancelPrice: 0,
+    totalCancelCount: 0,
+    totalAdCash: 0,
+    reservationCount: 0,
+  };
+  const [summaryData, setSummaryData] = useState(emptySummary);
+  const [beforeSummaryData, setBeforeSummaryData] = useState(emptySummary);
+  const [summaryTodaysData, setSummaryTodaysData] = useState(emptySummary);
+  const [summaryDaysAgoData, setSummaryDaysAgoData] = useState(emptySummary);
+  const [summaryWeeksAgoData, setSummaryWeeksAgoData] = useState(emptySummary);
+  const [summaryYearsAgoData, setSummaryYearsAgoData] = useState(emptySummary);
   const [chartData, setChartData] = useState([]);
   const [rentList, setRentList] = useState([]);
   const [selectedRentId, setSelectedRentId] = useState(null);
@@ -36,9 +79,15 @@ const RentDashboard = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (!userId || selectedRentId === null) return;
+    const { beforeStartDate, beforeEndDate } = calcComparisonRange(startDate, endDate);
+    setBeforeStartDate(beforeStartDate);
+    setBeforeEndDate(beforeEndDate);
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    if (!userId || selectedRentId === null || !beforeStartDate || !beforeEndDate) return;
     loadData();
-    }, [userId, selectedRentId, startDate, endDate]);
+    }, [userId, selectedRentId, startDate, endDate, beforeStartDate, beforeEndDate]);
 
   useEffect(() => {
     setMounted(true);
@@ -47,6 +96,30 @@ const RentDashboard = () => {
   const loadData = async () => {
     const summary = await fetchRentSummary(userId, selectedRentId, startDate, endDate);
     setSummaryData(summary);
+    
+    const beforeSummary = await fetchRentSummary(
+      userId,
+      selectedRentId,
+      beforeStartDate,
+      beforeEndDate
+    );
+    setBeforeSummaryData(beforeSummary);
+
+    const today = await fetchRentSummary(userId, selectedRentId, endDate, endDate);
+    setSummaryTodaysData(today);
+
+    const dayAgoDate = getRelativeDate(endDate, 1);
+    const dayAgo = await fetchRentSummary(userId, selectedRentId, dayAgoDate, dayAgoDate);
+    setSummaryDaysAgoData(dayAgo);
+
+    const weekAgoDate = getRelativeDate(endDate, 7);
+    const weekAgo = await fetchRentSummary(userId, selectedRentId, weekAgoDate, weekAgoDate);
+    setSummaryWeeksAgoData(weekAgo);
+
+    const yearAgoDate = getRelativeDate(endDate, 365);
+    const yearAgo = await fetchRentSummary(userId, selectedRentId, yearAgoDate, yearAgoDate);
+    setSummaryYearsAgoData(yearAgo);
+
     const chart = await fetchRentChart(userId, selectedRentId, startDate, endDate);
     setChartData(chart);
   };
@@ -128,7 +201,16 @@ const RentDashboard = () => {
       <div style={{ display: "flex", alignItems: "flex-start", gap: "20px" }}>
         <SalesSummaryChart summaryData={summaryData} />
         <SalesCategoryChart categoryData={chartData} />
-        <StatOverviewCard stats={{ current: summaryData }} />
+        <StatOverviewCard
+          stats={{
+            current: summaryData,
+            before: beforeSummaryData,
+            today: summaryTodaysData,
+            dayAgo: summaryDaysAgoData,
+            weekAgo: summaryWeeksAgoData,
+            yearAgo: summaryYearsAgoData,
+          }}
+        />
       </div>
     </div>
   );

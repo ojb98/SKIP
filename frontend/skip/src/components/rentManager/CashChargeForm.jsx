@@ -12,6 +12,7 @@ const CashChargeForm = () => {
   const [amount, setAmount] = useState('');
   const [pg, setPg] = useState('kakaopay.TC0ONETIME');
   const [rentList, setRentList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   const [selectedRentId, setSelectedRentId] = useState(0);
 
   useEffect(() => {
@@ -109,7 +110,9 @@ const CashChargeForm = () => {
           <label>충전 금액</label>
           <input
             type="text"
-            value={amount ? `${Number(amount).toLocaleString()} 원` : ''}
+            value={isEditing ? amount : amount ? `${Number(amount).toLocaleString()} 원` : ''}
+            onFocus={() => setIsEditing(true)}
+            onBlur={() => setIsEditing(false)}
             onChange={handleAmountChange}
             required
             style={{ textAlign: 'right' }}
