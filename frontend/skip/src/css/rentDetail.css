@@ -1,4 +1,4 @@
-.rent-detail-container {
+/* .rent-detail-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
@@ -20,6 +20,7 @@
 }
 
 /* 테이블 스타일 */
+/*
 .detail-table {
   width: 100%;
   border-collapse: collapse;
@@ -43,13 +44,13 @@
 .detail-tbody td {
   color: #444;
   font-size: 1rem;
-}
+} */
 
 /* 이미지 스타일 */
-.detail-tbody img {
+/* .detail-tbody img {
   max-width: 200px;
   max-height: 150px;
   object-fit: contain;
   border-radius: 6px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
+} */

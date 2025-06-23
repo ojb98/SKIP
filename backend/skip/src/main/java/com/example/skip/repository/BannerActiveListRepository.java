@@ -2,6 +2,7 @@ package com.example.skip.repository;
 
 import com.example.skip.entity.BannerActiveList;
 import com.example.skip.entity.BannerWaitingList;
+import com.example.skip.enumeration.BannerActiveListStatus;
 import com.example.skip.enumeration.BannerWaitingListStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,7 @@ public interface BannerActiveListRepository extends JpaRepository<BannerActiveLi
             LocalDateTime start,
             LocalDateTime end
     );
+
+    //한 개 렌탈샵 배너 중복신청방지
+    boolean existsByRent_RentIdAndStatus(Long rentId, BannerActiveListStatus status);
 }

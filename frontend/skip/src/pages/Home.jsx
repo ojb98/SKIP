@@ -11,7 +11,7 @@ const Home = () => {
     return (
         <>
             <div className="w-full flex flex-col items-center gap-30 font-[NanumSquare]">
-                <div className="space-y-10">
+                <div className="w-full flex flex-col gap-10 items-center">
                     <BannerSlide></BannerSlide>
                 
                     <SearchBar></SearchBar>

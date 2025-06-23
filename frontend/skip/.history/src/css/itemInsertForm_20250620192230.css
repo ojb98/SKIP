@@ -1,0 +1,173 @@
+/* 관리자페이지 rentInsertForm.css와 결을 맞춘 itemInsertForm.css */
+
+.item-detail-wrapper {
+  width: 600px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 0;
+  border: 1px solid #000;
+  color: #000;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.top-subject {
+  font-size: 28px;
+  font-weight: 700;
+  color: #253463;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #253463;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.form-group label span {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea,
+.item-table select,
+.item-table input[type="number"] {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #4b5175;
+  border-radius: 0;
+  font-size: 15px;
+  color: #000;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.form-group input[readonly] {
+  background: #f5f5f5;
+  color: #888;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.item-insert-btn, .item-add-btn, .item-size-add-btn {
+  all: unset;
+  padding: 10px 0;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+  background-color: #bccefa;
+  color: #000;
+  margin-top: 16px;
+  width: 180px;
+  display: inline-block;
+}
+
+.item-insert-btn:hover, .item-add-btn:hover, .item-size-add-btn:hover {
+  color: #fff;
+  background-color: #89a5ec;
+}
+
+.item-update-btn {
+  all: unset;
+  padding: 10px 0;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+  background-color: #f9e79f;
+  color: #000;
+  margin-top: 16px;
+  width: 180px;
+  display: inline-block;
+}
+
+/* .item-update-btn:hover {} */
+
+.item-delete-btn {
+  all: unset;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #dc3545;
+  background-color: #fbd6d6;
+  color: #cc4444;
+  margin-left: 8px;
+  border-radius: 0;
+}
+
+.item-delete-btn:hover {
+  background-color: #cc4444;
+  color: #fff;
+}
+
+.sub-subject {
+  font-size: 18px;
+  font-weight: 600;
+  color: #253463;
+  margin: 32px 0 16px;
+}
+
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.item-table th, .item-table td {
+  padding: 6px 8px;
+  border: 1px solid #4b5175;
+  font-size: 14px;
+  text-align: center;
+}
+
+.item-table th {
+  background-color: #253463;
+  color: #fff;
+  font-weight: 600;
+}
+
+.item-table td {
+  background-color: transparent;
+  color: #000;
+}
+
+.form-inline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* 버튼 컨테이너 중앙 정렬 */
+.item-detail-wrapper form > div:last-child {
+  text-align: center;
+}
+
+.form-group.input-section {
+  border: 1px solid #253463;
+  background: #f7f9fc;
+  border-radius: 6px;
+  padding: 18px 16px;
+  margin-bottom: 24px;
+}

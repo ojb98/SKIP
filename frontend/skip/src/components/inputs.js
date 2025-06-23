@@ -6,7 +6,7 @@ export const inputText = tv({
         'border-gray-200',
         'rounded',
         'text-sm',
-        'indent-2',
+        'p-2',
         'focus-visible:outline-none',
         'focus:border-black'
     ],

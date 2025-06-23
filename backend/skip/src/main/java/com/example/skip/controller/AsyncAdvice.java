@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 public class AsyncAdvice {
     @ExceptionHandler(InterruptedException.class)
     public ApiResponse handleInterruptedException(InterruptedException e) {
+        e.printStackTrace();
         return ApiResponse.builder()
                 .success(false)
                 .data(e.getCause().getMessage())
@@ -18,6 +19,7 @@ public class AsyncAdvice {
 
     @ExceptionHandler(ExecutionException.class)
     public ApiResponse handleExecutionException(ExecutionException e) {
+        e.printStackTrace();
         return ApiResponse.builder()
                 .success(false)
                 .data(e.getCause().getMessage())

@@ -13,4 +13,6 @@ public interface BoostRepository extends JpaRepository<Boost,Long> {
     List<Boost> findAllByEndDateBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 
     List<Boost> findByEndDateBefore(LocalDateTime endDateBefore);
+
+    List<Boost> findAllByRentIdAndEndDateAfter(Long rentId, LocalDateTime now);
 }

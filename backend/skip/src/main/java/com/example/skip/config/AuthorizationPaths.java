@@ -21,7 +21,10 @@ public class AuthorizationPaths {
             "/api/qna/item/*",
             "/api/reviews/item/*",
             "/api/reviews/stats/*",
-            "/api/rents/slide/*"
+            "/api/rents/slide/*",
+            "/api/rents/regions",
+            "/api/rents/autocomplete",
+            "/api/rents/categories"
     );
 
     public static final List<String> ROLE_USER = List.of(

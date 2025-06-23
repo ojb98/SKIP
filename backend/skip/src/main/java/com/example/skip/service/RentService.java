@@ -176,6 +176,13 @@ public class RentService {
                 .toList();
     }
 
+    public String getNameById(Long rentId){
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(()-> new IllegalArgumentException("해당 렌탈샵을 찾을 수 없습니다."));
+
+        return rent.getName();
+    }
+
     public List<RentDTO> findAllDto() {
         return rentRepository.findAll().stream()
                 .map(rent -> new RentDTO(rent))

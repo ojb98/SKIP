@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { rentDetailApi } from "../../api/rentListApi";
 import { useNavigate, useParams } from "react-router-dom";
-import '../../css/rentDetail.css';
+// import '../../css/rentDetail.css';
 
 const RentDetail=()=>{
 

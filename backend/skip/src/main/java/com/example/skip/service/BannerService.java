@@ -2,7 +2,7 @@ package com.example.skip.service;
 
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.BannerActiveListStatus;
-import com.example.skip.repository.BannerWaitingListRepository;
+import com.example.skip.repository.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,7 @@ import com.example.skip.dto.banner.BannerActiveListDTO;
 import com.example.skip.dto.banner.BannerWaitingListDTO;
 import com.example.skip.entity.BannerWaitingList;
 import com.example.skip.enumeration.BannerWaitingListStatus;
-import com.example.skip.repository.BannerActiveListRepository;
 import com.example.skip.repository.BannerWaitingListRepository;
-import com.example.skip.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,13 +42,10 @@ public class BannerService {
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-
     private static final QBannerActiveList bannerActiveList = QBannerActiveList.bannerActiveList;
-
     private static final QRent rent = QRent.rent;
-
     private static final String REDIS_KEY = "banner:clicks";
-
+    private final RentRepository rentRepository;
 
     LocalDate today = LocalDate.now();
     // 항상 다음 주 월요일 계산
@@ -78,8 +73,7 @@ public class BannerService {
     public List<BannerActiveListDTO> getActiveBanners() {
         // 1. 등록된 배너 엔티티 조회
         List<BannerActiveList> banners = bannerActiveListRepository
-                .findAllByEndDateBetween(mondayAt3AM, mondayAt3AM10M);
-        //
+                .findAllByUploadDateBetween(mondayAt3AM, mondayAt3AM10M);
 
         // 3. DTO 변환
         return banners.stream()
@@ -167,6 +161,18 @@ public class BannerService {
             BannerActiveList bannerActiveList = bannerActiveListRepository.findById(bannerId).orElseThrow();
 
             bannerActiveList.setClickCnt(bannerActiveList.getClickCnt() + count);
+
+            int totalCost = bannerActiveList.getCpcBid() * count;
+            Rent rent = bannerActiveList.getRent();
+            rent.setRemainAdCash(rent.getRemainAdCash() - totalCost);
+
+            if (rent.getRemainAdCash() < 0) {
+                bannerActiveList.setStatus(BannerActiveListStatus.DISABLE);
+                log.info("배너 {} 잔액 부족으로 비활성화", bannerId);
+            }
+
+            rentRepository.save(rent);
+            bannerActiveListRepository.save(bannerActiveList);
             log.info("{}: flushed", bannerId);
         }
         redisTemplate.delete(REDIS_KEY);

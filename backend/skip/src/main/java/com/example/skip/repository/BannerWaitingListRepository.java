@@ -27,4 +27,9 @@ public interface BannerWaitingListRepository extends JpaRepository<BannerWaiting
             LocalDateTime start,
             LocalDateTime end
     );
+
+
+    boolean existsByRent_RentIdAndStatus(Long rentId, BannerWaitingListStatus status);
+
+    BannerWaitingList findTopByRent_User_UserIdAndStatusOrderByUpdatedAtDesc(Long userId, BannerWaitingListStatus status);
 }

@@ -1,15 +1,16 @@
 import axios from "axios";
+import caxios from "../../api/caxios";
 
-export const fetchRentSummary = async (userId, startDate, endDate) => {
-  const response = await axios.get(`/api/rentAdmin/summary`, {
-    params: { userId, startDate, endDate },
+export const fetchRentSummary = async (userId, rentId, startDate, endDate) => {
+  const response = await caxios.get(`/api/rentAdmin/summary`, {
+        params: { userId, rentId, startDate, endDate },
   });
   return response.data;
 };
 
-export const fetchRentChart = async (userId, start, end) => {
-  const response = await axios.get(`/api/rentAdmin/sales/chart`, {
-    params: { userId, start, end },
+export const fetchRentChart = async (userId, rentId, start, end) => {
+  const response = await caxios.get(`/api/rentAdmin/sales/chart`, {
+        params: { userId, rentId, start, end },
   });
   return response.data;
 };

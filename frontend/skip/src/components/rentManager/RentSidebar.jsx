@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CustomAccordion from "../adminpage/CustomAccordian";
 import { useState } from "react";
 import { useSelector } from 'react-redux';
 
 const RentSidebar = () => {
+
+    const { rentId } = useParams();
     const [openIndex, setOpenIndex] = useState(null);
 
     const handleAccordionClick = (index) => {
@@ -11,17 +13,20 @@ const RentSidebar = () => {
     };
 
     function Sideprofile() {    
-    const { userId, username, isLoggedIn, isLoading, image } = useSelector((state) => state.loginSlice);
+        const { userId, username, isLoggedIn, isLoading, image } = useSelector(
+            state => state.loginSlice
+        );
 
-    if (isLoading) return <div>로딩 중…</div>;
-    if (!isLoggedIn) return <div>로그인해주세요</div>;
+        if (isLoading) return <div>로딩 중…</div>;
+        if (!isLoggedIn) return <div>로그인해주세요</div>;
 
-    return (        
-        <div className="admin-sidebar__profile">
-            <img src={image} alt="프로필" width={40} className="admin-sidebar__profile-icon"/>
-            <span className="admin-sidebar__name">{username}님, 환영합니다!</span>
-        </div>
-    );
+        return (        
+            <div className="admin-sidebar__profile">
+            <img src={image || "/images/default-user.png"} alt="프로필" width={40} className="admin-sidebar__profile-icon"/>
+            <span className="admin-sidebar__name">{userId}님, 환영합니다!</span>
+            </div>
+        );
+
     }
 
     return (
@@ -40,7 +45,11 @@ const RentSidebar = () => {
                 <li>
                     <CustomAccordion title="상품 관리" isOpen={openIndex === 2} onClick={() => handleAccordionClick(2)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin/select">상품 관리</Link></li>
+                            <Link to={rentId ? `/rentAdmin/item/insert/${rentId}` : "/rentAdmin/item/insert"}>
+                                상품 등록
+                            </Link>
+                            <li><Link to="/rentAdmin/item/list">상품 관리</Link></li>
+
                         </ul>
                     </CustomAccordion>
                 </li>
@@ -55,8 +64,9 @@ const RentSidebar = () => {
                 <li>
                     <CustomAccordion title="광고상품 구매·관리" isOpen={openIndex === 4} onClick={() => handleAccordionClick(4)}>
                         <ul className="sub-menu">
-                            <li><Link to="/rentAdmin/boost"> 부스트 구매하기</Link></li>
-                            <li><Link to="/rentAdmin/banner"> 배너광고 신청·구매하기</Link></li>
+                            <li><Link to="/rentAdmin/cash">캐시 충전</Link></li>
+                            <li><Link to="/rentAdmin/boost">부스트 구매하기</Link></li>
+                            <li><Link to="/rentAdmin/banner">배너광고 신청·구매하기</Link></li>                            
                         </ul>
                     </CustomAccordion>
                 </li>

@@ -6,10 +6,12 @@ import { fetchTopTenRanking } from "../api/rentStatApi";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { fetchRegions } from "../api/rentListApi";
 
 const host = __APP_BASE__;
 
 const Ranking = () => {
+    const [regions, setRegions] = useState([]);
     const [region, setRegion] = useState('ETC');
     const [period, setPeriod] = useState({
         from: '',
@@ -18,12 +20,19 @@ const Ranking = () => {
     const [ranking, setRanking] = useState([]);
 
     useEffect(() => {
+        fetchRegions().then(res => {
+            if (res.success) {
+                setRegions(res.data);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
         fetchTopTenRanking({
             region: region,
             ...period
         }).then(res => {
             if (res.success) {
-                console.log(res.data);
                 setRanking(res.data);
             } else {
                 console.log(res.data);
@@ -35,7 +44,9 @@ const Ranking = () => {
     return (
         <>
             <div className="w-[1150px] space-y-10">
-                <RankingFilter conditions={{region, period}} conditionSetters={{setRegion, setPeriod}}></RankingFilter>
+                <h1 className="text-2xl font-extrabold">Top 10 시설</h1>
+
+                <RankingFilter regions={regions} conditions={{region, period}} conditionSetters={{setRegion, setPeriod}}></RankingFilter>
 
                 <ul className="grid grid-rows-5 grid-cols-2 grid-flow-col gap-5">
                     {

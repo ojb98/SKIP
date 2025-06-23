@@ -10,11 +10,16 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum Region {
+    ETC("기타", null, null),
+    SEOUL("서울특별시", "서울", List.of()),
     GYEONGGI("경기도", "경기", List.of()),
     KANGWON("강원도", "강원", List.of()),
+    CHUNGBUK("충청북", "충북", List.of("충청도")),
+    CHUNGNAM("충청남도", "충남", List.of("충청도")),
     JEONBUK("전라북도", "전북", List.of("전라도")),
-    GYEONGNAM("경상남도", "경남", List.of("경상도")),
-    ETC("기타", null, null);
+    JEONNAM("전라북도", "전남", List.of("전라도")),
+    GYEONGBUK("경사북도", "경북", List.of("경상도")),
+    GYEONGNAM("경상남도", "경남", List.of("경상도"));
 
 
     private final String fullName;

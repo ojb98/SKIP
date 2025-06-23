@@ -55,16 +55,18 @@ const BannerActiveTable = () => {
     );
   };
 
-  const getNextWeekMonday3AM = () => {
+ 
+  // 다음 주 월요일 오전 3시
+  const getNextMonday3AM = () => {
     const today = new Date();
-    const day = today.getDay();
-    const diffToMonday = (9 - day) % 7 || 7;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diffToMonday);
-    monday.setHours(3, 0, 0, 0);
-    return monday.toISOString().split('T')[0] + ' 오전 3시';
+    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(3, 0, 0, 0);
+    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
   };
-  const registDay = getNextWeekMonday3AM();
+  const registDay = getNextMonday3AM();
 
   const openModal = imageUrl => setModalImage(imageUrl);
   const closeModal = () => setModalImage(null);
@@ -177,7 +179,7 @@ const BannerActiveTable = () => {
             <p><strong>렌탈샵명:</strong> {selectedBanner.rentName}</p>
             <p><strong>입찰가:</strong> {selectedBanner.cpcBid}</p>
             <p><strong>노출도점수:</strong> {selectedBanner.finalScore}</p>
-            <p><strong>요청일:</strong> {selectedBanner.uploadDate?.split('T')[0]}</p>
+            <p><strong>등록예정일:</strong> {selectedBanner.uploadDate?.split('T')[0]}</p>
           </div>
         </div>
       )}
