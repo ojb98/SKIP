@@ -40,7 +40,13 @@ const BoostPurchaseForm = () => {
 
   const handlePurchase = async e => {
     e.preventDefault();
-    const remaining = await purchaseBoost(userId, selectedRentId, Number(boost), Number(cpb), cashToken);
+    const quantity = Number(boost);
+    const pricePerBoost = Number(cpb);
+    const totalPrice = quantity * pricePerBoost;
+
+    if (!window.confirm(`총 결제 금액은 ${totalPrice}원 입니다. 부스트를 구매하시겠습니까?`)) return;
+    alert('구매가 완료되었습니다.');
+    const remaining = await purchaseBoost(userId, selectedRentId, quantity, pricePerBoost, cashToken);
     if (remaining != null) {
       setCashToken(remaining);
       const amount = await decryptCash(remaining);
@@ -51,15 +57,16 @@ const BoostPurchaseForm = () => {
     setBoost('');
   };
 
-  const getNextMonday0AM = () => {
+  const getNextMonday3AM = () => {
     const today = new Date();
-    const diff = (8 - today.getDay()) % 7 || 7;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diff);
-    monday.setHours(3, 0, 0, 0);
-    return monday.toISOString().split('T')[0] + ' 00:00';
+    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(3, 0, 0, 0);
+    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
   };
-  const updateDay = getNextMonday0AM();
+  const updateDay = getNextMonday3AM();
 
   return (
     <div style={{display:"flex"}}>

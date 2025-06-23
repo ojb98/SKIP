@@ -100,12 +100,12 @@ const BannerApplyForm = () => {
 
   const getNextMonday3AM = () => {
     const today = new Date();
-    const day = today.getDay();
-    const diff = (8 - day) % 7 || 7;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diff);
-    monday.setHours(3, 0, 0, 0);
-    return monday.toISOString().split('T')[0] + ' 03:00';
+    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(3, 0, 0, 0);
+    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
   };
   const registDay = getNextMonday3AM();
 
@@ -137,7 +137,7 @@ const BannerApplyForm = () => {
             <input type="text" value={maxBid} readOnly/>
           </div>
           <div className="form-group">
-            <label>CPC 입찰가</label>
+            <label>클릭당 가격 입찰가</label>
             <input
               type="number"
               value={cpcBid}
