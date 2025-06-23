@@ -16,6 +16,12 @@ export const fetchCpb = async (userId, rentId) => {
   return resp.data.cpb;
 };
 
+export const decryptCash = async cashToken => {
+  const resp = await axios.get('/api/rentAdmin/cash/decrypt', { params: { cashToken } });
+  return resp.data.remainingCash;
+};
+
+
 export const fetchActiveBoost = async (userId, rentId) => {
   const resp = await axios.get('/api/rentAdmin/boost', { params: { userId, rentId } });
   return resp.data.activeBoost;

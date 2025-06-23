@@ -188,4 +188,9 @@ public class RentAdService {
             throw new IllegalArgumentException("잔여 캐시 검증 실패");
         }
     }
+
+    public int decryptCash(String cashToken) {
+        String plain = aesUtil.decrypt(cashToken);
+        return Integer.parseInt(plain);
+    }
 }

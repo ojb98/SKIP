@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchCash, purchaseBoost, fetchCpb, fetchActiveBoost } from '../../services/admin/rent/AdService';
+import { fetchCash, purchaseBoost, fetchCpb, fetchActiveBoost, decryptCash } from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
 const BoostPurchaseForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
   const [cashToken, setCashToken] = useState('');
+  const [cashAmount, setCashAmount] = useState(0);
   const [boost, setBoost] = useState('');
   const [cpb, setCpb] = useState(0);
   const [rentList, setRentList] = useState([]);
@@ -27,6 +28,8 @@ const BoostPurchaseForm = () => {
       if (!userId || !selectedRentId) return;
       const token = await fetchCash(userId, selectedRentId);
       setCashToken(token);
+      const amount = await decryptCash(token);
+      setCashAmount(amount);
       const ab = await fetchActiveBoost(userId, selectedRentId);
       setActiveBoost(ab);
       const price = await fetchCpb(userId, selectedRentId);
@@ -40,6 +43,8 @@ const BoostPurchaseForm = () => {
     const remaining = await purchaseBoost(userId, selectedRentId, Number(boost), Number(cpb), cashToken);
     if (remaining != null) {
       setCashToken(remaining);
+      const amount = await decryptCash(remaining);
+      setCashAmount(amount);
       const ab = await fetchActiveBoost(userId, selectedRentId);
       setActiveBoost(ab);
     }
@@ -76,8 +81,8 @@ const BoostPurchaseForm = () => {
             </select>
           </div>
           <div className="form-group">
-            <label>현재 보유 캐시 토큰</label>
-            <input type="text" value={cashToken} readOnly />
+            <label>현재 보유 캐시</label>
+            <input type="text" value={cashAmount.toLocaleString()} readOnly />
           </div>
           <div className="form-group">
             <div style={{display:"flex"}}>

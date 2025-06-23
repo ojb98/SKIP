@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchCash, chargeCash } from '../../services/admin/rent/AdService';
+import { fetchCash, chargeCash, decryptCash  } from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
 
 const CashChargeForm = () => {
   const { userId } = useSelector(state => state.loginSlice);
   const [cashToken, setCashToken] = useState('');
+  const [cashAmount, setCashAmount] = useState(0);
   const [amount, setAmount] = useState('');
   const [pg, setPg] = useState('kakaopay.TC0ONETIME');
   const [rentList, setRentList] = useState([]);
@@ -26,6 +27,8 @@ const CashChargeForm = () => {
       if (!userId || !selectedRentId) return;
       const token = await fetchCash(userId, selectedRentId);
       setCashToken(token);
+      const amount = await decryptCash(token);
+      setCashAmount(amount);
     };
     load();
   }, [userId, selectedRentId]);
@@ -64,6 +67,8 @@ const CashChargeForm = () => {
         });
         const token = await fetchCash(userId, selectedRentId);
         setCashToken(token);
+        const amount = await decryptCash(token);
+        setCashAmount(amount);
       } else {
         alert('결제 실패: ' + rsp.error_msg);
       }
@@ -104,7 +109,7 @@ const CashChargeForm = () => {
             <label>현재 보유 캐시</label>
            <input
             type="text"
-            value={cashToken.toLocaleString() + ' 원'}
+            value={cashAmount.toLocaleString() + ' 원'}
             readOnly
             style={{ textAlign: 'right' }}
           />

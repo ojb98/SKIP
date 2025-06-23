@@ -49,3 +49,4 @@ export const findRentByRentName = async (rentname) => {
 export const requestUpdate = async (rentId, status) => {
   return await axios.put(`/api/rent/update/${rentId}/${status}`);
 };
+
