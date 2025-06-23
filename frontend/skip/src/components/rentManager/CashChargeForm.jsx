@@ -122,7 +122,13 @@ const CashChargeForm = () => {
               <option value="tosspay.tosstest">토스페이</option>
             </select>
           </div>
-          <button type="submit" style={{marginLeft:"260px" , marginTop:"20px"}}>결제하기</button>
+          <button
+            type="submit"
+            className="action-btn"
+            style={{ marginLeft: "350px", marginTop: "20px" }}
+          >
+          결제하기
+          </button>
           </form>
         </div>
       </div>

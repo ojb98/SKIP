@@ -27,6 +27,12 @@ public class BannerController {
         List<BannerWaitingListDTO> banners = bannerService.getWaitingBanners();
         return ResponseEntity.ok(banners);
     }
+    @GetMapping("/waiting/approved")
+    public ResponseEntity<List<BannerWaitingListDTO>> getApprovedWaitingBanners() {
+        List<BannerWaitingListDTO> banners = bannerService.getApprovedWaitingBanners();
+        return ResponseEntity.ok(banners);
+    }
+
 
     @GetMapping("/active")
     public ResponseEntity<List<BannerActiveListDTO>> getActiveBanners() {

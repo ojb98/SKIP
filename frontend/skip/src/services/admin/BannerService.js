@@ -7,6 +7,12 @@ export const fetchWaitingBanners = async () => {
   return response.data;
 };
 
+//승인된 배너 불러오기
+export const fetchApprovedWaitingBanners = async () => {
+  const response = await caxios.get('/api/banners/waiting/approved');
+  return response.data;
+};
+
 //등록된 배너 불러오기
 export const fetchActiveBanners = async () => {
   const response = await caxios.get('/api/banners/active');

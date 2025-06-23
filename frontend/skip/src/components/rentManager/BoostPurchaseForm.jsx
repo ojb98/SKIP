@@ -94,7 +94,8 @@ const BoostPurchaseForm = () => {
           <div className="form-group">
             <div style={{display:"flex"}}>
             <label>부스트 한 개당 가격</label>
-            <span className="tooltip-icon" style={{width:"15px", height:"25px"}}>?
+            
+            <span className="tooltip-icon" style={{width:"14px", height:"20px", fontSize:"8px"}}>?
               <span className="tooltip-text" style={{width:"400px"}}>
                 부스트 가격 산정방식: 
                 <br/> 1 + (5.0 - 평균 평점) * 0.1 + (5.0 - 최근7일 평균평점) * 0.1            
@@ -113,7 +114,13 @@ const BoostPurchaseForm = () => {
             />
           </div>
           
-          <button type="submit" style={{marginLeft:"260px" , marginTop:"20px"}}>구매하기</button>
+          <button
+            type="submit"
+            className="action-btn"
+            style={{ marginLeft: "350px", marginTop: "20px" }}
+          >
+            구매하기
+          </button>
         </form>
       </div>
     </div>

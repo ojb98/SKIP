@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../css/rentAdForm.css';
 import '../../css/userlist.css';
-import { fetchActiveBanners } from '../../services/admin/BannerService';
+import { fetchActiveBanners, fetchApprovedWaitingBanners  } from '../../services/admin/BannerService';
 import { submitBannerRequest , fetchCash, fetchWithdrawnBanner} from '../../services/admin/rent/AdService';
 import { useSelector } from 'react-redux';
 import { findRentByUserId } from '../../services/admin/RentListService';
@@ -55,7 +55,11 @@ const BannerApplyForm = () => {
   useEffect(() => {
     const load = async () => {
       const actives = await fetchActiveBanners();
-      const bids = actives.map(b => b.cpcBid);
+      const approved = await fetchApprovedWaitingBanners();
+      const bids = [
+        ...actives.map(b => b.cpcBid),
+        ...approved.map(b => b.cpcBid)
+      ];
       setMaxBid(bids.length > 0 ? Math.max(...bids) : 0);
       setActiveScores(actives.map(b => Number(b.finalScore)));
     };
@@ -164,7 +168,7 @@ const BannerApplyForm = () => {
           <div className="form-group">
           <label>
             예상 노출도 점수
-            <span className="tooltip-icon">?
+            <span className="tooltip-icon" style={{color:"white"}}>?
               <span className="tooltip-text" style={{width:"590px"}}>
                 노출도 점수 산정방식: 
                 <br/> 0.2×평균별점 + 0.3×(해당 배너의 입찰가 ÷ 해당 주차의 최대 입찰가) + 0.5×최근7일평점                 
@@ -179,10 +183,17 @@ const BannerApplyForm = () => {
           <div className="form-group">
           <label>배너 이미지</label>
           <div>
-            <button type="button" className="file-button" onClick={openFile} style={{width:"140px", marginLeft:"0px"}}>
+            <button type="button" className="file-button" onClick={openFile} style={{width:"160px", marginLeft:"0px"}}>
               🏂이미지 선택
             </button>
-            <button type="submit" style={{marginLeft:"100px"}}>신청하기</button> <br />
+            <button
+              type="submit"
+              className="action-btn"
+              style={{ marginLeft: "180px" }}
+            >
+              신청하기
+            </button>{' '}
+            <br />
             <span className="file-name">
               {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
             </span>

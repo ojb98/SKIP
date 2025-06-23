@@ -25,7 +25,7 @@ const RentDashboard = () => {
   const [mounted, setMounted] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [rentList, setRentList] = useState([]);
-  const [selectedRentId, setSelectedRentId] = useState(0);
+  const [selectedRentId, setSelectedRentId] = useState(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -36,7 +36,7 @@ const RentDashboard = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || selectedRentId === null) return;
     loadData();
     }, [userId, selectedRentId, startDate, endDate]);
 
@@ -61,13 +61,16 @@ const RentDashboard = () => {
 
   return (
     <div className="admin-dashboard" style={{ paddingTop:"0px", backgroundColor: "#f1f3f5" }}>
-      <div style={{display:"flex"}}>
+      <div style={{display:"flex",justifyContent: "space-between", alignItems: "center" }}>
       <h2>📊 렌탈샵 매출 관리</h2>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 렌탈샵 선택:<select value={selectedRentId} onChange={e => setSelectedRentId(Number(e.target.value))} style={{border:"1px solid #c4c4c4", borderRadius:"4px", marginLeft:"5px"}}>
+      <div>
+      <span>렌탈샵 선택:&nbsp;</span>
+      <select value={selectedRentId} onChange={e => setSelectedRentId(Number(e.target.value))} style={{border:"1px solid #c4c4c4", borderRadius:"4px", marginLeft:"5px"}}>
         {rentList.map(r => (
           <option key={r.rentId} value={r.rentId}>{r.name}</option>
         ))}
       </select>
+      </div>
       </div>
       <div style={{ display: "flex", marginTop: "10px" }}>
         <div className="date-card">
@@ -110,8 +113,9 @@ const RentDashboard = () => {
             <Odometer value={mounted ? summaryData.reservationCount || 0 : 0} duration={500} /> 건
           </div>
         </div>
-        <div className="card-excel">
-          <div style={{display:"flex",marginBottom:"10px", cursor: "pointer", backgroundColor: isClicked==="xlsx" ? "#ccc" : "transparent",transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick(".xlsx")}}>
+        <div className="card-excel" style={{padding:"10px"}}>
+          <h3>📃 매출전표</h3>
+          <div style={{display:"flex",marginBottom:"5px", marginTop:"5px", cursor: "pointer", backgroundColor: isClicked==="xlsx" ? "#ccc" : "transparent",transition: "background-color 0.2s ease", borderRadius:"4px"}} onClick={()=>{handleClick(".xlsx")}}>
                 <img src="/public/images/icons8-msExcel-48.png" style={{width:"10%",height:"10%"}}/>
                 <h6>&nbsp;&nbsp;엑셀 파일로 내려받기 (.xlsx)</h6>
             </div>

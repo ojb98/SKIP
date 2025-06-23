@@ -68,6 +68,16 @@ public class BannerService {
                 .map(BannerWaitingListDTO::new)
                 .toList();
     }
+    //승인된 대기 배너 조회
+    public List<BannerWaitingListDTO> getApprovedWaitingBanners() {
+        List<BannerWaitingList> banners = bannerWaitingListRepository
+                .findAllByStatusAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+        banners.forEach(this::populateRatings);
+        return banners.stream()
+                .map(BannerWaitingListDTO::new)
+                .toList();
+    }
+
 
     //등록된 배너 조회
     public List<BannerActiveListDTO> getActiveBanners() {

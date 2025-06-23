@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import '../../css/rentAdForm.css';
-import { fetchActiveBanners } from '../../services/admin/BannerService';
+import { fetchActiveBanners, fetchApprovedWaitingBanners } from '../../services/admin/BannerService';
 import { fetchBannerDetail, resubmitBannerRequest } from '../../services/admin/rent/AdService';
 
 const BannerResubmitForm = () => {
@@ -27,11 +27,17 @@ const BannerResubmitForm = () => {
   }, [userId, waitingId]);
 
   useEffect(() => {
-    fetchActiveBanners().then(actives => {
-      const bids = actives.map(b => b.cpcBid);
+    const load = async () => {
+      const actives = await fetchActiveBanners();
+      const approved = await fetchApprovedWaitingBanners();
+      const bids = [
+        ...actives.map(b => b.cpcBid),
+        ...approved.map(b => b.cpcBid)
+      ];
       setMaxBid(bids.length > 0 ? Math.max(...bids) : 0);
       setActiveScores(actives.map(b => Number(b.finalScore)));
-    });
+    };
+    load();
   }, []);
 
   useEffect(() => {
@@ -113,10 +119,17 @@ const BannerResubmitForm = () => {
             <div className="form-group">
               <label>배너 이미지</label>
               <div>
-                <button type="button" className="file-button" onClick={() => imageRef.current?.click()} style={{ width: '140px', marginLeft: '0px' }}>
+                <button type="button" className="file-button" onClick={() => imageRef.current?.click()} style={{ width: '160px', marginLeft: '0px' }}>
                   🏂이미지 선택
                 </button>
-                <button type="submit" style={{ marginLeft: '100px' }}>재신청</button>
+                <button
+                type="submit"
+                className="action-btn"
+                style={{ marginLeft: "180px" }}
+                >
+                재신청하기
+                </button>{' '}
+                
                 <br />
                 <span className="file-name">
                   {imageRef.current?.files[0]?.name || '선택된 파일 없음'}
