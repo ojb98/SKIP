@@ -46,6 +46,7 @@ import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
 import MyRefundPage from "./pages/myPage/MyRefundPage"
 import ReservationList from './components/rentManager/ReservationList';
+import SearchResultPage from "./pages/SearchResultPage"
 
 
 function App() {
@@ -114,6 +115,9 @@ function App() {
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rent/detail/:rentId" element={<RentalshopPage/>}></Route>
                         <Route path="/rent/product/:rentId/:itemId" element={<ProductPage/>}></Route>
+
+                        {/* 렌탈샵 검색 페이지 */}
+                        <Route path="/rent/search" element={<SearchResultPage></SearchResultPage>}></Route>
                     </Route>
 
                     {/* 관리자 라우트 */}

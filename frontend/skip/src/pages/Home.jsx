@@ -1,11 +1,14 @@
 import { useState } from "react";
 import BannerSlide from "../components/BannerSlide";
-import { radio } from "../components/buttons";
 import Forecast from "../components/Forecast";
 import Ranking from "../components/Ranking";
 import SearchBar from "../components/SearchBar";
 
 const Home = () => {
+    const [keyword, setKeyword] = useState('');
+    const [from, setFrom] = useState();
+    const [to, setTo] = useState();
+    const [selectedCategories, setSelectedCategories] = useState([]);
 
 
     return (
@@ -14,7 +17,7 @@ const Home = () => {
                 <div className="w-full flex flex-col gap-10 items-center">
                     <BannerSlide></BannerSlide>
                 
-                    <SearchBar></SearchBar>
+                    <SearchBar keywordState={[keyword, setKeyword]} fromState={[from, setFrom]} toState={[to, setTo]} selectedCategoriesState={[selectedCategories, setSelectedCategories]}></SearchBar>
                 </div>
 
                 {/* <span className="w-full flex items-center">
