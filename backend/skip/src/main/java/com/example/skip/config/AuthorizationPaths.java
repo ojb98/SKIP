@@ -24,7 +24,8 @@ public class AuthorizationPaths {
             "/api/rents/slide/*",
             "/api/rents/regions",
             "/api/rents/autocomplete",
-            "/api/rents/categories"
+            "/api/rents/categories",
+            "/api/rents/search"
     );
 
     public static final List<String> ROLE_USER = List.of(

@@ -43,7 +43,7 @@ const MainHeader = () => {
                 <div className="w-[1150px] h-16 flex justify-between items-center">
                     <div className="flex gap-5 items-center">
                         <h1 className="text-3xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
-                        <span className="text-[14px] text-blue-400 italic">스키장비 예약 플랫폼</span>
+                        <span className="text-[14px] text-blue-400 italic">스키 장비 예약 플랫폼</span>
                     </div>
                     {
                         !isLoading

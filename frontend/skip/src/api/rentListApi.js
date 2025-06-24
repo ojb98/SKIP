@@ -77,3 +77,11 @@ export const fetchItemCategories = async () => {
 
     return data;
 };
+
+export const fetchSearchResult = async req => {
+    const data = await axios.post(`${host}/search`, req).then(res => {
+        return res.data;
+    });
+
+    return data;
+};

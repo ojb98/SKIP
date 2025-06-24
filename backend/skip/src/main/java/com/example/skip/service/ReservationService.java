@@ -126,6 +126,7 @@ public class ReservationService {
                 .leftJoin(itemDetail.item, item)
                 .leftJoin(reservationItem.refundsHistories, refundsHistory)
                 .where(reservation.user.userId.eq(userId).and(reservationSearchRequest.toPredicate(reservation, reservationItem)))
+                .where(reservation.status.ne(ReservationStatus.READY))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(reservation.createdAt.desc())

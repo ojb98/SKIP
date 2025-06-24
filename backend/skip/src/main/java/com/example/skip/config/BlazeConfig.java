@@ -5,10 +5,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViews;
 import com.blazebit.persistence.view.spi.EntityViewConfiguration;
-import com.example.skip.view.RefundsHistoryDetailsView;
-import com.example.skip.view.RefundsHistoryView;
-import com.example.skip.view.ReservationDetailsWithItemsView;
-import com.example.skip.view.ReservationItemDetailsView;
+import com.example.skip.view.*;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +28,10 @@ public class BlazeConfig {
         cfg.addEntityView(ReservationItemDetailsView.class);
         cfg.addEntityView(RefundsHistoryDetailsView.class);
         cfg.addEntityView(RefundsHistoryView.class);
+        cfg.addEntityView(RentSearchView.class);
+        cfg.addEntityView(RentDefaultView.class);
+        cfg.addEntityView(RentPopularityView.class);
+        cfg.addEntityView(RentRatingView.class);
         return cfg.createEntityViewManager(cbf);
     }
 }

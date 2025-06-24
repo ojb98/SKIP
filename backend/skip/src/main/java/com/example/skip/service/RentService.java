@@ -1,19 +1,29 @@
 package com.example.skip.service;
 
+import com.blazebit.persistence.PagedList;
 import com.example.skip.dto.projection.RentSummaryDTO;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
+import com.example.skip.dto.request.RentSearchRequest;
+import com.example.skip.dto.response.RentSearchResponse;
 import com.example.skip.entity.Rent;
 import com.example.skip.entity.User;
+import com.example.skip.enumeration.RentSearchSortOption;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
+import com.example.skip.repository.RentCustomRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
+import com.example.skip.view.RentDefaultView;
+import com.example.skip.view.RentPopularityView;
+import com.example.skip.view.RentRatingView;
+import com.example.skip.view.RentSearchView;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +40,8 @@ public class RentService {
 
     private final UserRepository userRepository;
     private final RentRepository rentRepository;
+    private final RentCustomRepository rentCustomRepository;
+    private final RentSearchService rentSearchService;
     private final FileUploadUtil fileUploadUtil;
     private final FileUtil fileUtil;
 
@@ -223,4 +235,16 @@ public class RentService {
         rent.setStatus(status);
     }
 
+    public RentSearchResponse<?> search(RentSearchRequest rentSearchRequest, Pageable pageable) {
+        List<Long> rentIds = rentSearchService.getIdsByKeyword(rentSearchRequest.getKeyword());
+
+        RentSearchSortOption sort = rentSearchRequest.getSort();
+        Class<? extends RentSearchView> viewClass = sort == RentSearchSortOption.POPULAR ? RentPopularityView.class : (sort == RentSearchSortOption.RATING ? RentRatingView.class : RentDefaultView.class);
+        RentSearchResponse<?> response = rentCustomRepository.searchWithKey(
+                rentSearchRequest.toCondition(rentIds, pageable),
+                viewClass
+        );
+
+        return response;
+    }
 }

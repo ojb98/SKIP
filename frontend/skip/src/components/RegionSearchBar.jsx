@@ -56,7 +56,7 @@ const RegionSearchBar = ({ keywordState }) => {
                 {
                     showRegionSelect
                     &&
-                    <RegionSelect regions={regions} setKeyword={setKeyword} onClose={() => setShowRegionSelect(false)}></RegionSelect>
+                    <RegionSelect regions={regions} keywordState={keywordState} onClose={() => setShowRegionSelect(false)}></RegionSelect>
                 }
             </div>
         </>

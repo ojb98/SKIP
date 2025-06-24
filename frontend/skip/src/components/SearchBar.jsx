@@ -4,13 +4,27 @@ import { useState } from "react";
 import DateRangeSelect from "./DateRangeSelect";
 import RegionSearchBar from "./RegionSearchBar";
 import RentItemSelect from "./RentItemSelect";
+import { useNavigate } from "react-router-dom";
 
-const SearchBar = () => {
-    const [keyword, setKeyword] = useState('');
-    const [from, setFrom] = useState();
-    const [to, setTo] = useState();
-    const [selectedCategories, setSelectedCategories] = useState([]);
+const SearchBar = ({ keywordState, fromState, toState, selectedCategoriesState }) => {
+    const [keyword, setKeyword] = keywordState;
+    const [from, setFrom] = fromState;
+    const [to, setTo] = toState;
+    const [selectedCategories, setSelectedCategories] = selectedCategoriesState;
 
+    const navigate = useNavigate();
+
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        params.append('keyword', keyword);
+        params.append('from', from ? from.toISOString().split('T')[0] : '');
+        params.append('to', to ? to.toISOString().split('T')[0] : '');
+        params.append('sort', 'DEFAULT');
+        selectedCategories.forEach(c => params.append('categories', c.value));
+
+        navigate(`/rent/search?${params.toString()}`);
+    };
 
     return (
         <>
@@ -22,6 +36,7 @@ const SearchBar = () => {
                 <RentItemSelect selectedCategoriesState={[selectedCategories, setSelectedCategories]}></RentItemSelect>
                 
                 <button
+                    onClick={handleSearch}
                     className={button({ color: "primary", className: 'w-40 h-full flex justify-center items-center rounded-md' })}
                 >
                     검색

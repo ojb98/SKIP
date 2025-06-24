@@ -1,5 +1,6 @@
 package com.example.skip.document;
 
+import com.example.skip.entity.Rent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,16 @@ public class RentDocument {
     private String streetAddress;
 
     private String basicAddress;
+
+
+    public static RentDocument from(Rent rent) {
+        return RentDocument.builder()
+                .rentId(String.valueOf(rent.getRentId()))
+                .name(rent.getName())
+                .regionFullName(rent.getRegion().getFullName())
+                .regionShortname(rent.getRegion().getShortName())
+                .streetAddress(rent.getStreetAddress())
+                .basicAddress(rent.getBasicAddress())
+                .build();
+    }
 }
