@@ -20,6 +20,8 @@ public interface BannerActiveListRepository extends JpaRepository<BannerActiveLi
             LocalDateTime end
     );
 
+    List<BannerActiveList> findByStatus(BannerActiveListStatus status);
+
     //한 개 렌탈샵 배너 중복신청방지
     boolean existsByRent_RentIdAndStatus(Long rentId, BannerActiveListStatus status);
 }

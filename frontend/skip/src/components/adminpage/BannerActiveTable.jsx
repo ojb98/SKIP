@@ -61,7 +61,7 @@ const BannerActiveTable = () => {
   const getNextMonday3AM = () => {
     const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
     const dayOfWeek = today.getDay();
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 - 7;
+    const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);

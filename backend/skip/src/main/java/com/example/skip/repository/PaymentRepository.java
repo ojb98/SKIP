@@ -97,7 +97,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Long getBannerWaitingCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT p FROM Payment p JOIN p.reservations r WHERE r.user.userId = :userId ORDER BY p.createdAt DESC")
-    List<Payment> findTop5ByUserIdInReservations(@Param("userId") Long userId);
+    List<Payment> findTop5ByUserIdInReservations(@Param("userId") Long userId,
+                                                 Pageable pageable);
 
 
     // ===== 렌탈관리자 대시보드를 위한 쿼리 =====

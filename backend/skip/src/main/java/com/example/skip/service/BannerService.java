@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -49,18 +47,11 @@ public class BannerService {
     private final RentRepository rentRepository;
     private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
 
-    LocalDate today = LocalDate.now(SEOUL_ZONE);
-    // 항상 다음 주 월요일 계산
-    LocalDate nextMonday = today.with(java.time.temporal.TemporalAdjusters.next(DayOfWeek.MONDAY));
-    // 오전 3시로 세팅
-    LocalDateTime mondayAt3AM = nextMonday.atTime(2, 59);
-    LocalDateTime mondayAt3AM10M = nextMonday.atTime(3, 10);
-
     //대기중인 배너 조회
     public List<BannerWaitingListDTO> getWaitingBanners() {
         // 1. 대기 배너 엔티티들 조회
         List<BannerWaitingList> banners = bannerWaitingListRepository
-                .findAllByStatusNotAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+                .findByStatus(BannerWaitingListStatus.PENDING);
 
         // 2. 각 배너마다 평점 계산 → 엔티티 필드에 set (메모리에서만)
         banners.forEach(this::populateRatings);  // 저장은 하지 않음
@@ -73,7 +64,7 @@ public class BannerService {
     //승인된 대기 배너 조회
     public List<BannerWaitingListDTO> getApprovedWaitingBanners() {
         List<BannerWaitingList> banners = bannerWaitingListRepository
-                .findAllByStatusAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+                .findByStatus(BannerWaitingListStatus.PENDING);
         banners.forEach(this::populateRatings);
         return banners.stream()
                 .map(BannerWaitingListDTO::new)
@@ -85,9 +76,7 @@ public class BannerService {
     public List<BannerActiveListDTO> getActiveBanners() {
         // 1. 등록된 배너 엔티티 조회
         List<BannerActiveList> banners = bannerActiveListRepository
-                .findAllByUploadDateBetween(mondayAt3AM, mondayAt3AM10M);
-
-        // 3. DTO 변환
+                .findByStatus(BannerActiveListStatus.ACTIVE);
         return banners.stream()
                 .map(BannerActiveListDTO::new)
                 .toList();

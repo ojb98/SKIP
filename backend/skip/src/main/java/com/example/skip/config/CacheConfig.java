@@ -21,7 +21,7 @@ public class CacheConfig {
                         RedisCacheConfiguration
                                 .defaultCacheConfig()
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new JdkSerializationRedisSerializer(resourceLoader.getClassLoader())))
-                                .entryTtl(Duration.ofMinutes(10))
+                                .entryTtl(Duration.ofSeconds(10))
                 ).build();
     }
 }
