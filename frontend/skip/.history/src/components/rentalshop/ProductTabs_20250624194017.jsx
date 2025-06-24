@@ -8,7 +8,7 @@ const ProductTabs=({rentId, tab, setTab, shopName, shopPhone, shopAddress, shopD
 
   const tabList = [
     {key: "LIFT_TICKET", label: "리프트권"},
-    {key: "PACKAGE", label: "패키지"},
+    {key: "LIFT_TICKET", label: "패키지"},
     {key: "SKI", label: "스키"},
     {key: "SNOWBOARD", label: "보드"},
     {key: "PROTECTIVE_GEAR", label: "보호장비"},

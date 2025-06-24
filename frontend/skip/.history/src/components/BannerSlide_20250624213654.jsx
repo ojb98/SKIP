@@ -73,8 +73,7 @@ const BannerSlide = () => {
                         >
                             {
                                 banners?.map((banner, index) => {
-                                    console.log(banner.bannerImage);
-                                    return(
+                                    console.log(banner.bannerImage);(
                                     <SwiperSlide
                                         key={index}
                                         className="!w-[50%] rounded-2xl"

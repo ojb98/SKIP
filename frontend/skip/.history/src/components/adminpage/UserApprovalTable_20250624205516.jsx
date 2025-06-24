@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import '../../css/userlist.css'; 
 import AdminPagination from './AdminPagination.jsx';
-import { formatDate, formatDate1 } from '../../utils/formatdate.js';
-import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
+import { formatDate, formatDate1 } from '../../utils/formatdate';
+import { fetchApprovalRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
-const STATUS_FILTER = 'WITHDRAWN';
+const STATUS_FILTER = 'APPROVED';
 
-  function WithdrawTable() {
+  function ApprovalTable() {
     const [rents, setRents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRent, setSelectedRent] = useState(null);
@@ -69,7 +69,7 @@ const STATUS_FILTER = 'WITHDRAWN';
 
     const loadRents = async () => {
       try {
-        const data = await fetchWithdrawRents();
+        const data = await fetchApprovalRents();
         if (!Array.isArray(data)) {
           setRents([]);
         } else {
@@ -82,12 +82,13 @@ const STATUS_FILTER = 'WITHDRAWN';
         setLoading(false);
       }
     };
-    const handleApprove = async () => {
+
+    const handleWithdraw = async () => {
       if (!selectedRent) return;
-      const confirmed = window.confirm('승인 상태로 변경하시겠습니까?');
+      const confirmed = window.confirm('정말 거절하시겠습니까?');
       if (!confirmed) return;
       try {
-        await requestUpdate(selectedRent.rentId, 'APPROVED');
+        await requestUpdate(selectedRent.rentId, 'WITHDRAWN');
         await loadRents();
         setSelectedRent(null);
         setCurrentPage(1);
@@ -96,7 +97,7 @@ const STATUS_FILTER = 'WITHDRAWN';
         alert('상태 변경 중 오류가 발생했습니다.');
       }
     };
-    
+
     useEffect(() => {
       loadRents();
     }, []);
@@ -106,8 +107,8 @@ const STATUS_FILTER = 'WITHDRAWN';
     return (
       <div className="table-container">
         <div style={{ display: 'flex' }}>
-          <button onClick={fetchWithdrawRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
-            <h3>❌ 승인 거부 목록 조회</h3>
+          <button onClick={fetchApprovalRents} style={{ cursor: 'pointer', border: 'none', background: 'none', display: 'flex', alignItems: 'center', marginBottom:"25px" }}>
+            <h3>✅ 가맹점 목록 조회</h3>
           </button>
           <div className="search-filter">
             <select className="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -154,7 +155,7 @@ const STATUS_FILTER = 'WITHDRAWN';
                   <td>{formatDate1(rent.createdAt)  || '-'}</td>
                   <td>{rent.bizRegNumber || '-'}</td>
                   <td>{rent.bizStatus === "Y" ? "유효" : "무효" || '-'}</td>
-                  <td>{rent.bizClosureFlag === "N" ? "휴업" : "폐업" || '-'}</td>
+                  <td>{rent.bizClosureFlag === "N" ? "영업 중" : "휴업·폐업" || '-'}</td>
                                 
                 </tr>                
               ))
@@ -212,25 +213,20 @@ const STATUS_FILTER = 'WITHDRAWN';
             </div>   
             <div style={{borderLeft:"1px solid #dddddd", paddingLeft:"20px"}}>
               <div style={{display:"flex"}}>
-              <h4 style={{marginTop:"10px"}}>🖼️ 렌탈샵 이미지 & 소개</h4>       
+              <h4 style={{marginTop:"10px"}}>🖼️ 렌탈샵 이미지 & 소개</h4>
               <button
-                style={{marginLeft:"390px", marginTop:"10px"}}
-                className="btn-approve"
-                onClick={handleApprove}
+                style={{marginLeft:"350px",marginTop:"10px"}}
+                className="btn-withdraw"
+                onClick={handleWithdraw}
               >
-                승인 상태로 변경
-              </button>     
+                승인 거부 상태로 변경
+              </button>
               </div>
               <div style={{display:"flex" }}>
                 <img src={selectedRent.image1 ? `http://localhost:8080${selectedRent.image1}` : "/images/default-shop.png"}
-                  style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
-                />
-                <img src={selectedRent.image2 ? `http://localhost:8080${selectedRent.image2}` : "/images/default-shop.png"}
-                  style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
-                />
-                <img src={selectedRent.image3 ? `http://localhost:8080${selectedRent.image3}` : "/images/default-shop.png"}
-                  style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
-                />
+                    style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}/>
+                <img src={selectedRent.image2 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
+                <img src={selectedRent.image3 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
               </div>        
               <div>
                 <p><strong>렌탈샵 소개:</strong></p>                
@@ -244,4 +240,4 @@ const STATUS_FILTER = 'WITHDRAWN';
     );
   }
 
-  export default WithdrawTable;
+  export default ApprovalTable;

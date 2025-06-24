@@ -179,7 +179,7 @@ const STATUS_FILTER = 'WITHDRAWN';
           <div className="user-detail-card">
             <div className="user-section"> <br /> 
               <h4  style={{marginTop:"-10px"}}>📷 렌탈샵 썸네일</h4>     <br /><br />       
-              <img src={selectedRent.thumbnail ? `http://localhost:8080${selectedRent.thumbnail}` : "/images/default-shop.png"} alt="렌탈샵 프로필" />
+              <img src={selectedRent.thumbnail ? `http://localhost:8080${selectedRent.thumbnail}` : "/images/default-shop.png"}} alt="렌탈샵 프로필" />
               <p style={{ textAlign: 'center' }}>
                 <strong>상호:</strong> {selectedRent.name}  <br />
                 <strong>관리자 이름:</strong> {selectedRent.userName} <br />
@@ -225,10 +225,10 @@ const STATUS_FILTER = 'WITHDRAWN';
                 <img src={selectedRent.image1 ? `http://localhost:8080${selectedRent.image1}` : "/images/default-shop.png"}
                   style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
                 />
-                <img src={selectedRent.image2 ? `http://localhost:8080${selectedRent.image2}` : "/images/default-shop.png"}
+                <img src={selectedRent.image2 ? `http://localhost:8080${selectedRent.image1}` : "/images/default-shop.png"}
                   style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
                 />
-                <img src={selectedRent.image3 ? `http://localhost:8080${selectedRent.image3}` : "/images/default-shop.png"}
+                <img src={selectedRent.image3 ? `http://localhost:8080${selectedRent.image1}` : "/images/default-shop.png"}
                   style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
                 />
               </div>        

@@ -82,7 +82,7 @@
 .rent-img {
   width: 80px;
   height: 80px;
-  object-fit: contain;
+  object-fit: cover;
   border: none;
   border-radius: 0;
   box-shadow: none;

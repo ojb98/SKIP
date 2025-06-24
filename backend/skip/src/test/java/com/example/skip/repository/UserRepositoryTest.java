@@ -24,7 +24,14 @@ public class UserRepositoryTest {
 
     @Test
     public void admin() {
-        UserDto userDto = new UserDto(null, "admin", "1234", "admin", "admin", "admin", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+        UserDto userDto = new UserDto(null, "admin", "1234", "admin", "admin", "010-000-0000", UserSocial.NONE, Set.of("USER", "MANAGER", "ADMIN"), UserStatus.APPROVED, null, null, null);
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userRepository.saveAndFlush(userDto.toEntity());
+    }
+
+    @Test
+    public void manager() {
+        UserDto userDto = new UserDto(null, "manager", "1234", "manager", "manager", "010-555-0000", UserSocial.NONE, Set.of("USER", "MANAGER"), UserStatus.APPROVED, null, null, null);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(userDto.toEntity());
     }
@@ -35,6 +42,7 @@ public class UserRepositoryTest {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(userDto.toEntity());
     }
+
 //
 //    @Test
 //    public void user() {

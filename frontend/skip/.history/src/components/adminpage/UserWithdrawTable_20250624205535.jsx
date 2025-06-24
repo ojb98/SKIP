@@ -228,7 +228,7 @@ const STATUS_FILTER = 'WITHDRAWN';
                 <img src={selectedRent.image2 ? `http://localhost:8080${selectedRent.image2}` : "/images/default-shop.png"}
                   style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
                 />
-                <img src={selectedRent.image3 ? `http://localhost:8080${selectedRent.image3}` : "/images/default-shop.png"}
+                <img src={selectedRent.image3 ? `http://localhost:8080${selectedRent.image1}` : "/images/default-shop.png"}
                   style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
                 />
               </div>        

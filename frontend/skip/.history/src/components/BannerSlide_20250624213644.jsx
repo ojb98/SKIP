@@ -72,9 +72,8 @@ const BannerSlide = () => {
                             className="w-full h-full !px-[15%] overflow-visible"
                         >
                             {
-                                banners?.map((banner, index) => {
+                                banners?.map((banner, index) => {(
                                     console.log(banner.bannerImage);
-                                    return(
                                     <SwiperSlide
                                         key={index}
                                         className="!w-[50%] rounded-2xl"

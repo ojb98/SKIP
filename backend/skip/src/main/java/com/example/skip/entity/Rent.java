@@ -61,8 +61,7 @@ public class Rent {
     private String thumbnail;
 
     // 이미지1는 필수로 변경예정
-    //@Column(nullable = false)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String image1;
 
     @Column(nullable = true)
