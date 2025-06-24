@@ -95,10 +95,10 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
         <table className="user-table">
           <thead>
             <tr>
+              <th>고유번호</th>
               <th>ID</th>
               <th>이름</th>
-              <th>닉네임</th>
-              <th>사용자명</th>
+              <th>닉네임</th>              
               <th>이메일</th>
               <th>전화번호</th>
               <th>소셜 구분</th>
@@ -117,9 +117,9 @@ import { fetchUsers, findUsersByUsername, findUsersByName, findUser5Activity, re
                   className={selectedUser && selectedUser.userId === user.userId ? 'selected-row' : ''}
                 >                  
                   <td>{user.userId}</td>
+                  <td>{user.username}</td>
                   <td>{user.name}</td>
-                  <td>{user.nickname}</td>
-                  <td>{user.username}</td>                  
+                  <td>{user.nickname}</td>                                   
                   <td>{user.email}</td>
                   <td>{user.phone}</td>
                   <td>{user.social}</td>

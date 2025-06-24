@@ -4,6 +4,7 @@ import AdminPagination from './AdminPagination.jsx';
 import { formatDate, formatDate1 } from '../../utils/formatdate.js';
 import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentName, requestUpdate} from '../../services/admin/RentListService.js';
 
+const STATUS_FILTER = 'WITHDRAWN';
 
   function WithdrawTable() {
     const [rents, setRents] = useState([]);
@@ -57,6 +58,7 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
         if (!Array.isArray(data)) {     
           data = [data];
         }
+        data = data.filter(rent => rent.status === STATUS_FILTER);
         setRents(data);
         setCurrentPage(1);
       }catch(e){
@@ -67,10 +69,15 @@ import { fetchWithdrawRents, findRentByUserId, findRentByName, findRentByRentNam
 
     const loadRents = async () => {
       try {
-      const data = await fetchWithdrawRents();
-        setRents(data);
+        const data = await fetchWithdrawRents();
+        if (!Array.isArray(data)) {
+          setRents([]);
+        } else {
+          setRents(data);
+        }
       } catch (e) {
         console.error('렌탈샵 조회 실패', e);
+        setRents([]); // 에러 발생 시 기본값으로 빈 배열 설정
       } finally {
         setLoading(false);
       }

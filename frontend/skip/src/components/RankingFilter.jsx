@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { radio } from "./buttons";
 import { select } from "./inputs";
 
-const RankingFilter = ({ conditions, conditionSetters }) => {
+const RankingFilter = ({ regions, conditions, conditionSetters }) => {
     const fromRef = useRef();
     const toRef = useRef();
     const filterRef = useRef();
@@ -11,10 +11,10 @@ const RankingFilter = ({ conditions, conditionSetters }) => {
     const { setRegion, setPeriod } = conditionSetters;
 
     useEffect(() => {
+        console.log(regions);
         const handleClickOutside = e => {
             if (filterRef.current && !filterRef.current.contains(e.target)) {
                 filterRef.current.open = false;
-                console.log(filterRef);
             }
         };
 
@@ -28,7 +28,6 @@ const RankingFilter = ({ conditions, conditionSetters }) => {
     useEffect(() => {
         fromRef.current.value = period?.from;
         toRef.current.value = period?.to;
-        console.log(period);
     }, [region]);
 
 
@@ -45,83 +44,27 @@ const RankingFilter = ({ conditions, conditionSetters }) => {
 
     return (
         <>
-            <div className="w-1/2 flex items-start justify-between">
+            <div className="flex items-start justify-between">
                 <fieldset className="flex items-center gap-2">
-                    <div>
-                        <label id="all" className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
-                            <p>전체</p>
+                    {
+                        regions.map(region => (
+                            <div key={region.value}>
+                                <label htmlFor={region.value} className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
+                                    <p>{region.value == 'ETC' ? '전체' : region.shortName}</p>
 
-                            <input
-                                type="radio"
-                                id="all"
-                                name="region"
-                                value="ETC"
-                                defaultChecked
-                                onClick={applyRegion}
-                                className="sr-only"
-                            ></input>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label id="gyeonggi" className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
-                            <p>경기</p>
-
-                            <input
-                                type="radio"
-                                id="gyeonggi"
-                                name="region"
-                                value="GYEONGGI"
-                                onClick={applyRegion}
-                                className="sr-only"
-                            ></input>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label htmlFor="kangwon" className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
-                            <p>강원</p>
-
-                            <input
-                                type="radio"
-                                id="kangwon"
-                                name="region"
-                                value="KANGWON"
-                                onClick={applyRegion}
-                                className="sr-only"
-                            ></input>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label htmlFor="jeonbuk" className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
-                            <p>전북</p>
-
-                            <input
-                                type="radio"
-                                id="jeonbuk"
-                                name="region"
-                                value="JEONBUK"
-                                onClick={applyRegion}
-                                className="sr-only"
-                            ></input>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label htmlFor="gyeongnam" className={radio({ color: "primary", className: 'w-15 h-9 rounded-3xl' })}>
-                            <p>경남</p>
-
-                            <input
-                                type="radio"
-                                id="gyeongnam"
-                                name="region"
-                                value="GYEONGNAM"
-                                onClick={applyRegion}
-                                className="sr-only"
-                            ></input>
-                        </label>
-                    </div>
+                                    <input
+                                        type="radio"
+                                        id={region.value}
+                                        name="region"
+                                        value={region.value}
+                                        defaultChecked={region.value == 'ETC'}
+                                        onClick={applyRegion}
+                                        className="sr-only"
+                                    ></input>
+                                </label>
+                            </div>
+                        ))
+                    }
                 </fieldset>
 
                 <details ref={filterRef} className="w-50 group relative">

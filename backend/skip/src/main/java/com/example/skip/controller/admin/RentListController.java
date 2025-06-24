@@ -1,6 +1,7 @@
 package com.example.skip.controller.admin;
 
 import com.example.skip.dto.rent.RentDTO;
+import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.entity.Rent;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.repository.RentRepository;
@@ -41,8 +42,8 @@ public class RentListController {
     }
 
     @GetMapping("/find/userid/{userid}")
-    public List<RentDTO> findRentByUserUserName(@PathVariable("userid") String userId) {
-        return rentService.findByUserUsername(userId);
+    public List<RentInfoDTO> findRentByUserId(@PathVariable("userid") Long userId) {
+        return rentService.findRentsByUserId(userId);
     }
 
     @GetMapping("/find/username/{username}")

@@ -3,6 +3,8 @@ package com.example.skip.controller;
 import com.example.skip.dto.ItemDetailPageDTO;
 import com.example.skip.dto.item.*;
 
+import com.example.skip.entity.Item;
+import com.example.skip.enumeration.ItemCategory;
 import com.example.skip.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +41,18 @@ public class ItemController {
         return new ResponseEntity<>(itemId, HttpStatus.OK);
     }
 
+    // 리프트권 등록
+    @PostMapping(value = "/liftTicket", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> registerLiftTicket(
+            @RequestPart("itemRequest") LiftTicketDTO dto,
+            @RequestPart("image") MultipartFile image) {
+
+        dto.setImage(image);  // DTO에 이미지 세팅
+
+        Long itemId = itemService.registerLiftTicket(dto);
+        return new ResponseEntity<>(itemId, HttpStatus.OK);
+    }
+
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
@@ -55,16 +69,30 @@ public class ItemController {
 
     }
 
+//    //장비 수정하기 위한 조회
+//    @GetMapping("/{rentId}/{itemId}")
+//    public ResponseEntity<ItemConfirmDTO> getItem(@PathVariable("rentId") Long rentId,
+//                                                  @PathVariable("itemId") Long itemId){
+//        ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
+//        return new ResponseEntity<>(dto,HttpStatus.OK);
+//    }
+
     //장비 수정하기 위한 조회
     @GetMapping("/{rentId}/{itemId}")
-    public ResponseEntity<ItemConfirmDTO> getItem(@PathVariable("rentId") Long rentId,
-                                                  @PathVariable("itemId") Long itemId){
-        ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
-        return new ResponseEntity<>(dto,HttpStatus.OK);
+    public ResponseEntity<?> getItem(@PathVariable Long rentId, @PathVariable Long itemId) {
+        Item item = itemService.findItemEntity(rentId, itemId); // 공통적으로 가져옴
+
+        if (item.getCategory() == ItemCategory.LIFT_TICKET) {
+            LiftTicketDTO liftTicket = itemService.getLiftTicketByRent(rentId, itemId);
+            return ResponseEntity.ok(liftTicket);
+        } else {
+            ItemConfirmDTO dto = itemService.getItemByRent(rentId,itemId);
+            return ResponseEntity.ok(dto);
+        }
     }
 
 
-    //장비 수정
+    //일반 장비 수정
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateItem(@RequestPart("itemRequest") ItemConfirmDTO dto,
                                              @RequestPart(value = "image", required = false) MultipartFile image){
@@ -73,6 +101,15 @@ public class ItemController {
         itemService.updateItemByDetail(dto);
         return new ResponseEntity<>("UpdateItemSuccess",HttpStatus.OK);
 
+    }
+
+    //리프트권 수정
+    @PutMapping(value = "/updateLiftTicket", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateLiftTicket(@RequestPart("itemRequest") LiftTicketDTO dto,
+                                                   @RequestPart(value = "image", required = false) MultipartFile image) {
+        dto.setImage(image);
+        itemService.updateLiftTicket(dto);
+        return ResponseEntity.ok("UpdateLiftTicketSuccess");
     }
 
     //장비 옵션 추가

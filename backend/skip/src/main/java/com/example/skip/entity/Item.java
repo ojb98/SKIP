@@ -52,6 +52,7 @@ public class Item {
         orphanRemoval = 부모와 연관이 끊어진 자식 엔티티를 자동으로 삭제해주는 기능
     */
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ItemDetail> itemDetails = new ArrayList<>();
 
 }

@@ -3,6 +3,7 @@ package com.example.skip.util;
 import com.example.skip.config.IamPortConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,35 @@ public class IamportTokenUtil {
             // 응답에서 access_token을 추출 (트리 구조로 역직렬화)
             return objectMapper.readTree(response.body().string())
                     .get("response").get("access_token").asText();
+        }
+    }
+
+    // 사전 등록 기능(사기성 결제, 조작된 금액 등을 서버에서 걸러주는 중요한 검증 메서드)
+    public void prepareIamportPayment(String token, String merchantUid, long amount) throws IOException {
+        // 요청 JSON 구성
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ObjectNode body = objectMapper.createObjectNode();
+        body.put("merchant_uid", merchantUid);
+        body.put("amount", amount);
+
+        String jsonBody = objectMapper.writeValueAsString(body);
+
+        // HTTP 요청 생성
+        Request request = new Request.Builder()
+                .url("https://api.iamport.kr/payments/prepare")
+                .post(RequestBody.create(
+                        jsonBody,
+                        MediaType.parse("application/json")
+                ))
+                .addHeader("Authorization", token)  // 아임포트 액세스 토큰
+                .build();
+
+        // 요청 실행
+        try (Response response = new OkHttpClient().newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("아임포트 결제 사전 등록 실패: " + response.body().string());
+            }
         }
     }
 }

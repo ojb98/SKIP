@@ -16,7 +16,6 @@ import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
-import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,12 +30,10 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class ItemService {
-
     private final ItemRepository itemRepository;
     private final ItemDetailRepository itemDetailRepository;
     private final RentRepository rentRepository;
     private final FileUtil fileUtil;
-    private final FileUploadUtil fileUploadUtil;
 
     //장비 등록
     public Long registerItem(ItemRequestDTO dto){
@@ -66,6 +63,10 @@ public class ItemService {
                             .stockQuantity(sizeStock.getStockQuantity())
                             .isActive(YesNo.Y)
                             .build();
+
+                    // 연관관계 주입
+                    savedItem.getItemDetails().add(detail);
+
                     itemDetailRepository.save(detail);
                 }
             }
@@ -73,6 +74,48 @@ public class ItemService {
 
         return savedItem.getItemId();
     }
+
+    //리프트권 등록
+    public Long registerLiftTicket(LiftTicketDTO dto) {
+        // 1. 렌탈샵 확인
+        Rent rent = rentRepository.findById(dto.getRentId())
+                .orElseThrow(() -> new RuntimeException("렌탈샵 없음"));
+
+        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+
+        // 2. Item 생성
+        Item item = Item.builder()
+                .rent(rent)
+                .name(dto.getName())
+                .image(imageUrl)
+                .category(ItemCategory.valueOf(dto.getCategory()))
+                .build();
+
+        itemRepository.save(item);
+
+        // 3. ItemDetail 생성
+        if (dto.getOptions() != null) {
+            for (LiftTicketDTO.LiftTicketOption option : dto.getOptions()) {
+                ItemDetail detail = ItemDetail.builder()
+                        .item(item)
+                        .rentHour(option.getRentHour())
+                        .price(option.getPrice())
+                        .totalQuantity(option.getTotalQuantity())
+                        .stockQuantity(option.getStockQuantity())
+                        .size(null)
+                        .isActive(YesNo.Y)
+                        .build();
+
+                // 연관관계 주입
+                item.getItemDetails().add(detail);
+
+                itemDetailRepository.save(detail);
+            }
+        }
+
+        return item.getItemId();
+    }
+
 
     //장비 + 디테일 리스트
     public List<ItemResponseDTO> getItemByDetailList(Long rentId) {
@@ -111,6 +154,8 @@ public class ItemService {
                     );
                 }).toList();
     }
+
+
     // 장비디테일 삭제
     public void setItemDetailDelete(Long itemId, Long itemDetailId){
         Item item = itemRepository.findById(itemId)
@@ -128,8 +173,47 @@ public class ItemService {
         itemDetailRepository.save(detail);
     }
 
+    //일반장비인지 리프트권인지 구분
+    public Item findItemEntity(Long rentId, Long itemId) {
+        return itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다."));
+    }
 
-    // 장비 + 디테일 수정하기 위한 조회
+    //리프트권 조회
+    public LiftTicketDTO getLiftTicketByRent(Long rentId, Long itemId) {
+        Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
+                .orElseThrow(() -> new RuntimeException("해당 리프트권을 찾을 수 없습니다."));
+
+        LiftTicketDTO dto = LiftTicketDTO.builder()
+                .itemId(item.getItemId())
+                .rentId(item.getRent().getRentId())
+                .category(item.getCategory().name())
+                .name(item.getName())
+                .options(new ArrayList<>())
+                .build();
+
+        // rentHour + price 단위로 중복 없이 구성
+        Map<String, LiftTicketDTO.LiftTicketOption> optionMap = new LinkedHashMap<>();
+
+        for (ItemDetail detail : item.getItemDetails()) {
+            if (detail.getIsActive() != YesNo.Y) continue;
+
+            String key = detail.getRentHour() + "-" + detail.getPrice();
+            if (!optionMap.containsKey(key)) {
+                optionMap.put(key, LiftTicketDTO.LiftTicketOption.builder()
+                        .rentHour(detail.getRentHour())
+                        .price(detail.getPrice())
+                        .totalQuantity(detail.getTotalQuantity())
+                        .stockQuantity(detail.getStockQuantity())
+                        .build());
+            }
+        }
+
+        dto.setOptions(new ArrayList<>(optionMap.values()));
+        return dto;
+    }
+
+    // 장비 조회 (장비 + 디테일 수정용)
     public ItemConfirmDTO getItemByRent(Long rentId, Long itemId) {
         Item item = itemRepository.findByRent_RentIdAndItemId(rentId, itemId)
                 .orElseThrow(() -> new RuntimeException("해당 장비를 찾을 수 없습니다."));
@@ -177,32 +261,117 @@ public class ItemService {
         return dto;
     }
 
-    // 장비 + 디테일 수정 (해당 장비(Item)의 ItemDetail 리스트를 싹 비우고 다시 등록)
+    //장비수정 (장비 + 디테일)
     public void updateItemByDetail(ItemConfirmDTO dto) {
         Item item = itemRepository.findById(dto.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
-        item.getItemDetails().clear(); // 기존 데이터 초기화
+        List<ItemDetail> existItemDetails = item.getItemDetails();
 
         List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
         List<ItemConfirmDTO.SizeStocks> sizeList = dto.getSizeStockList();
 
-        if (detailList != null && sizeList != null) {
-            //모든 조합(곱집합)
-            for (ItemConfirmDTO.DetailGroups detail : detailList) {
-                for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
-                    ItemDetail itemDetail = ItemDetail.builder()
+        if (detailList == null || sizeList == null) {
+            throw new IllegalArgumentException("detailList와 sizeStockList는 반드시 존재해야 합니다.");
+        }
+
+        // 활성화 키셋: rentHour + size 조합
+        Set<String> activeKeys = new HashSet<>();
+        for (ItemConfirmDTO.DetailGroups detail : detailList) {
+            for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                String sizeKey = sizeStock.getSize();
+                String key = detail.getRentHour() + "_" + sizeKey;
+                activeKeys.add(key);
+            }
+        }
+
+        // 기존 ItemDetail 활성화 / 비활성화 처리
+        for (ItemDetail existing : existItemDetails) {
+            String existingSize = existing.getSize();
+            String key = existing.getRentHour() + "_" + existingSize;
+            existing.setIsActive(activeKeys.contains(key) ? YesNo.Y : YesNo.N);
+        }
+
+        // DTO 조합 기준으로 업데이트 or 신규 추가
+        for (ItemConfirmDTO.DetailGroups detail : detailList) {
+            for (ItemConfirmDTO.SizeStocks sizeStock : sizeList) {
+                String sizeValue = sizeStock.getSize();
+
+                ItemDetail existing = existItemDetails.stream()
+                        .filter(d -> Objects.equals(d.getRentHour(), detail.getRentHour()) &&
+                                Objects.equals(d.getSize(), sizeValue))
+                        .findFirst()
+                        .orElse(null);
+
+                if (existing != null) {
+                    // 업데이트
+                    existing.setPrice(detail.getPrice());
+                    existing.setTotalQuantity(sizeStock.getTotalQuantity());
+                    existing.setStockQuantity(sizeStock.getStockQuantity());
+                    existing.setIsActive(YesNo.Y);
+                } else {
+                    // 신규 추가
+                    ItemDetail newDetail = ItemDetail.builder()
                             .item(item)
                             .rentHour(detail.getRentHour())
-                            .price(detail.getPrice() != null ? detail.getPrice() : 0)
-                            .size(sizeStock.getSize())
-                            .totalQuantity(sizeStock.getTotalQuantity() != null ? sizeStock.getTotalQuantity() : 0)
-                            .stockQuantity(sizeStock.getStockQuantity() != null ? sizeStock.getStockQuantity() : 0)
+                            .price(detail.getPrice())
+                            .size(sizeValue)
+                            .totalQuantity(sizeStock.getTotalQuantity())
+                            .stockQuantity(sizeStock.getStockQuantity())
                             .isActive(YesNo.Y)
                             .build();
-                    //새로 생성한 itemDetail 객체를 해당 장비(item)의 상세 목록에 추가
-                    item.getItemDetails().add(itemDetail);
+                    item.getItemDetails().add(newDetail);
                 }
+            }
+        }
+
+        itemRepository.save(item);
+    }
+
+    //리프트권 수정
+    public void updateLiftTicket(LiftTicketDTO dto) {
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new RuntimeException("아이템 없음"));
+
+        List<ItemDetail> existItemDetails = item.getItemDetails();
+        List<LiftTicketDTO.LiftTicketOption> options = dto.getOptions();
+
+        Set<Integer> updatedRentHours = new HashSet<>();
+
+        if (options != null) {
+            for (LiftTicketDTO.LiftTicketOption option : options) {
+                Integer rentHour = option.getRentHour();
+                updatedRentHours.add(rentHour);
+
+                Optional<ItemDetail> match = existItemDetails.stream()
+                        .filter(d -> d.getSize() == null && Objects.equals(d.getRentHour(), rentHour))
+                        .findFirst();
+
+                if (match.isPresent()) {
+                    ItemDetail existing = match.get();
+                    existing.setPrice(option.getPrice());
+                    existing.setTotalQuantity(option.getTotalQuantity());
+                    existing.setStockQuantity(option.getStockQuantity());
+                    existing.setIsActive(YesNo.Y);
+                } else {
+                    ItemDetail newDetail = ItemDetail.builder()
+                            .item(item)
+                            .rentHour(option.getRentHour())
+                            .price(option.getPrice())
+                            .size(null)
+                            .totalQuantity(option.getTotalQuantity())
+                            .stockQuantity(option.getStockQuantity())
+                            .isActive(YesNo.Y)
+                            .build();
+                    item.getItemDetails().add(newDetail);
+                    itemDetailRepository.save(newDetail);
+                }
+            }
+        }
+
+        for (ItemDetail existing : existItemDetails) {
+            if (existing.getSize() == null && !updatedRentHours.contains(existing.getRentHour())) {
+                existing.setIsActive(YesNo.N);
             }
         }
 
@@ -227,6 +396,8 @@ public class ItemService {
             detail.setStockQuantity(sizeDto.getStockQuantity());
 
             detail.setIsActive(YesNo.Y);  // 기본 활성 상태 설정
+            // 연관 리스트에 명시적으로 추가
+            item.getItemDetails().add(detail);
 
             itemDetailRepository.save(detail);
         }

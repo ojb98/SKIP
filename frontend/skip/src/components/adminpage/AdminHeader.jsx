@@ -6,7 +6,7 @@ const AdminHeader = () => {
     return (
         <header className="admin-header">
             <div className="header-left">
-                <Link to="/admin">
+                <Link to="/">
                     <h1>SKI:P</h1>
                 </Link>
             </div>

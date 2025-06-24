@@ -22,8 +22,8 @@ public class RefundsHistoryRepositoryImpl implements RefundsHistoryRespositoryCu
             Long rentId, // 렌탈샵 구분
             RefundStatus status,
             LocalDateTime startDate,
-            LocalDateTime endDate,
-            String sort
+            LocalDateTime endDate
+//            , String sort
     ) {
         QRefundsHistory refund = QRefundsHistory.refundsHistory;
         QReservationItem reservationItem = QReservationItem.reservationItem;
@@ -64,14 +64,15 @@ public class RefundsHistoryRepositoryImpl implements RefundsHistoryRespositoryCu
                 .leftJoin(reservationItem.reservation, reservation).fetchJoin()
                 .leftJoin(reservation.rent, rent).fetchJoin()
                 .leftJoin(rent.user, user).fetchJoin()
-                .where(builder);
+                .where(builder)
+                .orderBy(refund.createdAt.desc());
 
-        // 정렬
-        if ("ASC".equalsIgnoreCase(sort)) {
-            query.orderBy(refund.createdAt.asc());
-        } else {
-            query.orderBy(refund.createdAt.desc());
-        }
+//        // 정렬
+//        if ("ASC".equalsIgnoreCase(sort)) {
+//            query.orderBy(refund.createdAt.asc());
+//        } else {
+//            query.orderBy(refund.createdAt.desc());
+//        }
 
         return query.fetch();
     }

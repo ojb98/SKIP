@@ -3,7 +3,13 @@ package com.example.skip.controller;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
+import com.example.skip.dto.response.ApiResponse;
+import com.example.skip.dto.response.ItemCategoryRecord;
+import com.example.skip.dto.response.RegionRecord;
+import com.example.skip.enumeration.ItemCategory;
+import com.example.skip.enumeration.Region;
 import com.example.skip.enumeration.UserStatus;
+import com.example.skip.service.RentSearchService;
 import com.example.skip.service.RentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -20,6 +27,9 @@ import java.util.List;
 public class RentController {
 
     private final RentService rentService;
+
+    private final RentSearchService rentSearchService;
+
 
     //렌탈샵 등록
     @PostMapping
@@ -84,5 +94,36 @@ public class RentController {
     public ResponseEntity<List<RentInfoDTO>> getRentsByOwner(@PathVariable Long userId) {
         List<RentInfoDTO> rents = rentService.findRentsByUserId(userId);
         return new ResponseEntity<>(rents, HttpStatus.OK);
+    }
+
+    //렌탈샵 name만 조회
+    @GetMapping("/name/{rentId}")
+    public ResponseEntity<String> getRentName(@PathVariable Long rentId) {
+        String name = rentService.getNameById(rentId);
+        return ResponseEntity.ok(name);
+    }
+
+    @GetMapping("/regions")
+    public ApiResponse getRegions() {
+        return ApiResponse.builder()
+                .success(true)
+                .data(Arrays.stream(Region.values()).map(RegionRecord::fromRegion).toList())
+                .build();
+    }
+
+    @GetMapping("/autocomplete")
+    public ApiResponse getAutoComplete(@RequestParam("keyword") String keyword) {
+        return ApiResponse.builder()
+                .success(true)
+                .data(rentSearchService.autocomplete(keyword))
+                .build();
+    }
+
+    @GetMapping("/categories")
+    public ApiResponse getItemCategories() {
+        return ApiResponse.builder()
+                .success(true)
+                .data(Arrays.stream(ItemCategory.values()).map(ItemCategoryRecord::fromItemCategory).toList())
+                .build();
     }
 }

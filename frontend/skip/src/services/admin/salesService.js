@@ -1,8 +1,9 @@
 import axios from "axios";
+import caxios from "../../api/caxios";
 
 // 요약 통계
 export const fetchSalesSummary = async (startDate, endDate) => {
-    const response = await axios.get(`/api/admin/summary`, {
+    const response = await caxios.get(`/api/admin/summary`, {
         params: {
             startDate,
             endDate,
@@ -13,7 +14,7 @@ export const fetchSalesSummary = async (startDate, endDate) => {
 
 // 특정 날짜의 매출 요약 데이터
 export const fetchDaySalesSummary = async (date) => {
-    const response = await axios.get(`/api/admin/sales/today`, {
+    const response = await caxios.get(`/api/admin/sales/today`, {
         params: {
             todaysDate: date,
         },
@@ -27,7 +28,7 @@ export const fetchSalesChartData = async (startDate, endDate) => {
     return [];
   }
 
-  const response = await axios.get(`/api/admin/sales/chart`, {
+  const response = await caxios.get(`/api/admin/sales/chart`, {
     params: {
       start: startDate,
       end: endDate,
@@ -38,7 +39,7 @@ export const fetchSalesChartData = async (startDate, endDate) => {
 
 
 export const fetchSalesList = async (startDate, endDate) => {
-    const response = await axios.get(`/api/admin/sales/list`, {
+    const response = await caxios.get(`/api/admin/sales/list`, {
         params: {
             atStart: startDate,
             atEnd: endDate,

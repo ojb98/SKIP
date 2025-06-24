@@ -87,4 +87,27 @@ public interface ReservationItemRepository extends JpaRepository<ReservationItem
         AND ri.reservation.user.userId =:userId 
     """)
     Optional<ReviewWriteDTO> findReviewWriteInfo(Long rentItemId, Long userId);
+
+    
+    //보유한 렌탈샵 개별확인용 쿼리
+    @Query("""
+    SELECT COUNT(DISTINCT p)
+    FROM ReservationItem ri
+    JOIN ri.reservation r
+    JOIN r.payment p
+    JOIN ri.itemDetail id
+    JOIN id.item i
+    WHERE i.category = :category
+      AND r.rent.user.userId = :userId
+      AND r.rent.rentId = :rentId
+      AND p.createdAt BETWEEN :start AND :end
+      AND p.status = 'PAID'
+    """)
+    Long countPaymentsByUserAndItemCategoryAndRent(
+            @Param("userId") Long userId,
+            @Param("rentId") Long rentId,
+            @Param("category") ItemCategory category,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 }
