@@ -69,6 +69,7 @@ public class RentStatService {
                 .where(rankingRequest.toPredicate(dailyRentStat))
                 .groupBy(dailyRentStat.rent)
                 .orderBy(dailyRentStat.reservationCount.sum().desc())
+                .limit(10)
                 .fetch();
 
         AtomicInteger rank = new AtomicInteger(1);
