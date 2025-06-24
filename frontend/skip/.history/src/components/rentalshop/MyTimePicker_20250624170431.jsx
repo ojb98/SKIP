@@ -71,7 +71,7 @@ const MyTimePicker = ({ setStartTime, startTime }) => {
     };
   }, [showPicker]);
 
-  return (
+  return(
     <div ref={pickerRef}>
       <button onClick={handleSelectToggle} className="w-[100%] text-left pl-[5px]">
         {formattedTime}

@@ -144,7 +144,7 @@ const ReviewList = () => {
                     <div className="review-left">
                       <div className="review-user-img">
                         {review.replyAdminUserImage ? (
-                          <img src={`http://localhost:8080${review.replyAdminUserImage}`} alt="admin" className="h-[100%]" />
+                          <img src={`http://localhost:8080${review.replyAdminUserImage}`} alt="admin" className="" />
                         ) : (
                           <div className="review-user-default-img">
                             <FontAwesomeIcon icon={faUser} className="fa-user" />

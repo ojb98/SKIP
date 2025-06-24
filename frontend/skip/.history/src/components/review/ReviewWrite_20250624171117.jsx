@@ -135,7 +135,7 @@ const ReviewWrite = ({ mode }) => {
               <div>
                 <img
                   src={`http://localhost:8080${itemInfo?.itemImage}`}
-                  className="w-[150px] h-[150px]"
+                  className="w-[150px] h-[150px] object-cover"
                   alt="상품 이미지"
                 />
               </div>
