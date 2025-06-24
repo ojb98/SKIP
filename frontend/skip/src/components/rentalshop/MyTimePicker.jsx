@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
+
 
 const MyTimePicker = ({ setStartTime, startTime }) => {
   const [hour, setHour] = useState(null);
@@ -72,7 +72,7 @@ const MyTimePicker = ({ setStartTime, startTime }) => {
     };
   }, [showPicker]);
 
-  return(
+  return (
     <div ref={pickerRef}>
       <button onClick={handleSelectToggle} className="w-[100%] text-left pl-[5px]">
         {formattedTime}
