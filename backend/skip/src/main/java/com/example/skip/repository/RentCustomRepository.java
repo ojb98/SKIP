@@ -41,6 +41,8 @@ public class RentCustomRepository {
         LocalDateTime to = rentSearchCondition.getTo();
         List<ItemCategory> itemCategories = rentSearchCondition.getItemCategories();
 
+        log.info("{}", rentSearchCondition);
+
         if (from != null && to != null && itemCategories != null && !itemCategories.isEmpty()) {
             for (int i = 0; i < itemCategories.size(); i++) {
                 ItemCategory itemCategory = itemCategories.get(i);
