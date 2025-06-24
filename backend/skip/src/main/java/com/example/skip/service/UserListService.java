@@ -6,6 +6,7 @@ import com.example.skip.entity.Payment;
 import com.example.skip.entity.Review;
 import com.example.skip.repository.PaymentRepository;
 import com.example.skip.repository.ReviewRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class UserListService {
 
     public List<PaymentDTO> getUserRecentPayments(Long userId) {
         List<Payment> payments = paymentRepository
-                .findTop5ByUserIdInReservations(userId);
+                .findTop5ByUserIdInReservations(userId, PageRequest.of(0, 5));
 
         return payments.stream()
                 .map(PaymentDTO::new)

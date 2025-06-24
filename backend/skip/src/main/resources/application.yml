@@ -41,7 +41,7 @@ spring:
       port: 6379
 
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://192.168.80.13:9200
     username: elastic
     password: ${ELASTIC_PASSWORD}
 

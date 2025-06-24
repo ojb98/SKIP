@@ -14,16 +14,17 @@ const BannerApprovalTable = () => {
   const [modalImage, setModalImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const host = __APP_BASE__;
 
   // 다음 주 월요일 오전 3시
   const getNextMonday3AM = () => {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+    const dayOfWeek = today.getDay();
+    const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
-    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
+    return nextMonday.toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }).split(' ')[0] + ' 오전 3시';
   };
   const registDay = getNextMonday3AM();
 
@@ -160,10 +161,10 @@ const BannerApprovalTable = () => {
             style={{ width: '1100px', height: '250px', cursor: 'zoom-in' }}
           >
             <img
-              src={selectedBanner.bannerImage || '/images/default-banner.png'}
+              src={selectedBanner.bannerImage ? host + selectedBanner.bannerImage : '/images/default-banner.png'}
               style={{ width: '1100px', height: '250px' }}
               alt="배너 미리보기"
-              onClick={() => openModal(selectedBanner.bannerImage)}
+              onClick={() => openModal(host + selectedBanner.bannerImage)}
             />
           </div>
           <div className="user-info" style={{ width: '250px' }}>

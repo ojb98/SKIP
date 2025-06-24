@@ -84,7 +84,7 @@ const BannerSlide = () => {
                                             onClick={() => click(banner.bannerId)}
                                         >
                                             <img
-                                                src={host + '/images' +  banner.bannerImage}
+                                                src={host + banner.bannerImage}
                                                 className="rounded-2xl w-full h-full object-cover cursor-pointer"
                                             ></img>
                                         </Link>

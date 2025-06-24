@@ -118,19 +118,24 @@ const BannerApplyForm = () => {
     form.append('rentId', selectedRentId);
     form.append('cpcBid', cpcBid);
     if (imageRef.current?.files[0]) form.append('bannerImage', imageRef.current.files[0]);
-    await submitBannerRequest(form, cashToken);
-    setCpcBid('');
-    if (imageRef.current) imageRef.current.value = null;
+    try {
+      await submitBannerRequest(form, cashToken);
+      alert('배너 신청이 성공적으로 제출되었습니다.');
+      setCpcBid('');
+      if (imageRef.current) imageRef.current.value = null;
+    } catch (err) {
+      alert(err.response?.data?.message || '배너 신청 중 오류가 발생했습니다.');
+    }
   };
 
   const getNextMonday3AM = () => {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+    const dayOfWeek = today.getDay();
+    const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
-    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
+    return nextMonday.toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }).split(' ')[0] + ' 오전 3시';
   };
   const registDay = getNextMonday3AM();
 
@@ -171,9 +176,10 @@ const BannerApplyForm = () => {
             <label>클릭당 가격 입찰가</label>
             <input
               type="number"
+              min="1"
               value={cpcBid}
               onChange={e => setCpcBid(e.target.value)}
-              required             
+              required
             />
           </div>
           <div className="form-group">
@@ -225,11 +231,12 @@ const BannerApplyForm = () => {
       <h3 className="form-header" style={{borderBottom:"1px solid #c8c8c8"}}>
         ⚠️ 주의사항        <br /><br />
         <span style={{ fontSize: '14px', marginLeft: '10px', color: '#555' }}>
-          * 권장 이미지 형식은 1111px * 1111px입니다.
+          * 권장 이미지 형식은 1200px * 600px입니다.
           <br />&nbsp;&nbsp;* 승인된 배너는 매주 월요일 오전 3:00에 갱신됩니다.     
           <br />&nbsp;&nbsp;* 배너 등록 요청 시 등록비용으로 150,000원이 차감됩니다. 
+          <br />&nbsp;&nbsp;* 클릭 당 입찰가는 등록 후 고객이 클릭을 한 번 할 때마다 청구되는 금액이므로, 신중하게 작성하세요.
           <br />&nbsp;&nbsp;* 최근 리뷰가 없는 신규 입점 업체는 기본값으로 설정된 최소점수가 반영됩니다.
-          <br />&nbsp;&nbsp;* 요청된 배너는 내부심사 이후 '승인 반려' 시 전화 안내와 함께 등록비용이 반환됩니다.               
+          <br />&nbsp;&nbsp;* 요청된 배너는 내부심사 이후 '승인 반려' 시 전화 안내와 함께 등록비용이 반환됩니다.
           <br />&nbsp;&nbsp;* 보유 캐시가 모두 소진될 시, 다시 충전될 때 까지 자동으로 배너는 홈페이지에 노출되지 않습니다.
           <br />&nbsp;&nbsp;* 등록된 배너 및 클릭당 비용은 일주일간 유지되며, 이용자의 클릭 수에 따라 5분에 한번씩 갱신되어 보유캐시에서 차감됩니다.
           <br />&nbsp;&nbsp;* 악의적인 행위로 인한 부당한 광고비 차감은 실시간 모니터링 되고 있으며, 내부 확인 후 반환됩니다.
