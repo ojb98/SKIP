@@ -41,7 +41,10 @@ const MainHeader = () => {
         <>
             <div className="w-full flex justify-center items-center border-b border-gray-200 font-[NanumSquare]">
                 <div className="w-[1150px] h-16 flex justify-between items-center">
-                    <h1 className="text-3xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
+                    <div className="flex gap-5 items-center">
+                        <h1 className="text-3xl text-blue-400 font-[GumiRomanceTTF] italic font-bold"><Link to={"/"}>SKI:P</Link></h1>
+                        <span>통합 스키 예약 플랫폼</span>
+                    </div>
                     {
                         !isLoading
                         &&

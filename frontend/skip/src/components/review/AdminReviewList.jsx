@@ -474,13 +474,19 @@ const fetchRentIds = async () => {
             ))}
           </tbody>
         </table>
-        <AdminPagination
-          currentPage={page + 1}
-          totalItems={totalElements}
-          pageSize={size}
-          groupSize={10}
-          onPageChange={(newPage) => setPage(newPage - 1)}
-        />
+        {reviewList.length === 0 ? (
+          <div className="text-center font-bold text-gray-500 mt-5">
+            리뷰가 존재하지 않습니다.
+          </div>
+        ) : (
+          <AdminPagination
+            currentPage={page + 1}
+            totalItems={totalElements}
+            pageSize={size}
+            groupSize={10}
+            onPageChange={(newPage) => setPage(newPage - 1)}
+          />
+        )}
       </div>
     </div>
   )

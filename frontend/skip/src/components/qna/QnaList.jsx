@@ -100,51 +100,55 @@ const QnaList = () => {
           <div>작성자</div>
           <div>작성일</div>
         </div>
-        {qnaList.map((qna, index) => (
-          <div key={qna.qnaId} className="qna-item">
-            <div className="qna-question">
-              <div>{qna.replyId ? "답변완료" : "미답변"}</div>
-              <div
-                className="qna-question-title"
-                onClick={() => toggleDetail(index, qna.secret, qna.username)}
-              >
-                {(qna.secret && (!isLogin || profile.username !== qna.username))
-                  ? (
-                    <>
-                      비밀글입니다. <FontAwesomeIcon icon={faLock} />
-                    </>
-                  )
-                  : (
-                    <>
-                      {qna.title} {qna.secret && <FontAwesomeIcon icon={faLock} />}
-                    </>
-                  )}
-              </div>
-              <div>{maskUsername(qna.username)}</div>
-              <div>{qna.createdAt.slice(0, 10)}</div>
-            </div>
-            {openIndex === index && (
-              (!qna.secret || (isLogin && profile.username === qna.username)) && (
-                <div className="qna-question-detail active">
-                  <div className="qna-question-content">
-                    <p>{qna.content}</p>
-                  </div>
-                  {qna.replyId && (
-                    <div className="qna-answer">
-                      <div className="qna-answer-content">
-                        <span>└</span>
-                        <span className="answer-icon">답변</span>
-                        <span>{qna.replyContent}</span>
-                      </div>
-                      <div>{qna.replyUsername}</div>
-                      <div>{qna.replyCreatedAt.slice(0, 10)}</div>
-                    </div>
-                  )}
+        {qnaList.length === 0 ? (
+          <div className="text-center font-bold mt-10">해당 아이템에 대한 문의가 존재하지 않습니다.</div>
+        ) : (
+          qnaList.map((qna, index) => (
+            <div key={qna.qnaId} className="qna-item">
+              <div className="qna-question">
+                <div>{qna.replyId ? "답변완료" : "미답변"}</div>
+                <div
+                  className="qna-question-title"
+                  onClick={() => toggleDetail(index, qna.secret, qna.username)}
+                >
+                  {(qna.secret && (!isLogin || profile.username !== qna.username))
+                    ? (
+                      <>
+                        비밀글입니다. <FontAwesomeIcon icon={faLock} />
+                      </>
+                    )
+                    : (
+                      <>
+                        {qna.title} {qna.secret && <FontAwesomeIcon icon={faLock} />}
+                      </>
+                    )}
                 </div>
-              )
-            )}
-          </div>
-        ))}
+                <div>{maskUsername(qna.username)}</div>
+                <div>{qna.createdAt.slice(0, 10)}</div>
+              </div>
+              {openIndex === index && (
+                (!qna.secret || (isLogin && profile.username === qna.username)) && (
+                  <div className="qna-question-detail active">
+                    <div className="qna-question-content">
+                      <p>{qna.content}</p>
+                    </div>
+                    {qna.replyId && (
+                      <div className="qna-answer">
+                        <div className="qna-answer-content">
+                          <span>└</span>
+                          <span className="answer-icon">답변</span>
+                          <span>{qna.replyContent}</span>
+                        </div>
+                        <div>{qna.replyUsername}</div>
+                        <div>{qna.replyCreatedAt.slice(0, 10)}</div>
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
+            </div>
+          ))
+        )}
       </div>
       {qnaList.length > 0 && (
         <Pagination
