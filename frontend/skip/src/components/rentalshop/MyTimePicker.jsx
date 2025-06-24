@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
 
 const MyTimePicker = ({ setStartTime, startTime }) => {
   const [hour, setHour] = useState(null);

@@ -14,6 +14,7 @@ public interface UserReviewListDTO {
     Long getRentId();
     Long getItemId();
     String getItemName();
+    String getItemImage();
     String getSize();
 
     // 답변 정보
