@@ -19,13 +19,15 @@ const BannerResubmitForm = () => {
   const [recentRating, setRecentRating] = useState(2.5);
   const imageRef = useRef();
 
+  const host = __APP_BASE__;
+
   // 기본 배너 정보 가져오기
   useEffect(() => {
     if (!userId) return;
     fetchBannerDetail(userId, waitingId).then(data => {
       setBanner(data);
       setCpcBid(data.cpcBid);
-      setPreviewUrl(data.bannerImage);
+      setPreviewUrl(data.bannerImage ? host + data.bannerImage : '');
     });
   }, [userId, waitingId]);
 
@@ -126,7 +128,7 @@ const BannerResubmitForm = () => {
             </div>
             <div className="form-group">
               <label>CPC 입찰가</label>
-              <input type="number" value={cpcBid} onChange={e => setCpcBid(e.target.value)} required />
+              <input type="number" min="1" value={cpcBid} onChange={e => setCpcBid(e.target.value)} required />
             </div>
             <div className="form-group">
               <label>예상 노출도 점수</label>

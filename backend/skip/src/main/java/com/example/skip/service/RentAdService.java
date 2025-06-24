@@ -139,6 +139,12 @@ public class RentAdService {
     }
 
     public String purchaseBoost(Long userId, Long rentId, int boost, int cpb, String cashToken) {
+        if (boost <= 0) {
+            throw new IllegalArgumentException("부스트 갯수는 1개 이상이어야 합니다.");
+        }
+        if (cpb <= 0) {
+            throw new IllegalArgumentException("부스트 가격은 0보다 커야 합니다.");
+        }
         Rent rent = findRent(userId, rentId);
         verifyCashToken(rent, cashToken);
         int total = cpb * boost;

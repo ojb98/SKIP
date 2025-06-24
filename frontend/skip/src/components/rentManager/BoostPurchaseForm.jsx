@@ -108,6 +108,7 @@ const BoostPurchaseForm = () => {
             <label>부스트 갯수</label>
             <input
               type="number"
+              min="1"
               value={boost}
               onChange={e => setBoost(e.target.value)}
               required
