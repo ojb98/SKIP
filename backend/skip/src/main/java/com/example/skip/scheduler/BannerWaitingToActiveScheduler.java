@@ -23,7 +23,7 @@ public class BannerWaitingToActiveScheduler {
     private final BannerActiveListRepository bannerActiveListRepository;
 
     @Transactional
-    @Scheduled(cron = "0 0 3 * * MON") // 매주 월요일 새벽 3시 실행
+    @Scheduled(cron = "0 0 3 * * MON" , zone = "Asia/Seoul") // 매주 월요일 새벽 3시 실행
     public void toActive() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime before1Minute = now.minusMinutes(1);
@@ -69,6 +69,7 @@ public class BannerWaitingToActiveScheduler {
                     .cpcBid(waiting.getCpcBid())
                     .finalScore(BigDecimal.valueOf(score))
                     .endDate(waiting.getRegistDay().plusWeeks(1))
+                    .status(BannerActiveListStatus.ACTIVE)
                     .build();
 
             bannerActiveListRepository.save(active);

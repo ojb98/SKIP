@@ -12,6 +12,7 @@ const BannerActiveTable = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const host = __APP_BASE__;
 
   // 배너 호출
   const loadBanners = async () => {
@@ -60,7 +61,7 @@ const BannerActiveTable = () => {
   const getNextMonday3AM = () => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7; // 항상 다음 주 월요일
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
@@ -168,10 +169,10 @@ const BannerActiveTable = () => {
             }}
           >
             <img
-              src={selectedBanner.bannerImage || '/images/default-banner.png'}
+              src={selectedBanner.bannerImage ? host + selectedBanner.bannerImage : '/images/default-banner.png'}
               style={{ width: '1100px', height: '250px' }}
-              alt="배너 미리보기"
-              onClick={() => openModal(selectedBanner.bannerImage)}
+              alt="배너 미리보기"              
+              onClick={() => openModal(host + selectedBanner.bannerImage)}
             />
           </div>
           <div className="user-info" style={{ width: '250px' }}>

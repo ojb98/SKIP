@@ -19,13 +19,15 @@ const BannerResubmitForm = () => {
   const [recentRating, setRecentRating] = useState(2.5);
   const imageRef = useRef();
 
+  const host = __APP_BASE__;
+
   // 기본 배너 정보 가져오기
   useEffect(() => {
     if (!userId) return;
     fetchBannerDetail(userId, waitingId).then(data => {
       setBanner(data);
       setCpcBid(data.cpcBid);
-      setPreviewUrl(data.bannerImage);
+      setPreviewUrl(data.bannerImage ? host + data.bannerImage : '');
     });
   }, [userId, waitingId]);
 
@@ -93,7 +95,12 @@ const BannerResubmitForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     const file = imageRef.current?.files[0];
-    await resubmitBannerRequest(waitingId, userId, cpcBid, file);
+    try {
+      await resubmitBannerRequest(waitingId, userId, cpcBid, file);
+      alert('배너 수정 요청이 성공적으로 제출되었습니다.');
+    } catch (err) {
+      alert(err.response?.data?.message || '배너 수정 중 오류가 발생했습니다.');
+    }
   };
 
   if (!banner) return <p>로딩 중...</p>;
@@ -101,7 +108,7 @@ const BannerResubmitForm = () => {
   const getNextMonday3AM = () => {
     const today = new Date();
     const dayOfWeek = today.getDay();
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8;
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
@@ -126,7 +133,7 @@ const BannerResubmitForm = () => {
             </div>
             <div className="form-group">
               <label>CPC 입찰가</label>
-              <input type="number" value={cpcBid} onChange={e => setCpcBid(e.target.value)} required />
+              <input type="number" min="1" value={cpcBid} onChange={e => setCpcBid(e.target.value)} required />
             </div>
             <div className="form-group">
               <label>예상 노출도 점수</label>

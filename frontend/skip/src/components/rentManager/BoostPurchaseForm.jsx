@@ -60,7 +60,7 @@ const BoostPurchaseForm = () => {
   const getNextMonday3AM = () => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7; // 항상 다음 주 월요일
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
@@ -108,6 +108,7 @@ const BoostPurchaseForm = () => {
             <label>부스트 갯수</label>
             <input
               type="number"
+              min="1"
               value={boost}
               onChange={e => setBoost(e.target.value)}
               required
