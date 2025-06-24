@@ -52,7 +52,7 @@ const Ranking = () => {
                     {
                         ranking.map(r => (
                             <li key={r.rentId} className="flex items-center gap-5">
-                                <img src={`${host}${r.thumbnail}`} className="w-30 h-30 rounded"></img>
+                                <img src={`${host}/images${r.thumbnail}`} className="w-30 h-30 rounded"></img>
 
                                 <div className="flex flex-col gap-1">
                                     <Link to={`/rent/detail/${r.rentId}`} className="flex gap-3 pl-[3px] font-bold">
