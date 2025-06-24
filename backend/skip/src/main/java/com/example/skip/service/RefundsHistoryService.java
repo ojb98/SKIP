@@ -68,10 +68,10 @@ public class RefundsHistoryService {
 
     // 환불 내역 항목
     public List<RefundSummaryDTO> findRefunds(Long userId, Long rentId, RefundStatus status,
-                                              LocalDateTime startDate,LocalDateTime endDate, String sort) {
+                                              LocalDateTime startDate,LocalDateTime endDate) {
 
         List<RefundsHistory> entities =
-                refundsHistoryRepository.findWithFilters(userId, rentId ,status, startDate, endDate , sort);
+                refundsHistoryRepository.findWithFilters(userId, rentId ,status, startDate, endDate);
 
         // Entity → DTO 변환
         return entities.stream()

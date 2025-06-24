@@ -41,6 +41,18 @@ public class ItemController {
         return new ResponseEntity<>(itemId, HttpStatus.OK);
     }
 
+    // 리프트권 등록
+    @PostMapping(value = "/liftTicket", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> registerLiftTicket(
+            @RequestPart("itemRequest") LiftTicketDTO dto,
+            @RequestPart("image") MultipartFile image) {
+
+        dto.setImage(image);  // DTO에 이미지 세팅
+
+        Long itemId = itemService.registerLiftTicket(dto);
+        return new ResponseEntity<>(itemId, HttpStatus.OK);
+    }
+
     @GetMapping("/list/{rentId}")
     public ResponseEntity<List<ItemResponseDTO>> getItemList(@PathVariable("rentId") Long rentId) {
         List<ItemResponseDTO> items = itemService.getItemByDetailList(rentId);
@@ -125,5 +137,7 @@ public class ItemController {
         ItemDetailPageDTO dto = itemService.getItemDetailPage(rentId, itemId);
         return ResponseEntity.ok(dto);
     }
+
+    
 
 }

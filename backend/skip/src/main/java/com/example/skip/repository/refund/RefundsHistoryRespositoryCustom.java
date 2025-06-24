@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface RefundsHistoryRespositoryCustom {
     List<RefundsHistory> findWithFilters(Long userId, Long rentId, RefundStatus status,
-                                         LocalDateTime startDate, LocalDateTime endDate,String sort);
+                                         LocalDateTime startDate, LocalDateTime endDate);
 
 }

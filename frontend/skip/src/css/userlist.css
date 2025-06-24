@@ -196,3 +196,21 @@ select.filter,
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
+
+
+.modify-link {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 4px 12px;
+  background-color: #e7cf48;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.modify-link:hover {
+  background-color: #bec02b;
+}

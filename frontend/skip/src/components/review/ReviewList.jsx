@@ -100,70 +100,74 @@ const ReviewList = () => {
           </div>
         </div>
         <div className="review-list">
-          <ul>
-            {reviews.map((review) => (
-              <li key={review.reviewId} className="review-item">
-                <div className="review-user">
-                  <div className="review-left">
-                    <div className="review-user-img">
-                      {review.userImage ? (
-                        <img src={`http://localhost:8080${review.userImage}`} alt="user" />
-                      ) : (
-                        <div className="review-user-default-img">
-                          <FontAwesomeIcon icon={faUser} className="fa-user" />
+          {reviews.length === 0 ? (
+            <div className="text-center font-bold">해당 아이템의 리뷰가 존재하지 않습니다.</div>
+          ): (
+            <ul>
+              {reviews.map((review) => (
+                <li key={review.reviewId} className="review-item">
+                  <div className="review-user">
+                    <div className="review-left">
+                      <div className="review-user-img">
+                        {review.userImage ? (
+                          <img src={`http://localhost:8080${review.userImage}`} alt="user" className="h-[100%]" />
+                        ) : (
+                          <div className="review-user-default-img">
+                            <FontAwesomeIcon icon={faUser} className="fa-user" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="review-card">
+                        <div className="review-rating">
+                          {renderStars(review.rating)}
                         </div>
+                        <div className="review-info">
+                          <span className="review-user">{maskUsername(review.username)}</span>
+                          <span className="review-date">{review.createdAt.slice(0, 10)}</span>
+                        </div>
+                        <div className="review-product">
+                          <span className="review-product-option">옵션: {review.size}</span>
+                        </div>
+                        <div className="review-content">
+                          <span>{review.content}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="review-right">
+                      {review.image && (
+                        <img src={`http://localhost:8080${review.image}`} alt="리뷰 이미지" />
                       )}
                     </div>
-                    <div className="review-card">
-                      <div className="review-rating">
-                        {renderStars(review.rating)}
-                      </div>
-                      <div className="review-info">
-                        <span className="review-user">{maskUsername(review.username)}</span>
-                        <span className="review-date">{review.createdAt.slice(0, 10)}</span>
-                      </div>
-                      <div className="review-product">
-                        <span className="review-product-option">옵션: {review.size}</span>
-                      </div>
-                      <div className="review-content">
-                        <span>{review.content}</span>
-                      </div>
-                    </div>
                   </div>
-                  <div className="review-right">
-                    {review.image && (
-                      <img src={`http://localhost:8080${review.image}`} alt="리뷰 이미지" />
-                    )}
-                  </div>
-                </div>
-                {review.replyId && (
-                <div className="review-admin">
-                  <div className="review-left">
-                    <div className="review-user-img">
-                      {review.replyAdminUserImage ? (
-                        <img src={`http://localhost:8080${review.replyAdminUserImage}`} alt="admin" />
-                      ) : (
-                        <div className="review-user-default-img">
-                          <FontAwesomeIcon icon={faUser} className="fa-user" />
+                  {review.replyId && (
+                  <div className="review-admin">
+                    <div className="review-left">
+                      <div className="review-user-img">
+                        {review.replyAdminUserImage ? (
+                          <img src={`http://localhost:8080${review.replyAdminUserImage}`} alt="admin" />
+                        ) : (
+                          <div className="review-user-default-img">
+                            <FontAwesomeIcon icon={faUser} className="fa-user" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="review-card">
+                        <div className="review-info">
+                          <span className="review-admin-name">관리자</span>
+                          <span className="review-date">{review.replyCreatedAt.slice(0, 10)}</span>
                         </div>
-                      )}
-                    </div>
-                    <div className="review-card">
-                      <div className="review-info">
-                        <span className="review-admin-name">관리자</span>
-                        <span className="review-date">{review.replyCreatedAt.slice(0, 10)}</span>
-                      </div>
-                      <div className="review-content">
-                        <span className="answer-icon">답변</span>
-                        <span>{review.replyContent}</span>
+                        <div className="review-content">
+                          <span className="answer-icon">답변</span>
+                          <span>{review.replyContent}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                )}
-              </li>
-            ))}
-          </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         {totalPages > 1 && (
           <Pagination

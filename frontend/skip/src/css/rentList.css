@@ -57,6 +57,15 @@
   background-color: #c7c6c6;
 }
 
+.rent-list-tbody tr.selected {
+  background-color: #8fa3d1;
+  color: #000;
+}
+
+.rent-list-tbody tr.selected td {
+  color: #000;
+}
+
 .rent-list-tbody td {
   padding: 10px 8px;
   font-size: 13px;

@@ -35,11 +35,11 @@ public class RefundsHistoryController {
             @RequestParam(required = false) Long rentId,
             @RequestParam(required = false) RefundStatus status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam(defaultValue = "DESC") String sort
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+//            @RequestParam(defaultValue = "DESC") String sort
     ) {
         System.out.println("환불조회시 rentId ===> "+rentId);
-        return refundsHistoryService.findRefunds(userId, rentId, status, startDate, endDate, sort);
+        return refundsHistoryService.findRefunds(userId, rentId, status, startDate, endDate);
     }
 
     // 환불 상세 조회

@@ -85,6 +85,10 @@
   background-color: #89a5ec;
 }
 
+.item-size-add-btn {
+  margin-bottom: 32px;
+}
+
 .item-update-btn {
   all: unset;
   padding: 10px 0;

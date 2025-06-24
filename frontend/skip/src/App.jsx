@@ -45,6 +45,10 @@ import ActiveBannerList from "./pages/admin/ActiveBannerList"
 import PendingBannerList from "./pages/admin/PendingBannerList"
 import RentLayout from "./pages/rentalAdmin/RentLayout"
 import MyRefundPage from "./pages/myPage/MyRefundPage"
+import BoostPurchasePage from "./pages/rentalAdmin/BoostPurchasePage"
+import CashChargePage from "./pages/rentalAdmin/CashCahrgePage"
+import BannerApplyPage from "./pages/rentalAdmin/BannerApplyPage"
+import BannerResubmitPage from "./pages/rentalAdmin/BannerResubmitPage"
 import ReservationList from './components/rentManager/ReservationList';
 import SearchResultPage from "./pages/SearchResultPage"
 
@@ -95,15 +99,17 @@ function App() {
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                             <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
                             <Route path="/rentAdmin/item/insert/:rentId?" element={<ItemInsertForm/>}></Route>
-                            {/* <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route> */}
                             <Route path="/rentAdmin/item/list/" element={<ItemListAndDetails/>}></Route>
                             <Route path="/rentAdmin/item/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                             <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
                             <Route path="/rentAdmin/refundManager/list" element={<RefundList/>}></Route>
-                            <Route path="/rentAdmin/boost"></Route>
-                            <Route path="/rentAdmin/banner"></Route>
+                            <Route path="/rentAdmin/cash" element={<CashChargePage/>}></Route>
+                            <Route path="/rentAdmin/boost" element={<BoostPurchasePage/>}></Route>
+                            <Route path="/rentAdmin/banner" element={<BannerApplyPage/>}></Route>
+                            <Route path="/rentAdmin/banner/edit/:waitingId" element={<BannerResubmitPage/>}></Route>
                             <Route path="/rentAdmin/qna" element={<AdminQnaList></AdminQnaList>} />
                             <Route path="/rentAdmin/review" element={<AdminReviewList></AdminReviewList>} />
+
                         </Route>
 
 

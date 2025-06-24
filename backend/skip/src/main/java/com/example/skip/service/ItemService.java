@@ -75,6 +75,47 @@ public class ItemService {
         return savedItem.getItemId();
     }
 
+    //리프트권 등록
+    public Long registerLiftTicket(LiftTicketDTO dto) {
+        // 1. 렌탈샵 확인
+        Rent rent = rentRepository.findById(dto.getRentId())
+                .orElseThrow(() -> new RuntimeException("렌탈샵 없음"));
+
+        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+
+        // 2. Item 생성
+        Item item = Item.builder()
+                .rent(rent)
+                .name(dto.getName())
+                .image(imageUrl)
+                .category(ItemCategory.valueOf(dto.getCategory()))
+                .build();
+
+        itemRepository.save(item);
+
+        // 3. ItemDetail 생성
+        if (dto.getOptions() != null) {
+            for (LiftTicketDTO.LiftTicketOption option : dto.getOptions()) {
+                ItemDetail detail = ItemDetail.builder()
+                        .item(item)
+                        .rentHour(option.getRentHour())
+                        .price(option.getPrice())
+                        .totalQuantity(option.getTotalQuantity())
+                        .stockQuantity(option.getStockQuantity())
+                        .size(null)
+                        .isActive(YesNo.Y)
+                        .build();
+
+                // 연관관계 주입
+                item.getItemDetails().add(detail);
+
+                itemDetailRepository.save(detail);
+            }
+        }
+
+        return item.getItemId();
+    }
+
 
     //장비 + 디테일 리스트
     public List<ItemResponseDTO> getItemByDetailList(Long rentId) {
