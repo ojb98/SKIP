@@ -121,6 +121,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             res.rent.rentId AS rentId,
             idt.item.itemId AS itemId,
             i.name AS itemName,
+            i.image AS itemImage,
             idt.size AS size,
             rr.replyId AS replyId,
             rr.content AS replyContent,

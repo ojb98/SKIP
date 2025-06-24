@@ -366,7 +366,7 @@ const fetchRentIds = async () => {
                               <img
                                   className="w-[140px] h-[120px] mt-1.5"
                                   src = {`http://localhost:8080${review.image}`}
-                                  alt="${review.image}" 
+                                  alt = "리뷰 이미지"
                               />}
                           </div>
                           {review.updatedAt && review.updatedAt !== review.createdAt && (
