@@ -106,13 +106,13 @@ const BannerResubmitForm = () => {
   if (!banner) return <p>로딩 중...</p>;
 
   const getNextMonday3AM = () => {
-    const today = new Date();
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
     const dayOfWeek = today.getDay();
     const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
-    return nextMonday.toISOString().split('T')[0] + ' 오전 3시';
+    return nextMonday.toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }).split(' ')[0] + ' 오전 3시';
   };
   const registDay = getNextMonday3AM();
 

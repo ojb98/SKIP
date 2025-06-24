@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,8 +47,9 @@ public class BannerService {
     private static final QRent rent = QRent.rent;
     private static final String REDIS_KEY = "banner:clicks";
     private final RentRepository rentRepository;
+    private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
 
-    LocalDate today = LocalDate.now();
+    LocalDate today = LocalDate.now(SEOUL_ZONE);
     // 항상 다음 주 월요일 계산
     LocalDate nextMonday = today.with(java.time.temporal.TemporalAdjusters.next(DayOfWeek.MONDAY));
     // 오전 3시로 세팅
@@ -113,7 +115,7 @@ public class BannerService {
         Long rentId = banner.getRent().getRentId();
 
         BigDecimal avgRating = reviewRepository.findAverageRatingByRentId(rentId);
-        BigDecimal recentRating = reviewRepository.findRecent7dRatingByRentId(rentId, LocalDateTime.now().minusDays(7));
+        BigDecimal recentRating = reviewRepository.findRecent7dRatingByRentId(rentId, LocalDateTime.now(SEOUL_ZONE).minusDays(7));
 
         banner.setAverageRating(avgRating != null ? avgRating : BigDecimal.ZERO);
         banner.setRecent7dRating(recentRating != null ? recentRating : BigDecimal.ZERO);
