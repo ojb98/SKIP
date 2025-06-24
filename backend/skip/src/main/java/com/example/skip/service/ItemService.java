@@ -16,6 +16,7 @@ import com.example.skip.enumeration.YesNo;
 import com.example.skip.repository.ItemDetailRepository;
 import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
+import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class ItemService {
     private final ItemDetailRepository itemDetailRepository;
     private final RentRepository rentRepository;
     private final FileUtil fileUtil;
+    private final FileUploadUtil fileUploadUtil;
 
     //장비 등록
     public Long registerItem(ItemRequestDTO dto){
@@ -266,6 +268,11 @@ public class ItemService {
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
+        item.setName(dto.getName());
+        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(),"items");
+        item.setImage(updatedImageUrl);
+
+
         List<ItemDetail> existItemDetails = item.getItemDetails();
 
         List<ItemConfirmDTO.DetailGroups> detailList = dto.getDetailList();
@@ -332,6 +339,10 @@ public class ItemService {
     public void updateLiftTicket(LiftTicketDTO dto) {
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
+
+        item.setName(dto.getName());
+        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
+        item.setImage(updatedImageUrl);
 
         List<ItemDetail> existItemDetails = item.getItemDetails();
         List<LiftTicketDTO.LiftTicketOption> options = dto.getOptions();

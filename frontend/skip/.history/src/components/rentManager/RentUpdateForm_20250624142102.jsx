@@ -214,7 +214,7 @@ const RentUpdateForm = () => {
         <div className="rent-page-wrapper">
             <h1 className="top-subject">가맹점 수정하기</h1>
             <div className="rent-detail-wrapper" style={{ maxWidth: 600, margin: '0 auto' }}>
-                <form id="rentUpdateForm" onSubmit={handleSubmit} encType="multipart/form-data">
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <input type="hidden" name="rentId" value={formData.rentId} />
                     <input type="hidden" name="userId" value={formData.userId} />
                     <div className="form-group">

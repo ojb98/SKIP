@@ -41,6 +41,8 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
 
         if (status != null) {
             builder.and(reservation.status.eq(status));
+        } else {
+            builder.and(reservation.status.ne(ReservationStatus.READY));
         }
 
         if (start != null) {

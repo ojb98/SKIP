@@ -2,6 +2,7 @@ package com.example.skip.repository.refund;
 
 import com.example.skip.entity.*;
 import com.example.skip.enumeration.RefundStatus;
+import com.example.skip.enumeration.ReservationStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
