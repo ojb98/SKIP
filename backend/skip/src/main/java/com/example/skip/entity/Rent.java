@@ -5,9 +5,12 @@ import com.example.skip.enumeration.Region;
 import com.example.skip.enumeration.RentCategory;
 import com.example.skip.enumeration.UserStatus;
 import com.example.skip.enumeration.YesNo;
+import com.example.skip.handler.RentChangeListener;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -20,7 +23,7 @@ import java.util.regex.Pattern;
 @Setter
 @Entity
 @Builder
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, RentChangeListener.class})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rent {
@@ -90,6 +93,9 @@ public class Rent {
 
     @CreatedDate
     private LocalDate createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     //사업자등록 관련 컬럼
     @Column(name = "bizregnumber", nullable = false, unique = true)

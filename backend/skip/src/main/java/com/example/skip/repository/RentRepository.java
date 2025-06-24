@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RentRepository extends JpaRepository<Rent, Long> {
@@ -38,4 +39,6 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     // user기준 렌탈샵 조회
     List<Rent> findByUserAndUseYnAndStatus(User user,YesNo yesNo,UserStatus status);
+
+    List<Rent> findByUpdatedAtAfter(LocalDateTime updatedAtAfter);
 }
