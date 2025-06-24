@@ -223,14 +223,14 @@ const ItemListAndDetails = () => {
       
 
       {/* 장비 목록 */}
-      {(() => {
+        {(() => {
         // 조건에 따라 필터링
         const filteredItems = items.filter(i => !selectedCategory || i.category === selectedCategory);
 
         // 렌탈샵 없거나, 전체 장비가 비어 있거나, 필터된 장비가 비어 있으면 메시지 출력
         if (rentShops.length === 0 || items.length === 0 || filteredItems.length === 0) {
           return (
-            <div className="sub-subject">
+            <div className="no-items-message">
               <h2>등록된 장비가 없습니다.</h2>
             </div>
           );
@@ -283,21 +283,21 @@ const ItemListAndDetails = () => {
         ))
       })()}
 
-      {/* 등록 버튼 */}
-      {rentShops.length > 0 ? (
-        <div className="move-item">
-          <button
-            className="register-link"
-            onClick={() => navigate(`/rentAdmin/item/insert/${selectedRentId}?category=${selectedCategory || ''}`)}
-          >
-            장비 추가하러 가기
-          </button>
-        </div>
-        ) : (
-        <div className="sub-subject">
-          <h2>렌탈샵을 먼저 등록해주세요.</h2>
-        </div>
-      )}
+    {/* 등록 버튼 */}
+    {rentShops.length > 0 ? (
+      <div className="move-item">
+        <button
+          className="register-link"
+          onClick={() => navigate(`/rentAdmin/item/insert/${selectedRentId}?category=${selectedCategory || ''}`)}
+        >
+          장비 추가하러 가기
+        </button>
+      </div>
+      ) : (
+      <div className="no-items-message">
+        <h2>렌탈샵을 먼저 등록해주세요.</h2>
+      </div>
+    )}
 
       {/* 옵션 추가 모달 */}
       {isModalOpen && (

@@ -224,80 +224,80 @@ const ItemListAndDetails = () => {
 
       {/* 장비 목록 */}
       {(() => {
-        // 조건에 따라 필터링
-        const filteredItems = items.filter(i => !selectedCategory || i.category === selectedCategory);
+      // 조건에 따라 필터링
+      const filteredItems = items.filter(i => !selectedCategory || i.category === selectedCategory);
 
-        // 렌탈샵 없거나, 전체 장비가 비어 있거나, 필터된 장비가 비어 있으면 메시지 출력
-        if (rentShops.length === 0 || items.length === 0 || filteredItems.length === 0) {
-          return (
-            <div className="sub-subject">
-              <h2>등록된 장비가 없습니다.</h2>
-            </div>
-          );
-        }
-        
-        // {(items.filter(i => !selectedCategory || i.category === selectedCategory)).map(item => (
-        return filteredItems.map(item => (
-          <div key={item.itemId} className="item-card">
-            <h2 className="bottom-subject2">{item.name}</h2>
-            <span>카테고리:</span> {categoryMap[item.category]}
-            <img src={`http://localhost:8080${item.image}`} width="150" />
-
-            <ul className="button-list">
-              <li><button onClick={() => openModal(item.itemId, item.category)} className="itemlist-add-option-btn">옵션 추가</button></li>
-              <li><button onClick={() => goToUpdate(item.itemId)} className="itemlist-update-btn">수정</button></li>
-              <li><button onClick={deleteSelectedDetails} className="itemlist-delete-selected-btn">선택 항목 삭제</button></li>
-            </ul>
-
-            <h4 className="bottom-subject4">상세 정보:</h4>
-            <table className="table-list">
-              <thead>
-                <tr>
-                  <th><button onClick={() => toggleAllCheck(item.itemId, item.detailList)} className="itemlist-all-selected-btn"><MousePointerClick /></button></th>
-                  <th>시간</th><th>가격</th><th>사이즈</th><th>총수량</th><th>재고수량</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(item.detailList ?? []).map(d => {
-                  const key = `${item.itemId}_${d.itemDetailId}`;
-                  return (
-                    <tr key={key}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={checkedDetails.has(key)}
-                          onChange={() => toggleCheck(item.itemId, d.itemDetailId)}
-                        />
-                      </td>
-                      <td>{formatRentHour(d.rentHour)}</td>
-                      <td>{d.price}원</td>
-                      <td>{d.size}</td>
-                      <td>{d.totalQuantity}</td>
-                      <td>{d.stockQuantity}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      // 렌탈샵 없거나, 전체 장비가 비어 있거나, 필터된 장비가 비어 있으면 메시지 출력
+      if (rentShops.length === 0 || items.length === 0 || filteredItems.length === 0) {
+        return (
+          <div className="no-items-message">
+            <h2>등록된 장비가 없습니다.</h2>
           </div>
-        ))
-      })()}
+        );
+      }
+      
+      // {(items.filter(i => !selectedCategory || i.category === selectedCategory)).map(item => (
+      return filteredItems.map(item => (
+        <div key={item.itemId} className="item-card">
+          <h2 className="bottom-subject2">{item.name}</h2>
+          <span>카테고리:</span> {categoryMap[item.category]}
+          <img src={`http://localhost:8080${item.image}`} width="150" />
 
-      {/* 등록 버튼 */}
-      {rentShops.length > 0 ? (
-        <div className="move-item">
-          <button
-            className="register-link"
-            onClick={() => navigate(`/rentAdmin/item/insert/${selectedRentId}?category=${selectedCategory || ''}`)}
-          >
-            장비 추가하러 가기
-          </button>
+          <ul className="button-list">
+            <li><button onClick={() => openModal(item.itemId, item.category)} className="itemlist-add-option-btn">옵션 추가</button></li>
+            <li><button onClick={() => goToUpdate(item.itemId)} className="itemlist-update-btn">수정</button></li>
+            <li><button onClick={deleteSelectedDetails} className="itemlist-delete-selected-btn">선택 항목 삭제</button></li>
+          </ul>
+
+          <h4 className="bottom-subject4">상세 정보:</h4>
+          <table className="table-list">
+            <thead>
+              <tr>
+                <th><button onClick={() => toggleAllCheck(item.itemId, item.detailList)} className="itemlist-all-selected-btn"><MousePointerClick /></button></th>
+                <th>시간</th><th>가격</th><th>사이즈</th><th>총수량</th><th>재고수량</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(item.detailList ?? []).map(d => {
+                const key = `${item.itemId}_${d.itemDetailId}`;
+                return (
+                  <tr key={key}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={checkedDetails.has(key)}
+                        onChange={() => toggleCheck(item.itemId, d.itemDetailId)}
+                      />
+                    </td>
+                    <td>{formatRentHour(d.rentHour)}</td>
+                    <td>{d.price}원</td>
+                    <td>{d.size}</td>
+                    <td>{d.totalQuantity}</td>
+                    <td>{d.stockQuantity}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-        ) : (
-        <div className="sub-subject">
-          <h2>렌탈샵을 먼저 등록해주세요.</h2>
-        </div>
-      )}
+      ))
+    })()}
+
+    {/* 등록 버튼 */}
+    {rentShops.length > 0 ? (
+      <div className="move-item">
+        <button
+          className="register-link"
+          onClick={() => navigate(`/rentAdmin/item/insert/${selectedRentId}?category=${selectedCategory || ''}`)}
+        >
+          장비 추가하러 가기
+        </button>
+      </div>
+      ) : (
+      <div className="no-items-message">
+        <h2>렌탈샵을 먼저 등록해주세요.</h2>
+      </div>
+    )}
 
       {/* 옵션 추가 모달 */}
       {isModalOpen && (
