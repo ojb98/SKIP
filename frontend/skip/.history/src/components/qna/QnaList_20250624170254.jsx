@@ -139,7 +139,7 @@ const QnaList = () => {
                           <span className="answer-icon">답변</span>
                           <span>{qna.replyContent}</span>
                         </div>
-                        <div className="font-bold">관리자</div>
+                        <div className="">관리자</div>
                         <div>{qna.replyCreatedAt.slice(0, 10)}</div>
                       </div>
                     )}

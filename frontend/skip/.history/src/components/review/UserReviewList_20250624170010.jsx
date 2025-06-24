@@ -138,7 +138,7 @@ const UserReviewList = () => {
                         <img
                           className="w-[140px] h-[120px] mt-1.5"
                           src={`http://localhost:8080${review.image}`}
-                          alt="리뷰 이미지"
+                          alt="${review.image}"
                         />}
                     </div>
                     <div className="mt-2.5 ml-2 text-[14px]">

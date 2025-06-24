@@ -33,7 +33,7 @@ const ReviewWrite = ({ mode }) => {
           setItemInfo({
             itemId: data.itemId,
             itemName: data.itemName,
-            itemImage: data.itemImage,
+            itemImage: ${data.itemImage}`,
             size: data.size,
             rentStart: data.rentStart,
             rentEnd: data.rentEnd,
@@ -134,8 +134,8 @@ const ReviewWrite = ({ mode }) => {
             <div className="flex justify-start items-center gap-[30px] mt-2.5">
               <div>
                 <img
-                  src={`http://localhost:8080${itemInfo?.itemImage}`}
-                  className="w-[150px] h-[150px]"
+                  src={itemInfo?.itemImage}
+                  className="w-[150px] h-[150px] object-cover"
                   alt="상품 이미지"
                 />
               </div>

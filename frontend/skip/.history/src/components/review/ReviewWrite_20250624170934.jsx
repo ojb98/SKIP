@@ -134,8 +134,8 @@ const ReviewWrite = ({ mode }) => {
             <div className="flex justify-start items-center gap-[30px] mt-2.5">
               <div>
                 <img
-                  src={`http://localhost:8080${itemInfo?.itemImage}`}
-                  className="w-[150px] h-[150px]"
+                  src={itemInfo?.http://localhost:8080itemImage}
+                  className="w-[150px] h-[150px] object-cover"
                   alt="상품 이미지"
                 />
               </div>
