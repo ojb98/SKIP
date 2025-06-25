@@ -54,7 +54,7 @@ import SearchResultPage from "./pages/SearchResultPage"
 
 
 function App() {
-    console.log(window.isSecureContext);
+    console.log()
     let deviceId = localStorage.getItem('deviceId');
     if (!deviceId) {
         deviceId = crypto.randomUUID();
