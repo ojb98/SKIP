@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Component
@@ -21,11 +22,12 @@ import java.util.List;
 public class BannerWaitingToActiveScheduler {
     private final BannerWaitingListRepository bannerWaitingListRepository;
     private final BannerActiveListRepository bannerActiveListRepository;
+    private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
 
     @Transactional
     @Scheduled(cron = "0 0 3 * * MON" , zone = "Asia/Seoul") // 매주 월요일 새벽 3시 실행
     public void toActive() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(SEOUL_ZONE);
         LocalDateTime before1Minute = now.minusMinutes(1);
         LocalDateTime next1Minute = now.plusMinutes(1);
 

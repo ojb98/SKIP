@@ -21,9 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,19 +45,13 @@ public class BannerService {
     private static final QRent rent = QRent.rent;
     private static final String REDIS_KEY = "banner:clicks";
     private final RentRepository rentRepository;
-
-    LocalDate today = LocalDate.now();
-    // 항상 다음 주 월요일 계산
-    LocalDate nextMonday = today.with(java.time.temporal.TemporalAdjusters.next(DayOfWeek.MONDAY));
-    // 오전 3시로 세팅
-    LocalDateTime mondayAt3AM = nextMonday.atTime(2, 59);
-    LocalDateTime mondayAt3AM10M = nextMonday.atTime(3, 10);
+    private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
 
     //대기중인 배너 조회
     public List<BannerWaitingListDTO> getWaitingBanners() {
         // 1. 대기 배너 엔티티들 조회
         List<BannerWaitingList> banners = bannerWaitingListRepository
-                .findAllByStatusNotAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+                .findByStatus(BannerWaitingListStatus.PENDING);
 
         // 2. 각 배너마다 평점 계산 → 엔티티 필드에 set (메모리에서만)
         banners.forEach(this::populateRatings);  // 저장은 하지 않음
@@ -71,7 +64,7 @@ public class BannerService {
     //승인된 대기 배너 조회
     public List<BannerWaitingListDTO> getApprovedWaitingBanners() {
         List<BannerWaitingList> banners = bannerWaitingListRepository
-                .findAllByStatusAndRegistDayBetween(BannerWaitingListStatus.APPROVED, mondayAt3AM, mondayAt3AM10M);
+                .findByStatus(BannerWaitingListStatus.PENDING);
         banners.forEach(this::populateRatings);
         return banners.stream()
                 .map(BannerWaitingListDTO::new)
@@ -83,9 +76,7 @@ public class BannerService {
     public List<BannerActiveListDTO> getActiveBanners() {
         // 1. 등록된 배너 엔티티 조회
         List<BannerActiveList> banners = bannerActiveListRepository
-                .findAllByUploadDateBetween(mondayAt3AM, mondayAt3AM10M);
-
-        // 3. DTO 변환
+                .findByStatus(BannerActiveListStatus.ACTIVE);
         return banners.stream()
                 .map(BannerActiveListDTO::new)
                 .toList();
@@ -113,7 +104,7 @@ public class BannerService {
         Long rentId = banner.getRent().getRentId();
 
         BigDecimal avgRating = reviewRepository.findAverageRatingByRentId(rentId);
-        BigDecimal recentRating = reviewRepository.findRecent7dRatingByRentId(rentId, LocalDateTime.now().minusDays(7));
+        BigDecimal recentRating = reviewRepository.findRecent7dRatingByRentId(rentId, LocalDateTime.now(SEOUL_ZONE).minusDays(7));
 
         banner.setAverageRating(avgRating != null ? avgRating : BigDecimal.ZERO);
         banner.setRecent7dRating(recentRating != null ? recentRating : BigDecimal.ZERO);
