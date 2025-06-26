@@ -18,6 +18,7 @@ import com.example.skip.repository.ItemRepository;
 import com.example.skip.repository.RentRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
+import com.example.skip.util.S3FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,13 +37,16 @@ public class ItemService {
     private final RentRepository rentRepository;
     private final FileUtil fileUtil;
     private final FileUploadUtil fileUploadUtil;
+    private final S3FileUtil s3FileUtil;
 
     //장비 등록
     public Long registerItem(ItemRequestDTO dto){
         Rent rent = rentRepository.findById(dto.getRentId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 렌트샵을 찾을 수 없습니다."));
 
-        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+        //String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+        // S3 업로드로 교체
+        String imageUrl = s3FileUtil.uploadFile(dto.getImage(), "items");
 
         Item item = Item.builder()
                 .rent(rent)
@@ -83,7 +87,9 @@ public class ItemService {
         Rent rent = rentRepository.findById(dto.getRentId())
                 .orElseThrow(() -> new RuntimeException("렌탈샵 없음"));
 
-        String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+        // String imageUrl = fileUtil.uploadFile(dto.getImage(),"items");
+        // S3 업로드로 교체
+        String imageUrl = s3FileUtil.uploadFile(dto.getImage(), "items");
 
         // 2. Item 생성
         Item item = Item.builder()
@@ -269,7 +275,8 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
         item.setName(dto.getName());
-        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(),"items");
+//        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(),"items");
+        String updatedImageUrl = s3FileUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(),"items");
         item.setImage(updatedImageUrl);
 
 
@@ -341,7 +348,8 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("아이템 없음"));
 
         item.setName(dto.getName());
-        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
+//        String updatedImageUrl = fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
+        String updatedImageUrl = s3FileUtil.uploadFileAndUpdateUrl(dto.getImage(), item.getImage(), "items");
         item.setImage(updatedImageUrl);
 
         List<ItemDetail> existItemDetails = item.getItemDetails();

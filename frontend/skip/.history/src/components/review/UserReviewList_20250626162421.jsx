@@ -139,7 +139,7 @@ const UserReviewList = () => {
                         <img
                           className="w-[140px] h-[120px] mt-1.5"
                           // src={`${__APP_BASE__}${review.image}`}
-                          src={`${review.image}`}
+                          src={`${__APP_BASE__}${review.image}`}
                           alt="리뷰 이미지"
                         />}
                     </div>

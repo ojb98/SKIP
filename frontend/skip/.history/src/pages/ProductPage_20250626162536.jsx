@@ -399,7 +399,7 @@ const ProductPage = () => {
       {itemData ? (
         <div className="product-wrapper">
           <div className="product-image">
-            {/* <img src={`${__APP_BASE__}${itemData.image}`} alt="itemData.name" /> */}
+            <img src={`${__APP_BASE__}${itemData.image}`} alt="itemData.name" />
             <img src={`${itemData.image}`} alt="itemData.name" />
           </div>
           <div className="product-info">

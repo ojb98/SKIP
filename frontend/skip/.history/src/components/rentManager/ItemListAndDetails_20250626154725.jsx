@@ -241,7 +241,7 @@ const ItemListAndDetails = () => {
           <div key={item.itemId} className="item-card">
             <h2 className="bottom-subject2">{item.name}</h2>
             <span>카테고리:</span> {categoryMap[item.category]}
-            {/* <img src={`${__APP_BASE__}${item.image}`} width="150" /> */}
+            <img src={`${__APP_BASE__}${item.image}`} width="150" />
             <img src={item.image} width="150" />
 
             <ul className="button-list">

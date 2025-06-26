@@ -13,6 +13,7 @@ import com.example.skip.repository.ReviewRepository;
 import com.example.skip.repository.reservation.ReservationItemRepository;
 import com.example.skip.repository.reservation.ReservationRepository;
 import com.example.skip.util.FileUtil;
+import com.example.skip.util.S3FileUtil;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -41,6 +42,7 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final FileUtil fileUtil;
+    private final S3FileUtil s3FileUtil;
 
     private static final QReview review = QReview.review;
     private static final QRent rent = QRent.rent;

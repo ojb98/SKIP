@@ -154,3 +154,8 @@ cloud:
       secret-key: ${AWS_SECRET_KEY}
     region:
       static: ap-northeast-2
+
+    bucket-name: skip-image-upload-bucket
+
+
+

@@ -115,8 +115,8 @@ const UserReviewList = () => {
                     <h4 className="text-[18px] font-bold"><FontAwesomeIcon icon={faTag} className="mr-1.5 text-blue-500 !align-middle" />리뷰아이템이름</h4>
                     <p className="text-[14px] font-bold ml-5">옵션: {review.size}</p>
                     <img
-                      // src={`${__APP_BASE__}${review.itemImage}`}
-                      src={`${review.itemImage}`}
+                      src={`${__APP_BASE__}${review.itemImage}`}
+                      src={`${__APP_BASE__}${review.itemImage}`}
                       alt={review.itemName}
                       className="w-[180px] h-[180px] mt-[5px] border-[#cecece]"
                     />
@@ -138,8 +138,7 @@ const UserReviewList = () => {
                       {review.image &&
                         <img
                           className="w-[140px] h-[120px] mt-1.5"
-                          // src={`${__APP_BASE__}${review.image}`}
-                          src={`${review.image}`}
+                          src={`${__APP_BASE__}${review.image}`}
                           alt="리뷰 이미지"
                         />}
                     </div>

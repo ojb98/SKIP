@@ -111,7 +111,7 @@ const ReviewList = () => {
                       <div className="review-user-img">
                         {review.userImage ? (
                           // <img src={`${__APP_BASE__}${review.userImage}`} alt="user" className="h-[100%]" />
-                          <img src={`${review.userImage}`} alt="user" className="h-[100%]" />
+                          <img src={`${__APP_BASE__}${review.userImage}`} alt="user" className="h-[100%]" />
                         ) : (
                           <div className="review-user-default-img">
                             <FontAwesomeIcon icon={faUser} className="fa-user" />
@@ -136,8 +136,7 @@ const ReviewList = () => {
                     </div>
                     <div className="review-right">
                       {review.image && (
-                        // <img src={`${__APP_BASE__}${review.image}`} alt="리뷰 이미지" />
-                        <img src={`${review.image}`} alt="리뷰 이미지" />
+                        <img src={`${__APP_BASE__}${review.image}`} alt="리뷰 이미지" />
                       )}
                     </div>
                   </div>
@@ -146,8 +145,7 @@ const ReviewList = () => {
                     <div className="review-left">
                       <div className="review-user-img">
                         {review.replyAdminUserImage ? (
-                          // <img src={`${__APP_BASE__}${review.replyAdminUserImage}`} alt="admin" className="h-[100%]" />
-                          <img src={`${review.replyAdminUserImage}`} alt="admin" className="h-[100%]" />
+                          <img src={`${__APP_BASE__}${review.replyAdminUserImage}`} alt="admin" className="h-[100%]" />
                         ) : (
                           <div className="review-user-default-img">
                             <FontAwesomeIcon icon={faUser} className="fa-user" />

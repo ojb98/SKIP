@@ -82,7 +82,7 @@ const RentList = () => {
                             >
                                 <td>{index + 1}</td>
                                 {/* <td><img className="rent-img" src={`${__APP_BASE__}${r.thumbnail}`} /></td> */}
-                                <td><img className="rent-img" src={r.thumbnail} /></td>
+                                <td><img className="rent-img" src={`${__APP_BASE__}${r.thumbnail}`} /></td>
                                 <td>{r.name}</td>
                                 <td>{r.phone}</td>
                                 <td>{r.streetAddress}</td>

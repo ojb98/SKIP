@@ -81,8 +81,7 @@ const RentList = () => {
                                 className={`clickable-row ${selectedRentId === r.rentId ? 'selected' : ''}`}
                             >
                                 <td>{index + 1}</td>
-                                {/* <td><img className="rent-img" src={`${__APP_BASE__}${r.thumbnail}`} /></td> */}
-                                <td><img className="rent-img" src={r.thumbnail} /></td>
+                                <td><img className="rent-img" src={`${__APP_BASE__}${r.thumbnail}`} /></td>
                                 <td>{r.name}</td>
                                 <td>{r.phone}</td>
                                 <td>{r.streetAddress}</td>
@@ -128,10 +127,10 @@ const RentList = () => {
                             {rentDetail.image1 && <tr><th>이미지1</th><td><img src={`${__APP_BASE__}${rentDetail.image1}`} /></td></tr>}
                             {rentDetail.image2 && <tr><th>이미지2</th><td><img src={`${__APP_BASE__}${rentDetail.image2}`} /></td></tr>}
                             {rentDetail.image3 && <tr><th>이미지3</th><td><img src={`${__APP_BASE__}${rentDetail.image3}`} /></td></tr>} */}
-                             <tr><th>썸네일</th><td><img src={rentDetail.thumbnail} /></td></tr>
-                            {rentDetail.image1 && <tr><th>이미지1</th><td><img src={rentDetail.image1} /></td></tr>}
-                            {rentDetail.image2 && <tr><th>이미지2</th><td><img src={rentDetail.image2} /></td></tr>}
-                            {rentDetail.image3 && <tr><th>이미지3</th><td><img src={rentDetail.image3} /></td></tr>}
+                             <tr><th>썸네일</th><td><img src={{rentDetail.thumbnail}`} /></td></tr>
+                            {rentDetail.image1 && <tr><th>이미지1</th><td><img src={`${__APP_BASE__}${rentDetail.image1}`} /></td></tr>}
+                            {rentDetail.image2 && <tr><th>이미지2</th><td><img src={`${__APP_BASE__}${rentDetail.image2}`} /></td></tr>}
+                            {rentDetail.image3 && <tr><th>이미지3</th><td><img src={`${__APP_BASE__}${rentDetail.image3}`} /></td></tr>}
                             
                             <tr><th>소개 및 설명</th><td>{rentDetail.description}</td></tr>
                             <tr><th>등록일</th><td>{rentDetail.createdAt}</td></tr>

@@ -1,6 +1,7 @@
 package com.example.skip.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -14,11 +15,14 @@ public class S3Config {
 
     private final AwsKeyConfig awsKeyConfig;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
 
     @Bean
     public S3Client s3Client(){
         return S3Client.builder()
-                .region(Region.AP_NORTHEAST_2)  // 서울 리전
+                .region(Region.of(region))  // 서울 리전
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(awsKeyConfig.getAccessKey(), awsKeyConfig.getSecretKey())

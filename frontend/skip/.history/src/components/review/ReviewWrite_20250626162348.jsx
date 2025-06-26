@@ -135,7 +135,7 @@ const ReviewWrite = ({ mode }) => {
               <div>
                 <img
                   // src={`${__APP_BASE__}${itemInfo?.itemImage}`}
-                  src={`${itemInfo?.itemImage}`}
+                  src={`${__APP_BASE__}${itemInfo?.itemImage}`}
                   className="w-[150px] h-[150px]"
                   alt="상품 이미지"
                 />

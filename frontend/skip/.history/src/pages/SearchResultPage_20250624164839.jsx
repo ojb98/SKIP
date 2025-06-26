@@ -187,7 +187,7 @@ const SearchResultPage = () => {
                         searchResult.map(r => (
                             <li key={r.rentId} className="w-full h-fit flex gap-10 p-5 border border-gray-200 rounded-md shadow-sm bg-white">
                                 <div className="w-fit h-full">
-                                    <img src={`${r.thumbnail}`} className="w-30 h-30 rounded-xl"></img>
+                                    <img src={`${host}${r.thumbnail}`} className="w-30 h-30 rounded-xl"></img>
                                 </div>
                                 
                                 <div className="w-full space-y-1">
