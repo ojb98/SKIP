@@ -79,6 +79,12 @@ public class UserSocialService {
     @Value("${file.profile-image}")
     private String profileImagePath;
 
+    @Value("${backend.host}")
+    private String backendHost;
+
+    @Value("${backend.port}")
+    private String backendPort;
+
 
     @CacheEvict(value = "users", key = "#userId")
     public UserDto signupWithKakao(Long userId, KakaoProfileDto kakaoProfileDto) throws DataIntegrityViolationException {
@@ -263,7 +269,7 @@ public class UserSocialService {
 
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
-            params.add("redirect_uri", "http://localhost:8080/user/social/link/kakao");
+            params.add("redirect_uri", "http://" + backendHost + ":" + backendPort + "/user/social/link/kakao");
             params.add("client_id", oAuth2Properties.getKakao().getClientId());
             params.add("client_secret", oAuth2Properties.getKakao().getClientSecret());
             params.add("code", authorizationCode);

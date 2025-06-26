@@ -1,6 +1,10 @@
-api:
+backend:
   host: localhost
   port: 8080
+
+frontend:
+  host: localhost
+  port: 80
 
 database:
   host: 192.168.80.13
@@ -10,13 +14,10 @@ spring:
     name: skip
 
   datasource:
-#    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://192.168.80.13:3306/skip    # 권새미 데이터베이스 설정
 #    username: hello
 #    password: hello1234
-    url: jdbc:mariadb://192.168.80.13:3306/testdb # 권새미 데이터베이스 설정
-    username: hello
-    password: hello1234
 
 #    url: jdbc:mariadb://${database.host}:3306/projectdb # 오정빈 데이터베이스 설정
 #    username: ${MARIADB_USERNAME}
@@ -25,6 +26,10 @@ spring:
 #    url: jdbc:mariadb://localhost:3306/projectdb # 지봉필 데이터베이스 설정
 #    username: root
 #    password: 1234
+
+    url: jdbc:mariadb://skip.cjmgi66o8vuc.ap-northeast-2.rds.amazonaws.com:3306/skip
+    username: ${RDS_MARIADB_USERNAME}
+    password: ${RDS_MARIADB_PASSWORD}
 
   jpa:
     hibernate:
@@ -37,11 +42,11 @@ spring:
 
   data:
     redis:
-      host: ${database.host}
+      host: ${backend.host}
       port: 6379
 
   elasticsearch:
-    uris: http://192.168.80.13:9200
+    uris: http://${backend.host}:9200
     username: elastic
     password: ${ELASTIC_PASSWORD}
 
@@ -62,10 +67,10 @@ spring:
     oauth2:
       client:
         custom-naver:
-          redirect-uri: http://${api.host}:${api.port}/user/social/link/naver
+          redirect-uri: http://${backend.host}:${backend.port}/user/social/link/naver
 
         custom-kakao:
-          redirect-uri: http://${api.host}:${api.port}/user/social/link/kakao
+          redirect-uri: http://${backend.host}:${backend.port}/user/social/link/kakao
 
         registration:
           naver:
@@ -73,7 +78,7 @@ spring:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: http://${api.host}:${api.port}/login/oauth2/code/naver
+            redirect-uri: http://${backend.host}:${backend.port}/login/oauth2/code/naver
             scope:
               - name
               - nickname
@@ -87,7 +92,7 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: http://${api.host}:${api.port}/login/oauth2/code/kakao
+            redirect-uri: http://${backend.host}:${backend.port}/login/oauth2/code/kakao
             scope:
               - profile_nickname
               - profile_image

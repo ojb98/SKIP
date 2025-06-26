@@ -22,8 +22,11 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
-    @Value("${api.host}")
-    private String host;
+    @Value("${frontend.host}")
+    private String frontendHost;
+
+    @Value("${frontend.port}")
+    private String frontendPort;
 
     private final JwtUtil jwtUtil;
 
@@ -63,6 +66,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 레디스 저장
         refreshTokenService.saveRefreshToken(userDto.getUsername(), deviceId, refreshToken);
 
-        response.sendRedirect("http://" + host + ":5173");
+        response.sendRedirect("http://" + frontendHost + ":" + frontendPort);
     }
 }

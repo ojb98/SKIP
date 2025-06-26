@@ -6,6 +6,7 @@ import com.example.skip.enumeration.UserSocial;
 import com.example.skip.service.UserSocialService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,12 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class UserSocialController {
     private final UserSocialService userSocialService;
+
+    @Value("${frontend.host}")
+    private String frontendHost;
+
+    @Value("${frontend.port}")
+    private String frontendPort;
 
 
     @GetMapping("/redirect/{client}")
@@ -53,7 +60,7 @@ public class UserSocialController {
             data = URLEncoder.encode("이미 연동된 소셜 계정입니다.", StandardCharsets.UTF_8);
         }
 
-        return "redirect:http://localhost:5173/mypage/account?success=" + success + "&data=" + data;
+        return "redirect:http://" + frontendHost + ":" + frontendPort + "/mypage/account?success=" + success + "&data=" + data;
     }
 
     @ResponseBody
