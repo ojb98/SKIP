@@ -70,6 +70,11 @@ dependencies {
 	implementation "com.blazebit:blaze-persistence-integration-spring-data-3.1:1.6.9"
 	implementation "com.blazebit:blaze-persistence-integration-entity-view-spring-6.0:1.6.9"
 	annotationProcessor "com.blazebit:blaze-persistence-entity-view-processor:1.6.9"
+
+	// AWS-S3
+	implementation 'software.amazon.awssdk:s3:2.25.32'
+	implementation 'software.amazon.awssdk:auth'
+
 }
 
 // 쿼리 dsl 설정
