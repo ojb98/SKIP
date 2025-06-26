@@ -3,6 +3,7 @@ package com.example.skip.service;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.entity.BannerActiveList;
 import com.example.skip.enumeration.BannerActiveListStatus;
+import com.example.skip.scheduler.BannerWaitingToActiveScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,9 @@ public class BannerServiceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private BannerWaitingToActiveScheduler bannerWaitingToActiveScheduler;
+
 
 //    @Test
 //    public void insert() {
@@ -40,4 +44,9 @@ public class BannerServiceTest {
 //                    .build());
 //        }
 //    }
+
+    @Test
+    public void banner() {
+        bannerWaitingToActiveScheduler.toActive();
+    }
 }

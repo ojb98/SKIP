@@ -17,6 +17,7 @@ import com.example.skip.repository.RentRepository;
 import com.example.skip.repository.UserRepository;
 import com.example.skip.util.FileUploadUtil;
 import com.example.skip.util.FileUtil;
+import com.example.skip.util.S3FileUtil;
 import com.example.skip.view.RentDefaultView;
 import com.example.skip.view.RentPopularityView;
 import com.example.skip.view.RentRatingView;
@@ -44,6 +45,7 @@ public class RentService {
     private final RentSearchService rentSearchService;
     private final FileUploadUtil fileUploadUtil;
     private final FileUtil fileUtil;
+    private final S3FileUtil s3FileUtil;
 
     //등록
     public Long createRent(RentRequestDTO rentRequestDTO){
@@ -58,10 +60,15 @@ public class RentService {
                     .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
             // 파일 업로드 처리
-            thumbnailUrl = fileUtil.uploadFile(rentRequestDTO.getThumbnail(), "rents");
-            imageUrl1 = fileUtil.uploadFile(rentRequestDTO.getImage1(), "rents");
-            imageUrl2 = fileUtil.uploadFile(rentRequestDTO.getImage2(), "rents");
-            imageUrl3 = fileUtil.uploadFile(rentRequestDTO.getImage3(), "rents");
+//            thumbnailUrl = fileUtil.uploadFile(rentRequestDTO.getThumbnail(), "rents");
+//            imageUrl1 = fileUtil.uploadFile(rentRequestDTO.getImage1(), "rents");
+//            imageUrl2 = fileUtil.uploadFile(rentRequestDTO.getImage2(), "rents");
+//            imageUrl3 = fileUtil.uploadFile(rentRequestDTO.getImage3(), "rents");
+
+            thumbnailUrl = s3FileUtil.uploadFile(rentRequestDTO.getThumbnail(), "rents");
+            imageUrl1 = s3FileUtil.uploadFile(rentRequestDTO.getImage1(), "rents");
+            imageUrl2 = s3FileUtil.uploadFile(rentRequestDTO.getImage2(), "rents");
+            imageUrl3 = s3FileUtil.uploadFile(rentRequestDTO.getImage3(), "rents");
 
             Rent rent = Rent.builder()
                     .user(user)
@@ -138,10 +145,15 @@ public class RentService {
         }
 
         // 파일 업로드 처리 후 URL 업데이트(기존 파일 삭제 및 새로운 파일 업로드)
-        rent.setThumbnail(fileUploadUtil.uploadFileAndUpdateUrl(dto.getThumbnail(), rent.getThumbnail(),"rents"));
-        rent.setImage1(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage1(), rent.getImage1(),"rents"));
-        rent.setImage2(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage2(), rent.getImage2(), "rents"));
-        rent.setImage3(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage3(), rent.getImage3(), "rents"));
+//        rent.setThumbnail(fileUploadUtil.uploadFileAndUpdateUrl(dto.getThumbnail(), rent.getThumbnail(),"rents"));
+//        rent.setImage1(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage1(), rent.getImage1(),"rents"));
+//        rent.setImage2(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage2(), rent.getImage2(), "rents"));
+//        rent.setImage3(fileUploadUtil.uploadFileAndUpdateUrl(dto.getImage3(), rent.getImage3(), "rents"));
+
+        rent.setThumbnail(s3FileUtil.uploadFileAndUpdateUrl(dto.getThumbnail(), rent.getThumbnail(),"rents"));
+        rent.setImage1(s3FileUtil.uploadFileAndUpdateUrl(dto.getImage1(), rent.getImage1(),"rents"));
+        rent.setImage2(s3FileUtil.uploadFileAndUpdateUrl(dto.getImage2(), rent.getImage2(), "rents"));
+        rent.setImage3(s3FileUtil.uploadFileAndUpdateUrl(dto.getImage3(), rent.getImage3(), "rents"));
 
         rent.setCategory(dto.getCategory());
         rent.setName(dto.getName());
@@ -166,10 +178,16 @@ public class RentService {
     // 롤백을 고려한 파일 삭제 메소드 추가
     private void deleteUploadedFiles(String thumbnailUrl, String imageUrl1, String imageUrl2, String imageUrl3) {
         try {
-            if (thumbnailUrl != null) fileUtil.deleteFile(thumbnailUrl);
-            if (imageUrl1 != null) fileUtil.deleteFile(imageUrl1);
-            if (imageUrl2 != null) fileUtil.deleteFile(imageUrl2);
-            if (imageUrl3 != null) fileUtil.deleteFile(imageUrl3);
+//            if (thumbnailUrl != null) fileUtil.deleteFile(thumbnailUrl);
+//            if (imageUrl1 != null) fileUtil.deleteFile(imageUrl1);
+//            if (imageUrl2 != null) fileUtil.deleteFile(imageUrl2);
+//            if (imageUrl3 != null) fileUtil.deleteFile(imageUrl3);
+
+            if (thumbnailUrl != null) s3FileUtil.deleteFile(thumbnailUrl);
+            if (imageUrl1 != null) s3FileUtil.deleteFile(imageUrl1);
+            if (imageUrl2 != null) s3FileUtil.deleteFile(imageUrl2);
+            if (imageUrl3 != null) s3FileUtil.deleteFile(imageUrl3);
+
         } catch (Exception e) {
             // 파일 삭제 실패 시 로그에 남기고 예외 처리
             e.printStackTrace();

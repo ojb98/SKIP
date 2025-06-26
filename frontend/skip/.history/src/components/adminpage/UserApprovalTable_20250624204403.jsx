@@ -223,7 +223,7 @@ const STATUS_FILTER = 'APPROVED';
               </button>
               </div>
               <div style={{display:"flex" }}>
-                <img src={{`hselectedRent.image1 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
+                <img src={selectedRent.image1 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
                 <img src={selectedRent.image2 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
                 <img src={selectedRent.image3 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
               </div>        

@@ -180,7 +180,14 @@ const STATUS_FILTER = 'APPROVED';
           <div className="user-detail-card">
             <div className="user-section"> <br /> 
               <h4  style={{marginTop:"-10px"}}>📷 렌탈샵 썸네일</h4>     <br /><br />       
-              <img src={selectedRent.thumbnail || "/images/default-shop.png"} alt="렌탈샵 프로필" />
+              <img
+                src={
+                  selectedRent.thumbnail
+                    ? `${__APP_BASE__}${selectedRent.thumbnail}`
+                    : "/images/default-shop.png"
+                }
+                alt="렌탈샵 프로필"
+              />
               <p style={{ textAlign: 'center' }}>
                 <strong>상호:</strong> {selectedRent.name}  <br />
                 <strong>관리자 이름:</strong> {selectedRent.userName} <br />
@@ -223,9 +230,34 @@ const STATUS_FILTER = 'APPROVED';
               </button>
               </div>
               <div style={{display:"flex" }}>
-                <img src={{`http://localhost:8080/hselectedRent.image1 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
-                <img src={selectedRent.image2 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
-                <img src={selectedRent.image3 || "/images/default-shop.png"} style={{width:"150px",height:"150px", margin:"40px", marginTop:"30px"}}/>
+                <img
+                src={
+                  selectedRent.image1
+                    ? `${__APP_BASE__}${selectedRent.image1}`
+                    : "/images/default-shop.png"
+                }
+                style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
+                alt="대여 이미지"
+              />
+            </div>
+                <img
+                src={
+                  selectedRent.image2
+                    ? `${__APP_BASE__}${selectedRent.image2}`
+                    : "/images/default-shop.png"
+                }
+                style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
+                alt="대여 이미지"
+              />
+                <img
+                src={
+                  selectedRent.image3
+                    ? `${__APP_BASE__}${selectedRent.image3}`
+                    : "/images/default-shop.png"
+                }
+                style={{ width: "150px", height: "150px", margin: "40px", marginTop: "30px" }}
+                alt="대여 이미지"
+              />
               </div>        
               <div>
                 <p><strong>렌탈샵 소개:</strong></p>                
@@ -233,7 +265,7 @@ const STATUS_FILTER = 'APPROVED';
                 
               </div> 
             </div>
-          </div>
+          // </div>
           )}
       </div>
     );

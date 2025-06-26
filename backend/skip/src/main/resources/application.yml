@@ -27,7 +27,7 @@ spring:
 #    username: root
 #    password: 1234
 
-    url: jdbc:mariadb://skip.cjmgi66o8vuc.ap-northeast-2.rds.amazonaws.com:3306/skip
+    url: jdbc:mariadb://skip.cjmgi66o8vuc.ap-northeast-2.rds.amazonaws.com:3306/skip # AWS 데이터베이스
     username: ${RDS_MARIADB_USERNAME}
     password: ${RDS_MARIADB_PASSWORD}
 
@@ -150,3 +150,17 @@ iamport:
 
 encryption:
   key: ${ENCRYPTION_KEY}
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+
+    bucket-name: skip-image-upload-bucket
+
+
+

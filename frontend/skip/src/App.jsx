@@ -62,6 +62,7 @@ const safeUUID = () => {
 
 
 function App() {
+    console.log(window.isSecureContext);
     let deviceId = localStorage.getItem('deviceId');
     if (!deviceId) {
         deviceId = safeUUID();
