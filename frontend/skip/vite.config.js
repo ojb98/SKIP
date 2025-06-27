@@ -10,7 +10,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../backend/skip/.env') });
 export default defineConfig({
     
     define: {
-        __APP_BASE__: JSON.stringify('http://ec2-3-38-104-170.ap-northeast-2.compute.amazonaws.com:8080')
+        __APP_BASE__: JSON.stringify('http://ec2-3-39-253-214.ap-northeast-2.compute.amazonaws.com:8080')
     },
     plugins: [react(), tailwindcss()],
         server: {

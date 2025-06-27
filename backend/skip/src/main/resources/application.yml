@@ -1,9 +1,9 @@
 backend:
-  host: ec2-3-38-104-170.ap-northeast-2.compute.amazonaws.com
+  host: ec2-3-39-253-214.ap-northeast-2.compute.amazonaws.com
   port: 8080
 
 frontend:
-  host: ec2-3-38-104-170.ap-northeast-2.compute.amazonaws.com
+  host: ec2-3-39-253-214.ap-northeast-2.compute.amazonaws.com
   port: 80
 
 database:
@@ -46,12 +46,11 @@ spring:
       port: 6379
 
   elasticsearch:
-    uris: http://${backend.host}:9200
     username: elastic
     password: ${ELASTIC_PASSWORD}
 
-  config:
-    import: optional:file:.env[.properties]
+#  config:
+#    import: optional:file:.env[.properties]
 
   servlet:
     multipart:

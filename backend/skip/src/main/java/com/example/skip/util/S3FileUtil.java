@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class S3FileUtil {
     // 파일 등록
     public String uploadFile(MultipartFile file, String subDir) {
         try {
-            String key = subDir + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String key = subDir + File.separator + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
