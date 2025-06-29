@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
@@ -160,6 +161,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Long getCancelledCountByUser(@Param("userId") Long userId,
                                  @Param("start") LocalDateTime start,
                                  @Param("end") LocalDateTime end);
+
+    Optional<Payment> findByMerchantUid(String merchantUid);
 
 
     // ===== 렌탈샵 단일 대시보드를 위한 쿼리 =====

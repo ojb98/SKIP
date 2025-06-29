@@ -4,6 +4,7 @@ import { ko } from "date-fns/locale";
 import { useEffect, useRef, useState } from "react";
 import { button, radio } from "./buttons";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { isBefore, startOfDay } from "date-fns";
 
 
 const now = new Date();
@@ -205,7 +206,7 @@ const DateRangeSelect = ({ fromState, toState }) => {
         const isToday = isSameDay(now, date);
         const isSunday = dayOfWeek === 0;
         const isSaturday = dayOfWeek === 6;
-        const isDisabled = date.getDate() < now.getDate();
+        const isDisabled = isBefore(startOfDay(date), startOfDay(now));
         const isStart = isSameDay(startDate, date);
         const isRange = isInRange(startDate, date, endDate);
         const isEnd = isSameDay(endDate, date);

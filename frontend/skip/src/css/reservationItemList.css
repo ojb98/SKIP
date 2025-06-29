@@ -1,0 +1,104 @@
+/* 아이템 테이블 스타일 */
+.reservation-item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 1px solid #4b5175;
+}
+
+.reservation-item-header {
+  padding: 10px 8px;
+  font-size: 13px;
+  text-align: center;
+  background-color: #253463;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 1px solid #4b5175;
+}
+
+.reservation-item-cell {
+  padding: 8px 6px;
+  font-size: 13px;
+  text-align: center;
+  background-color: transparent;
+  color: #000;
+  border-bottom: 1px solid #4b5175;
+}
+
+.reservation-item-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reservation-item-row:hover {
+  background-color: #c7c6c6;
+}
+
+.reservation-item-row-expanded {
+  background-color: #b8c7e8;
+  color: #000;
+}
+
+.reservation-item-row-expanded .reservation-item-cell {
+  color: #000;
+}
+
+/* 반납 버튼 스타일 */
+.reservation-return-button {
+  all: unset;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+  background-color: #bccefa;
+  color: #000;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.reservation-return-button:hover {
+  color: #fff;
+  background-color: #89a5ec;
+}
+
+.reservation-return-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #000;
+  cursor: not-allowed;
+}
+
+/* 아이템 상세 정보 */
+.reservation-item-detail-row {
+  cursor: default;
+}
+
+.reservation-item-detail-row:hover {
+  background-color: transparent;
+}
+
+.reservation-item-detail-cell {
+  padding: 0;
+}
+
+.reservation-item-detail-container {
+  padding: 12px;
+  background-color: #f0f8ff;
+  border-radius: 4px;
+  margin: 8px;
+}
+
+.reservation-item-detail-item {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.reservation-item-detail-label {
+  color: #253463;
+  font-weight: 600;
+  margin-right: 8px;
+  font-size: 14px;
+}

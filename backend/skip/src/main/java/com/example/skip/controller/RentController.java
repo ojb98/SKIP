@@ -3,6 +3,7 @@ package com.example.skip.controller;
 import com.example.skip.dto.rent.RentDTO;
 import com.example.skip.dto.rent.RentInfoDTO;
 import com.example.skip.dto.rent.RentRequestDTO;
+import com.example.skip.dto.request.RentSearchRequest;
 import com.example.skip.dto.response.ApiResponse;
 import com.example.skip.dto.response.ItemCategoryRecord;
 import com.example.skip.dto.response.RegionRecord;
@@ -12,6 +13,9 @@ import com.example.skip.enumeration.UserStatus;
 import com.example.skip.service.RentSearchService;
 import com.example.skip.service.RentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/rents")
 @RequiredArgsConstructor
@@ -125,5 +130,23 @@ public class RentController {
                 .success(true)
                 .data(Arrays.stream(ItemCategory.values()).map(ItemCategoryRecord::fromItemCategory).toList())
                 .build();
+    }
+
+    @PostMapping("/search")
+    public ApiResponse search(@RequestBody RentSearchRequest rentSearchRequest,
+                              @PageableDefault(size = 10)Pageable pageable) {
+        log.info("request: {}", rentSearchRequest);
+        try {
+            return ApiResponse.builder()
+                    .success(true)
+                    .data(rentService.search(rentSearchRequest, pageable))
+                    .build();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+
+            return ApiResponse.builder()
+                    .success(false)
+                    .build();
+        }
     }
 }

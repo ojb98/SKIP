@@ -15,7 +15,7 @@ const RentItemSelect = ({ selectedCategoriesState }) => {
             if (res.success) {
                 setCategories(res.data);
             }
-        })
+        });
     }, []);
 
     useEffect(() => {

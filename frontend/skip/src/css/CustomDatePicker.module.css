@@ -1,0 +1,11 @@
+/* 이 wrapper 내부에 있는 react-datepicker만 스타일 적용됨 */
+.wrapper :global(.react-datepicker) {
+  background-color: white;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.wrapper :global(.react-datepicker__day--selected) {
+  background-color: #222;
+  color: white;
+}

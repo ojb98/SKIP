@@ -50,6 +50,7 @@ import CashChargePage from "./pages/rentalAdmin/CashCahrgePage"
 import BannerApplyPage from "./pages/rentalAdmin/BannerApplyPage"
 import BannerResubmitPage from "./pages/rentalAdmin/BannerResubmitPage"
 import ReservationList from './components/rentManager/ReservationList';
+import SearchResultPage from "./pages/SearchResultPage"
 
 
 function App() {
@@ -98,7 +99,6 @@ function App() {
                             <Route path="/rentAdmin/detail/:rentId" element={<RentDetail/>}></Route>
                             <Route path="/rentAdmin/update/:rentId" element={<RentUpdateForm/>}></Route>
                             <Route path="/rentAdmin/item/insert/:rentId?" element={<ItemInsertForm/>}></Route>
-                            {/* <Route path="/rentAdmin/select" element={<ItemSelectorByRent/>}></Route> */}
                             <Route path="/rentAdmin/item/list/" element={<ItemListAndDetails/>}></Route>
                             <Route path="/rentAdmin/item/update/:rentId/:itemId" element={<ItemUpdateForm/>}></Route>
                             <Route path="/rentAdmin/reservManager/list" element={<ReservationList/>}></Route>
@@ -121,6 +121,9 @@ function App() {
                         {/* 렌탈샵 상세 페이지 */}
                         <Route path="/rent/detail/:rentId" element={<RentalshopPage/>}></Route>
                         <Route path="/rent/product/:rentId/:itemId" element={<ProductPage/>}></Route>
+
+                        {/* 렌탈샵 검색 페이지 */}
+                        <Route path="/rent/search" element={<SearchResultPage></SearchResultPage>}></Route>
                     </Route>
 
                     {/* 관리자 라우트 */}

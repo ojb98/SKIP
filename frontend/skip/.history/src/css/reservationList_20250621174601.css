@@ -1,0 +1,268 @@
+/* 기본 컨테이너 */
+.reserv-container {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* 제목 */
+.top-subject {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* 예약 테이블 */
+.reserv-table,
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 테이블 헤더 */
+.reserv-thead th,
+.detail-thead th {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* 테이블 바디 */
+
+/* 일반 행 */
+.reserv-tbody-tr {
+  background-color: white;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+/* 선택된 행 */
+.expanded-row {
+  background-color: #e0f7ff; /* 밝은 하늘색 배경 */
+  box-shadow: inset 0 0 0 2px #007bff; /* 테두리 강조 */
+  font-weight: bold;
+}
+
+/* 마우스 오버 시 */
+.reserv-tbody-tr:hover {
+  background-color: #f3f9ff;
+}
+
+/* 예약 상세 행 */
+.reservation-detail-tr {
+  background-color: #f5f7fa;
+}
+
+.reservation-detail-td {
+  padding: 0;
+}
+
+.reservation-detail {
+  padding: 1.2rem;
+}
+
+.sub-subject {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+/* 버튼 스타일 */
+.return-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.return-btn:hover {
+  background-color: #218838;
+}
+
+/* 완료 표시 */
+.return-text {
+  color: green;
+  font-weight: bold;
+}
+
+/* 예약 관리 페이지 스타일 */
+.reservation-list-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: transparent;
+  color: #000;
+  box-sizing: border-box;
+}
+
+.reservation-list-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #253463;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+/* 필터 폼 스타일 */
+.reservation-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f7f9fc;
+  border: 1px solid #253463;
+  border-radius: 6px;
+}
+
+.reservation-filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.reservation-filter-select,
+.reservation-filter-input,
+.reservation-filter-date {
+  padding: 8px 12px;
+  border: 1px solid #4b5175;
+  border-radius: 0;
+  font-size: 14px;
+  color: #000;
+  background: #fff;
+  min-width: 120px;
+}
+
+.reservation-filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #253463;
+  margin-right: 8px;
+}
+
+.reservation-filter-button {
+  all: unset;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+  background-color: #bccefa;
+  color: #000;
+  transition: all 0.2s ease;
+}
+
+.reservation-filter-button:hover {
+  color: #fff;
+  background-color: #89a5ec;
+}
+
+.reservation-close-all-button {
+  all: unset;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  border: 1px solid #000;
+  background-color: #f9e79f;
+  color: #000;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.reservation-close-all-button:hover {
+  background-color: #e9d275;
+}
+
+/* 메인 테이블 스타일 */
+.reservation-main-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #4b5175;
+}
+
+.reservation-main-header {
+  padding: 12px 8px;
+  font-size: 14px;
+  text-align: center;
+  background-color: #253463;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border-bottom: 1px solid #4b5175;
+}
+
+.reservation-main-cell {
+  padding: 10px 8px;
+  font-size: 14px;
+  text-align: center;
+  background-color: transparent;
+  color: #000;
+  border-bottom: 1px solid #4b5175;
+}
+
+.reservation-main-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reservation-main-row:hover {
+  background-color: #c7c6c6;
+}
+
+.reservation-main-row-expanded {
+  background-color: #5c74b2;
+  color: white;
+}
+
+/* 상세 정보 행 */
+.reservation-detail-row {
+  cursor: default;
+}
+
+.reservation-detail-row:hover {
+  background-color: transparent;
+}
+
+.reservation-detail-cell {
+  padding: 0;
+}
+
+.reservation-detail-container {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  margin: 8px;
+}
+
+.reservation-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #253463;
+  margin-bottom: 16px;
+}
+
+/* 데이터 없음 메시지 */
+.reservation-no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 16px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}

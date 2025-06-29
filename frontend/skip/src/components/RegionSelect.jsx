@@ -3,17 +3,21 @@ import { inputText } from "./inputs";
 import { button } from "./buttons";
 import { fetchAutocomplete } from "../api/rentListApi";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 
-const RegionSelect = ({ regions, setKeyword, onClose }) => {
+const RegionSelect = ({ regions, keywordState, onClose }) => {
     const searchRef = useRef();
-    
+
+    const [keyword, setKeyword] = keywordState;
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const [autocomplete, setAutocomplete] = useState([]);
 
     useEffect(() => {
         searchRef.current.focus();
     }, []);
+
+    useEffect(() => {
+        searchRef.current.value = keyword;
+    }, [keyword]);
 
     useEffect(() => {
         if (!showAutocomplete) {
@@ -36,7 +40,7 @@ const RegionSelect = ({ regions, setKeyword, onClose }) => {
         }
     };
 
-    const handleSearch = (keyword = searchRef.current.value) => {
+    const handleSelect = (keyword = searchRef.current.value) => {
         setKeyword(keyword);
         onClose();
     };
@@ -50,13 +54,13 @@ const RegionSelect = ({ regions, setKeyword, onClose }) => {
                         ref={searchRef}
                         placeholder="지역명, 시설명 검색"
                         onInput={handleAutocomplete}
-                        onKeyDown={({ key }) => key == 'Enter' ? handleSearch() : null}
+                        onKeyDown={({ key }) => key == 'Enter' ? handleSelect() : null}
                         className={inputText({ className: 'w-full h-14' })}
                     ></input>
 
                     <button
                         onClick={() => {
-                            searchRef.current.value = '';
+                            setKeyword('');
                             setShowAutocomplete(false);
                         }}
                         className="absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -76,8 +80,8 @@ const RegionSelect = ({ regions, setKeyword, onClose }) => {
                                 <AlertCircle size={20} className="inline"></AlertCircle><p>검색된 결과가 없습니다.</p>
                             </li>
                             ||
-                            autocomplete.map(k => (
-                                <li key={k} onClick={() => handleSearch(k)} className="p-5 text-sm text-black font-bold cursor-pointer">{k}</li>
+                            autocomplete.map((k, i) => (
+                                <li key={i} onClick={() => handleSelect(k)} className="p-5 text-sm text-black font-bold cursor-pointer">{k}</li>
                             ))
                         }
                     </ul>
@@ -92,7 +96,7 @@ const RegionSelect = ({ regions, setKeyword, onClose }) => {
                                 regions.filter(region => region.value != 'ETC').map(region => (
                                     <div key={region.value}>
                                         <button
-                                            onClick={() => handleSearch(region.shortName)}
+                                            onClick={() => handleSelect(region.shortName)}
                                             className={button({ color: "secondary-outline", className: 'w-full h-11 block rounded text-sm font-semibold' })}
                                         >
                                             {region.shortName}
