@@ -118,15 +118,20 @@ const BannerApplyForm = () => {
     form.append('rentId', selectedRentId);
     form.append('cpcBid', cpcBid);
     if (imageRef.current?.files[0]) form.append('bannerImage', imageRef.current.files[0]);
-    await submitBannerRequest(form, cashToken);
-    setCpcBid('');
-    if (imageRef.current) imageRef.current.value = null;
+    try {
+      await submitBannerRequest(form, cashToken);
+      alert('배너 신청이 성공적으로 제출되었습니다.');
+      setCpcBid('');
+      if (imageRef.current) imageRef.current.value = null;
+    } catch (err) {
+      alert(err.response?.data?.message || '배너 신청 중 오류가 발생했습니다.');
+    }
   };
 
   const getNextMonday3AM = () => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0(일) ~ 6(토)
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8; // 항상 다음 주 월요일
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7; // 항상 다음 주 월요일
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);

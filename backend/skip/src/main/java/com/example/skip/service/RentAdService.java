@@ -251,11 +251,11 @@ public class RentAdService {
     }
 
     public BannerWaitingListDTO getLatestWithdrawnBanner(Long userId) {
-        BannerWaitingList banner = bannerWaitingListRepository
-                .findTopByRent_User_UserIdAndStatusOrderByUpdatedAtDesc(userId, BannerWaitingListStatus.WITHDRAWN);
-        if (banner == null) {
+        BannerWaitingList latest = bannerWaitingListRepository
+                .findTopByRent_User_UserIdOrderByUpdatedAtDesc(userId);
+        if (latest == null || latest.getStatus() != BannerWaitingListStatus.WITHDRAWN) {
             return null;
         }
-        return new BannerWaitingListDTO(banner);
+        return new BannerWaitingListDTO(latest);
     }
 }

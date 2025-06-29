@@ -95,7 +95,12 @@ const BannerResubmitForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     const file = imageRef.current?.files[0];
-    await resubmitBannerRequest(waitingId, userId, cpcBid, file);
+    try {
+      await resubmitBannerRequest(waitingId, userId, cpcBid, file);
+      alert('배너 수정 요청이 성공적으로 제출되었습니다.');
+    } catch (err) {
+      alert(err.response?.data?.message || '배너 수정 중 오류가 발생했습니다.');
+    }
   };
 
   if (!banner) return <p>로딩 중...</p>;
@@ -103,7 +108,7 @@ const BannerResubmitForm = () => {
   const getNextMonday3AM = () => {
     const today = new Date();
     const dayOfWeek = today.getDay();
-    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8;
+    const daysUntilNextMonday = ((8 - dayOfWeek) % 7) + 8 -7;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     nextMonday.setHours(3, 0, 0, 0);
