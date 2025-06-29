@@ -69,6 +69,7 @@ public class BannerWaitingToActiveScheduler {
                     .cpcBid(waiting.getCpcBid())
                     .finalScore(BigDecimal.valueOf(score))
                     .endDate(waiting.getRegistDay().plusWeeks(1))
+                    .status(BannerActiveListStatus.ACTIVE)
                     .build();
 
             bannerActiveListRepository.save(active);
