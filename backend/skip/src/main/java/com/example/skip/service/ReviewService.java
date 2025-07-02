@@ -210,8 +210,8 @@ public class ReviewService {
 
     // Review 3개월 마다 자동 삭제
     @Scheduled(cron = "0 0 0 * * ?") // 매 자정마다 실행
-    public void deleteOldQna() {
+    public void deleteOldReview() {
         LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(3); // 3개월 단위 Q&A 삭제
-        qnaRepository.deleteByCreatedAtBefore(cutoffDate);
+        reviewRepository.deleteByCreatedAtBefore(cutoffDate);
     }
 }
